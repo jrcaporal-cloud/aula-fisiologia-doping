@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-red: #E11D48;
+  --color-brand-crimson: #9F1239;
+  --color-brand-dark: #0A0A0A;
+  --color-brand-gray: #171717;
+  --color-brand-slate: #1e293b;
+  --font-display: 'Clash Display', sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-black/40 border border-white/10 backdrop-blur-2xl shadow-2xl;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: var(--color-brand-dark);
+  color: #FAFAFA;
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+}
+
+.grid-2 {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  width: 100%;
+}
+
+/* Expandable Card CSS for the Biological Passport / Bento Slides */
+.expand-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 500ms ease;
+  overflow: hidden;
+  margin-top: 0;
+}
+
+.expand-content>p,
+.expand-content>ul {
+  overflow: hidden;
+}
+
+.group:hover .expand-content {
+  grid-template-rows: 1fr;
+  margin-top: 1rem;
+}
+
+.chevron {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.group:hover .chevron {
+  transform: rotate(180deg);
+}
+
+/* Pro-tip styling for the inline markdown logic inside Proze rendering */
+.highlight-white {
+  color: #fff;
+  font-weight: 700;
+}
+
+.highlight-red {
+  color: var(--color-brand-red);
+  font-weight: 700;
+}
+
+/* Global Animations for Presentation Blocks */
+
+.reveal {
+  animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal-scale {
+  animation: fade-scale-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+
+@keyframes fade-slide-up {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-scale-up {
+  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+  50% { text-shadow: 0 0 25px rgba(220, 38, 38, 1); transform: scale(1.02); }
+  100% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+}
+
+/* Global Animations for Presentation Blocks */
+
+.reveal {
+  animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal-scale {
+  animation: fade-scale-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+
+@keyframes fade-slide-up {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-scale-up {
+  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+  50% { text-shadow: 0 0 25px rgba(220, 38, 38, 1); transform: scale(1.02); }
+  100% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+}
+
+/* Global Animations for Presentation Blocks */
+
+.reveal {
+  animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal-scale {
+  animation: fade-scale-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+
+@keyframes fade-slide-up {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-scale-up {
+  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+  50% { text-shadow: 0 0 25px rgba(220, 38, 38, 1); transform: scale(1.02); }
+  100% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+}
+
+/* Global Animations for Presentation Blocks */
+
+.reveal {
+  animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal-scale {
+  animation: fade-scale-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+
+@keyframes fade-slide-up {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-scale-up {
+  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+  50% { text-shadow: 0 0 25px rgba(220, 38, 38, 1); transform: scale(1.02); }
+  100% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+}
