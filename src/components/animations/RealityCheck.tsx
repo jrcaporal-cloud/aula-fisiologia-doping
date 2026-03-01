@@ -1,53 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useMemo } from 'react';
-
-// 100 athletes: we'll label the first N as detected, next M as truly doping but undetected, rest as clean
-const TOTAL = 100;
-const DETECTED = 2;       // official WADA catch rate
-const TRUE_DOPING = 43;   // real prevalence
-
-type AthleteState = 'clean' | 'detected' | 'hidden_doper';
-
-interface Athlete {
-    id: number;
-    state: AthleteState;
-    x: number;
-    y: number;
-}
-
-const COLS = 10;
-const athletes: Athlete[] = Array.from({ length: TOTAL }, (_, i) => {
-    let state: AthleteState = 'clean';
-    if (i < DETECTED) state = 'detected';
-    else if (i < TRUE_DOPING) state = 'hidden_doper';
-    return {
-        id: i,
-        state,
-        x: (i % COLS) * 10,
-        y: Math.floor(i / COLS) * 10,
-    };
-});
-
-const stateConfig = {
-    detected: {
-        color: '#3b82f6',
-        glow: 'rgba(59,130,246,0.5)',
-        label: 'Detectado (WADA)',
-        emoji: '🔍',
-    },
-    hidden_doper: {
-        color: '#e11d48',
-        glow: 'rgba(225,29,72,0.5)',
-        label: 'Dopado (Não Detectado)',
-        emoji: '🩸',
-    },
-    clean: {
-        color: 'rgba(255,255,255,0.15)',
-        glow: 'transparent',
-        label: 'Limpo',
-        emoji: '✅',
-    },
-};
+import { useState } from 'react';
 
 // Animated number counter
 const AnimatedNumber = ({ target, color, suffix = '%' }: { target: number; color: string; suffix?: string }) => (
@@ -63,184 +15,138 @@ const AnimatedNumber = ({ target, color, suffix = '%' }: { target: number; color
     </motion.span>
 );
 
-export const RealityCheck = () => {
-    const [revealed, setRevealed] = useState(false);
-    const [hoveredId, setHoveredId] = useState<number | null>(null);
+const DATA = [
+    {
+        id: 'wada',
+        pct: 2,
+        title: 'Detectado pela WADA',
+        subtitle: '📊 Dados Oficiais Abertos',
+        color: '#3b82f6',
+        bg: 'rgba(30,58,138,0.2)',
+        border: 'rgba(59,130,246,0.3)',
+        glow: 'rgba(59,130,246,0.15)',
+        question: 'Como funcionam os testes oficiais?',
+        bullets: [
+            'Dos ~300.000 testes/ano realizados pela WADA, apenas 1-2% resultam em AAF (Achados Analíticos Adversos).',
+            'Isso equivale a cerca de 4.000 atletas pegos por ano em todo o mundo esportivo.',
+            'Muitos destes casos positivos são de substâncias sociais/recreativas, não ergogênicas (doping intencional de performance).',
+            'O teste é altamente específico (poucos falsos positivos) mas possui baixa sensibilidade real nas janelas off-season.'
+        ]
+    },
+    {
+        id: 'real',
+        pct: 43,
+        title: 'Prevalência Real',
+        subtitle: '🔬 Metodologia Científica Anônima',
+        color: '#e11d48',
+        bg: 'rgba(127,29,29,0.2)',
+        border: 'rgba(225,29,72,0.35)',
+        glow: 'rgba(225,29,72,0.15)',
+        question: 'Qual é a verdadeira extensão?',
+        bullets: [
+            'Pesquisa anônima de Ulrich et al. (2018) em eventos da IAAF usando a técnica do "Randomized Response Model".',
+            '43.6% dos atletas de elite admitiram anonimamente uso de substâncias proibidas nos últimos 12 meses.',
+            'Em Jogos Pan-Árabes e Pan-Americanos o número variou de 30% a 57% dependendo da modalidade avaliada.',
+            'Isso indica que o sistema antidoping atual captura apenas uma fração mínima (aprox. 1 em cada 20) dos usuários crônicos.'
+        ]
+    }
+];
 
-    const hovered = hoveredId !== null ? athletes[hoveredId] : null;
+export const RealityCheck = () => {
+    const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
     return (
-        <div className="w-full mt-2 font-body space-y-8 pointer-events-auto">
+        <div className="w-full max-w-4xl mx-auto mt-4 font-body">
 
-            {/* === Stats header === */}
-            <div className="grid grid-cols-2 gap-4">
-                {/* WADA */}
-                <motion.div
-                    className="relative overflow-hidden rounded-2xl p-5 flex flex-col items-center gap-1 border cursor-default"
-                    style={{ background: 'rgba(30,58,138,0.2)', borderColor: 'rgba(59,130,246,0.3)' }}
-                    whileHover={{ y: -3, boxShadow: '0 16px 40px rgba(59,130,246,0.2)' }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                >
-                    <div className="absolute inset-0 pointer-events-none"
-                        style={{ background: 'radial-gradient(ellipse at top, rgba(59,130,246,0.08) 0%, transparent 70%)' }} />
-                    <motion.div
-                        className="w-20 h-20 rounded-full flex items-center justify-center mb-1"
-                        style={{ background: 'conic-gradient(#3b82f6 7.2deg, rgba(255,255,255,0.06) 0deg)' }}
-                        animate={{ rotate: [0, 360] }}
-                        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                    >
-                        <div className="w-14 h-14 rounded-full bg-[#080818] flex items-center justify-center">
-                            <AnimatedNumber target={2} color="#3b82f6" />
-                        </div>
-                    </motion.div>
-                    <p className="text-xs font-semibold text-blue-300 uppercase tracking-widest">Detectado pela WADA</p>
-                    <p className="text-[10px] text-gray-500 text-center leading-relaxed mt-1">Amostras positivas em controle oficial</p>
-                </motion.div>
+            <div className="flex flex-col md:flex-row gap-6">
+                {DATA.map((col) => {
+                    const isAct = expandedRow === col.id;
+                    return (
+                        <motion.div
+                            key={col.id}
+                            layout
+                            className="relative rounded-2xl border p-6 flex flex-col transition-colors cursor-pointer"
+                            style={{
+                                background: col.bg,
+                                borderColor: isAct ? col.color : col.border,
+                                boxShadow: isAct ? `0 0 30px ${col.glow}` : 'none',
+                                flex: isAct ? '5 0 0' : '4 0 0'
+                            }}
+                            transition={{ layout: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }}
+                            onClick={() => setExpandedRow(isAct ? null : col.id)}
+                            whileHover={{ y: isAct ? 0 : -4 }}
+                        >
+                            <div className="absolute inset-0 pointer-events-none rounded-2xl"
+                                style={{ background: `radial-gradient(ellipse at top, ${col.glow} 0%, transparent 60%)` }} />
 
-                {/* Real */}
-                <motion.div
-                    className="relative overflow-hidden rounded-2xl p-5 flex flex-col items-center gap-1 border cursor-default"
-                    style={{ background: 'rgba(127,29,29,0.2)', borderColor: 'rgba(225,29,72,0.35)' }}
-                    whileHover={{ y: -3, boxShadow: '0 16px 40px rgba(225,29,72,0.2)' }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                >
-                    <div className="absolute inset-0 pointer-events-none"
-                        style={{ background: 'radial-gradient(ellipse at top, rgba(225,29,72,0.10) 0%, transparent 70%)' }} />
-                    <motion.div
-                        className="w-20 h-20 rounded-full flex items-center justify-center mb-1"
-                        style={{ background: 'conic-gradient(#e11d48 154.8deg, rgba(255,255,255,0.06) 0deg)' }}
-                        animate={{ rotate: [0, -360] }}
-                        transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
-                    >
-                        <div className="w-14 h-14 rounded-full bg-[#080818] flex items-center justify-center">
-                            <AnimatedNumber target={43} color="#e11d48" />
-                        </div>
-                    </motion.div>
-                    <p className="text-xs font-semibold text-red-300 uppercase tracking-widest">Prevalência Real</p>
-                    <p className="text-[10px] text-gray-500 text-center leading-relaxed mt-1">Métodos epidemiológicos anônimos</p>
-                </motion.div>
+                            {/* Circle Chart */}
+                            <div className="flex justify-center mb-5">
+                                <motion.div
+                                    className="w-28 h-28 rounded-full flex items-center justify-center relative shadow-lg"
+                                    style={{
+                                        background: `conic-gradient(${col.color} ${(col.pct / 100) * 360}deg, rgba(255,255,255,0.05) 0deg)`
+                                    }}
+                                    initial={{ rotate: -90, opacity: 0 }}
+                                    whileInView={{ rotate: 0, opacity: 1 }}
+                                    viewport={{ once: false, amount: 0.5 }}
+                                    transition={{ duration: 1, type: "spring", stiffness: 60 }}
+                                >
+                                    <div className="w-[88px] h-[88px] rounded-full bg-[#080818] flex items-center justify-center border border-white/5">
+                                        <AnimatedNumber target={col.pct} color={col.color} />
+                                    </div>
+                                </motion.div>
+                            </div>
+
+                            <motion.h3 layout className="text-center font-display text-xl font-bold text-white mb-2">{col.title}</motion.h3>
+                            <motion.p layout className="text-center text-xs font-semibold uppercase tracking-wide opacity-80 mb-6" style={{ color: col.color }}>{col.subtitle}</motion.p>
+
+                            {/* Expandable Accordion Header */}
+                            <div className="mt-auto pt-4 border-t border-white/10">
+                                <div className="flex items-center justify-between group">
+                                    <span className="text-sm font-semibold flex items-center gap-2" style={{ color: isAct ? 'white' : '#fbbf24' }}>
+                                        <motion.span animate={{ rotate: isAct ? 90 : 0 }} className="text-xs">▶</motion.span>
+                                        {col.question}
+                                    </span>
+                                </div>
+
+                                {/* Expanded Content */}
+                                <AnimatePresence mode="wait">
+                                    {isAct && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                                            className="overflow-hidden"
+                                        >
+                                            <div className="pt-4 pb-2">
+                                                <ul className="space-y-3">
+                                                    {col.bullets.map((b, i) => (
+                                                        <motion.li
+                                                            key={i}
+                                                            initial={{ opacity: 0, x: -10 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: 0.1 + (i * 0.05) }}
+                                                            className="flex items-start gap-2 text-sm text-gray-300"
+                                                        >
+                                                            <span className="text-xs mt-1" style={{ color: col.color }}>●</span>
+                                                            <span className="leading-relaxed">{b}</span>
+                                                        </motion.li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </motion.div>
+                    );
+                })}
             </div>
 
-            {/* === Dot Grid === */}
-            <motion.div
-                className="rounded-2xl border border-white/8 p-6"
-                style={{ background: 'rgba(5,5,18,0.75)' }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{ duration: 0.6 }}
-            >
-                <div className="flex items-center justify-between mb-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-gray-400">
-                        100 atletas de elite — passe o mouse nos pontos
-                    </p>
-                    <button
-                        onClick={() => setRevealed(r => !r)}
-                        className="text-xs px-4 py-1.5 rounded-full border transition-all duration-300 font-medium cursor-pointer"
-                        style={revealed
-                            ? { borderColor: '#e11d48', color: '#e11d48', background: 'rgba(225,29,72,0.1)' }
-                            : { borderColor: 'rgba(255,255,255,0.2)', color: '#9ca3af', background: 'rgba(255,255,255,0.04)' }
-                        }
-                    >
-                        {revealed ? '🔴 Esconder realidade' : '👁 Revelar realidade'}
-                    </button>
-                </div>
-
-                {/* Grid of dots */}
-                <div
-                    className="grid gap-1.5 mx-auto w-fit"
-                    style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)` }}
-                >
-                    {athletes.map((a) => {
-                        const isRevealed = revealed || a.state === 'detected';
-                        const cfg = stateConfig[isRevealed ? a.state : (a.state === 'detected' ? 'detected' : 'clean')];
-                        const isHov = hoveredId === a.id;
-
-                        return (
-                            <motion.div
-                                key={a.id}
-                                className="w-6 h-6 rounded-full cursor-pointer relative"
-                                style={{ background: cfg.color }}
-                                animate={{
-                                    scale: isHov ? 1.6 : 1,
-                                    boxShadow: isHov ? `0 0 12px 4px ${cfg.glow}` : 'none',
-                                }}
-                                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                                onHoverStart={() => setHoveredId(a.id)}
-                                onHoverEnd={() => setHoveredId(null)}
-                                layout
-                            />
-                        );
-                    })}
-                </div>
-
-                {/* Tooltip */}
-                <div className="mt-4 h-8 flex items-center justify-center">
-                    <AnimatePresence mode="wait">
-                        {hovered && (
-                            <motion.div
-                                key={hovered.id}
-                                initial={{ opacity: 0, y: 6 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -4 }}
-                                transition={{ duration: 0.15 }}
-                                className="flex items-center gap-2 px-4 py-1.5 rounded-full text-xs border"
-                                style={{
-                                    borderColor: stateConfig[hovered.state].glow,
-                                    background: `${stateConfig[hovered.state].glow}22`,
-                                    color: hovered.state === 'clean' ? '#9ca3af' : stateConfig[hovered.state].color,
-                                }}
-                            >
-                                <span>{stateConfig[hovered.state].emoji}</span>
-                                <span>Atleta #{hovered.id + 1} — {stateConfig[revealed ? hovered.state : (hovered.state === 'detected' ? 'detected' : 'clean')].label}</span>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-
-                {/* Legend */}
-                <div className="mt-3 flex flex-wrap gap-4 justify-center">
-                    {Object.entries(stateConfig).map(([key, cfg]) => (
-                        <div key={key} className="flex items-center gap-1.5 text-[10px] text-gray-400">
-                            <div className="w-2.5 h-2.5 rounded-full" style={{ background: cfg.color }} />
-                            {cfg.label}
-                        </div>
-                    ))}
-                </div>
-            </motion.div>
-
-            {/* === Why section === */}
-            <motion.div
-                className="rounded-2xl border border-white/8 p-5"
-                style={{ background: 'rgba(0,0,0,0.5)' }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-            >
-                <h3 className="font-display text-base text-yellow-400 font-semibold mb-4 flex items-center gap-2">
-                    ⚠️ Por que a detecção falha?
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {[
-                        { icon: '⏱️', title: 'Microdosagem', desc: 'Frações de dose em horários estratégicos evitam detecção na janela de clearance.' },
-                        { icon: '🩸', title: 'Transfusão Autóloga', desc: 'Sangue próprio do atleta. Vestígios de plástico das bolsas são a única pista.' },
-                        { icon: '🧬', title: 'Furo Genético (UGT2B17)', desc: 'Deleção genética impede excreção urinária de metabólitos — teste sempre "limpo".' },
-                    ].map((item, i) => (
-                        <motion.div
-                            key={i}
-                            className="p-4 rounded-xl border border-white/5 hover:border-yellow-400/30 transition-colors cursor-default"
-                            style={{ background: 'rgba(255,255,255,0.02)' }}
-                            whileHover={{ y: -3, background: 'rgba(255,255,255,0.04)' }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                        >
-                            <div className="text-xl mb-2">{item.icon}</div>
-                            <strong className="block text-white text-xs uppercase tracking-wider mb-1">{item.title}</strong>
-                            <p className="text-gray-400 text-[11px] leading-relaxed">{item.desc}</p>
-                        </motion.div>
-                    ))}
-                </div>
-            </motion.div>
+            <p className="text-center text-[10px] text-gray-500 mt-6 tracking-widest uppercase">
+                Clique nos painéis para expandir os dados
+            </p>
         </div>
     );
 };
