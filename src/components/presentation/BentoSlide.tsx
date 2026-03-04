@@ -19,6 +19,7 @@ import { EAAInteractive } from '../animations/EAAInteractive';
 import { TransBiologyViz } from '../animations/TransBiologyViz';
 import { TransCasesTimeline } from '../animations/TransCasesTimeline';
 import { TransScienceReview } from '../animations/TransScienceReview';
+import { SteroidProfileVisualizer } from '../animations/SteroidProfileVisualizer';
 
 const COMP_MAP: Record<string, React.FC> = {
     CellularSignaling,
@@ -37,6 +38,7 @@ const COMP_MAP: Record<string, React.FC> = {
     TransBiologyViz,
     TransCasesTimeline,
     TransScienceReview,
+    SteroidProfileVisualizer,
 };
 
 const renderContent = (content: string) => {

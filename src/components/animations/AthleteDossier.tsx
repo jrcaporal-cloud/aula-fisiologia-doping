@@ -27,7 +27,7 @@ const ATHLETES: Athlete[] = [
         year: '1988',
         substance: 'Estanozolol (Winstrol)',
         substanceColor: '#e11d48',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Ben_Johnson_%281988%29.jpg/220px-Ben_Johnson_%281988%29.jpg',
+        image: '/athletes/ben_johnson.jpg',
         headline: 'O maior escândalo olímpico da história. Bateu o recorde mundial nos Jogos de Seul, mas falhou no antidoping 3 dias depois. Banido vitaliciamente após segunda infração em 1993.',
         expandedContent: {
             pharmacology: 'Estanozolol é um derivado sintético da DHT com alta afinidade androgênica. Johnson usava 10–20mg/dia via oral. Meia-vida urinária de ~3 semanas. Excreção detectável pelos metabólitos 3′-OH-stanozolol. Treinador Charlie Francis revelou doping sistemático desde 1981.',
@@ -44,7 +44,7 @@ const ATHLETES: Athlete[] = [
         year: '1999–2005',
         substance: 'EPO, Testosterona, Transfusões, HCG',
         substanceColor: '#f59e0b',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/LanceArmstrong_2010_Tour_de_Suisse.jpg/220px-LanceArmstrong_2010_Tour_de_Suisse.jpg',
+        image: '/athletes/lance_armstrong.jpg',
         headline: 'Sete Tours de France cancelados em 2012 após investigação da USADA. Confirmou uso sistemático de doping em entrevista para Oprah Winfrey em 2013. Considerado o dopador mais sofisticado da história.',
         expandedContent: {
             pharmacology: 'Stack operacional: rhEPO microdosada (uso noturno para evitar controles matinais), testosterona em patch subdérmico, transfusão autóloga (bolsas guardadas em altitude), cortisona (uso terapêutico fraudulento) e HGH. Médico Michele Ferrari é considerado o arquiteto do esquema.',
@@ -61,11 +61,11 @@ const ATHLETES: Athlete[] = [
         year: '2000',
         substance: 'THG (The Clear) + EPO',
         substanceColor: '#a855f7',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Marion_Jones_2007.jpg/220px-Marion_Jones_2007.jpg',
+        image: '/athletes/marion_jones.jpg',
         headline: 'Cinco medalhas de Sydney 2000 cassadas. Admitiu uso do THG, a droga designer criada por BALCO. Presa por falsas declarações ao FBI em 2007, cumpriu 6 meses de prisão.',
         expandedContent: {
             pharmacology: 'THG (tetrahidrogestrinona) é um EAA designer sintetizado por Patrick Arnold especificamente para não ser detectado. Estrutura química: 1,2-desidrogestrinona com modificações no anel D. Administração sublingual em gotas (indetectável nos anos 2000). Descoberto apenas via doping de traição ("tip" anônima à USADA em 2003).',
-            mechanism: 'THG tem afinidade ao AR comparável à testosterona mas com farmacocinética modificada que prolonga a ligação. Também ativa Receptores de Glucocorticoides, com efeitos anti-inflamatórios e preservação muscular. A molécula foi reversa-engenheirada a partir da gestrinona (abortiva).',
+            mechanism: 'THG tem affinity ao AR comparável à testosterona mas com farmacocinética modificada que prolonga a ligação. Também ativa Receptores de Glucocorticoides, com efeitos anti-inflamatórios e preservação muscular. A molécula foi reversa-engenheirada a partir da gestrinona (abortiva).',
             detection: 'A USADA enviou uma seringa usada de THG ao Dr. Don Catlin (UCLA). Em 72 horas, ele desenvolveu o primeiro método de detecção por LC-MS/MS. Retroativamente, centenas de amostras foram retestadas. A BALCO (Bay Area Laboratory Co-Operative) foi o fornecedor central identificado.',
             outcome: 'Jones devolveu 5 medalhas olímpicas. Condenada por perjúrio (2 contagens). 6 meses de prisão federal. Multas de $500k. A investigação BALCO expôs Tim Montgomery, Marion, vários jogadores da MLB e NFL.',
             trivia: 'O escândalo BALCO levou à criação do "WADA Anti-Doping Code" reformado em 2003. Patrick Arnold, o químico que sintetizou o THG, cumpriu pena reduzida (3 meses) por cooperação. O THG ainda não tem uso médico aprovado.'
@@ -78,7 +78,7 @@ const ATHLETES: Athlete[] = [
         year: '2016 / 2017',
         substance: 'Clomifeno, Letrozol (2016) | Turinabol (2017)',
         substanceColor: '#f59e0b',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Jon_Jones_-_Supporting_Brain_Health_Study.jpg',
+        image: '/athletes/jon_jones.jpg',
         headline: 'Caiu duas vezes no auge (UFC 200 e 214). Inibidores de aromatase para retomar eixo HPG. Em 2017, Turinabol em picogramas pulsatíveis forçou alteração das métricas da USADA.',
         expandedContent: {
             pharmacology: 'Clomifeno (SERM) e Letrozol (inibidor de aromatase) são usados em PCT (Post-Cycle Therapy) para reiniciar o eixo HPG após ciclo de EAA. Clomifeno bloqueia feedback negativo de estrogênio no hipotálamo → elevando LH/FSH → estimulando produção de testosterona endógena. Letrozol suprime estrógenos sistêmicos.',
@@ -95,7 +95,7 @@ const ATHLETES: Athlete[] = [
         year: '2022',
         substance: 'Trimetazidina',
         substanceColor: '#60a5fa',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/6/62/%D0%9A%D0%B0%D0%BC%D0%B8%D0%BB%D0%B0_%D0%92%D0%B0%D0%BB%D0%B8%D0%B5%D0%B2%D0%B0_%2826-04-2022%29.jpg',
+        image: '/athletes/kamila_valieva.jpg',
         headline: 'Prodígio russa de 15 anos em Pequim. Trimetazidina modula metabolismo cardíaco. Rússia alegou "copo contaminado do avô". Medalha de Ouro cassada pelo CAS em 2024, suspensão de 4 anos.',
         expandedContent: {
             pharmacology: 'Trimetazidina (TMZ) é um agente antiangina: inibe beta-oxidação de ácidos graxos via supressão de 3-ketoacyl CoA thiolase, modulando o metabolismo miocárdico para glicose (mais eficiente em hipoxia/isquemia). Usada normalmente em pacientes com cardiopatia isquêmica. Banida pela WADA em 2014.',
@@ -112,7 +112,7 @@ const ATHLETES: Athlete[] = [
         year: '2016',
         substance: 'Meldonium (Mildronato)',
         substanceColor: '#34d399',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Maria_Sharapova_during_opening_night_of_Web_Summit_2025_at_the_MEO_Arena_in_Lisbon%2C_Portugal.jpg/960px-Maria_Sharapova_during_opening_night_of_Web_Summit_2025_at_the_MEO_Arena_in_Lisbon%2C_Portugal.jpg',
+        image: '/athletes/maria_sharapova.jpg',
         headline: 'Meldonium entrou na lista WADA em jan/2016. Sharapova assumiu não ter lido o e-mail de atualização, usava há 10 anos "por saúde". Suspensão reduzida de 24 para 15 meses.',
         expandedContent: {
             pharmacology: 'Meldonium (Mildronate) inibe a carnitina palmitoiltransferase 1 (CPT1), enzima que transporta ácidos graxos de cadeia longa para mitocôndria. Isso desvia o substrato para metabolismo de glicose — mais eficiente em condições de oxigênio limitado. Desenvolvido na Letônia para tratamento de insuficiência cardíaca.',
@@ -129,7 +129,7 @@ const ATHLETES: Athlete[] = [
         year: '2023',
         substance: 'Testosterona / DHEA',
         substanceColor: '#e11d48',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Paul_Pogba_at_the_2025_Cannes_Film_Festival_02.jpg/960px-Paul_Pogba_at_the_2025_Cannes_Film_Festival_02.jpg',
+        image: '/athletes/paul_pogba.jpg',
         headline: 'Testou positivo após jogo da Serie A. Banido por 4 anos, conseguiu recurso comprovando suplemento contaminado da Flórida (DHEA), reduzido para 18 meses.',
         expandedContent: {
             pharmacology: 'DHEA (deidroepiandrosterona) é precursor adrenal de androgênios e estrogênios. Pode elevar T e E endógenas indiretamente via metabolismo periférico (17β-HSD). Banida pela WADA desde 2004. Amplamente disponível como suplemento dietético nos EUA (não regulamentado como medicamento pelo FDA).',
@@ -146,7 +146,7 @@ const ATHLETES: Athlete[] = [
         year: '2019',
         substance: 'rhEPO (Eritropoietina Recombinante)',
         substanceColor: '#f87171',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/6/68/TJ_Dillashaw.png',
+        image: '/athletes/tj_dillashaw.png',
         headline: 'Campeão que desceu de categoria com corte de 15kg. Assumiu injetar EPO para sobreviver à anemia severa do corte. Abriu mão do cinturão, banido por 2 anos.',
         expandedContent: {
             pharmacology: 'rhEPO é a versão recombinante da eritropoietina — hormônio renal que estimula eritropoiese na medula óssea. Meia-vida plasmática: ~4–6h (IV) ou ~24h (SC). Meia-vida biológica: 3–4 dias (pelo efeito hematopoiético). Detectável por isoeletrofocalização e Passport SAR. Dose típica no esporte: 50–200 UI/kg 3×/semana.',
@@ -206,18 +206,30 @@ export const AthleteDossier = () => {
                             </div>
 
                             {/* Photo */}
-                            <div className="flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden border border-white/10">
+                            <motion.div
+                                layout
+                                className="flex-shrink-0 overflow-hidden border border-white/10 relative"
+                                initial={false}
+                                animate={{
+                                    width: isOpen ? 120 : 56,
+                                    height: isOpen ? 120 : 56,
+                                    borderRadius: isOpen ? 16 : 12,
+                                }}
+                                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                            >
                                 <img
                                     src={athlete.image}
                                     alt={athlete.name}
-                                    className="w-full h-full object-cover object-top"
+                                    className="w-full h-full object-cover object-top absolute inset-0"
                                     referrerPolicy="no-referrer"
-                                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                    onError={e => {
+                                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(athlete.name.replace(' ', '+'))}&background=111827&color=fff&size=256`;
+                                    }}
                                 />
-                            </div>
+                            </motion.div>
 
                             {/* Info */}
-                            <div className="flex-1 min-w-0">
+                            <motion.div layout className="flex-1 min-w-0">
                                 <div className="flex flex-wrap items-center gap-2 mb-1">
                                     <span className="font-display font-bold text-white text-lg leading-tight">{athlete.name}</span>
                                     <span className="text-[10px] text-gray-400 uppercase tracking-wider">{athlete.sport} · {athlete.year}</span>
@@ -228,8 +240,13 @@ export const AthleteDossier = () => {
                                 >
                                     {athlete.substance}
                                 </span>
-                                <p className="text-gray-400 text-xs leading-relaxed line-clamp-2">{athlete.headline}</p>
-                            </div>
+                                <motion.p
+                                    layout
+                                    className={`text-gray-400 text-xs leading-relaxed ${isOpen ? '' : 'line-clamp-2'}`}
+                                >
+                                    {athlete.headline}
+                                </motion.p>
+                            </motion.div>
 
                             {/* Chevron */}
                             <motion.div
@@ -251,12 +268,7 @@ export const AthleteDossier = () => {
                                     transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                                     style={{ overflow: 'hidden' }}
                                 >
-                                    <div className="px-4 pb-5 pt-2 border-t border-white/6">
-                                        {/* Full headline */}
-                                        <p className="text-gray-300 text-sm leading-relaxed mb-4 pl-2 border-l-2" style={{ borderColor: athlete.substanceColor }}>
-                                            {athlete.headline}
-                                        </p>
-
+                                    <div className="px-4 pb-5 pt-2">
                                         {/* Sections accordion */}
                                         <div className="space-y-2">
                                             {(Object.keys(SECTION_LABELS) as Array<keyof typeof SECTION_LABELS>).map(section => {
@@ -270,7 +282,10 @@ export const AthleteDossier = () => {
                                                         <button
                                                             className="w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-white/4 transition-colors cursor-pointer"
                                                             style={{ background: secOpen ? `${athlete.substanceColor}08` : 'transparent' }}
-                                                            onClick={() => setExpandedSection(secOpen ? null : section)}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setExpandedSection(secOpen ? null : section);
+                                                            }}
                                                         >
                                                             <span className="text-xs font-medium" style={{ color: secOpen ? athlete.substanceColor : '#9ca3af' }}>
                                                                 {SECTION_LABELS[section]}

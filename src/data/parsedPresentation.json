@@ -145,6 +145,16 @@
     ]
   },
   {
+    "id": 75,
+    "sectionName": "EAA - Aprofundamento",
+    "number": "05.2",
+    "layout": "prose",
+    "title": "Perfis Farmacológicos",
+    "subtitle": "Dinâmica das Variáveis: Anabolismo, Androgenismo e Tempo",
+    "content": "[[COMP:SteroidProfileVisualizer]]",
+    "cards": []
+  },
+  {
     "id": 8,
     "sectionName": "EAA - Aprofundamento",
     "number": "05.2",
@@ -426,6 +436,41 @@
     ]
   },
   {
+    "id": 191,
+    "sectionName": "Fronteiras Atuais",
+    "number": "BLOCO 3.2b",
+    "title": "A Máquina Metabólica: Beta-2 Detalhado",
+    "subtitle": "Farmacocinética e Detecção dos principais agentes",
+    "layout": "bento",
+    "content": "",
+    "cards": [
+      {
+        "type": "info",
+        "title": "Clembuterol (Clen)",
+        "attributes": [],
+        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'><strong>Meia-vida:</strong> ~35 horas.<br><strong>Efeito Anabólico:</strong> Mais pronunciado em modelos animais, mas em humanos atua fortemente como anticatabolítico e um termogênico extremo. Ocorre rápida <span style='color:#F87171;'>taquifilaxia</span> (down-regulation dos receptores β2) em 14-21 dias, exigindo o uso de Cetotifeno para \"limpar\" os receptores.<br><strong>Doping:</strong> Historicamente o mais pego. Casos famosos incluem Alberto Contador e Canelo Alvarez (alegação de carne contaminada no México).</p>"
+      },
+      {
+        "type": "info",
+        "title": "Salbutamol / Albuterol",
+        "attributes": [],
+        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'><strong>Meia-vida:</strong> ~4 a 6 horas.<br><strong>Efeito:</strong> Menos potente que o Clenbuterol para queima de gordura, mas muito utilizado (especialmente oral/xarope) por ser eliminado rapidamente, escapando da janela de detecção.<br><strong>Doping (TUE):</strong> Permitido via inalação para asma (limite de 1600 mcg/24h). Chris Froome caiu no antidoping por exceder quase 2x esse limite urinário, culpando desidratação severa concentrando a urina.</p>"
+      },
+      {
+        "type": "warning",
+        "title": "O Falso Beta-2: Cardarine (GW1516)",
+        "attributes": [],
+        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'>Frequentemente vendido ao lado de SARMs e Beta-2, na verdade é um <strong style='color:white;'>Agonista PPAR-delta</strong>.<br><strong>Mecanismo:</strong> Reprograma o músculo esquelético para preferir ácidos graxos em vez de glicose. Converte fibras musculares rápidas (Tipo II) em lentas e oxidativas (Tipo I).<br><strong>Riscos Reais:</strong> Abandonado pela GlaxoSmithKline na fase 2 por induzir tumores cancerígenos sistêmicos rápidos e agressivos em modelos de ratos. Mesmo assim, <em>sucesso absoluto de vendas no mercado underground</em> de endurance.</p>"
+      },
+      {
+        "type": "alert",
+        "title": "Janelas e Detecção Analítica",
+        "attributes": [],
+        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'>A WADA possui <strong>Zero Tolerância (MRPL de 0.2 ng/mL)</strong> para Clembuterol. No entanto, devido ao histórico de contaminação alimentar mundial (China, México, onde o Clenbuterol é usado clandestinamente em porcos/bois para aumento de carne magra), a WADA introduziu uma diretriz para \"Gestão de Resultados\" baseada na rastreabilidade isotópica quando se encontram frações de <span style='color:#F59E0B;'>picogramas</span> (limite de notificação < 5 ng/mL em carnes de países de risco).</p>"
+      }
+    ]
+  },
+  {
     "id": 20,
     "sectionName": "Fronteiras Atuais",
     "number": "BLOCO 3.3",
@@ -481,9 +526,9 @@
       },
       {
         "type": "bento",
-        "title": "",
+        "title": "O Princípio-Chave",
         "attributes": [],
-        "rawHtml": "<div style=\"width: 100px; height: 100px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.1); border-top-color: #FBBF24; border-bottom-color: #60A5FA; border-left-color: var(--accent-main); animation: spin 4s linear infinite; display: flex; align-items: center; justify-content: center; position: relative;\">\n                        <style>\n                            @keyframes spin {\n                                100% {\n                                    transform: rotate(360deg);\n                                }\n                            }\n\n                            .reverse-spin {\n                                animation: spin 4s linear infinite reverse;\n                            }\n                        </style>\n                        <div class=\"reverse-spin\" style=\"font-family: var(--font-display); font-size: 1.2rem; color: white;\">ABP</div>\n                    </div>\n                    <p style=\"text-align: center; font-size: 0.8rem; margin-top: 1rem; color: #9CA3AF;\">O Atleta é\n                        comparado<br><strong style=\"color: white;\">consigo mesmo.</strong></p>"
+        "rawHtml": "<div style=\"margin-bottom: 1rem;\">\n                        <div style=\"display: flex; align-items: center; gap: 8px; margin-bottom: 0.8rem;\">\n                            <span style=\"font-size: 1.4rem;\">🔬</span>\n                            <span style=\"font-size: 0.7rem; color: #9CA3AF; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 1px;\">Comparação Longitudinal Individual</span>\n                        </div>\n\n                        <!-- Mini SVG chart: Normal vs Anomalous Profile -->\n                        <div style=\"background: rgba(0,0,0,0.5); border-radius: 8px; padding: 12px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 1rem;\">\n                            <svg width=\"100%\" height=\"100\" viewBox=\"0 0 200 80\" preserveAspectRatio=\"none\" style=\"display: block;\">\n                                <!-- Grid lines -->\n                                <line x1=\"0\" y1=\"20\" x2=\"200\" y2=\"20\" stroke=\"rgba(255,255,255,0.04)\" stroke-width=\"0.5\"/>\n                                <line x1=\"0\" y1=\"40\" x2=\"200\" y2=\"40\" stroke=\"rgba(255,255,255,0.04)\" stroke-width=\"0.5\"/>\n                                <line x1=\"0\" y1=\"60\" x2=\"200\" y2=\"60\" stroke=\"rgba(255,255,255,0.04)\" stroke-width=\"0.5\"/>\n\n                                <!-- Individual Corridor (shaded band) -->\n                                <path d=\"M 0,30 Q 50,28 100,32 T 200,28 L 200,52 Q 150,56 100,50 T 0,54 Z\" fill=\"rgba(96,165,250,0.12)\"/>\n                                <path d=\"M 0,30 Q 50,28 100,32 T 200,28\" fill=\"none\" stroke=\"#60A5FA\" stroke-width=\"0.6\" stroke-dasharray=\"3,2\" opacity=\"0.5\"/>\n                                <path d=\"M 0,54 Q 50,56 100,50 T 200,52\" fill=\"none\" stroke=\"#60A5FA\" stroke-width=\"0.6\" stroke-dasharray=\"3,2\" opacity=\"0.5\"/>\n                                <text x=\"100\" y=\"44\" fill=\"rgba(96,165,250,0.3)\" font-size=\"5\" text-anchor=\"middle\" font-family=\"monospace\">CORREDOR</text>\n\n                                <!-- Normal baseline (blue solid) -->\n                                <path d=\"M 0,42 Q 20,40 40,43 T 80,41 Q 100,44 120,40 T 160,43 Q 180,41 200,42\" fill=\"none\" stroke=\"#60A5FA\" stroke-width=\"1.5\" stroke-linecap=\"round\">\n                                    <animate attributeName=\"stroke-dashoffset\" from=\"300\" to=\"0\" dur=\"2s\" fill=\"freeze\"/>\n                                    <animate attributeName=\"stroke-dasharray\" from=\"0 300\" to=\"300 0\" dur=\"2s\" fill=\"freeze\"/>\n                                </path>\n\n                                <!-- Anomalous deviation (red dashed) -->\n                                <path d=\"M 0,42 Q 20,40 40,43 T 80,41 Q 100,38 120,25 T 145,18 Q 165,22 185,20 L 200,19\" fill=\"none\" stroke=\"#e11d48\" stroke-width=\"1.2\" stroke-dasharray=\"4,3\" stroke-linecap=\"round\" opacity=\"0.85\">\n                                    <animate attributeName=\"stroke-dashoffset\" from=\"300\" to=\"0\" dur=\"2.5s\" fill=\"freeze\"/>\n                                    <animate attributeName=\"stroke-dasharray\" values=\"0 300;4 3\" dur=\"2.5s\" fill=\"freeze\"/>\n                                </path>\n\n                                <!-- Normal points -->\n                                <circle cx=\"20\" cy=\"41\" r=\"2\" fill=\"#60A5FA\" opacity=\"0.7\"/>\n                                <circle cx=\"60\" cy=\"42\" r=\"2\" fill=\"#60A5FA\" opacity=\"0.7\"/>\n                                <circle cx=\"100\" cy=\"40\" r=\"2\" fill=\"#60A5FA\" opacity=\"0.7\"/>\n\n                                <!-- Anomaly points with pulse -->\n                                <circle cx=\"120\" cy=\"25\" r=\"2.5\" fill=\"#e11d48\">\n                                    <animate attributeName=\"r\" values=\"2.5;4;2.5\" dur=\"1.5s\" repeatCount=\"indefinite\"/>\n                                    <animate attributeName=\"opacity\" values=\"1;0.5;1\" dur=\"1.5s\" repeatCount=\"indefinite\"/>\n                                </circle>\n                                <circle cx=\"145\" cy=\"18\" r=\"2.5\" fill=\"#e11d48\">\n                                    <animate attributeName=\"r\" values=\"2.5;4;2.5\" dur=\"1.5s\" repeatCount=\"indefinite\" begin=\"0.3s\"/>\n                                    <animate attributeName=\"opacity\" values=\"1;0.5;1\" dur=\"1.5s\" repeatCount=\"indefinite\" begin=\"0.3s\"/>\n                                </circle>\n\n                                <!-- ATF Alert -->\n                                <text x=\"145\" y=\"13\" fill=\"#e11d48\" font-size=\"5\" text-anchor=\"middle\" font-weight=\"bold\" font-family=\"monospace\">\n                                    <animate attributeName=\"opacity\" values=\"0;1;0\" dur=\"2s\" repeatCount=\"indefinite\"/>\n                                    ⚠ ATF\n                                </text>\n\n                                <!-- Legend -->\n                                <line x1=\"5\" y1=\"73\" x2=\"15\" y2=\"73\" stroke=\"#60A5FA\" stroke-width=\"1.2\"/>\n                                <text x=\"18\" y=\"75\" fill=\"#9CA3AF\" font-size=\"4\">Perfil Normal</text>\n                                <line x1=\"65\" y1=\"73\" x2=\"75\" y2=\"73\" stroke=\"#e11d48\" stroke-width=\"1\" stroke-dasharray=\"3,2\"/>\n                                <text x=\"78\" y=\"75\" fill=\"#9CA3AF\" font-size=\"4\">Perfil Dopado</text>\n                                <rect x=\"135\" y=\"71\" width=\"8\" height=\"5\" fill=\"rgba(96,165,250,0.15)\" rx=\"1\"/>\n                                <text x=\"146\" y=\"75\" fill=\"#9CA3AF\" font-size=\"4\">Corredor</text>\n                            </svg>\n                        </div>\n\n                        <!-- 3 Key Concepts -->\n                        <div style=\"display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.78rem; color: #D1D5DB; line-height: 1.5;\">\n                            <div style=\"display: flex; gap: 8px; align-items: flex-start;\">\n                                <span style=\"color: #60A5FA; font-size: 0.9rem; flex-shrink: 0;\">🧬</span>\n                                <span><strong style=\"color: white;\">Sem limite fixo</strong> — cada atleta tem seu próprio corredor estatístico baseado em seu histórico genético.</span>\n                            </div>\n                            <div style=\"display: flex; gap: 8px; align-items: flex-start;\">\n                                <span style=\"color: #FBBF24; font-size: 0.9rem; flex-shrink: 0;\">📊</span>\n                                <span><strong style=\"color: white;\">Inferência Bayesiana</strong> — a cada novo exame, o algoritmo recalcula a probabilidade de desvio natural.</span>\n                            </div>\n                            <div style=\"display: flex; gap: 8px; align-items: flex-start;\">\n                                <span style=\"color: #e11d48; font-size: 0.9rem; flex-shrink: 0;\">⚠️</span>\n                                <span><strong style=\"color: white;\">ATF (Achado Atípico)</strong> — disparo automático quando valores escapam do túnel individual (&gt;99.9% de improbabilidade).</span>\n                            </div>\n                        </div>\n\n                        <!-- Conclusion -->\n                        <div style=\"margin-top: 1rem; padding: 0.6rem 0.8rem; background: rgba(96,165,250,0.08); border-radius: 6px; border-left: 3px solid #60A5FA; text-align: center;\">\n                            <p style=\"font-size: 0.82rem; color: white; margin: 0; font-family: var(--font-display); letter-spacing: 0.3px;\">O atleta é seu próprio controle.</p>\n                            <p style=\"font-size: 0.65rem; color: #9CA3AF; margin: 4px 0 0 0;\">Não se compara com a média — compara-se com o seu perfil longitudinal único.</p>\n                        </div>\n                    </div>"
       },
       {
         "type": "bento",
@@ -531,6 +576,30 @@
         "rawHtml": "<p style=\"font-size: 0.9rem; color: #E5E7EB; line-height: 1.7; margin-bottom: 1.5rem;\">\n                        <strong style=\"color: #F87171; font-family: var(--font-display);\">A Ilusão do Jogo\n                            Limpo:</strong> O sistema gasta milhões em\n                        logística, mas sofre de \"cegueira seletiva\". A insulina ultrarrápida sai do soro em 2 horas;\n                        peptídeos secretores (IGF-1 LR3, CJC-1295) atuam sob as enzimas em minutos; e a transfusão\n                        autóloga noturna burla o ABP misturando o próprio sangue do atleta.\n                    </p>\n                    <p style=\"font-size: 0.9rem; color: #E5E7EB; line-height: 1.7;\">\n                        <span style=\"color: #F87171;\">▶ O Embate:</span> O teste antidoping na superelite serve\n                        primariamente para proteger a saúde real dos atletas ou é um \"imposto de relações públicas\"\n                        mantido pelos Comitês Olímpicos para não afugentar os patrocinadores (\"sponsors\")\n                        bilionários corporativos?\n                    </p>"
       }
     ]
+  },
+  {
+    "id": 32,
+    "layout": "prose",
+    "title": "O Dimorfismo Sexual como Variável Atlética",
+    "subtitle": "Testosterona, estrutura corporal e o que a TRT feminizante reverte — ou não",
+    "content": "[[COMP:TransBiologyViz]]",
+    "cards": []
+  },
+  {
+    "id": 33,
+    "layout": "prose",
+    "title": "Casos que Mudaram as Regras do Esporte",
+    "subtitle": "Semenya, Chand, Hubbard e Thomas — e como cada um redefiniu as políticas das federações",
+    "content": "[[COMP:TransCasesTimeline]]",
+    "cards": []
+  },
+  {
+    "id": 34,
+    "layout": "prose",
+    "title": "O Abismo entre Ciência e Regulação",
+    "subtitle": "O que os estudos dizem, o que ainda não sabemos e por que as federações discordam entre si",
+    "content": "[[COMP:TransScienceReview]]",
+    "cards": []
   },
   {
     "id": 25,
@@ -633,30 +702,6 @@
     "title": "",
     "subtitle": "",
     "content": "<p class=\"quote-text reveal\" style=\"font-size: clamp(2rem, 5vw, 4rem); font-style: normal; font-family: var(--font-display);\">\n                Conhecimento não é cumplicidade — <br><span class=\"highlight-red\">é proteção.</span>\n            </p>\n\n            <p class=\"reveal delay-2\" style=\"font-size: var(--small-size); margin-top: var(--slide-padding); text-align: center; max-width: 600px; color: var(--text-secondary);\">\n                Handelsman DJ, et al. (2018). Circulating Testosterone as the Hormonal Basis of Sex Differences in\n                Athletic Performance.<br>\n                Eichner AK, Tygart T. (2022). Insulin as a PED: What do we know?<br>\n                Barker SB, et al. (2023). Autologous Blood Transfusion in Sport: The Detection Problem.\n            </p>",
-    "cards": []
-  },
-  {
-    "id": 32,
-    "layout": "prose",
-    "title": "O Dimorfismo Sexual como Variável Atlética",
-    "subtitle": "Testosterona, estrutura corporal e o que a TRT feminizante reverte — ou não",
-    "content": "[[COMP:TransBiologyViz]]",
-    "cards": []
-  },
-  {
-    "id": 33,
-    "layout": "prose",
-    "title": "Casos que Mudaram as Regras do Esporte",
-    "subtitle": "Semenya, Chand, Hubbard e Thomas — e como cada um redefiniu as políticas das federações",
-    "content": "[[COMP:TransCasesTimeline]]",
-    "cards": []
-  },
-  {
-    "id": 34,
-    "layout": "prose",
-    "title": "O Abismo entre Ciência e Regulação",
-    "subtitle": "O que os estudos dizem, o que ainda não sabemos e por que as federações discordam entre si",
-    "content": "[[COMP:TransScienceReview]]",
     "cards": []
   }
 ]
