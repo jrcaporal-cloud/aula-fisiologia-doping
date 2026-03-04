@@ -80,7 +80,7 @@ const RESULT_LABEL: Record<string, string> = {
 export const TransCasesTimeline = () => {
     const [activeCase, setActiveCase] = useState<number | null>(null);
     const [tab, setTab] = useState<'cases' | 'policies'>('cases');
-    const c = activeCase !== null ? CASES[activeCase] : null;
+
 
     return (
         <div className="w-full space-y-5 font-body">
