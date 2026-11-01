@@ -26,3 +26,11 @@ export const DECK: DeckSlide[] = buildDeck(parsedPresentation as unknown as Slid
 
 /** Slides que ganham o visualizador 3D do mecanismo genômico (por id do JSON). */
 export const SLIDES_WITH_3D = new Set<number>([3]);
+
+/**
+ * Slides em que o fundo de hemácias fica animado (capa e citações). Nos demais ele
+ * congela no último quadro: libera a GPU para os simuladores e gráficos do slide.
+ */
+export const ANIMATED_BACKGROUND_SLIDES = new Set<number>(
+    DECK.flatMap((item, i) => (i === 0 || !item.slide.title.trim() ? [i] : []))
+);

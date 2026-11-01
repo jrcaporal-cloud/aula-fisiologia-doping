@@ -1,19 +1,57 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { motion, AnimatePresence, animate, useMotionValue, useTransform } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { create } from 'zustand';
+import { useSlideSteps } from '../../store/useSlideSteps';
 
-// Animated number counter
-const AnimatedNumber = ({ target, color, suffix = '%' }: { target: number; color: string; suffix?: string }) => (
-    <motion.span
-        style={{ color }}
-        initial={{ scale: 0.7, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-        viewport={{ once: false, amount: 0.5 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-        className="font-black font-display text-5xl tabular-nums"
-    >
-        {target}{suffix}
-    </motion.span>
-);
+/** Palpite da turma fica guardado durante a aula: o slide 26 retoma o mesmo número. */
+const useClassGuess = create<{
+    guess: number | null;
+    /** A revelação completa já aconteceu (slide 2): a reaparição no slide 26 vira recapitulação. */
+    revealedOnce: boolean;
+    setGuess: (g: number) => void;
+    markRevealed: () => void;
+}>(set => ({
+    guess: null,
+    revealedOnce: false,
+    setGuess: guess => set({ guess }),
+    markRevealed: () => set({ revealedOnce: true }),
+}));
+
+const RING_SIZE = 132;
+const RING_STROKE = 12;
+
+/** Anel que enche junto com o número contando — dispara quando `shown` vira true. */
+const RevealRing = ({ pct, color, shown }: { pct: number; color: string; shown: boolean }) => {
+    const progress = useMotionValue(0);
+    const label = useTransform(progress, v => `${Math.round(v)}%`);
+    const r = (RING_SIZE - RING_STROKE) / 2;
+    const circumference = 2 * Math.PI * r;
+    const dash = useTransform(progress, v => `${(v / 100) * circumference} ${circumference}`);
+    const ringOpacity = useTransform(progress, v => (v > 0.3 ? 1 : 0));
+
+    useEffect(() => {
+        const controls = animate(progress, shown ? pct : 0, { duration: shown ? 1.6 : 0.3, ease: [0.16, 1, 0.3, 1] });
+        return () => controls.stop();
+    }, [shown, pct, progress]);
+
+    return (
+        <div className="relative" style={{ width: RING_SIZE, height: RING_SIZE }}>
+            <svg width={RING_SIZE} height={RING_SIZE} className="-rotate-90">
+                <circle cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={RING_STROKE} />
+                <motion.circle
+                    cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={r} fill="none"
+                    stroke={color} strokeWidth={RING_STROKE} strokeLinecap="round"
+                    style={{ strokeDasharray: dash, opacity: ringOpacity, filter: `drop-shadow(0 0 10px ${color})` }}
+                />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+                {shown
+                    ? <motion.span className="font-black font-display text-[2.6rem] tabular-nums" style={{ color }}>{label}</motion.span>
+                    : <span className="font-display text-5xl font-bold text-white/25">?</span>}
+            </div>
+        </div>
+    );
+};
 
 const DATA = [
     {
@@ -52,56 +90,88 @@ const DATA = [
     }
 ];
 
+const STEP_LABELS = ['Palpite da turma', 'O que o antidoping detecta', 'O que os atletas admitem'];
+
 export const RealityCheck = () => {
     const [expandedRow, setExpandedRow] = useState<string | null>(null);
+    // Decidido na montagem: se já houve revelação, este slide é recapitulação (sem passos).
+    const [isRecap] = useState(() => useClassGuess.getState().revealedOnce);
+    const { step: rawStep } = useSlideSteps(isRecap ? 1 : 3);
+    const step = isRecap ? 2 : rawStep;
+    const guess = useClassGuess(s => s.guess);
+    const setGuess = useClassGuess(s => s.setGuess);
+    const markRevealed = useClassGuess(s => s.markRevealed);
+    const [draft, setDraft] = useState(guess ?? 10);
+    const revealed = (id: string) => (id === 'wada' ? step >= 1 : step >= 2);
+
+    useEffect(() => {
+        if (step >= 2) markRevealed();
+    }, [step, markRevealed]);
+    const shownGuess = guess ?? draft;
 
     return (
-        <div className="w-full max-w-4xl mx-auto mt-4 font-body">
+        <div className="w-full max-w-4xl mx-auto mt-2 font-body">
 
-            <div className="flex flex-col md:flex-row gap-6">
+            {/* Palpite da turma: o professor registra o chute (mãos levantadas) antes da revelação. */}
+            <div className="mb-6 rounded-2xl border border-amber-400/25 bg-amber-400/[0.05] px-6 py-4 flex items-center gap-6">
+                <div className="flex-shrink-0">
+                    <p className="text-[11px] uppercase tracking-[0.25em] text-amber-300/90 font-semibold">Palpite da turma</p>
+                    <p className="text-sm text-gray-300 mt-1">Quantos % dos atletas de elite usam doping?</p>
+                </div>
+                <input
+                    type="range" min={0} max={100} step={1}
+                    value={shownGuess}
+                    aria-label="Palpite da turma em porcentagem"
+                    onChange={e => { const v = Number(e.target.value); setDraft(v); setGuess(v); }}
+                    className="flex-1 accent-amber-400 h-2 cursor-pointer"
+                />
+                <span className="w-24 text-right font-display text-4xl font-bold text-amber-300 tabular-nums">{shownGuess}%</span>
+            </div>
+
+            <div className="flex flex-row gap-6">
                 {DATA.map((col) => {
                     const isAct = expandedRow === col.id;
+                    const shown = revealed(col.id);
                     return (
                         <motion.div
                             key={col.id}
                             layout
                             className="relative rounded-2xl border p-6 flex flex-col transition-colors cursor-pointer"
                             style={{
-                                background: col.bg,
-                                borderColor: isAct ? col.color : col.border,
+                                background: shown ? col.bg : 'rgba(255,255,255,0.02)',
+                                borderColor: isAct ? col.color : shown ? col.border : 'rgba(255,255,255,0.08)',
                                 boxShadow: isAct ? `0 0 30px ${col.glow}` : 'none',
                                 flex: isAct ? '5 0 0' : '4 0 0'
                             }}
                             transition={{ layout: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }}
-                            onClick={() => setExpandedRow(isAct ? null : col.id)}
-                            whileHover={{ y: isAct ? 0 : -4 }}
+                            onClick={() => shown && setExpandedRow(isAct ? null : col.id)}
+                            whileHover={{ y: isAct || !shown ? 0 : -4 }}
                         >
-                            <div className="absolute inset-0 pointer-events-none rounded-2xl"
+                            <motion.div className="absolute inset-0 pointer-events-none rounded-2xl"
+                                animate={{ opacity: shown ? 1 : 0 }}
                                 style={{ background: `radial-gradient(ellipse at top, ${col.glow} 0%, transparent 60%)` }} />
 
-                            {/* Circle Chart */}
                             <div className="flex justify-center mb-5">
-                                <motion.div
-                                    className="w-28 h-28 rounded-full flex items-center justify-center relative shadow-lg"
-                                    style={{
-                                        background: `conic-gradient(${col.color} ${(col.pct / 100) * 360}deg, rgba(255,255,255,0.05) 0deg)`
-                                    }}
-                                    initial={{ rotate: -90, opacity: 0 }}
-                                    whileInView={{ rotate: 0, opacity: 1 }}
-                                    viewport={{ once: false, amount: 0.5 }}
-                                    transition={{ duration: 1, type: "spring", stiffness: 60 }}
-                                >
-                                    <div className="w-[88px] h-[88px] rounded-full bg-[#080818] flex items-center justify-center border border-white/5">
-                                        <AnimatedNumber target={col.pct} color={col.color} />
-                                    </div>
-                                </motion.div>
+                                <RevealRing pct={col.pct} color={col.color} shown={shown} />
                             </div>
 
                             <motion.h3 layout className="text-center font-display text-xl font-bold text-white mb-2">{col.title}</motion.h3>
-                            <motion.p layout className="text-center text-xs font-semibold uppercase tracking-wide opacity-80 mb-6" style={{ color: col.color }}>{col.subtitle}</motion.p>
+                            <motion.p layout className="text-center text-xs font-semibold uppercase tracking-wide opacity-80 mb-4" style={{ color: col.color }}>{col.subtitle}</motion.p>
 
-                            {/* Expandable Accordion Header */}
-                            <div className="mt-auto pt-4 border-t border-white/10">
+                            {/* Comparação com o palpite, quando o número real aparece */}
+                            <AnimatePresence>
+                                {shown && col.id === 'real' && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                        transition={{ delay: 1.2 }}
+                                        className="text-center text-sm text-amber-200 mb-4"
+                                    >
+                                        A turma chutou <strong className="text-amber-300">{shownGuess}%</strong>
+                                    </motion.p>
+                                )}
+                            </AnimatePresence>
+
+                            <div className={`mt-auto pt-4 border-t border-white/10 transition-opacity duration-500 ${shown ? 'opacity-100' : 'opacity-30'}`}>
                                 <div className="flex items-center justify-between group">
                                     <span className="text-sm font-semibold flex items-center gap-2" style={{ color: isAct ? 'white' : '#fbbf24' }}>
                                         <motion.span animate={{ rotate: isAct ? 90 : 0 }} className="text-xs">▶</motion.span>
@@ -109,7 +179,6 @@ export const RealityCheck = () => {
                                     </span>
                                 </div>
 
-                                {/* Expanded Content */}
                                 <AnimatePresence mode="wait">
                                     {isAct && (
                                         <motion.div
@@ -144,8 +213,8 @@ export const RealityCheck = () => {
                 })}
             </div>
 
-            <p className="text-center text-[10px] text-gray-500 mt-6 tracking-widest uppercase">
-                Clique nos painéis para expandir os dados
+            <p className="text-center text-[11px] text-gray-400 mt-6 tracking-widest uppercase">
+                {STEP_LABELS[step]} · {step < 2 ? 'avance para revelar' : 'clique nos painéis para expandir os dados'}
             </p>
         </div>
     );

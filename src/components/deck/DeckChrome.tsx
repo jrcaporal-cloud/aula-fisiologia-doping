@@ -1,5 +1,6 @@
-import { ChevronLeft, ChevronRight, LayoutGrid, Maximize, Minimize, Box } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutGrid, Maximize, Minimize, Box, MonitorSpeaker } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useSlideStepStore } from '../../store/useSlideSteps';
 
 interface DeckChromeProps {
     index: number;
@@ -12,6 +13,7 @@ interface DeckChromeProps {
     onNext: () => void;
     onOverview: () => void;
     on3D: () => void;
+    onPresenter: () => void;
 }
 
 const useFullscreen = () => {
@@ -46,8 +48,10 @@ const IconButton = ({ label, onClick, disabled, children }: {
 );
 
 /** Barra de progresso, seção atual, contador e controles — somem com o mouse parado. */
-export const DeckChrome = ({ index, total, section, number, idle, has3D, onPrev, onNext, onOverview, on3D }: DeckChromeProps) => {
+export const DeckChrome = ({ index, total, section, number, idle, has3D, onPrev, onNext, onOverview, on3D, onPresenter }: DeckChromeProps) => {
     const { isFull, toggle } = useFullscreen();
+    const step = useSlideStepStore(s => s.step);
+    const stepCount = useSlideStepStore(s => s.count);
     const progress = total > 1 ? index / (total - 1) : 1;
     const fade = idle ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0';
 
@@ -87,6 +91,13 @@ export const DeckChrome = ({ index, total, section, number, idle, has3D, onPrev,
                 <IconButton label="Slide anterior (←)" onClick={onPrev} disabled={index === 0}>
                     <ChevronLeft size={18} />
                 </IconButton>
+                {stepCount > 1 && (
+                    <span className="flex items-center gap-1 pl-1" aria-label={`Passo ${step + 1} de ${stepCount}`}>
+                        {Array.from({ length: stepCount }, (_, i) => (
+                            <span key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === step ? 'w-4 bg-brand-red' : i < step ? 'w-1.5 bg-brand-red/60' : 'w-1.5 bg-white/20'}`} />
+                        ))}
+                    </span>
+                )}
                 <span className="px-2 font-mono text-xs text-gray-300 tabular-nums select-none">
                     {pad(index + 1)}<span className="text-gray-600"> / {pad(total)}</span>
                 </span>
@@ -94,6 +105,9 @@ export const DeckChrome = ({ index, total, section, number, idle, has3D, onPrev,
                     <ChevronRight size={18} />
                 </IconButton>
                 <span className="w-px h-5 bg-white/10 mx-1" />
+                <IconButton label="Modo apresentador (P)" onClick={onPresenter}>
+                    <MonitorSpeaker size={16} />
+                </IconButton>
                 <IconButton label="Visão geral (G)" onClick={onOverview}>
                     <LayoutGrid size={16} />
                 </IconButton>

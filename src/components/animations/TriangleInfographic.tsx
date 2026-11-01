@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
+import { useSlideSteps } from '../../store/useSlideSteps';
 
 const NODES = [
     {
@@ -62,7 +63,11 @@ const CENTER = { x: 280, y: 237 };
 const NODE_R = 36;
 
 export const TriangleInfographic = () => {
-    const [active, setActive] = useState<number | null>(null);
+    // Passador: passo 0 = visão geral; passos 1–3 = um eixo por vez. Clique manual vale até o próximo passo.
+    const { step } = useSlideSteps(4);
+    const [manual, setManual] = useState<{ step: number; value: number | null } | null>(null);
+    const active = manual && manual.step === step ? manual.value : step > 0 ? step - 1 : null;
+    const setActive = (value: number | null) => setManual({ step, value });
     const activeNode = active !== null ? NODES[active] : null;
 
     return (

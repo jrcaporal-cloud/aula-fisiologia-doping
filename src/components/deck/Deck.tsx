@@ -10,6 +10,8 @@ import { DeckChrome } from './DeckChrome';
 import { Overview } from './Overview';
 import { DECK, SLIDES_WITH_3D, type DeckSlide } from './slides';
 import { useDeckNavigation } from './useDeckNavigation';
+import { useSlideStepStore } from '../../store/useSlideSteps';
+import { PRESENTER_CHANNEL, openPresenterWindow, type PresenterMessage } from './presenterChannel';
 
 const renderSlide = ({ slide }: DeckSlide) => {
     if (slide.id === 0) return <TitleSlide slide={slide} />;
@@ -49,6 +51,41 @@ export const Deck = () => {
     const has3D = SLIDES_WITH_3D.has(current.slide.id);
 
     useEffect(() => setSlide(index), [index, setSlide]);
+
+    // Sincroniza com a janela do apresentador (P): envia estado, recebe comandos.
+    const step = useSlideStepStore(st => st.step);
+    const stepCount = useSlideStepStore(st => st.count);
+    const channelRef = useRef<BroadcastChannel | null>(null);
+    const navRef = useRef({ next, prev, goTo });
+    useEffect(() => { navRef.current = { next, prev, goTo }; }, [next, prev, goTo]);
+    const stateRef = useRef({ index, step, stepCount });
+
+    useEffect(() => {
+        stateRef.current = { index, step, stepCount };
+        channelRef.current?.postMessage({ type: 'state', index, step, stepCount } satisfies PresenterMessage);
+    }, [index, step, stepCount]);
+
+    useEffect(() => {
+        const channel = new BroadcastChannel(PRESENTER_CHANNEL);
+        channelRef.current = channel;
+        channel.onmessage = (e: MessageEvent<PresenterMessage>) => {
+            const msg = e.data;
+            if (msg.type === 'next') navRef.current.next();
+            else if (msg.type === 'prev') navRef.current.prev();
+            else if (msg.type === 'goto') navRef.current.goTo(msg.index);
+            else if (msg.type === 'hello') channel.postMessage({ type: 'state', ...stateRef.current } satisfies PresenterMessage);
+        };
+        return () => { channel.close(); channelRef.current = null; };
+    }, []);
+
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (modalOpen || e.metaKey || e.ctrlKey || e.altKey) return;
+            if (e.key === 'p' || e.key === 'P') openPresenterWindow(stateRef.current.index);
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [modalOpen]);
     useEffect(() => setModalOpen(show3D), [show3D, setModalOpen]);
 
     // Atalho "3" abre o modelo 3D quando o slide tem um.
@@ -113,6 +150,7 @@ export const Deck = () => {
                 onNext={next}
                 onOverview={toggleOverview}
                 on3D={() => setShow3D(true)}
+                onPresenter={() => openPresenterWindow(index)}
             />
 
             <AnimatePresence>

@@ -155,7 +155,7 @@ const BentoCard: React.FC<CardProps> = ({ card, idx }) => {
  * Slides em que o componente interativo já ocupa a tela: os cartões de detalhamento
  * ficam atrás de um botão, senão o slide inteiro encolhe até o texto ficar ilegível.
  */
-const COLLAPSED_CARD_SLIDES = new Set<number>([3, 6, 22]);
+const COLLAPSED_CARD_SLIDES = new Set<number>([3, 6, 14, 22]);
 
 const gridColumns = (count: number) =>
     count === 1 ? 'grid-cols-1 max-w-4xl mx-auto' :
@@ -221,7 +221,7 @@ export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
                         transition={{ duration: 0.7 }}
                         className="prose prose-invert prose-lg max-w-none mb-10 text-gray-200 drop-shadow-md pointer-events-auto"
                     >
-                        {renderSlideContent(slide.content)}
+                        {renderSlideContent(slide.content, { collapseAfter: collapsible })}
                     </motion.div>
                 )}
 

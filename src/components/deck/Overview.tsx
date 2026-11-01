@@ -14,6 +14,7 @@ const SHORTCUTS: [string, string][] = [
     ['← / PgUp', 'voltar'],
     ['G', 'visão geral'],
     ['F', 'tela cheia'],
+    ['P', 'modo apresentador'],
     ['Home / End', 'início / fim'],
 ];
 

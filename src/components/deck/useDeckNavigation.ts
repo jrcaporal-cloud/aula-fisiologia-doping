@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSlideStepStore } from '../../store/useSlideSteps';
 
 const NEXT_KEYS = new Set(['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter']);
 const PREV_KEYS = new Set(['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace']);
@@ -49,16 +50,27 @@ export const useDeckNavigation = ({ total, paused, rootRef, onToggleOverview, on
 
     const indexRef = useRef(index);
 
-    const goTo = useCallback((target: number) => {
+    const goTo = useCallback((target: number, atEnd = false) => {
         const clamped = Math.min(Math.max(target, 0), total - 1);
         if (clamped === indexRef.current) return;
+        useSlideStepStore.getState().prepareEntry(atEnd);
         setDirection(clamped > indexRef.current ? 1 : -1);
         indexRef.current = clamped;
         setIndex(clamped);
     }, [total]);
 
-    const next = useCallback(() => goTo(indexRef.current + 1), [goTo]);
-    const prev = useCallback(() => goTo(indexRef.current - 1), [goTo]);
+    // O passador percorre os passos do slide antes de trocar de slide.
+    const next = useCallback(() => {
+        const { step, count, setStep } = useSlideStepStore.getState();
+        if (step < count - 1) setStep(step + 1);
+        else goTo(indexRef.current + 1);
+    }, [goTo]);
+
+    const prev = useCallback(() => {
+        const { step, setStep } = useSlideStepStore.getState();
+        if (step > 0) setStep(step - 1);
+        else goTo(indexRef.current - 1, true);
+    }, [goTo]);
 
     useEffect(() => {
         const hash = `#/${index + 1}`;

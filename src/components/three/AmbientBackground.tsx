@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useStore } from '../../store/useStore';
+import { ANIMATED_BACKGROUND_SLIDES } from '../deck/slides';
 
 const CELL_COUNT = 70;
 const DUST_COUNT = 500;
@@ -135,7 +136,7 @@ export const AmbientBackground = () => {
         >
             <Canvas
                 dpr={[1, 1.5]}
-                frameloop={modalOpen ? 'never' : 'always'}
+                frameloop={modalOpen ? 'never' : ANIMATED_BACKGROUND_SLIDES.has(slide) ? 'always' : 'demand'}
                 camera={{ position: [0, 0, 16], fov: 50 }}
                 gl={{ antialias: true, powerPreference: 'low-power' }}
             >

@@ -1,13 +1,23 @@
 import { motion } from 'framer-motion';
 import { Activity, Dna, Zap, Target, ShieldAlert } from 'lucide-react';
+import { useSlideSteps } from '../../store/useSlideSteps';
+
+/** Passador: 0 = as duas vias; 1 = foco na genômica; 2 = foco na não genômica. */
+const focusStyle = (focused: boolean, anyFocus: boolean) => ({
+    opacity: !anyFocus || focused ? 1 : 0.28,
+    scale: anyFocus && focused ? 1.02 : 1,
+    filter: !anyFocus || focused ? 'saturate(1)' : 'saturate(0.3)',
+});
 
 export const CellularSignaling = () => {
+    const { step } = useSlideSteps(3);
+    const anyFocus = step > 0;
     return (
         <div className="w-full mt-4 font-body">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-8">
                 {/* Genômica */}
                 <motion.div
-                    initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
+                    initial={{ opacity: 0, x: -30 }} animate={{ x: 0, ...focusStyle(step === 1, anyFocus) }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                     className="relative bg-slate-900/60 border border-blue-500/20 rounded-2xl p-6 shadow-[0_10px_30px_rgba(59,130,246,0.1)] overflow-hidden group"
                 >
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -58,7 +68,7 @@ export const CellularSignaling = () => {
 
                 {/* Não-Genômica */}
                 <motion.div
-                    initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}
+                    initial={{ opacity: 0, x: 30 }} animate={{ x: 0, ...focusStyle(step === 2, anyFocus) }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                     className="relative bg-rose-950/20 border border-brand-red/30 rounded-2xl p-6 shadow-[0_10px_30px_rgba(225,29,72,0.1)] overflow-hidden group"
                 >
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">

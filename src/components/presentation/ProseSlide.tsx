@@ -2,6 +2,9 @@ import { motion } from 'framer-motion';
 import type { SlideSchema } from './TitleSlide';
 import { renderSlideContent } from './slideContent';
 
+/** Slides cujo texto longo fica recolhido sob o simulador (que já mostra a mesma ideia). */
+const COLLAPSED_TEXT_SLIDES = new Set<number>([15]);
+
 export const ProseSlide = ({ slide }: { slide: SlideSchema }) => {
     return (
         <div className="w-full flex flex-col justify-center py-4 px-8 relative z-10 max-w-6xl mx-auto">
@@ -39,7 +42,7 @@ export const ProseSlide = ({ slide }: { slide: SlideSchema }) => {
                     transition={{ duration: 0.8, delay: 0.1, ease: 'easeOut' }}
                     className="prose prose-invert prose-p:text-gray-200 prose-headings:font-display prose-headings:text-white max-w-none prose-xl w-full drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] custom-presentation-content pointer-events-auto"
                 >
-                    {renderSlideContent(slide.content)}
+                    {renderSlideContent(slide.content, { collapseAfter: COLLAPSED_TEXT_SLIDES.has(slide.id) })}
                 </motion.div>
             )}
         </div>
