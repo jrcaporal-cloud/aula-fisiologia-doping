@@ -50,15 +50,15 @@ export const CellEnvironment: React.FC = () => {
     const handlePointerOver = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'Cell Membrane',
-            info: 'Lipid bilayer — hydrophobic interior allows steroid hormones (like testosterone) to diffuse freely.'
+            name: 'Membrana celular',
+            info: 'Bicamada lipídica — o interior hidrofóbico permite que hormônios esteroides (como a testosterona) se difundam livremente.'
         });
         document.body.style.cursor = 'pointer';
     };
 
     const handlePointerOut = () => {
         setHoveredObject(null);
-        document.body.style.cursor = 'grab';
+        document.body.style.cursor = '';
     };
 
     return (
@@ -123,15 +123,15 @@ const Mitochondria: React.FC = () => {
     const interact = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'Mitochondrion',
-            info: 'Provides ATP for protein synthesis. Testosterone enhances mitochondrial biogenesis.'
+            name: 'Mitocôndria',
+            info: 'Fornece ATP para a síntese proteica. A testosterona estimula a biogênese mitocondrial.'
         });
         document.body.style.cursor = 'pointer';
     };
 
     const out = () => {
         setHoveredObject(null);
-        document.body.style.cursor = 'grab';
+        document.body.style.cursor = '';
     };
 
     return (

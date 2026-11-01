@@ -34,10 +34,10 @@ const CASES = [
         country: '🇳🇿',
         sport: 'Halterofilia',
         color: '#a855f7',
-        case: 'Primeira atleta trans a competir nas Olimpíadas. Tokyo 2021, categoria +87kg feminino.',
-        outcome: 'Eliminada sem medalha após falhar 3 tentativas no snatch. Nenhuma performance superior às finalistas cis.',
+        case: 'Primeira atleta trans a competir nas Olimpíadas. Tóquio 2020, categoria +87kg feminino.',
+        outcome: 'Eliminada sem medalha após falhar 3 tentativas no arranco. Nenhuma performance superior às finalistas cis.',
         regulation: 'COI',
-        impact: 'Debacle mediático sem vitória atlética. Abriu espaço para o famework IOC 2021 que aboliu regras universais de T.',
+        impact: 'Debacle midiática sem vitória atlética. Abriu espaço para o framework do COI 2021 que aboliu regras universais de T.',
         twist: 'Hubbard era competitiva internacionalmente, mas não alcançou o pódio. O "problema" esperado não aconteceu — mas o debate já estava posto.',
         result: 'neutral',
     },
@@ -47,8 +47,8 @@ const CASES = [
         country: '🇺🇸',
         sport: 'Natação 500yd',
         color: '#e11d48',
-        case: 'Primeira trans campeã nacional NCAA. Competia na equipe masculina de Penn, transitou e foi para feminino.',
-        outcome: 'Campeã dos 500 jardas femininos (NCAA). Tempos pré-transição (masculino) vs pós-transição (feminino): diferença de ~1.5s em 500yd.',
+        case: 'Primeira trans campeã nacional NCAA. Competia na equipe masculina de Penn, transitou e foi para a equipe feminina.',
+        outcome: 'Campeã dos 500 jardas femininos (NCAA). Tempos pré-transição (masculino) vs pós-transição (feminino): diferença de ~1,5 s em 500yd.',
         regulation: 'NCAA / World Aquatics',
         impact: 'World Aquatics proibiu trans femininas que passaram por puberdade masculina. Gerou a política mais restritiva do esporte olímpico.',
         twist: 'Thomas foi de top-100 (masculino) para top-10 (feminino) na mesma distância — mas não venceu todas as provas. Debate: é uma "vantagem injusta" ou apenas competição normal?',
@@ -57,8 +57,8 @@ const CASES = [
 ];
 
 const POLICIES = [
-    { org: 'IOC', year: 2021, rule: 'Eliminou limites de T. Delegou às federações. "Presunção de não-vantagem."', icon: '🏅', color: '#34d399', stance: 'inclusivo' },
-    { org: 'World Athletics', year: 2023, rule: 'T < 2.5 nmol/L por 24 meses para provas de 60m–1500m. Trans femininas completamente excluídas.', icon: '🏃', color: '#e11d48', stance: 'restritivo' },
+    { org: 'COI', year: 2021, rule: 'Eliminou limites de T. Delegou às federações. "Presunção de não vantagem."', icon: '🏅', color: '#34d399', stance: 'inclusivo' },
+    { org: 'World Athletics', year: 2023, rule: 'T < 2,5 nmol/L por 24 meses para provas de 60m–1500m. Trans femininas completamente excluídas.', icon: '🏃', color: '#e11d48', stance: 'restritivo' },
     { org: 'World Aquatics', year: 2022, rule: 'Exclui trans femininas que passaram por puberdade masculina. Permite transição pré-puberal.', icon: '🏊', color: '#f59e0b', stance: 'restritivo' },
     { org: 'NCAA', year: 2022, rule: 'Seguiu as regras de cada federação esportiva (caso a caso por modalidade).', icon: '🎓', color: '#60a5fa', stance: 'neutro' },
 ];
@@ -244,7 +244,7 @@ export const TransCasesTimeline = () => {
                             <div>
                                 <div className="text-xs font-bold text-red-300 mb-1">O Problema da Fragmentação</div>
                                 <p className="text-xs text-gray-400 leading-relaxed">
-                                    Com cada federação tendo sua própria política, uma atleta trans pode ser elegível em uma modalidade olímpica e banida em outra do mesmo Jogos. Isso cria insegurança jurídica e viola o princípio de padronização do movimento olímpico.
+                                    Com cada federação tendo sua própria política, uma atleta trans pode ser elegível em uma modalidade olímpica e banida em outra dos mesmos Jogos. Isso cria insegurança jurídica e viola o princípio de padronização do movimento olímpico.
                                 </p>
                             </div>
                         </motion.div>

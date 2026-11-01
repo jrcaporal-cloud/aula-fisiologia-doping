@@ -14,24 +14,24 @@ export const ComparisonTable = () => {
             detail: "<b>Oculto/Colaterais:</b> Supressão do Eixo HPG obrigatória, hipertrofia ventricular esquerda (cardiopatia) irreversível, e dislipidemia severa (redução drástica do HDL bom). O exame antidoping tradicional utiliza a relação T/E para flagrar o composto exógeno."
         },
         {
-            name: "rhEPO", action: "Via JAK/STAT", effect: "Eritrócitos / VO2Máx", magnitude: "+3-7% VO2Máx", hidden: "Não", color: "text-brand-red", bgColor: "bg-brand-red/10", border: "border-brand-red",
+            name: "rhEPO", action: "Via JAK/STAT", effect: "Eritrócitos / VO₂máx", magnitude: "+3-7% VO₂máx", hidden: "Não", color: "text-brand-red", bgColor: "bg-brand-red/10", border: "border-brand-red",
             detail: "<b>Oculto/Colaterais:</b> Aumenta massivamente o hematócrito (volume de glóbulos vermelhos). Risco letal de hiperviscosidade sanguínea (sangue de lodo), predispondo a tromboses e paradas cardíacas noturnas. Foi o pesadelo do ciclismo nos anos 90."
         },
         {
             name: "GH / IGF-1", action: "Via mTOR", effect: "Massa / Lipólise", magnitude: "Sinergia Alta", hidden: "Quase", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500",
-            detail: "<b>Oculto/Colaterais:</b> Potencia a síntese colagênica e óssea, reduzindo BF (Body Fat). Uso abusivo gera 'Palumboísmo' (crescimento das vísceras/alargamento de extremidades) e resistência insulínica maciça. É dificílimo flagrar o GH recombinante por sua meia-vida em plasma de meros ~20 minutos."
+            detail: "<b>Oculto/Colaterais:</b> Potencia a síntese colagênica e óssea, reduzindo a gordura corporal. Uso abusivo gera 'Palumboísmo' (crescimento das vísceras/alargamento de extremidades) e resistência insulínica maciça. É dificílimo flagrar o GH recombinante por sua meia-vida em plasma de meros ~20 minutos."
         },
         {
             name: "Insulina", action: "Receptor IR", effect: "Anabolismo Máximo", magnitude: "+5-8kg (Stack)", hidden: "Sim", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500", bold: true,
             detail: "<b>Oculto/Colaterais:</b> O hormônio mais mortífero do esporte. Como é um peptídeo natural sem limite superior definido pela WADA, é clinicamente impossível punir um atleta por 'uso de Insulina'. Um erro na dosagem causa coma hipoglicêmico cerebral letal."
         },
         {
-            name: "Transfusão Auto.", action: "Expansão Direta", effect: "VO2Máx / Endurance", magnitude: "+3-5% VO2Máx", hidden: "Sim", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500", bold: true,
-            detail: "<b>Oculto/Colaterais:</b> O próprio sangue reinfundido. O Calcanhar de Aquiles do Passaporte Biológico. O atleta retira sua bolsa de sangue num dia 'alto' em montanha, guarda, e volta ela ao corpo um dia antes do endurance. Pode causar sobrecarga de ferro ou choque hemolítico por erro de armazenagem."
+            name: "Transfusão Auto.", action: "Expansão Direta", effect: "VO₂máx / Endurance", magnitude: "+3-5% VO₂máx", hidden: "Sim", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500", bold: true,
+            detail: "<b>Oculto/Colaterais:</b> O próprio sangue reinfundido. O Calcanhar de Aquiles do Passaporte Biológico. O atleta retira sua bolsa de sangue num dia 'alto' em montanha, guarda e a devolve ao corpo um dia antes da prova de endurance. Pode causar sobrecarga de ferro ou choque hemolítico por erro de armazenagem."
         },
         {
             name: "SARMs", action: "AR (Seletivo)", effect: "Massa", magnitude: "Moderada", hidden: "Não", color: "text-brand-red", bgColor: "bg-brand-red/10", border: "border-brand-red",
-            detail: "<b>Oculto/Colaterais:</b> Prometem ação anabólica limpa bloqueada na próstata (Ostarine, RAD-140), mas a realidade empírica demonstra lesão biliar/hepática profunda (DILI) e supressão severa do eixo testicular, sem oferecer as janelas monstruosas de hipertrofia dos EAAs. Cai muito em doping cruzado na suplementação."
+            detail: "<b>Oculto/Colaterais:</b> Prometem ação anabólica limpa bloqueada na próstata (Ostarina, RAD-140), mas a realidade empírica demonstra lesão biliar/hepática profunda (DILI) e supressão severa do eixo testicular, sem oferecer as janelas monstruosas de hipertrofia dos EAAs. Cai muito em doping cruzado na suplementação."
         }
     ];
 

@@ -31,7 +31,7 @@ const PHASES = [
         steps: [
             { icon: '🧊', text: 'Bolsa armazenada a –80°C. Microvasculatura dos eritrócitos preservada pelo DMSO. Taxa de sobrevivência >95% após 6 meses.' },
             { icon: '🔬', text: 'Monitoramento do Passaporte Biológico durante esse período para manter Hb/Hct dentro da faixa "normal" — sem anomalias detectáveis.' },
-            { icon: '📋', text: 'O Calcanhar de Aquiles: mudanças sutis no perfil de glóbulos envelhecidos vs. jovens podem ser detectadas pelo ABP como micro-variações de reticulócitos.' },
+            { icon: '📋', text: 'O Calcanhar de Aquiles: mudanças sutis no perfil de glóbulos envelhecidos vs. jovens podem ser detectadas pelo ABP como microvariações de reticulócitos.' },
         ],
         detail: 'O armazenamento exige logística sofisticada: transporte aéreo, câmaras criogênicas portáteis, pessoal médico treinado. O ciclismo profissional (pré-2006) tinha médicos de equipe exclusivos para isso. O escândalo da Operação Puerto (2006) revelou geladeiras com +200 bolsas de atletas de elite europeus.',
     },
@@ -47,7 +47,7 @@ const PHASES = [
         steps: [
             { icon: '🏁', text: 'Na véspera da etapa decisiva, a bolsa é descongelada, lavada para remover DMSO e aquecida até 37°C.' },
             { icon: '💉', text: 'Reinfundida IV em 30–45 min. Hematócrito sobe de ~43% para 49–51% em poucas horas — pouco acima do limite UCI de 50%.' },
-            { icon: '🔋', text: 'VO₂max aumenta 3–5% imediatamente. Em pace de competição de alto nível, essa diferença representa 1–2min em uma prova de 40km de contrarrelógio.' },
+            { icon: '🔋', text: 'VO₂máx aumenta 3–5% imediatamente. Em ritmo de competição de alto nível, essa diferença representa 1–2min em uma prova de 40km de contrarrelógio.' },
             { icon: '🩸', text: 'O sangue reinfundido é 100% do próprio atleta — sem moléculas exógenas detectáveis convencionalmente. O ABP tenta capturar a anomalia pelo padrão longitudinal.' },
         ],
         detail: 'A reinfusão autóloga é considerada o método de doping "perfeito" do ponto de vista analítico. Não existe uma substância química a detectar. O ABP é a única ferramenta disponível, e requer variação estatisticamente improvável no perfil do atleta para emitir um alerta — algo que exige amostras históricas suficientes (mínimo 3 coletas prévias).',

@@ -30,7 +30,7 @@ const DATA = [
             'Dos ~300.000 testes/ano realizados pela WADA, apenas 1-2% resultam em AAF (Achados Analíticos Adversos).',
             'Isso equivale a cerca de 4.000 atletas pegos por ano em todo o mundo esportivo.',
             'Muitos destes casos positivos são de substâncias sociais/recreativas, não ergogênicas (doping intencional de performance).',
-            'O teste é altamente específico (poucos falsos positivos) mas possui baixa sensibilidade real nas janelas off-season.'
+            'O teste é altamente específico (poucos falsos positivos), mas possui baixa sensibilidade real nas janelas off-season.'
         ]
     },
     {
@@ -45,7 +45,7 @@ const DATA = [
         question: 'Qual é a verdadeira extensão?',
         bullets: [
             'Pesquisa anônima de Ulrich et al. (2018) em eventos da IAAF usando a técnica do "Randomized Response Model".',
-            '43.6% dos atletas de elite admitiram anonimamente uso de substâncias proibidas nos últimos 12 meses.',
+            '43,6% dos atletas de elite admitiram anonimamente uso de substâncias proibidas nos últimos 12 meses.',
             'Em Jogos Pan-Árabes e Pan-Americanos o número variou de 30% a 57% dependendo da modalidade avaliada.',
             'Isso indica que o sistema antidoping atual captura apenas uma fração mínima (aprox. 1 em cada 20) dos usuários crônicos.'
         ]

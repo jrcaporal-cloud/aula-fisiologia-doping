@@ -14,7 +14,7 @@ const GAPS = [
     { sport: 'Natação 100m', gap: 7, icon: '🏊' },
     { sport: 'Levantamento de peso', gap: 25, icon: '🏋️' },
     { sport: 'Salto em distância', gap: 14, icon: '⬆️' },
-    { sport: 'Cycling FTP', gap: 10, icon: '🚴' },
+    { sport: 'Ciclismo (FTP)', gap: 10, icon: '🚴' },
     { sport: 'Arremesso de peso', gap: 30, icon: '⚙️' },
 ];
 
@@ -34,7 +34,7 @@ export const TransScienceReview = () => {
 
     const SECTIONS = [
         { key: 'studies', label: '📊 Estudos Comparados', color: '#a855f7' },
-        { key: 'gaps', label: '🏆 Gap por Modalidade', color: '#60a5fa' },
+        { key: 'gaps', label: '🏆 Diferença por Modalidade', color: '#60a5fa' },
         { key: 'consensus', label: '✅ O Que Sabemos', color: '#34d399' },
     ] as const;
 

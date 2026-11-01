@@ -98,8 +98,8 @@ export const AndrogenReceptor: React.FC<Props> = ({ progressRef }) => {
     const interactAR = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'Androgen Receptor',
-            info: 'Intracellular receptor. Bound to Heat Shock Proteins (HSP) until testosterone triggers conformity.'
+            name: 'Receptor androgênico (AR)',
+            info: 'Receptor intracelular. Permanece ligado às proteínas de choque térmico (HSP) até a testosterona induzir a mudança conformacional.'
         });
         document.body.style.cursor = 'pointer';
     };
@@ -107,8 +107,8 @@ export const AndrogenReceptor: React.FC<Props> = ({ progressRef }) => {
     const interactHSP = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'Heat Shock Proteins (HSP90)',
-            info: 'Chaperone proteins that keep the AR stabilized and inactive. They dissociate when T binds.'
+            name: 'Proteínas de choque térmico (HSP90)',
+            info: 'Chaperonas que mantêm o AR estável e inativo. Dissociam-se quando a testosterona se liga.'
         });
         document.body.style.cursor = 'pointer';
     };
@@ -116,15 +116,15 @@ export const AndrogenReceptor: React.FC<Props> = ({ progressRef }) => {
     const interactComplex = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'T-AR Dimer Complex',
-            info: 'The active form that translocates into the nucleus and binds to target genes.'
+            name: 'Dímero T-AR',
+            info: 'Forma ativa que se transloca para o núcleo e se liga aos genes-alvo.'
         });
         document.body.style.cursor = 'pointer';
     };
 
     const out = () => {
         setHoveredObject(null);
-        document.body.style.cursor = 'grab';
+        document.body.style.cursor = '';
     };
 
     return (

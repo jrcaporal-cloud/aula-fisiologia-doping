@@ -39,12 +39,12 @@ const STEROIDS: SteroidData[] = [
         halfLifeScore: 5,
         color: '#ef4444', // red
         description: 'Primeiro EAA criado especificamente para performance atlética (EUA, anos 50).',
-        clinicalUse: 'Usado historicamente como "Kick-start" de ganho de volume bruto e força agressiva.',
+        clinicalUse: 'Usado historicamente como "pontapé inicial" de ganho de volume bruto e força agressiva.',
         colaterais: 'Altamente hepatotóxico. Conversão para metilestradiol (extremamente potente = ginecomastia súbita).'
     },
     {
         id: 'nandrolona',
-        name: 'Deca Durabolin (Nandrolona)',
+        name: 'Deca-Durabolin (Nandrolona)',
         family: 'Derivado 19-Nor',
         anabolic: 125,
         androgenic: 37,
@@ -65,8 +65,8 @@ const STEROIDS: SteroidData[] = [
         halfLifeScore: 20,
         color: '#f59e0b', // amber
         description: 'O rei dos anabolizantes. Afinidade pelo Receptor Androgênico 3x mais forte que a Testosterona.',
-        clinicalUse: 'Uso EXCLUSIVO veterinário (Criação bovina para engate rápido pré-abate). Nunca aprovado para humanos.',
-        colaterais: 'Toxidade neurológica severa. Insônia crônica, suores noturnos agressivos e estresse cardiovascular massivo.'
+        clinicalUse: 'Uso EXCLUSIVO veterinário (Criação bovina para engorda rápida pré-abate). Nunca aprovado para humanos.',
+        colaterais: 'Toxicidade neurológica severa. Insônia crônica, suores noturnos agressivos e estresse cardiovascular massivo.'
     },
     {
         id: 'winstrol',
@@ -78,7 +78,7 @@ const STEROIDS: SteroidData[] = [
         halfLifeScore: 10,
         color: '#8b5cf6', // purple
         description: 'Não aromatiza. Famoso no escândalo de Ben Johnson (1988).',
-        clinicalUse: 'Droga clássica de "corte" para visual hiper-seco e ganho de força explosiva na pista.',
+        clinicalUse: 'Droga clássica de "corte" para visual hiperseco e ganho de força explosiva na pista.',
         colaterais: 'Deleta as articulações (ressecamento sinovial) e devasta o perfil lipídico (queda brutal de HDL).'
     },
     {
@@ -90,9 +90,9 @@ const STEROIDS: SteroidData[] = [
         halfLifeLabel: '9 a 10 horas',
         halfLifeScore: 12,
         color: '#ec4899', // pink
-        description: 'Criado para mulheres e crianças com déficits de crescimento. Extremamente suave.',
+        description: 'Criada para mulheres e crianças com déficits de crescimento. Extremamente suave.',
         clinicalUse: 'Tratamento de queimaduras severas, osteoporose e ganho de força com mínimo impacto virilizante.',
-        colaterais: 'Toxidade hepática branda a moderada (17α-alquilado). Inibe o eixo HPG, mas com menor brutalidade que outras drogas orais.'
+        colaterais: 'Toxicidade hepática branda a moderada (17α-alquilado). Inibe o eixo HPG, mas com menor brutalidade que outras drogas orais.'
     },
     {
         id: 'primobolan',
@@ -100,7 +100,7 @@ const STEROIDS: SteroidData[] = [
         family: 'Derivado DHT',
         anabolic: 88,
         androgenic: 44,
-        halfLifeLabel: '~10.5 dias (Enantato)',
+        halfLifeLabel: '~10,5 dias (Enantato)',
         halfLifeScore: 70,
         color: '#06b6d4', // cyan
         description: 'Considerado um dos esteroides mais seguros e limpos já produzidos, lendário na era de Arnold.',
@@ -118,7 +118,7 @@ const STEROIDS: SteroidData[] = [
         color: '#e11d48', // rose
         description: 'O EAA oral mais brutal para ganho de peso rápido, retenção e força bruta.',
         clinicalUse: 'Tratamento de anemias severas (estimula massivamente a eritropoiese, glóbulos vermelhos).',
-        colaterais: 'Hepatotoxicidade altíssima. Retenção hídrica extrema (famoso "moon face") e picos perigosos de pressão arterial.'
+        colaterais: 'Hepatotoxicidade altíssima. Retenção hídrica extrema (famoso "face de lua cheia") e picos perigosos de pressão arterial.'
     }
 ];
 

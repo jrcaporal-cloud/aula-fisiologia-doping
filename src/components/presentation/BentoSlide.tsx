@@ -1,61 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Dna, FlaskConical, AlertTriangle, Zap, Shield, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
+import { Dna, FlaskConical, AlertTriangle, Zap, Shield, Activity, ChevronDown } from 'lucide-react';
 import type { SlideSchema } from './TitleSlide';
 import { cn } from '../../lib/utils';
-import { CellularSignaling } from '../animations/CellularSignaling';
-import { HPGAxis } from '../animations/HPGAxis';
-import { InsulinAnimation } from '../animations/InsulinAnimation';
-import { ComparisonTable } from '../animations/ComparisonTable';
-import { TriangleInfographic } from '../animations/TriangleInfographic';
-import { RealityCheck } from '../animations/RealityCheck';
-import { PhysiologicalProfile } from '../animations/PhysiologicalProfile';
-import { HematocritAnimation } from '../animations/HematocritAnimation';
-import { StackOlimpicoDisplay } from '../animations/StackOlimpicoDisplay';
-import { AthleteDossier } from '../animations/AthleteDossier';
-import { ABPAnimation } from '../animations/ABPAnimation';
-import { BloodDopingAnimation } from '../animations/BloodDopingAnimation';
-import { EAAInteractive } from '../animations/EAAInteractive';
-import { TransBiologyViz } from '../animations/TransBiologyViz';
-import { TransCasesTimeline } from '../animations/TransCasesTimeline';
-import { TransScienceReview } from '../animations/TransScienceReview';
-import { SteroidProfileVisualizer } from '../animations/SteroidProfileVisualizer';
-
-const COMP_MAP: Record<string, React.FC> = {
-    CellularSignaling,
-    HPGAxis,
-    InsulinAnimation,
-    ComparisonTable,
-    TriangleInfographic,
-    RealityCheck,
-    PhysiologicalProfile,
-    HematocritAnimation,
-    StackOlimpicoDisplay,
-    AthleteDossier,
-    ABPAnimation,
-    BloodDopingAnimation,
-    EAAInteractive,
-    TransBiologyViz,
-    TransCasesTimeline,
-    TransScienceReview,
-    SteroidProfileVisualizer,
-};
-
-const renderContent = (content: string) => {
-    const match = content.match(/\[\[COMP:(\w+)\]\]/);
-    if (match) {
-        const CompName = match[1];
-        const Comp = COMP_MAP[CompName];
-        const rest = content.replace(match[0], '').trim();
-        return (
-            <>
-                {rest && <div dangerouslySetInnerHTML={{ __html: rest }} />}
-                {Comp && <Comp />}
-            </>
-        );
-    }
-    return <div dangerouslySetInnerHTML={{ __html: content }} />;
-};
+import { renderSlideContent } from './slideContent';
 
 // Map card index to a contextual icon and accent color
 const CARD_THEMES = [
@@ -87,21 +35,21 @@ const BentoCard: React.FC<CardProps> = ({ card, idx }) => {
     const dir = DIRECTIONS[idx % DIRECTIONS.length];
     const { Icon } = theme;
 
-    const cardVariant = {
+    const cardVariant: Variants = {
         hidden: { opacity: 0, x: dir.x, y: dir.y, filter: 'blur(12px)', scale: 0.92 },
         show: {
             opacity: 1, x: 0, y: 0, filter: 'blur(0px)', scale: 1,
             transition: { type: 'spring', stiffness: 160, damping: 22, delay: idx * 0.1 }
         }
-    } as any;
+    };
 
-    const listItem = {
+    const listItem: Variants = {
         hidden: { opacity: 0, x: -16 },
         show: (i: number) => ({
             opacity: 1, x: 0,
             transition: { delay: 0.3 + idx * 0.1 + i * 0.07, duration: 0.45, ease: 'easeOut' }
         })
-    } as any;
+    };
 
     return (
         <motion.div
@@ -203,7 +151,21 @@ const BentoCard: React.FC<CardProps> = ({ card, idx }) => {
     );
 };
 
+/**
+ * Slides em que o componente interativo já ocupa a tela: os cartões de detalhamento
+ * ficam atrás de um botão, senão o slide inteiro encolhe até o texto ficar ilegível.
+ */
+const COLLAPSED_CARD_SLIDES = new Set<number>([3, 6, 22]);
+
+const gridColumns = (count: number) =>
+    count === 1 ? 'grid-cols-1 max-w-4xl mx-auto' :
+        count === 2 ? 'grid-cols-2 max-w-5xl mx-auto' :
+            count === 4 ? 'grid-cols-2 max-w-6xl mx-auto' :
+                'grid-cols-3';
+
 export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
+    const collapsible = COLLAPSED_CARD_SLIDES.has(slide.id) && Boolean(slide.content);
+    const [showCards, setShowCards] = useState(!collapsible);
 
     const container = {
         hidden: { opacity: 0 },
@@ -214,7 +176,7 @@ export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
     };
 
     return (
-        <div className="w-full min-h-screen flex flex-col justify-center snap-start py-20 px-8 relative z-10 max-w-[1200px] mx-auto pointer-events-auto">
+        <div className="w-full flex flex-col justify-center py-4 px-8 relative z-10 max-w-[1200px] mx-auto pointer-events-auto">
 
             <div className="flex flex-col w-full justify-center">
 
@@ -259,30 +221,39 @@ export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
                         transition={{ duration: 0.7 }}
                         className="prose prose-invert prose-lg max-w-none mb-10 text-gray-200 drop-shadow-md pointer-events-auto"
                     >
-                        {renderContent(slide.content)}
+                        {renderSlideContent(slide.content)}
                     </motion.div>
                 )}
 
-                {/* Cards grid */}
-                {slide.cards && slide.cards.length > 0 && (
-                    <motion.div
-                        variants={container}
-                        initial="hidden"
-                        whileInView="show"
-                        viewport={{ once: false, amount: 0.15 }}
-                        className={cn(
-                            "grid gap-5 w-full",
-                            slide.cards.length === 1 ? "grid-cols-1 max-w-4xl mx-auto" :
-                                slide.cards.length === 2 ? "grid-cols-1 xl:grid-cols-2 max-w-5xl mx-auto" :
-                                    slide.cards.length === 4 ? "grid-cols-1 md:grid-cols-2 max-w-6xl mx-auto" :
-                                        "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
-                        )}
+                {collapsible && slide.cards.length > 0 && (
+                    <button
+                        type="button"
+                        onClick={() => setShowCards(v => !v)}
+                        aria-expanded={showCards}
+                        className="self-center -mt-4 mb-6 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-gray-200 bg-white/[0.05] border border-white/15 hover:border-brand-red/60 hover:text-white hover:bg-brand-red/10 transition-colors"
                     >
-                        {slide.cards.map((card, idx) => (
-                            <BentoCard key={idx} card={card} idx={idx} />
-                        ))}
-                    </motion.div>
+                        {showCards ? 'Ocultar detalhamento' : `Mostrar detalhamento (${slide.cards.length} cartões)`}
+                        <ChevronDown size={16} className={`transition-transform duration-300 ${showCards ? 'rotate-180' : ''}`} />
+                    </button>
                 )}
+
+                {/* Cards grid */}
+                <AnimatePresence initial={false}>
+                    {showCards && slide.cards.length > 0 && (
+                        <motion.div
+                            key="cards"
+                            variants={container}
+                            initial="hidden"
+                            animate="show"
+                            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                            className={cn('grid gap-5 w-full', gridColumns(slide.cards.length))}
+                        >
+                            {slide.cards.map((card, idx) => (
+                                <BentoCard key={idx} card={card} idx={idx} />
+                            ))}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );

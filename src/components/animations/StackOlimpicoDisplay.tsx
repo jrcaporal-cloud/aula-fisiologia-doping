@@ -11,7 +11,7 @@ const COMPOUNDS = [
         border: 'rgba(96,165,250,0.3)',
         half: '7–10 dias',
         detect: '3 meses',
-        desc: 'Mionucleação permanente. O "chassis" do stack — suporta todas as adaptações estruturais.',
+        desc: 'Mionucleação permanente. O "chassi" do stack — suporta todas as adaptações estruturais.',
     },
     {
         name: 'hGH / IGF-1',
@@ -26,7 +26,7 @@ const COMPOUNDS = [
     },
     {
         name: 'INSULINA',
-        role: 'Gatilho Master',
+        role: 'Gatilho Mestre',
         color: '#f87171',
         glow: 'rgba(248,113,113,0.35)',
         bg: 'rgba(127,29,29,0.25)',
@@ -97,7 +97,7 @@ export const StackOlimpicoDisplay = () => {
                     <div>
                         <div className="text-xs font-bold text-red-300 uppercase tracking-wider mb-1">Risco Sistêmico Crítico</div>
                         <p className="text-xs text-gray-300 leading-relaxed">
-                            Hiperglicemia reativa aguda pela INSULINA: risco de hipoglicemia severa intra-treino levando a coma e indução fatal celular. Janela de erro = minutos.
+                            Hiperglicemia reativa aguda pela INSULINA: risco de hipoglicemia severa intratreino levando a coma e indução fatal celular. Janela de erro = minutos.
                         </p>
                     </div>
                 </motion.div>

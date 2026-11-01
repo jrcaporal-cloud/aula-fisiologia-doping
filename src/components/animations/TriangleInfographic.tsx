@@ -12,7 +12,7 @@ const NODES = [
         glow: 'rgba(225,29,72,0.4)',
         bg: 'rgba(127,29,29,0.25)',
         border: 'rgba(225,29,72,0.4)',
-        detail: 'A EPO estimula eritropoiese na medula óssea, elevando o VO₂max em até 5–7%. Com Hct >55%, o sangue se torna viscoso — risco de trombose fatal durante bradicardia do sono. Janela de detecção da rhEPO: apenas 24–72h.',
+        detail: 'A EPO estimula eritropoiese na medula óssea, elevando o VO₂máx em até 5–7%. Com Hct >55%, o sangue se torna viscoso — risco de trombose fatal durante bradicardia do sono. Janela de detecção da rhEPO: apenas 24–72h.',
     },
     {
         id: 1,
@@ -24,7 +24,7 @@ const NODES = [
         glow: 'rgba(245,158,11,0.4)',
         bg: 'rgba(120,53,0,0.25)',
         border: 'rgba(245,158,11,0.4)',
-        detail: 'AICAR ativa AMPK simulando "baixa energia celular". Induz expressão de PGC-1α — master-regulator da biogênese mitocondrial. Mais mitocôndrias = maior capacidade oxidativa por kg de músculo.',
+        detail: 'AICAR ativa AMPK simulando "baixa energia celular". Induz expressão de PGC-1α — regulador-mestre da biogênese mitocondrial. Mais mitocôndrias = maior capacidade oxidativa por kg de músculo.',
     },
     {
         id: 2,
@@ -121,6 +121,7 @@ export const TriangleInfographic = () => {
                         {/* Animated particles */}
                         {NODES.map((n, i) => (
                             <motion.circle key={`pt${i}`} r={4} fill={n.color}
+                                initial={{ cx: CENTER.x, cy: CENTER.y }}
                                 opacity={active === null || active === i ? 0.85 : 0.1}
                                 animate={{
                                     cx: [CENTER.x, VERTS[i].x, CENTER.x],
@@ -134,6 +135,7 @@ export const TriangleInfographic = () => {
                         <motion.circle cx={CENTER.x} cy={CENTER.y} r={32}
                             fill="rgba(0,0,0,0.8)"
                             stroke="rgba(255,255,255,0.12)" strokeWidth={1.5}
+                            initial={{ r: 32 }}
                             animate={{ r: [32, 35, 32] }}
                             transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
                         />

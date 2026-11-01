@@ -66,7 +66,7 @@ export const CellularSignaling = () => {
                     </div>
                     <h3 className="font-display text-2xl text-brand-red font-bold mb-2 flex items-center gap-3">
                         <span className="p-2 bg-brand-red/20 rounded-lg"><Zap size={24} /></span>
-                        Via Não-Genômica <span className="text-sm font-normal text-rose-300 ml-2">(Rápida)</span>
+                        Via Não Genômica <span className="text-sm font-normal text-rose-300 ml-2">(Rápida)</span>
                     </h3>
                     <p className="text-gray-400 text-sm mb-6 border-b border-white/5 pb-4">
                         Ação metabólica de choque no <strong>citoplasma e membranas</strong> em segundos a horas.
@@ -77,13 +77,13 @@ export const CellularSignaling = () => {
                             <Target className="w-5 h-5 text-brand-red shrink-0 mt-0.5" />
                             <div>
                                 <h4 className="text-white text-sm font-semibold">Ativação de Membrana</h4>
-                                <p className="text-gray-400 text-xs mt-1">Interação direta livre de nucleoide com receptores acoplados a proteína G (GPCRs) engatilhando cascatas MAPK e PI3K/Akt.</p>
+                                <p className="text-gray-400 text-xs mt-1">Interação direta livre de nucleoide com receptores acoplados à proteína G (GPCRs) engatilhando cascatas MAPK e PI3K/Akt.</p>
                             </div>
                         </div>
                         <div className="bg-black/40 border border-white/5 p-3 rounded-lg flex items-start gap-3">
                             <ShieldAlert className="w-5 h-5 text-brand-red shrink-0 mt-0.5" />
                             <div>
-                                <h4 className="text-white text-sm font-semibold">Bloqueio Anti-Catabólico</h4>
+                                <h4 className="text-white text-sm font-semibold">Bloqueio Anticatabólico</h4>
                                 <p className="text-gray-400 text-xs mt-1">Inibição imediata de Glucocorticoides: bloqueio competitivo aos sítios dos receptores de cortisol.</p>
                             </div>
                         </div>
@@ -91,7 +91,7 @@ export const CellularSignaling = () => {
                             <Activity className="w-5 h-5 text-brand-red shrink-0 mt-0.5" />
                             <div>
                                 <h4 className="text-white text-sm font-semibold">Choque Reticular & SNC</h4>
-                                <p className="text-gray-400 text-xs mt-1">Aumento dramático de íons de cálcio intra-celular (força em <b>minutos</b>) e facilitação neuromotora da acetilcolina.</p>
+                                <p className="text-gray-400 text-xs mt-1">Aumento dramático de íons de cálcio intracelular (força em <b>minutos</b>) e facilitação neuromotora da acetilcolina.</p>
                             </div>
                         </div>
                     </div>

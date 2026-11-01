@@ -86,15 +86,15 @@ export const Testosterone: React.FC<Props> = ({ progressRef }) => {
     const interact = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'Testosterone',
-            info: 'Testosterone (C19H28O2) — a lipophilic anabolic-androgenic steroid hormone.'
+            name: 'Testosterona',
+            info: 'Testosterona (C₁₉H₂₈O₂) — hormônio esteroide anabólico-androgênico lipofílico.'
         });
         document.body.style.cursor = 'pointer';
     };
 
     const out = () => {
         setHoveredObject(null);
-        document.body.style.cursor = 'grab';
+        document.body.style.cursor = '';
     };
 
     return (

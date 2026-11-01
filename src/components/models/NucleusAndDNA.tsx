@@ -82,8 +82,8 @@ export const NucleusAndDNA: React.FC<Props> = ({ progressRef }) => {
     const interactNucleus = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'Nucleus',
-            info: 'Stores DNA and controls gene expression. T-AR enters here to activate transcription.'
+            name: 'Núcleo',
+            info: 'Armazena o DNA e controla a expressão gênica. O complexo T-AR entra aqui para ativar a transcrição.'
         });
         document.body.style.cursor = 'pointer';
     };
@@ -91,8 +91,8 @@ export const NucleusAndDNA: React.FC<Props> = ({ progressRef }) => {
     const interactDNA = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'DNA Double Helix (AREs)',
-            info: 'Contains genes for contractile proteins (actin, myosin). Contains Androgen Response Elements (AREs) that the T-AR complex binds to.'
+            name: 'Dupla-hélice de DNA (AREs)',
+            info: 'Contém os genes das proteínas contráteis (actina, miosina) e os elementos de resposta androgênica (AREs) aos quais o complexo T-AR se liga.'
         });
         document.body.style.cursor = 'pointer';
     };
@@ -100,15 +100,15 @@ export const NucleusAndDNA: React.FC<Props> = ({ progressRef }) => {
     const interactPore = (e: any) => {
         e.stopPropagation();
         setHoveredObject({
-            name: 'Nuclear Pore Complex (NPC)',
-            info: 'Gated channel that imports the T-AR complex into the nucleus via importin-β.'
+            name: 'Complexo de poro nuclear (NPC)',
+            info: 'Canal seletivo que importa o complexo T-AR para o núcleo via importina-β.'
         });
         document.body.style.cursor = 'pointer';
     };
 
     const out = () => {
         setHoveredObject(null);
-        document.body.style.cursor = 'grab';
+        document.body.style.cursor = '';
     };
 
     return (

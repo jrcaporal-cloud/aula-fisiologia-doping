@@ -6,7 +6,7 @@ const T_GROUPS = [
     { label: 'Homem Cis', range: [8, 29], mean: 18, color: '#60a5fa', icon: '👨' },
     { label: 'Mulher Trans\n(sem TRT)', range: [8, 29], mean: 17, color: '#a78bfa', icon: '🏃' },
     { label: 'Mulher Trans\n(2 anos TRT)', range: [0.3, 3.5], mean: 1.8, color: '#c084fc', icon: '🏅' },
-    { label: 'Mulher Trans\n(WA: <2.5 nmol)', range: [0, 2.5], mean: 1.2, color: '#e879f9', icon: '📋' },
+    { label: 'Mulher Trans\n(WA: <2,5 nmol/L)', range: [0, 2.5], mean: 1.2, color: '#e879f9', icon: '📋' },
     { label: 'Mulher Cis', range: [0.2, 2.5], mean: 1.0, color: '#f0abfc', icon: '👩' },
 ];
 
@@ -15,7 +15,7 @@ const MAX_T = 30;
 // What TRT reverses / doesn't
 const REVERSIBILITY = [
     { item: 'Força muscular relativa', reversed: true, note: '~80% normalizada em 2-3 anos' },
-    { item: 'VO₂max relativo', reversed: true, note: 'Redução de ~10-12% documentada' },
+    { item: 'VO₂máx relativo', reversed: true, note: 'Redução de ~10-12% documentada' },
     { item: 'Número de mionúcleos', reversed: false, note: 'Memória muscular permanente' },
     { item: 'Estatura e envergadura', reversed: false, note: 'Estrutura óssea irreversível' },
     { item: 'Tamanho do coração (VE)', reversed: false, note: 'Hipertrofia persistente' },
@@ -80,7 +80,7 @@ export const TransBiologyViz = () => {
                                             transition={{ duration: 0.5, delay: i * 0.1 + 0.4 }}
                                         />
                                     </div>
-                                    <span className="text-[10px] text-gray-500 w-20 text-right">{g.range[0]}–{g.range[1]} nmol/L</span>
+                                    <span className="text-[10px] text-gray-500 w-20 text-right">{g.range[0].toLocaleString('pt-BR')}–{g.range[1].toLocaleString('pt-BR')} nmol/L</span>
                                 </div>
                                 <AnimatePresence>
                                     {isAct && (
@@ -92,7 +92,7 @@ export const TransBiologyViz = () => {
                                             className="overflow-hidden"
                                         >
                                             <div className="ml-9 pl-3 border-l text-xs text-gray-400 py-1.5" style={{ borderColor: g.color }}>
-                                                Média: <strong style={{ color: g.color }}>{g.mean} nmol/L</strong>
+                                                Média: <strong style={{ color: g.color }}>{g.mean.toLocaleString('pt-BR')} nmol/L</strong>
                                                 {i === 3 && ' — limiar regulatório imposto pelo World Athletics'}
                                                 {i === 2 && ' — após 2 anos de TRT feminizante padrão'}
                                                 {i === 0 && ' — testosterona fisiológica masculina adulta'}

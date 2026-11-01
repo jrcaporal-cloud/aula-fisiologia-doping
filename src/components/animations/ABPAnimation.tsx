@@ -97,8 +97,8 @@ export const ABPAnimation = () => {
                         stroke="rgba(96,165,250,0.25)" strokeWidth={1} strokeDasharray="4 3" />
                     <line x1={PAD_L} y1={bandBotY} x2={PAD_L + DATA_W} y2={bandBotY}
                         stroke="rgba(96,165,250,0.25)" strokeWidth={1} strokeDasharray="4 3" />
-                    <text x={PAD_L + 4} y={bandTopY - 4} fill="rgba(96,165,250,0.5)" fontSize="7">Limite superior (95% CI)</text>
-                    <text x={PAD_L + 4} y={bandBotY + 9} fill="rgba(96,165,250,0.5)" fontSize="7">Limite inferior</text>
+                    <text x={PAD_L + 4} y={bandTopY - 4} fill="rgba(96,165,250,0.75)" fontSize="9.5">Limite superior (IC 95%)</text>
+                    <text x={PAD_L + 4} y={bandBotY + 9} fill="rgba(96,165,250,0.75)" fontSize="9.5">Limite inferior</text>
 
                     {/* EPO period highlight */}
                     {revealed && (
@@ -110,20 +110,20 @@ export const ABPAnimation = () => {
                         />
                     )}
                     {revealed && (
-                        <text x={(toX(12) + toX(14)) / 2} y={PAD_T + 10} textAnchor="middle" fill="#e11d48" fontSize="7" fontWeight="bold">USO rhEPO</text>
+                        <text x={(toX(12) + toX(14)) / 2} y={PAD_T + 10} textAnchor="middle" fill="#e11d48" fontSize="9.5" fontWeight="bold">USO rhEPO</text>
                     )}
 
                     {/* Y axis labels */}
                     {[13, 14, 15, 16, 17, 18].map(v => (
                         <g key={v}>
-                            <text x={PAD_L - 4} y={toY(v) + 3} fill="rgba(255,255,255,0.3)" fontSize="7" textAnchor="end">{v}</text>
+                            <text x={PAD_L - 4} y={toY(v) + 3} fill="rgba(255,255,255,0.55)" fontSize="9.5" textAnchor="end">{v}</text>
                             <line x1={PAD_L} y1={toY(v)} x2={PAD_L + DATA_W} y2={toY(v)} stroke="rgba(255,255,255,0.04)" strokeWidth={1} />
                         </g>
                     ))}
 
                     {/* X axis month labels (every 3 months) */}
                     {MONTHS.map((m, i) => i % 3 === 0 && (
-                        <text key={i} x={toX(i)} y={CHART_H - 4} fill="rgba(255,255,255,0.25)" fontSize="7" textAnchor="middle">{m} {i < 12 ? "'23" : "'24"}</text>
+                        <text key={i} x={toX(i)} y={CHART_H - 4} fill="rgba(255,255,255,0.5)" fontSize="9.5" textAnchor="middle">{m} {i < 12 ? "'23" : "'24"}</text>
                     ))}
 
                     {/* Line */}
@@ -145,7 +145,7 @@ export const ABPAnimation = () => {
                                     onMouseLeave={() => setActivePoint(null)}
                                 />
                                 {isAnomaly && revealed && (
-                                    <text x={toX(i)} y={toY(v) - 9} textAnchor="middle" fill="#e11d48" fontSize="8" fontWeight="bold">⚠</text>
+                                    <text x={toX(i)} y={toY(v) - 9} textAnchor="middle" fill="#e11d48" fontSize="10" fontWeight="bold">⚠</text>
                                 )}
                             </g>
                         );
@@ -169,7 +169,7 @@ export const ABPAnimation = () => {
                                     background: 'rgba(5,5,18,0.9)',
                                 }}
                             >
-                                {MONTHS[activePoint]} — Hb: <strong>{hbData[activePoint]} g/dL</strong>
+                                {MONTHS[activePoint]} — Hb: <strong>{hbData[activePoint].toLocaleString('pt-BR')} g/dL</strong>
                                 {(hbData[activePoint] > HB_UPPER && revealed) && ' — 🚨 FORA DA ZONA NORMAL'}
                             </motion.div>
                         )}

@@ -7,6 +7,8 @@ type StoreState = {
     isAnimating: boolean;
     hoveredObject: { name: string; info: string } | null;
     loaded: boolean;
+    /** Um modal (ex.: visualizador 3D) capturou o teclado — a navegação de slides pausa. */
+    modalOpen: boolean;
     setStep: (step: number) => void;
     nextStep: () => void;
     prevStep: () => void;
@@ -14,6 +16,7 @@ type StoreState = {
     setHoveredObject: (obj: { name: string; info: string } | null) => void;
     setLoaded: (loaded: boolean) => void;
     setSlide: (slide: number) => void;
+    setModalOpen: (open: boolean) => void;
 };
 
 export const useStore = create<StoreState>((set) => ({
@@ -22,6 +25,7 @@ export const useStore = create<StoreState>((set) => ({
     isAnimating: false,
     hoveredObject: null,
     loaded: false,
+    modalOpen: false,
     setStep: (step) => set({ currentStep: step }),
     nextStep: () => set((state) => ({
         currentStep: Math.min(state.currentStep + 1, STEPS.length - 1)
@@ -33,4 +37,5 @@ export const useStore = create<StoreState>((set) => ({
     setHoveredObject: (hoveredObject) => set({ hoveredObject }),
     setLoaded: (loaded) => set({ loaded }),
     setSlide: (slide) => set({ currentSlide: slide }),
+    setModalOpen: (modalOpen) => set({ modalOpen }),
 }));

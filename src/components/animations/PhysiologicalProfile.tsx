@@ -12,7 +12,7 @@ export const PhysiologicalProfile = () => {
         },
         {
             title: "Razão Anabólica/Androgênica",
-            desc: "A química é manipulada para hipertrofia sem virilização excessiva. Ex: a Trembolona tem afinidade ao AR 3x mais violenta que a testosterona base.",
+            desc: "A química é manipulada para hipertrofia sem virilização excessiva. Ex.: a Trembolona tem afinidade ao AR 3x mais violenta que a testosterona base.",
             icon: "🔬",
             color: "border-purple-500/30",
             bg: "bg-purple-900/10"

@@ -144,14 +144,14 @@ export const TranslationProcess: React.FC<Props> = ({ progressRef }) => {
 
     const out = () => {
         setHoveredObject(null);
-        document.body.style.cursor = 'grab';
+        document.body.style.cursor = '';
     };
 
     return (
         <group>
             {/* mRNA Strand */}
             <group ref={mrnaRef}
-                onPointerOver={interactObj('mRNA Strand', 'Messenger RNA transcribed from DNA. It carries the code out into the cytoplasm.')}
+                onPointerOver={interactObj('Fita de mRNA', 'RNA mensageiro transcrito do DNA. Leva o código genético até o citoplasma.')}
                 onPointerOut={out}>
                 {Array.from({ length: 45 }).map((_, i) => {
                     const t = (i / 45) * Math.PI * 4;
@@ -170,7 +170,7 @@ export const TranslationProcess: React.FC<Props> = ({ progressRef }) => {
 
             {/* Ribosome */}
             <group ref={ribosomeRef} position={[-5, -1, 3]}
-                onPointerOver={interactObj('Ribosome', 'The cellular machine that reads mRNA and links amino acids together to form proteins.')}
+                onPointerOver={interactObj('Ribossomo', 'Maquinaria celular que lê o mRNA e encadeia aminoácidos para formar proteínas.')}
                 onPointerOut={out}>
                 {/* Large Subunit */}
                 <mesh position={[0, 0.4, 0]}>
@@ -191,7 +191,7 @@ export const TranslationProcess: React.FC<Props> = ({ progressRef }) => {
 
             {/* Emerging Polypeptide Chain */}
             <group ref={peptideChainRef}
-                onPointerOver={interactObj('Polypeptide Chain', 'Amino acids linked via peptide bonds. Will fold into structural proteins like Actin and Myosin.')}
+                onPointerOver={interactObj('Cadeia polipeptídica', 'Aminoácidos unidos por ligações peptídicas. Vão se dobrar em proteínas estruturais como actina e miosina.')}
                 onPointerOut={out}>
                 {Array.from({ length: 30 }).map((_, i) => (
                     <mesh key={`aa-${i}`} scale={0}>
@@ -210,7 +210,7 @@ export const TranslationProcess: React.FC<Props> = ({ progressRef }) => {
                 ref={proteinsRef}
                 args={[undefined, undefined, PROTEIN_COUNT]}
                 position={[-8, -2.5, 4.5]}
-                onPointerOver={interactObj('Actin & Myosin Formation', 'Increased rate of MPS (Muscle Protein Synthesis) leading directly to muscle hypertrophy (growth).')}
+                onPointerOver={interactObj('Formação de actina e miosina', 'Aumento da taxa de síntese proteica muscular (MPS), levando diretamente à hipertrofia.')}
                 onPointerOut={out}
             >
                 <sphereGeometry args={[1, 16, 16]} />

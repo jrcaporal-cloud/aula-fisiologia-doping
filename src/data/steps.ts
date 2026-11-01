@@ -10,49 +10,49 @@ export interface StepData {
 export const STEPS: StepData[] = [
     {
         id: 0,
-        badge: 'OVERVIEW',
-        title: 'Genomic Mechanism of Action',
-        description: 'Testosterone is a lipophilic steroid that crosses the cell membrane, binds to intracellular androgen receptors, and activates gene transcription for muscle protein synthesis.',
-        cameraPosition: [0, 8, 35],
-        cameraTarget: [0, 0, 0]
+        badge: 'VISÃO GERAL',
+        title: 'Mecanismo genômico de ação',
+        description: 'A testosterona, esteroide lipofílico, atravessa a membrana celular, liga-se ao receptor androgênico intracelular e ativa a transcrição de genes da síntese proteica muscular.',
+        cameraPosition: [4, 7, 40],
+        cameraTarget: [4, 0, 0]
     },
     {
         id: 1,
-        badge: 'STEP 1 — DIFFUSION',
-        title: 'Membrane Diffusion',
-        description: 'Testosterone (C19H28O2) is a non-polar steroid hormone. Its lipophilic nature allows it to freely cross the phospholipid bilayer of the cell membrane via simple diffusion.',
+        badge: 'ETAPA 1 — DIFUSÃO',
+        title: 'Difusão pela membrana',
+        description: 'A testosterona (C₁₉H₂₈O₂) é um hormônio esteroide apolar. Por ser lipofílica, atravessa livremente a bicamada fosfolipídica da membrana por difusão simples.',
         cameraPosition: [16, 5, 22],
         cameraTarget: [12, 0, 0]
     },
     {
         id: 2,
-        badge: 'STEP 2 — BINDING',
-        title: 'Androgen Receptor Binding',
-        description: 'Inside the cytoplasm, testosterone binds to the Androgen Receptor (AR), displacing Heat Shock Proteins (HSP90). This causes conformational change, exposing the nuclear localization signal (NLS).',
+        badge: 'ETAPA 2 — LIGAÇÃO',
+        title: 'Ligação ao receptor androgênico',
+        description: 'No citoplasma, a testosterona liga-se ao receptor androgênico (AR) e desloca as proteínas de choque térmico (HSP90). A mudança conformacional expõe o sinal de localização nuclear (NLS).',
         cameraPosition: [6, 2, 12],
         cameraTarget: [6, 0, 0]
     },
     {
         id: 3,
-        badge: 'STEP 3 — TRANSLOCATION',
-        title: 'Nuclear Translocation',
-        description: 'The T-AR dimer translocates through Nuclear Pore Complexes (NPCs) via importin-β. Inside the nucleus, it binds to Androgen Response Elements (AREs) on target gene promoters.',
+        badge: 'ETAPA 3 — TRANSLOCAÇÃO',
+        title: 'Translocação nuclear',
+        description: 'O dímero T-AR atravessa os complexos de poro nuclear (NPC) via importina-β. No núcleo, liga-se aos elementos de resposta androgênica (AREs) nos promotores dos genes-alvo.',
         cameraPosition: [1.5, 2.5, 8],
         cameraTarget: [0, 0, 0]
     },
     {
         id: 4,
-        badge: 'STEP 4 — TRANSCRIPTION',
-        title: 'Gene Transcription → mRNA',
-        description: 'AR binding recruits coactivators and RNA Polymerase II, activating transcription of MYH (myosin) and ACTA (actin) genes. The resulting mRNA is processed and exported.',
+        badge: 'ETAPA 4 — TRANSCRIÇÃO',
+        title: 'Transcrição gênica → mRNA',
+        description: 'A ligação do AR recruta coativadores e a RNA polimerase II, ativando a transcrição dos genes MYH (miosina) e ACTA (actina). O mRNA resultante é processado e exportado.',
         cameraPosition: [-4, 2, 8],
         cameraTarget: [-2, 0, 0]
     },
     {
         id: 5,
-        badge: 'STEP 5 — SYNTHESIS',
-        title: 'Protein Synthesis & Hypertrophy',
-        description: 'Ribosomes translate mRNA into contractile proteins (actin, myosin). Testosterone increases muscle protein synthesis rate, leading to myofibrillar hypertrophy over time.',
+        badge: 'ETAPA 5 — SÍNTESE',
+        title: 'Síntese proteica e hipertrofia',
+        description: 'Ribossomos traduzem o mRNA em proteínas contráteis (actina, miosina). A testosterona eleva a taxa de síntese proteica muscular, levando à hipertrofia miofibrilar ao longo do tempo.',
         cameraPosition: [-8, -2, 14],
         cameraTarget: [-6, -2, 4]
     }

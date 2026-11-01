@@ -40,7 +40,7 @@ const NODES = [
         sections: [
             {
                 label: '💊 Farmacocinética',
-                content: 'Meia-vida plasmática IV: ~15–20 min. SC: ~3–4h. Injeção às 23h → eliminado antes do controle matinal às 6h. O hGH endógeno e exógeno são molecularmente idênticos — o teste diferencial compara isoformas 20kDa vs 22kDa, detectável em  janela <12h após uso.',
+                content: 'Meia-vida plasmática IV: ~15–20 min. SC: ~3–4h. Injeção às 23h → eliminado antes do controle matinal às 6h. O hGH endógeno e exógeno são molecularmente idênticos — o teste diferencial compara isoformas 20kDa vs 22kDa, detectável em janela <12h após uso.',
             },
             {
                 label: '📈 Efeitos Anabólicos',
@@ -56,7 +56,7 @@ const NODES = [
         step: 3,
         icon: '🔴',
         title: 'Fígado',
-        subtitle: 'IGF-1 Exógeno (Mecasermin)',
+        subtitle: 'IGF-1 Exógeno (Mecasermina)',
         summary: 'Bypass completo do eixo GH. Ativa diretamente receptores IGF-1R sem passar pela hipófise.',
         color: '#f87171',
         border: 'rgba(248,113,113,0.35)',
