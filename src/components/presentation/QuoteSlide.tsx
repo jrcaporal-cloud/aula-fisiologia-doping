@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
 import type { ComponentType } from 'react';
 import { ReceptorAffinity } from './quote/ReceptorAffinity';
+import { ShieldKnowledge } from './quote/ShieldKnowledge';
 import type { SlideSchema } from './TitleSlide';
 
 /** Ilustração própria de algumas citações (por id do JSON); as demais usam o traço vermelho. */
-const QUOTE_ILLUSTRATIONS: Record<number, ComponentType> = { 4: ReceptorAffinity };
+const QUOTE_ILLUSTRATIONS: Record<number, ComponentType> = { 4: ReceptorAffinity, 30: ShieldKnowledge };
 
 /**
  * Slides sem título (citação de transição e encerramento): o texto do JSON vira
