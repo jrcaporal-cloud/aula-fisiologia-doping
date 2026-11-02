@@ -1,7 +1,6 @@
 import { lazy, Suspense, type ComponentType, type LazyExoticComponent } from 'react';
 import { CollapsibleHtml } from './CollapsibleHtml';
 import { CellularSignaling } from '../animations/CellularSignaling';
-import { HPGAxis } from '../animations/HPGAxis';
 import { ComparisonTable } from '../animations/ComparisonTable';
 import { TriangleInfographic } from '../animations/TriangleInfographic';
 import { RealityCheck } from '../animations/RealityCheck';
@@ -17,7 +16,6 @@ import { SteroidProfileVisualizer } from '../animations/SteroidProfileVisualizer
 /** Componentes interativos que o JSON dos slides referencia com [[COMP:Nome]]. */
 const COMP_MAP: Record<string, ComponentType> = {
     CellularSignaling,
-    HPGAxis,
     ComparisonTable,
     TriangleInfographic,
     RealityCheck,
