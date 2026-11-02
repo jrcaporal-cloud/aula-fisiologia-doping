@@ -113,7 +113,7 @@
     "layout": "bento",
     "title": "As Famílias de Esteroides",
     "subtitle": "Derivações estruturais e suas\n                assinaturas biológicas",
-    "content": "<div class=\"reveal-scale delay-2\" style=\"display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; width: 100%; max-width: 1250px;\">\n\n                <!-- Família 1: Testosterona e Derivados -->\n                \n\n                <!-- Família 2: Derivados do DHT -->\n                \n\n                <!-- Família 3: 19-Nor (Nandrolonas) -->\n                \n\n            </div>",
+    "content": "[[COMP:SteroidFamiliesSim]]",
     "cards": [
       {
         "type": "bento",
