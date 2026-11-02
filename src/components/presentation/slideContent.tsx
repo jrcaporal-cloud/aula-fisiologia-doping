@@ -4,9 +4,7 @@ import { CellularSignaling } from '../animations/CellularSignaling';
 import { ComparisonTable } from '../animations/ComparisonTable';
 import { TriangleInfographic } from '../animations/TriangleInfographic';
 import { RealityCheck } from '../animations/RealityCheck';
-import { StackOlimpicoDisplay } from '../animations/StackOlimpicoDisplay';
 import { AthleteDossier } from '../animations/AthleteDossier';
-import { BloodDopingAnimation } from '../animations/BloodDopingAnimation';
 import { EAAInteractive } from '../animations/EAAInteractive';
 import { TransBiologyViz } from '../animations/TransBiologyViz';
 import { TransCasesTimeline } from '../animations/TransCasesTimeline';
@@ -19,9 +17,7 @@ const COMP_MAP: Record<string, ComponentType> = {
     ComparisonTable,
     TriangleInfographic,
     RealityCheck,
-    StackOlimpicoDisplay,
     AthleteDossier,
-    BloodDopingAnimation,
     EAAInteractive,
     TransBiologyViz,
     TransCasesTimeline,
