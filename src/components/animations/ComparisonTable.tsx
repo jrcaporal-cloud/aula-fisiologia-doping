@@ -1,104 +1,97 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { MousePointerClick } from 'lucide-react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { useSlideSteps } from '../../store/useSlideSteps';
+import { Columns } from './dopingMap/Columns';
+import { DRUGS, SYSTEMS, SYSTEM_ORDER } from './dopingMap/data';
+import { DetailPanel } from './dopingMap/DetailPanel';
+import { DrugCard } from './dopingMap/DrugCard';
+import { cardRect, MAP_HEIGHT } from './dopingMap/geometry';
+import { SystemShape } from './dopingMap/Marker';
+import { UgtCallout } from './dopingMap/UgtCallout';
 
+const STEPS = ['O quê e como', 'Magnitude', 'Quem o antidoping pega'] as const;
+
+/**
+ * Slide 6 — O Mapa do Doping de Elite.
+ * Passo 0: os seis fármacos por sistema, com via de ação e efeito.
+ * Passo 1: selos de magnitude.
+ * Passo 2: os marcadores migram para as faixas de detectabilidade (+ nota do UGT2B17).
+ */
 export const ComparisonTable = () => {
-    const [openRow, setOpenRow] = useState<number | null>(null);
+    const { step } = useSlideSteps(STEPS.length);
+    const reduced = useReducedMotion() ?? false;
+    const ref = useRef<HTMLDivElement>(null);
+    const [width, setWidth] = useState(0);
+    const [selected, setSelected] = useState<string | null>(null);
 
-    const toggleRow = (index: number) => {
-        setOpenRow(openRow === index ? null : index);
-    };
+    useLayoutEffect(() => {
+        const el = ref.current;
+        if (!el) return undefined;
+        setWidth(el.clientWidth);
+        const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, []);
 
-    const data = [
-        {
-            name: "EAA (Testo)", action: "Receptor Androgênico", effect: "Massa/Força", magnitude: "+10-20% força", hidden: "Não*", color: "text-brand-red", bgColor: "bg-brand-red/10", border: "border-brand-red",
-            detail: "<b>Oculto/Colaterais:</b> Supressão do Eixo HPG obrigatória, hipertrofia ventricular esquerda (cardiopatia) irreversível, e dislipidemia severa (redução drástica do HDL bom). O exame antidoping tradicional utiliza a relação T/E para flagrar o composto exógeno."
-        },
-        {
-            name: "rhEPO", action: "Via JAK/STAT", effect: "Eritrócitos / VO₂máx", magnitude: "+3-7% VO₂máx", hidden: "Não", color: "text-brand-red", bgColor: "bg-brand-red/10", border: "border-brand-red",
-            detail: "<b>Oculto/Colaterais:</b> Aumenta massivamente o hematócrito (volume de glóbulos vermelhos). Risco letal de hiperviscosidade sanguínea (sangue de lodo), predispondo a tromboses e paradas cardíacas noturnas. Foi o pesadelo do ciclismo nos anos 90."
-        },
-        {
-            name: "GH / IGF-1", action: "Via mTOR", effect: "Massa / Lipólise", magnitude: "Sinergia Alta", hidden: "Quase", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500",
-            detail: "<b>Oculto/Colaterais:</b> Potencia a síntese colagênica e óssea, reduzindo a gordura corporal. Uso abusivo gera 'Palumboísmo' (crescimento das vísceras/alargamento de extremidades) e resistência insulínica maciça. É dificílimo flagrar o GH recombinante por sua meia-vida em plasma de meros ~20 minutos."
-        },
-        {
-            name: "Insulina", action: "Receptor IR", effect: "Anabolismo Máximo", magnitude: "+5-8kg (Stack)", hidden: "Sim", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500", bold: true,
-            detail: "<b>Oculto/Colaterais:</b> O hormônio mais mortífero do esporte. Como é um peptídeo natural sem limite superior definido pela WADA, é clinicamente impossível punir um atleta por 'uso de Insulina'. Um erro na dosagem causa coma hipoglicêmico cerebral letal."
-        },
-        {
-            name: "Transfusão Auto.", action: "Expansão Direta", effect: "VO₂máx / Endurance", magnitude: "+3-5% VO₂máx", hidden: "Sim", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500", bold: true,
-            detail: "<b>Oculto/Colaterais:</b> O próprio sangue reinfundido. O Calcanhar de Aquiles do Passaporte Biológico. O atleta retira sua bolsa de sangue num dia 'alto' em montanha, guarda e a devolve ao corpo um dia antes da prova de endurance. Pode causar sobrecarga de ferro ou choque hemolítico por erro de armazenagem."
-        },
-        {
-            name: "SARMs", action: "AR (Seletivo)", effect: "Massa", magnitude: "Moderada", hidden: "Não", color: "text-brand-red", bgColor: "bg-brand-red/10", border: "border-brand-red",
-            detail: "<b>Oculto/Colaterais:</b> Prometem ação anabólica limpa bloqueada na próstata (Ostarina, RAD-140), mas a realidade empírica demonstra lesão biliar/hepática profunda (DILI) e supressão severa do eixo testicular, sem oferecer as janelas monstruosas de hipertrofia dos EAAs. Cai muito em doping cruzado na suplementação."
-        }
-    ];
+    const mode = step >= 2 ? 'lane' : 'system';
+    const selectedDrug = DRUGS.find(d => d.id === selected) ?? null;
 
     return (
-        <div className="w-full overflow-x-auto pb-4 mt-8">
-            <table className="w-full text-left border-collapse min-w-[800px]">
-                <thead>
-                    <tr className="border-b-2 border-white/20 text-gray-400 font-display">
-                        <th className="p-4 font-semibold text-lg">Fármaco</th>
-                        <th className="p-4 font-semibold text-lg">Via de Ação</th>
-                        <th className="p-4 font-semibold text-lg">Efeito Principal</th>
-                        <th className="p-4 font-semibold text-lg">Magnitude</th>
-                        <th className="p-4 font-semibold text-lg">Indetectável?</th>
-                    </tr>
-                </thead>
-                <tbody className="text-gray-200">
-                    {data.map((row, idx) => {
-                        const isOpen = openRow === idx;
-                        return (
-                            <React.Fragment key={idx}>
-                                <tr
-                                    className={`group cursor-pointer transition-colors duration-300 border-b border-white/5 hover:bg-white/5 ${isOpen ? 'bg-white/5' : ''}`}
-                                    onClick={() => toggleRow(idx)}
-                                >
-                                    <td className="p-4 font-medium flex items-center gap-3">
-                                        <motion.div
-                                            animate={{ rotate: isOpen ? 90 : 0 }}
-                                            transition={{ duration: 0.2 }}
-                                            className={`text-sm ${row.color}`}
-                                        >
-                                            ▶
-                                        </motion.div>
-                                        {row.name}
-                                    </td>
-                                    <td className="p-4 text-gray-400">{row.action}</td>
-                                    <td className="p-4 text-gray-300">{row.effect}</td>
-                                    <td className="p-4 text-gray-400">{row.magnitude}</td>
-                                    <td className={`p-4 ${row.color} ${row.bold ? 'font-bold' : ''}`}>
-                                        {row.hidden}
-                                    </td>
-                                </tr>
-                                <AnimatePresence>
-                                    {isOpen && (
-                                        <tr>
-                                            <td colSpan={5} className="p-0 border-0">
-                                                <motion.div
-                                                    initial={{ height: 0, opacity: 0 }}
-                                                    animate={{ height: "auto", opacity: 1 }}
-                                                    exit={{ height: 0, opacity: 0 }}
-                                                    transition={{ duration: 0.3 }}
-                                                    className="overflow-hidden"
-                                                >
-                                                    <div
-                                                        className={`m-4 p-5 rounded-lg border-l-4 ${row.border} bg-black/40 backdrop-blur shadow-inner text-sm leading-relaxed`}
-                                                        dangerouslySetInnerHTML={{ __html: row.detail.replace(/Oculto\/Colaterais:/, `<span class="${row.color} font-bold mr-1">Oculto/Colaterais:</span>`) }}
-                                                    />
-                                                </motion.div>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </AnimatePresence>
-                            </React.Fragment>
-                        );
-                    })}
-                </tbody>
-            </table>
-            <p className="text-sm mt-4 text-brand-red">* Exceto em casos de deleção do gene UGT2B17.</p>
+        <div ref={ref} className="relative w-full max-w-[1040px] mx-auto font-body select-none" style={{ height: MAP_HEIGHT }}>
+            {width > 0 && (
+                <>
+                    <Columns width={width} mode={mode} reduced={reduced} />
+                    {DRUGS.map((drug, i) => (
+                        <DrugCard
+                            key={drug.id}
+                            drug={drug}
+                            rect={cardRect(width, mode, drug)}
+                            mode={mode}
+                            index={i}
+                            showMagnitude={step >= 1}
+                            reduced={reduced}
+                            dimmed={selected !== null && selected !== drug.id}
+                            onSelect={() => setSelected(cur => (cur === drug.id ? null : drug.id))}
+                        />
+                    ))}
+                    <AnimatePresence>{mode === 'lane' && <UgtCallout key="ugt" width={width} reduced={reduced} />}</AnimatePresence>
+                </>
+            )}
+
+            <div className="absolute left-0 right-0 bottom-0 flex items-center justify-between gap-6 px-1 text-[13px]">
+                <div className="flex items-center gap-2 font-mono text-gray-300">
+                    <span className="tracking-[0.18em] text-gray-400">PASSO {step + 1}/{STEPS.length}</span>
+                    <span className="text-gray-500">·</span>
+                    <motion.span
+                        key={step}
+                        className="text-white"
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: reduced ? 0 : 0.3 }}
+                    >
+                        {STEPS[step]}
+                    </motion.span>
+                </div>
+                <div className="flex items-center gap-1.5 text-gray-400">
+                    <MousePointerClick size={15} />
+                    Clique num fármaco para ver os colaterais
+                </div>
+                <div className="flex items-center gap-4">
+                    {SYSTEM_ORDER.map(id => (
+                        <span key={id} className="flex items-center gap-1.5 text-gray-300">
+                            <span className="relative w-[14px] h-[14px]">
+                                <SystemShape system={id} color={SYSTEMS[id].color} size={14} filled={0.5} />
+                            </span>
+                            {SYSTEMS[id].label}
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            <AnimatePresence>
+                {selectedDrug && <DetailPanel key={selectedDrug.id} drug={selectedDrug} reduced={reduced} onClose={() => setSelected(null)} />}
+            </AnimatePresence>
         </div>
     );
 };

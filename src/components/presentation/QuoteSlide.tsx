@@ -1,19 +1,37 @@
 import { motion } from 'framer-motion';
+import type { ComponentType } from 'react';
+import { ReceptorAffinity } from './quote/ReceptorAffinity';
 import type { SlideSchema } from './TitleSlide';
+
+/** Ilustração própria de algumas citações (por id do JSON); as demais usam o traço vermelho. */
+const QUOTE_ILLUSTRATIONS: Record<number, ComponentType> = { 4: ReceptorAffinity };
 
 /**
  * Slides sem título (citação de transição e encerramento): o texto do JSON vira
  * a peça central, em tipografia grande, em vez de cair no layout de texto corrido.
  */
-export const QuoteSlide = ({ slide }: { slide: SlideSchema }) => (
+export const QuoteSlide = ({ slide }: { slide: SlideSchema }) => {
+    const Illustration = QUOTE_ILLUSTRATIONS[slide.id];
+    return (
     <div className="quote-slide w-full min-h-[560px] flex flex-col items-center justify-center text-center px-16 relative z-10">
-        <motion.div
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="w-[3px] h-16 mb-10 rounded-full origin-top"
-            style={{ background: 'linear-gradient(180deg, #e11d48, transparent)' }}
-        />
+        {Illustration ? (
+            <motion.div
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="mb-8"
+            >
+                <Illustration />
+            </motion.div>
+        ) : (
+            <motion.div
+                initial={{ scaleY: 0 }}
+                animate={{ scaleY: 1 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="w-[3px] h-16 mb-10 rounded-full origin-top"
+                style={{ background: 'linear-gradient(180deg, #e11d48, transparent)' }}
+            />
+        )}
         <motion.div
             initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -22,4 +40,5 @@ export const QuoteSlide = ({ slide }: { slide: SlideSchema }) => (
             dangerouslySetInnerHTML={{ __html: slide.content }}
         />
     </div>
-);
+    );
+};

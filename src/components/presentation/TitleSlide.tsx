@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import { Chromatogram } from './title/Chromatogram';
+import { SteroidMark } from './title/SteroidMark';
 
 // We'll define the interface inline to avoid issues
 interface SlideCard {
@@ -22,10 +24,9 @@ export interface SlideSchema {
 export const TitleSlide = ({ slide }: { slide: SlideSchema }) => {
     return (
         <div className="w-full h-[660px] flex flex-col items-center justify-center text-center px-4 relative z-10">
-            <div aria-hidden className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none overflow-hidden">
-                <span className="text-[17rem] font-display font-bold leading-none text-white opacity-[0.035] whitespace-nowrap blur-[2px] select-none tracking-tight">
-                    DOPING
-                </span>
+            <div aria-hidden className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
+                <div className="absolute w-[760px] h-[760px] rounded-full bg-[radial-gradient(circle,rgba(225,29,72,0.10),transparent_65%)]" />
+                <SteroidMark className="w-[780px] max-w-none opacity-[0.24] translate-x-10 -translate-y-[120px]" />
             </div>
             <motion.p
                 initial={{ opacity: 0, y: 30 }}
@@ -41,7 +42,7 @@ export const TitleSlide = ({ slide }: { slide: SlideSchema }) => {
                 whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 viewport={{ once: false, amount: 0.5 }}
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="text-8xl font-display leading-[1.02] font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-500 mb-8 max-w-5xl drop-shadow-2xl"
+                className="text-8xl font-display leading-[1.02] font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400 mb-7 max-w-5xl drop-shadow-2xl"
             >
                 {slide.title}
             </motion.h1>
@@ -50,7 +51,7 @@ export const TitleSlide = ({ slide }: { slide: SlideSchema }) => {
                 whileInView={{ opacity: 1, width: '6rem' }}
                 viewport={{ once: false, amount: 0.5 }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="h-[2px] bg-gradient-to-r from-transparent via-brand-crimson to-transparent mb-8"
+                className="h-[2px] bg-gradient-to-r from-transparent via-brand-crimson to-transparent mb-7"
             />
             <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -61,6 +62,9 @@ export const TitleSlide = ({ slide }: { slide: SlideSchema }) => {
             >
                 {slide.subtitle.replace(/\s+/g, ' ')}
             </motion.p>
+            <div className="mt-10">
+                <Chromatogram />
+            </div>
             <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
