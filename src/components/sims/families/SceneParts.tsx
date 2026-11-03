@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import type { Pt } from './geometry';
-import { MONO, BODY, arrowHead } from './svgUtil';
+import { BODY, arrowHead } from './svgUtil';
 
 interface CurvedArrowProps {
     readonly from: Pt;
@@ -30,7 +30,7 @@ export const CurvedArrow = ({ from, ctrl, to, color, label, labelAt, at, still }
         />
         <motion.text
             x={labelAt[0]} y={labelAt[1]} textAnchor="middle" fill={color}
-            fontFamily={MONO} fontSize={15} fontWeight={600}
+            fontFamily={BODY} fontSize={19} fontWeight={700}
             initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ delay: at + 0.2, duration: 0.4 }}
         >
@@ -51,7 +51,7 @@ interface CaptionProps {
     readonly weight?: number;
 }
 
-export const Caption = ({ x, y, text, color = '#E5E7EB', at, still, size = 15, anchor = 'middle', weight = 600 }: CaptionProps) => (
+export const Caption = ({ x, y, text, color = '#E5E7EB', at, still, size = 19, anchor = 'middle', weight = 600 }: CaptionProps) => (
     <motion.text
         x={x} y={y} textAnchor={anchor} fill={color} fontFamily={BODY} fontSize={size} fontWeight={weight}
         initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }}

@@ -3,10 +3,10 @@
  * fração restante = 0,5^(t / t½), com os t½ dos cartões (Clen ~35 h; Salbutamol ~4 a 6 h).
  */
 
-export const VB = { w: 744, h: 362 } as const;
-export const PLOT = { l: 178, r: 732 } as const;
-export const BAND = { y: 2, h: 20 } as const;
-export const LANES = { top: 28, bottom: 318, gap: 8 } as const;
+export const VB = { w: 744, h: 368 } as const;
+export const PLOT = { l: 192, r: 732 } as const;
+export const BAND = { y: 2, h: 22 } as const;
+export const LANES = { top: 30, bottom: 318, gap: 8 } as const;
 export const AXIS_Y = 322;
 
 export const T_MIN_H = 1;

@@ -7,7 +7,11 @@ const AMBER = '#F59E0B';
 
 const BAR_X = 160;
 const UNIT = 128;
-const LANES = [280, 310, 340];
+/** Posição das três pistas de T dentro do tecido (relativa ao topo do tecido). */
+const LANE_OFFSETS = [80, 114, 148] as const;
+const TISSUE_Y = 204;
+const TISSUE_H = 192;
+const LANES = LANE_OFFSETS.map(o => TISSUE_Y + o);
 
 interface TissueProps {
     x: number;
@@ -24,14 +28,14 @@ const Tissue = ({ x, title, sub, converts, delay }: TissueProps) => {
     const mid = x + w / 2;
     return (
         <g>
-            <rect x={x} y={214} width={w} height={160} rx={14} fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" />
-            <text x={x + 14} y={238} fill="#F3F4F6" fontSize={15} fontWeight={700} className="font-body">{title}</text>
-            <text x={x + 14} y={257} fill={converts ? '#FCD34D' : '#D1D5DB'} fontSize={13} className="font-body">{sub}</text>
+            <rect x={x} y={TISSUE_Y} width={w} height={TISSUE_H} rx={14} fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" />
+            <text x={x + 14} y={TISSUE_Y + 26} fill="#F3F4F6" fontSize={16} fontWeight={700} className="font-body">{title}</text>
+            <text x={x + 14} y={TISSUE_Y + 47} fill={converts ? '#FCD34D' : '#E5E7EB'} fontSize={15} className="font-body">{sub}</text>
             {/* enzima 5α-redutase */}
-            {(converts ? LANES.map(y => [mid, y]) : [[x + w - 34, 236]]).map(([ex, y]) => (
+            {(converts ? LANES.map(y => [mid, y]) : [[x + w - 34, TISSUE_Y + 24]]).map(([ex, y]) => (
                 <g key={y}>
-                    <rect x={ex - 17} y={y - 11} width={34} height={22} rx={6} fill="rgba(245,158,11,0.18)" stroke={AMBER} strokeWidth={1.2} />
-                    <text x={ex} y={y + 4} textAnchor="middle" fill="#FCD34D" fontSize={12} fontWeight={700} className="font-mono">5αR</text>
+                    <rect x={ex - 22} y={y - 13} width={44} height={26} rx={7} fill="rgba(245,158,11,0.18)" stroke={AMBER} strokeWidth={1.2} />
+                    <text x={ex} y={y + 5} textAnchor="middle" fill="#FCD34D" fontSize={15} fontWeight={700} className="font-mono">5αR</text>
                 </g>
             ))}
             {LANES.map((y, i) => {
@@ -49,8 +53,8 @@ const Tissue = ({ x, title, sub, converts, delay }: TissueProps) => {
                             animate={still || !converts ? undefined : { opacity: [1, 1, 0, 0] }}
                             transition={{ ...trans, times }}
                         >
-                            <circle cx={0} cy={y} r={12} fill={PURPLE} opacity={0.9} />
-                            <text x={0} y={y + 4} textAnchor="middle" fill="#fff" fontSize={12} fontWeight={700} className="font-mono">T</text>
+                            <circle cx={0} cy={y} r={14} fill={PURPLE} opacity={0.95} />
+                            <text x={0} y={y + 5} textAnchor="middle" fill="#fff" fontSize={15} fontWeight={700} className="font-mono">T</text>
                         </motion.g>
                         {converts && (
                             <motion.g
@@ -58,15 +62,15 @@ const Tissue = ({ x, title, sub, converts, delay }: TissueProps) => {
                                 animate={still ? undefined : { opacity: [0, 0, 1, 1] }}
                                 transition={{ ...trans, times }}
                             >
-                                <circle cx={0} cy={y} r={16} fill={AMBER} />
-                                <text x={0} y={y + 4} textAnchor="middle" fill="#1F1300" fontSize={12} fontWeight={800} className="font-mono">DHT</text>
+                                <circle cx={0} cy={y} r={21} fill={AMBER} />
+                                <text x={0} y={y + 5} textAnchor="middle" fill="#1F1300" fontSize={15} fontWeight={800} className="font-mono">DHT</text>
                             </motion.g>
                         )}
                     </motion.g>
                 );
             })}
             {converts && (
-                <text x={x + w - 14} y={365} textAnchor="end" fill="#FCD34D" fontSize={13} fontWeight={600} className="font-body">DHT: 3× mais androgênica</text>
+                <text x={x + w - 14} y={TISSUE_Y + TISSUE_H - 10} textAnchor="end" fill="#FCD34D" fontSize={15} fontWeight={600} className="font-body">DHT: 3× mais androgênica</text>
             )}
         </g>
     );
@@ -77,15 +81,15 @@ export const StageRatio = () => {
     const still = useReducedMotion();
     const t = (delay: number, duration = 0.6) => (still ? { duration: 0 } : { delay, duration, ease: EASE });
     const rows = [
-        { y: 74, label: 'Testosterona', units: 1, value: '1×', note: 'referência', color: '#9CA3AF' },
-        { y: 130, label: 'Trembolona', units: 3, value: '3×', note: '', color: PURPLE },
+        { y: 70, label: 'Testosterona', units: 1, value: '1×', note: 'referência', color: '#CBD5E1' },
+        { y: 116, label: 'Trembolona', units: 3, value: '3×', note: '', color: PURPLE },
     ];
     return (
         <svg viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} className="w-full h-full" role="img" aria-label="Trembolona liga-se ao AR 3 vezes mais forte que a testosterona; 5α-redutase converte T em DHT">
-            <text x={20} y={30} fill="#9CA3AF" fontSize={12} className="font-mono" letterSpacing={1.5}>AFINIDADE PELO RECEPTOR ANDROGÊNICO (AR)</text>
+            <text x={20} y={28} fill="#CBD5E1" fontSize={15} className="font-mono" letterSpacing={1}>AFINIDADE PELO RECEPTOR ANDROGÊNICO (AR)</text>
             {rows.map((r, i) => (
                 <g key={r.label}>
-                    <text x={20} y={r.y + 5} fill="#F3F4F6" fontSize={15} fontWeight={600} className="font-body">{r.label}</text>
+                    <text x={20} y={r.y + 5} fill="#F3F4F6" fontSize={16} fontWeight={600} className="font-body">{r.label}</text>
                     {Array.from({ length: r.units }, (_, k) => (
                         <motion.rect
                             key={k}
@@ -101,26 +105,26 @@ export const StageRatio = () => {
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(0.8 + i * 1.1)}
                     >{r.value}</motion.text>
                     {r.note && (
-                        <motion.text x={BAR_X + r.units * UNIT + 44} y={r.y + 5} fill="#9CA3AF" fontSize={13} className="font-body"
+                        <motion.text x={BAR_X + r.units * UNIT + 46} y={r.y + 5} fill="#E5E7EB" fontSize={15} className="font-body"
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(0.9)}>{r.note}</motion.text>
                     )}
                 </g>
             ))}
-            <motion.text x={BAR_X} y={170} fill="#D1D5DB" fontSize={13} className="font-body"
+            <motion.text x={20} y={152} fill="#E5E7EB" fontSize={15} className="font-body"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(2.2)}>
                 Trembolona liga-se ao AR 3x mais forte que a Testosterona basal
             </motion.text>
 
-            <line x1={20} x2={580} y1={186} y2={186} stroke="rgba(255,255,255,0.1)" />
-            <text x={20} y={206} fill="#9CA3AF" fontSize={12} className="font-mono" letterSpacing={1.5}>SELETIVIDADE TECIDUAL · 5α-REDUTASE (T → DHT)</text>
+            <line x1={20} x2={580} y1={170} y2={170} stroke="rgba(255,255,255,0.1)" />
+            <text x={20} y={192} fill="#CBD5E1" fontSize={15} className="font-mono" letterSpacing={0}>SELETIVIDADE TECIDUAL · 5α-REDUTASE (T → DHT)</text>
 
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(2.4)}>
                 <Tissue x={20} title="Músculo" sub="baixa 5α-redutase" converts={false} delay={2.6} />
                 <Tissue x={310} title="Próstata e couro cabeludo" sub="alta 5α-redutase" converts delay={2.6} />
-                <text x={20} y={394} fill="#D1D5DB" fontSize={13} className="font-body">
+                <text x={20} y={422} fill="#E5E7EB" fontSize={15} className="font-body">
                     <tspan fill="#F3F4F6" fontWeight={600}>Resistem à 5α-redução</tspan> (ex.: Trembolona, Nandrolona):
                 </text>
-                <text x={20} y={411} fill="#D1D5DB" fontSize={13} className="font-body">efeitos androgênicos periféricos reduzidos.</text>
+                <text x={20} y={442} fill="#E5E7EB" fontSize={15} className="font-body">efeitos androgênicos periféricos reduzidos.</text>
             </motion.g>
         </svg>
     );

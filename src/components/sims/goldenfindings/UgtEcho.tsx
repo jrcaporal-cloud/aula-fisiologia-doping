@@ -112,8 +112,8 @@ export const UgtEcho = ({ compact }: EchoProps) => {
                             initial={reduce ? false : { width: 0 }} animate={{ width: Math.max(gx(res.value) - GAUGE.x, 8) }}
                             transition={{ duration: d(1.1), delay: d(base + 1.9), ease: EASE }} />
                         <line x1={gx(TE_LIMIT)} x2={gx(TE_LIMIT)} y1={y + 2} y2={y + 30} stroke="#fff" strokeWidth={2 * k} />
-                        {ri === 0 && <Label compact={compact} x={gx(TE_LIMIT)} y={y - 2} anchor="middle" size={12} mono fill="#E5E7EB">limite {TE_LIMIT}:1</Label>}
-                        <Label compact={compact} x={GAUGE.x} y={y - 22} size={19} weight={800} fill={row.color} delay={base + 2.4}>T/E {res.label}</Label>
+                        {ri === 0 && <Label compact={compact} x={gx(TE_LIMIT)} y={y - 5} anchor="middle" size={15} mono fill="#E5E7EB">limite {TE_LIMIT}:1</Label>}
+                        <Label compact={compact} x={GAUGE.x} y={y - 29} size={19} weight={800} fill={row.color} delay={base + 2.4}>T/E {res.label}</Label>
                         <Label compact={compact} x={GAUGE.x} y={y + 50} size={15} weight={600} fill={del ? '#FDA4AF' : '#A5F3FC'} delay={base + 2.6}>{res.verdict}</Label>
                     </g>
                 );

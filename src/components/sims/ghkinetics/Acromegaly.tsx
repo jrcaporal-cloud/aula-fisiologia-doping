@@ -64,7 +64,7 @@ export const Acromegaly = () => {
     const reduce = useReducedMotion();
     const t = { delay: reduce ? 0 : 0.5, duration: reduce ? 0 : 1.8, ease: [0.45, 0, 0.2, 1] as const };
     return (
-        <svg viewBox="0 0 330 236" className="w-full h-auto block" role="img" aria-label="Perfil, mão e pé antes (tracejado) e com acromegalia">
+        <svg viewBox="0 0 330 236" className="block h-full w-full" role="img" aria-label="Perfil, mão e pé antes (tracejado) e com acromegalia">
             {/* cabeça em perfil */}
             <g transform="translate(-6,4) scale(0.95)">
                 <path d={HEAD_N} fill="none" stroke="rgba(229,231,235,0.55)" strokeWidth={1.6} strokeDasharray="4 4" />
@@ -96,3 +96,14 @@ export const Acromegaly = () => {
         </svg>
     );
 };
+
+/** Passo 5: a silhueta ocupa o lugar do gráfico (que sai de cena) e as duas frases de fechamento viram legenda. */
+export const AcromegalyStage = () => (
+    <div className="absolute inset-0 flex flex-col">
+        <div className="space-y-0.5 pt-1 font-body text-[17px] font-semibold leading-snug">
+            <p className="text-gray-50">noite após noite, o rhGH some do plasma antes das 6h…</p>
+            <p style={{ color: '#FCD34D' }}>…mas o uso crônico expande tecido conjuntivo e ósseo</p>
+        </div>
+        <div className="min-h-0 flex-1"><Acromegaly /></div>
+    </div>
+);

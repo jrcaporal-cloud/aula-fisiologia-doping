@@ -7,9 +7,9 @@ import { FIBER, LocalFiber } from './LocalFiber';
  * tensão produz MGF no próprio local do dano (local). No passo 2 os dois chegam à mesma fibra.
  */
 
-export const SCENE = { w: 720, h: 440 } as const;
+export const SCENE = { w: 720, h: 424 } as const;
 const BODY = 'var(--font-body)';
-const VESSEL_Y = 268;
+const VESSEL_Y = 258;
 const LIVER_OUT = { x: 120, y: 150 } as const;
 const TRUNK = `M${LIVER_OUT.x},${LIVER_OUT.y} L${LIVER_OUT.x},${VESSEL_Y - 26} Q${LIVER_OUT.x},${VESSEL_Y} ${LIVER_OUT.x + 26},${VESSEL_Y}`;
 
@@ -19,17 +19,17 @@ const TARGETS: readonly Target[] = [
     { x: 430, name: 'Adipócito', effect: 'lipólise · AGL' },
     { x: 616, name: 'Outras células-alvo', effect: 'síntese proteica' },
 ];
-const TARGET_TOP = 336;
+const TARGET_TOP = 322;
 const FIBER_BRANCH_X = 654;
 
 const branchPath = (x: number): string => `${TRUNK} L${x},${VESSEL_Y} L${x},${TARGET_TOP}`;
 const FIBER_PATH = `${TRUNK} L${FIBER_BRANCH_X},${VESSEL_Y} L${FIBER_BRANCH_X},${FIBER.y1 + 2}`;
 const LIVER_D = 'M34,92 C32,60 82,44 146,46 C198,48 234,62 230,84 C226,104 188,116 158,134 C128,152 88,156 60,144 C42,136 34,116 34,92 Z';
 
-const Text = ({ x, y, text, color = '#E5E7EB', size = 13, anchor = 'middle', weight = 600 }: {
+const Text = ({ x, y, text, color = '#E5E7EB', size = 16, anchor = 'middle', weight = 600 }: {
     x: number; y: number; text: string; color?: string; size?: number; anchor?: 'start' | 'middle' | 'end'; weight?: number;
 }) => (
-    <text x={x} y={y} textAnchor={anchor} fontSize={size} fontWeight={weight} fill={color}
+    <text x={x} y={y} textAnchor={anchor} fontSize={size * 1.07} fontWeight={weight} fill={color}
         style={{ fontFamily: BODY, paintOrder: 'stroke', stroke: '#080812', strokeWidth: 4, strokeLinejoin: 'round' }}>{text}</text>
 );
 
@@ -94,16 +94,16 @@ export const SystemicLocalScene = ({ step, boost }: SceneProps) => {
         <svg viewBox={`0 0 ${SCENE.w} ${SCENE.h}`} className="absolute inset-0 w-full h-full block" preserveAspectRatio="xMidYMid meet" role="img"
             aria-label="Fígado enviando IGF-1 pelo sangue a todas as células e fibra muscular produzindo MGF no local do dano">
             {/* ── Sistêmico ── */}
-            <motion.g animate={{ opacity: systemicOn ? 1 : 0.28 }} transition={{ duration: 0.6 }}>
+            <motion.g animate={{ opacity: systemicOn ? 1 : 0.6 }} transition={{ duration: 0.6 }}>
                 <path d={LIVER_D} fill="rgba(159,18,57,0.55)" stroke={COLORS.liver} strokeWidth={2} />
-                <Text x={132} y={92} text="Fígado" size={17} color="#FFF1F2" weight={700} />
-                <Text x={132} y={112} text="IGF-1 hepático" size={13} color="#FECDD3" />
+                <Text x={132} y={92} text="Fígado" size={19} color="#FFF1F2" weight={700} />
+                <Text x={132} y={112} text="IGF-1 hepático" size={16} color="#FECDD3" />
                 <g>
                     <circle cx={292} cy={84} r={30} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={10} />
                     <motion.circle cx={292} cy={84} r={30} fill="none" stroke={COLORS.igf} strokeWidth={10} strokeLinecap="butt"
                         transform="rotate(-90 292 84)" initial={{ pathLength: 0 }} animate={{ pathLength: 0.7 }} transition={{ duration: reduce ? 0 : 1.2, delay: 0.3 }} />
-                    <Text x={292} y={90} text="~70%" size={15} color="#FFFFFF" weight={700} />
-                    <Text x={292} y={136} text="do IGF-1 circulante" size={12.5} color="#BFDBFE" />
+                    <Text x={292} y={90} text="~70%" size={17} color="#FFFFFF" weight={700} />
+                    <Text x={280} y={138} text="do IGF-1 circulante" size={15.5} color="#BFDBFE" />
                 </g>
 
                 {/* vaso */}
@@ -112,7 +112,7 @@ export const SystemicLocalScene = ({ step, boost }: SceneProps) => {
                 {TARGETS.map(t => (
                     <path key={t.x} d={`M${t.x},${VESSEL_Y} L${t.x},${TARGET_TOP}`} stroke="rgba(225,29,72,0.22)" strokeWidth={10} strokeLinecap="round" />
                 ))}
-                <Text x={150} y={VESSEL_Y - 20} text="sangue → todo o organismo" anchor="start" color="#FDA4AF" size={13} />
+                <Text x={150} y={VESSEL_Y - 20} text="sangue → todo o organismo" anchor="start" color="#FDA4AF" size={16} />
 
                 {TARGETS.map((t, i) => (
                     <g key={t.name}>
@@ -120,30 +120,30 @@ export const SystemicLocalScene = ({ step, boost }: SceneProps) => {
                         {i === 1 && <FatIcon x={t.x} />}
                         {i === 2 && <CellsIcon x={t.x} />}
                         <Receptor x={t.x} y={TARGET_TOP} />
-                        <Text x={t.x} y={TARGET_TOP + 74} text={t.name} size={14} color="#FFFFFF" />
-                        <Text x={t.x} y={TARGET_TOP + 93} text={t.effect} size={13} color="#93C5FD" />
+                        <Text x={t.x} y={TARGET_TOP + 74} text={t.name} size={16.5} color="#FFFFFF" />
+                        <Text x={t.x} y={TARGET_TOP + 93} text={t.effect} size={16} color="#93C5FD" />
                     </g>
                 ))}
-                <Text x={TARGETS[0].x - 66} y={TARGET_TOP + 4} text="IGF-1R" size={12.5} color="#93C5FD" anchor="end" />
+                <Text x={TARGETS[0].x - 66} y={TARGET_TOP + 4} text="IGF-1R" size={15.5} color="#93C5FD" anchor="end" />
                 {systemicOn && !reduce && <Particles paths={flowPaths} color={COLORS.igf} dur={4.2} />}
             </motion.g>
 
             {/* ── Local (zoom) ── */}
-            <motion.g animate={{ opacity: localOn ? 1 : 0.22 }} transition={{ duration: 0.6 }}>
-                <rect x={356} y={16} width={352} height={206} rx={16} fill="rgba(6,78,59,0.14)" stroke="rgba(52,211,153,0.45)" strokeWidth={1.4} />
-                <Text x={372} y={40} text="Zoom · fibra sob tensão mecânica" anchor="start" size={13.5} color="#A7F3D0" />
+            <motion.g animate={{ opacity: localOn ? 1 : 0.6 }} transition={{ duration: 0.6 }}>
+                <rect x={356} y={16} width={352} height={212} rx={16} fill="rgba(6,78,59,0.14)" stroke="rgba(52,211,153,0.45)" strokeWidth={1.4} />
+                <Text x={372} y={40} text="Zoom · fibra sob tensão mecânica" anchor="start" size={16.5} color="#A7F3D0" />
                 <LocalFiber active={localOn} boost={boost} />
-                <Text x={FIBER.x0 + 2} y={FIBER.y1 + 26} text="células satélite → novos mionúcleos" anchor="start" size={13} color="#D1FAE5" />
-                <Text x={530} y={FIBER.y1 + 46} text="exatamente onde houve dano" anchor="middle" size={13} color="#FECACA" />
-                <Text x={612} y={78} text="MGF (IGF-1Ec)" anchor="middle" size={13.5} color="#6EE7B7" weight={700} />
+                <Text x={FIBER.x0 + 2} y={FIBER.y1 + 26} text="células satélite → novos mionúcleos" anchor="start" size={16} color="#D1FAE5" />
+                <Text x={530} y={FIBER.y1 + 46} text="exatamente onde houve dano" anchor="middle" size={16} color="#FECACA" />
+                <Text x={612} y={78} text="MGF (IGF-1Ec)" anchor="middle" size={16.5} color="#6EE7B7" weight={700} />
                 {localOn && boost && (
-                    <Text x={698} y={214} text="+ GH exógeno: 3–5×" anchor="end" size={13.5} color="#FCD34D" weight={700} />
+                    <Text x={698} y={220} text="+ GH exógeno: 3–5×" anchor="end" size={16.5} color="#FCD34D" weight={700} />
                 )}
             </motion.g>
 
             {/* lupa: o músculo do corpo é a fibra do zoom */}
             <motion.g animate={{ opacity: localOn ? 1 : 0 }} transition={{ duration: 0.5 }}>
-                <path d={`M${TARGETS[0].x + 40},${TARGET_TOP + 6} L366,214`} stroke="rgba(167,243,208,0.45)" strokeDasharray="4 4" fill="none" />
+                <path d={`M${TARGETS[0].x + 40},${TARGET_TOP + 6} L366,220`} stroke="rgba(167,243,208,0.45)" strokeDasharray="4 4" fill="none" />
                 <rect x={TARGETS[0].x - 60} y={TARGET_TOP + 2} width={120} height={52} rx={24} fill="none" stroke="rgba(167,243,208,0.6)" strokeDasharray="4 4" />
             </motion.g>
 

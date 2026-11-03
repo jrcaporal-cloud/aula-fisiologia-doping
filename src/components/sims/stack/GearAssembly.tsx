@@ -24,7 +24,7 @@ const holes = (g: GearSpec, count: number) =>
 const ROLE_POS: readonly { x: number; y: number; anchor: 'middle' | 'end' }[] = [
     { x: GEARS[0].cx, y: GEARS[0].cy + GEARS[0].r + 34, anchor: 'middle' },
     { x: GEARS[1].cx, y: GEARS[1].cy - GEARS[1].r - 22, anchor: 'middle' },
-    { x: GEARS[2].cx, y: GEARS[2].cy + GEARS[2].r + 36, anchor: 'middle' },
+    { x: GEAR_VIEW.w - 14, y: GEARS[2].cy + GEARS[2].r + 40, anchor: 'end' },
 ];
 
 interface GearProps {
@@ -43,7 +43,7 @@ const Gear = ({ index, piece, engaged, focus, ghost, alarm, reduced, setRef, onS
     const g = GEARS[index];
     const c = piece.color;
     const fill = ghost ? 'transparent' : `url(#stack-fill-${piece.id})`;
-    const nameSize = index === 0 ? 34 : index === 1 ? 20 : 14;
+    const nameSize = index === 0 ? 34 : index === 1 ? 20 : 16;
     const lineGap = nameSize * 1.05;
     const lines = piece.gearLines;
     const nameY0 = g.cy - ((lines.length - 1) * lineGap) / 2 + nameSize * 0.36;
@@ -88,36 +88,37 @@ const Gear = ({ index, piece, engaged, focus, ghost, alarm, reduced, setRef, onS
                     {lines.map((line, k) => (
                         <text
                             key={line}
-                            x={g.cx} y={nameY0 + k * lineGap} textAnchor="middle"
+                            x={g.cx + (ghost ? 8 : 0)} y={nameY0 + k * lineGap} textAnchor="middle"
                             fontFamily={DISPLAY} fontWeight={700} fontSize={nameSize}
-                            fill={ghost ? piece.soft : '#fff'} opacity={ghost ? 0.75 : 1}
-                            style={{ pointerEvents: 'none' }}
+                            fill={ghost ? piece.soft : '#fff'}
+                            style={{ pointerEvents: 'none', ...(ghost ? { paintOrder: 'stroke', stroke: '#050510', strokeWidth: 4, strokeLinejoin: 'round' as const } : {}) }}
                         >
                             {line}
                         </text>
                     ))}
                     <text
                         x={role.x} y={role.y} textAnchor={role.anchor}
-                        fontFamily={MONO} fontSize={13} fontWeight={600} letterSpacing="0.06em"
+                        fontFamily={MONO} fontSize={16} fontWeight={600} letterSpacing="0.04em"
                         fill={piece.soft} style={{ pointerEvents: 'none', textTransform: 'uppercase' }}
                     >
                         {piece.role}
                     </text>
-                    {ghost && (
+                    {ghost && ['não aparece', 'no teste'].map((line, k) => (
                         <motion.text
-                            x={role.x} y={role.y + 20} textAnchor="middle" fontFamily={MONO} fontSize={13} fontWeight={700}
+                            key={line}
+                            x={role.x} y={role.y + 22 * (k + 1)} textAnchor={role.anchor} fontFamily={MONO} fontSize={16} fontWeight={700}
                             fill="#FDA4AF" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
                             style={{ pointerEvents: 'none' }}
                         >
-                            não aparece no teste
+                            {line}
                         </motion.text>
-                    )}
+                    ))}
                 </>
             ) : (
                 // O grupo está deslocado para a animação de entrada; a vaga fica no lugar final.
                 <g transform={reduced ? undefined : 'translate(-46 34)'}>
                     <circle cx={g.cx} cy={g.cy} r={g.r + 4} fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.28)" strokeWidth={1.5} strokeDasharray="5 7" />
-                    <text x={g.cx} y={g.cy + 5} textAnchor="middle" fontFamily={MONO} fontSize={13} fill="#9CA3AF" style={{ pointerEvents: 'none' }}>
+                    <text x={g.cx} y={g.cy + 5} textAnchor="middle" fontFamily={MONO} fontSize={16} fill="#CBD5E1" style={{ pointerEvents: 'none' }}>
                         peça {index + 1}
                     </text>
                 </g>
@@ -150,8 +151,8 @@ export const GearAssembly = ({ step, reduced, onSelect }: GearAssemblyProps) => 
                 ))}
             </defs>
 
-            <text x={20} y={34} fontFamily={MONO} fontSize={13} letterSpacing="0.14em" fill="#D1D5DB">ENGRENAGEM DO STACK</text>
-            <text x={20} y={56} fontFamily={BODY} fontSize={14} fill="#9CA3AF">3 classes · sistemas e receptores diferentes</text>
+            <text x={20} y={34} fontFamily={MONO} fontSize={16} letterSpacing="0.1em" fill="#D1D5DB">ENGRENAGEM DO STACK</text>
+            <text x={20} y={58} fontFamily={BODY} fontSize={16} fill="#CBD5E1">3 classes · sistemas e receptores diferentes</text>
 
             {PIECES.map((p, i) => (
                 <Gear

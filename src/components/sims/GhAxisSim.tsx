@@ -46,16 +46,13 @@ const GhAxisSim = () => {
     const accent = step === 0 ? '#fff' : LEVELS[step - 1].color;
 
     return (
-        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 540 }}>
+        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 546 }}>
             {/* Cabeçalho do passo + atalhos */}
-            <div className="flex items-center justify-between gap-4 h-[40px] mb-2.5">
+            <div className="flex items-center justify-between gap-4 h-[44px] mb-1.5">
                 <div className="flex items-center gap-3 min-w-0">
-                    <span className="shrink-0 font-mono text-[12px] tracking-widest uppercase px-2 py-1 rounded-md border border-white/15 text-gray-200">
-                        Passo {step + 1}/{STEPS.length}
-                    </span>
-                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 truncate">
-                        <span className="font-display text-[16px] font-semibold" style={{ color: accent }}>{info.title}</span>
-                        <span className="text-[14px] text-gray-200"> · {info.caption}</span>
+                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 leading-tight">
+                        <div className="font-display text-[17px] font-semibold" style={{ color: accent }}>{info.title}</div>
+                        <div className="text-[15px] text-gray-100">{info.caption}</div>
                     </motion.div>
                 </div>
                 <div className="flex items-center gap-1 rounded-2xl border border-white/10 p-1 shrink-0" style={CARD_BG} role="tablist" aria-label="Nível do eixo">
@@ -64,7 +61,7 @@ const GhAxisSim = () => {
                         const color = i === 0 ? '#E5E7EB' : LEVELS[i - 1].color;
                         return (
                             <button key={s.label} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative px-3 py-1.5 rounded-xl text-[13.5px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-3 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="gh-step" className="absolute inset-0 rounded-xl"
@@ -72,7 +69,7 @@ const GhAxisSim = () => {
                                         transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
                                 )}
                                 <span className="relative flex items-center gap-1.5">
-                                    {i > 0 && <span className="font-mono text-[12px]" style={{ color }}>{i}</span>}
+                                    {i > 0 && <span className="font-mono text-[14px]" style={{ color }}>{i}</span>}
                                     {s.label}
                                 </span>
                             </button>
@@ -81,17 +78,17 @@ const GhAxisSim = () => {
                 </div>
             </div>
 
-            <div className="grid gap-3" style={{ gridTemplateColumns: '430px minmax(0,1fr)', height: 488 }}>
+            <div className="grid gap-3" style={{ gridTemplateColumns: '460px minmax(0,1fr)', height: 496 }}>
                 {/* Eixo desenhado */}
                 <div className="relative rounded-2xl border border-white/10 overflow-hidden" style={CARD_BG}>
                     <AxisDiagram step={step} insulin={insulin} onSelect={setStep} />
                     {step === 3 && (
                         <button type="button" onClick={() => setInsulinChoice(!insulin)} aria-pressed={insulin}
-                            className="absolute right-3 bottom-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-semibold cursor-pointer border transition-colors"
+                            className="absolute left-3 bottom-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer border transition-colors"
                             style={insulin
                                 ? { background: 'rgba(34,211,238,0.16)', borderColor: 'rgba(34,211,238,0.7)', color: '#CFFAFE' }
                                 : { background: 'rgba(8,8,18,0.8)', borderColor: 'rgba(255,255,255,0.18)', color: '#E5E7EB' }}>
-                            <SyringeIcon size={14} /> {insulin ? 'com insulina' : '+ insulina'}
+                            <SyringeIcon size={16} /> {insulin ? 'com insulina' : '+ insulina'}
                         </button>
                     )}
                 </div>
@@ -102,18 +99,18 @@ const GhAxisSim = () => {
                     {/* Mini-gráfico do passo */}
                     <div className="rounded-2xl border border-white/10 px-3.5 pt-2.5 pb-1.5 shrink-0" style={CARD_BG}>
                         <div className="flex items-center justify-between gap-3 mb-0.5">
-                            <span className="font-display text-[14.5px] font-semibold text-white truncate">{CHART_TITLES[step]}</span>
+                            <span className="font-display text-[15px] font-semibold text-white truncate">{CHART_TITLES[step]}</span>
                             <div className="flex items-center gap-2 shrink-0">
                                 {step === 1 && (
                                     <button type="button" onClick={() => setSynergy(v => !v)} aria-pressed={synergy}
-                                        className="px-2.5 py-1 rounded-lg text-[12.5px] font-semibold cursor-pointer border transition-colors"
+                                        className="px-2.5 py-1 rounded-lg text-[14px] font-semibold cursor-pointer border transition-colors"
                                         style={synergy
                                             ? { background: 'rgba(245,158,11,0.16)', borderColor: 'rgba(245,158,11,0.7)', color: '#FDE68A' }
                                             : { background: 'transparent', borderColor: 'rgba(255,255,255,0.18)', color: '#E5E7EB' }}>
                                         + GHRH (CJC-1295)
                                     </button>
                                 )}
-                                <span className="text-[12px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
+                                <span className="text-[14px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
                                     modelo ilustrativo
                                 </span>
                             </div>

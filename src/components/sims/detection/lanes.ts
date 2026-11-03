@@ -13,7 +13,7 @@ export const COLORS = {
 } as const;
 
 const LANES_H = VB.lanesBottom - VB.lanesTop;
-const GAP = 12;
+const GAP = 10;
 
 // Amostras calculadas uma vez (o modelo é fixo).
 let cache: Record<string, Sample[]> | null = null;
@@ -81,7 +81,7 @@ const STRAT_HI = 0.55;
 /** Passo 2: estratégia off-season → clearance window → prova. */
 export const buildStratLanes = (): LaneSpec[] => {
     const s = samples();
-    const gainH = 74;
+    const gainH = 64;
     const h = (LANES_H - gainH - 2 * GAP) / 2;
     const bLong = laneBox(VB.lanesTop, h, true);
     const bShort = laneBox(VB.lanesTop + h + GAP, h, true);
@@ -100,7 +100,7 @@ export const buildStratLanes = (): LaneSpec[] => {
             detectThr: STRAT_THRESH.longDetect,
             effect: { intervals: mergeIntervals(intervals(s.long, v => v >= STRAT_THRESH.longEffect)), label: 'efeito anabólico' },
             detect: { intervals: mergeIntervals(intervals(s.long, v => v >= STRAT_THRESH.longDetect)), label: '~3 meses após a última dose' },
-                reveal: { duration: 1.6, delay: 0.2 },
+            reveal: { duration: 1.6, delay: 0.2 },
         },
         {
             box: bShort,

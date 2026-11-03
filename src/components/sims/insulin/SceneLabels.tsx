@@ -33,7 +33,7 @@ const Label = ({ position, text, color, visible, side = 'right', sub }: LabelPro
                 style={{ width: 7, height: 7, left: -3.5, top: -3.5, background: color, boxShadow: `0 0 10px ${color}` }}
             />
             <div
-                className="absolute whitespace-nowrap rounded-md border px-2 py-[3px] font-mono text-[13px] font-semibold leading-tight tracking-wide"
+                className="absolute whitespace-nowrap rounded-md border px-2 py-[3px] font-body text-[15px] font-semibold leading-tight"
                 style={{
                     transform: OFFSET[side],
                     color,
@@ -44,7 +44,7 @@ const Label = ({ position, text, color, visible, side = 'right', sub }: LabelPro
                 }}
             >
                 {text}
-                {sub && <span className="block text-[12px] font-normal text-gray-200">{sub}</span>}
+                {sub && <span className="block text-[14px] font-normal text-gray-100">{sub}</span>}
             </div>
         </div>
     </Html>
@@ -71,7 +71,7 @@ export const SceneLabels = ({ step, dose, telemetry }: SceneLabelsProps) => {
             <Label position={[pts.pi3k[0] + 0.15, pts.pi3k[1], pts.pi3k[2]]} text="PI3K" color="#c084fc" visible={cascadeOn} />
             <Label position={[pts.akt[0] + 0.15, pts.akt[1], pts.akt[2]]} text="Akt" color="#22D3EE" visible={cascadeOn} />
             <Label position={[rest[0] + 0.45, rest[1], rest[2]]} text="Vesícula GLUT4" sub="guardada no citoplasma" color="#93c5fd" visible={step <= 1} />
-            <Label position={[ch.x + 0.45, 0.45, ch.z]} text="Canal GLUT4" sub="glicose entra" color="#93c5fd" visible={step >= 2 && telemetry.open > 1} />
+            <Label position={[ch.x + 0.05, 0.5, ch.z]} text="Canal GLUT4" sub="glicose entra" color="#93c5fd" visible={step >= 2 && telemetry.open > 1} side="top" />
             <Label position={[-2.0, -2.95, 1.3]} text="Glicogênio" color="#6ee7b7" visible={step >= 2 && telemetry.glycogen > 0.3} />
             <Label
                 position={[5.4, 1.95, 0.6]}

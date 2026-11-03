@@ -64,7 +64,7 @@ export const MARKERS: readonly MarkerSpec[] = [
     {
         id: 'off', name: 'OFF-score', unit: 'Hb (g/L) − 60·√%Ret', color: '#A855F7',
         popHigh: 130, mu0: 80, sigmaW: 5,
-        domain: [40, 140], ticks: [60, 85, 130], decimals: 0,
+        domain: [40, 150], ticks: [85, 130], decimals: 0,
     },
 ];
 

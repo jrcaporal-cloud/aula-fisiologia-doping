@@ -37,14 +37,11 @@ const IgfDualSim = () => {
     const scene = step <= 2 ? 'dual' : step === 3 ? 'synergy' : 'collateral';
 
     return (
-        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 540 }}>
-            <div className="flex items-center justify-between gap-4 h-[40px] mb-2.5">
+        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 488 }}>
+            <div className="flex items-center justify-between gap-4 h-[42px] mb-1.5">
                 <div className="flex items-center gap-3 min-w-0">
-                    <span className="shrink-0 font-mono text-[12px] tracking-widest uppercase px-2 py-1 rounded-md border border-white/15 text-gray-200">
-                        Passo {step + 1}/{STEPS.length}
-                    </span>
                     <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-                        className="font-display text-[16px] font-semibold truncate" style={{ color: info.color }}>
+                        className="font-display text-[18px] font-semibold truncate" style={{ color: info.color }}>
                         {info.title}
                     </motion.span>
                 </div>
@@ -53,7 +50,7 @@ const IgfDualSim = () => {
                         const active = i === step;
                         return (
                             <button key={s.label} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative px-2.5 py-1.5 rounded-xl text-[13.5px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-2.5 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="igfd-step" className="absolute inset-0 rounded-xl"
@@ -61,7 +58,7 @@ const IgfDualSim = () => {
                                         transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
                                 )}
                                 <span className="relative flex items-center gap-1.5">
-                                    <span className="font-mono text-[12px]" style={{ color: s.color }}>{i}</span>
+                                    <span className="font-mono text-[14px]" style={{ color: s.color }}>{i + 1}</span>
                                     {s.label}
                                 </span>
                             </button>
@@ -70,22 +67,22 @@ const IgfDualSim = () => {
                 </div>
             </div>
 
-            <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 352px', height: 488 }}>
-                <div className="rounded-2xl border border-white/10 px-3.5 pt-2.5 pb-2 flex flex-col min-h-0" style={CARD_BG}>
-                    <div className="flex items-center justify-between gap-3 h-[30px]">
+            <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 360px', height: 440 }}>
+                <div className="rounded-2xl border border-white/10 px-3.5 pt-2 pb-1.5 flex flex-col min-h-0" style={CARD_BG}>
+                    <div className="flex items-center justify-between gap-3 min-h-[30px]">
                         <motion.span key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
-                            className="text-[14.5px] text-gray-100 truncate">{info.caption}</motion.span>
+                            className="text-[15px] leading-tight text-gray-100">{info.caption}</motion.span>
                         <div className="flex items-center gap-2 shrink-0">
                             {(step === 1 || step === 2) && (
                                 <button type="button" onClick={() => setBoost(b => !b)} aria-pressed={boost}
-                                    className="px-2.5 py-1 rounded-lg text-[13px] font-semibold cursor-pointer border transition-colors"
+                                    className="px-2.5 py-1 rounded-lg text-[14px] font-semibold cursor-pointer border transition-colors"
                                     style={boost
                                         ? { background: 'rgba(245,158,11,0.18)', borderColor: 'rgba(245,158,11,0.75)', color: '#FDE68A' }
                                         : { background: 'transparent', borderColor: 'rgba(255,255,255,0.18)', color: '#E5E7EB' }}>
                                     {boost ? 'com GH exógeno' : '+ GH exógeno'}
                                 </button>
                             )}
-                            <span className="text-[12px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
+                            <span className="text-[14px] font-mono uppercase tracking-wide px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
                                 esquema ilustrativo
                             </span>
                         </div>

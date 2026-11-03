@@ -15,14 +15,14 @@ interface Unit {
 }
 
 const UNITS: Unit[] = [
-    { rest: { x: 95, y: 168 }, dimer: { x: 160, y: 200 }, dna: { x: 160, y: 300 } },
-    { rest: { x: 215, y: 168 }, dimer: { x: 190, y: 200 }, dna: { x: 190, y: 300 } },
+    { rest: { x: 90, y: 168 }, dimer: { x: 160, y: 200 }, dna: { x: 160, y: 300 } },
+    { rest: { x: 238, y: 168 }, dimer: { x: 190, y: 200 }, dna: { x: 190, y: 300 } },
 ];
 const OUTSIDE_Y = 36;
 const EAA_IN_CUP = -3;
 
 const MRNA_PATH = 'M 190,300 C 190,272 176,258 175,236 C 174,212 250,204 310,222 C 360,236 392,258 410,288';
-const ROUTE_PATH = `M 215,44 C 215,140 175,168 175,${PORE.y - 4} L 175,292`;
+const ROUTE_PATH = `M 238,44 C 238,140 175,168 175,${PORE.y - 4} L 175,292`;
 
 const SARC_X0 = 410;
 const SARC_X1 = 650;
@@ -48,7 +48,7 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
     return (
         <motion.g
             initial={false}
-            animate={{ opacity: dim ? 0.2 : 1 }}
+            animate={{ opacity: dim ? 0.6 : 1 }}
             transition={t(0.5)}
             onClick={onSelect}
             style={{ cursor: 'pointer' }}
@@ -178,26 +178,26 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                         <motion.g initial={false} animate={{ x: pos.x, y: pos.y }} transition={moveT}>
                             <motion.g
                                 initial={false}
-                                animate={on(1) ? { x: -54, y: 36, opacity: 0 } : { x: -30, y: 13, opacity: 1 }}
+                                animate={on(1) ? { x: -60, y: 38, opacity: 0 } : { x: -36, y: 14, opacity: 1 }}
                                 transition={t(0.9)}
                             >
-                                <ellipse rx={24} ry={10.5} fill="#334155" stroke="#94A3B8" strokeWidth={1.2} />
-                                <text y={4.3} textAnchor="middle" fontSize={12} fill="#F1F5F9" className="font-mono" fontWeight={600}>
+                                <ellipse rx={30} ry={12.5} fill="#334155" stroke="#94A3B8" strokeWidth={1.2} />
+                                <text y={5.2} textAnchor="middle" fontSize={15} fill="#F1F5F9" className="font-mono" fontWeight={600}>
                                     HSP90
                                 </text>
                             </motion.g>
                             <motion.g
                                 initial={false}
-                                animate={on(1) ? { x: 54, y: 36, opacity: 0 } : { x: 30, y: 13, opacity: 1 }}
+                                animate={on(1) ? { x: 60, y: 38, opacity: 0 } : { x: 36, y: 14, opacity: 1 }}
                                 transition={t(0.9, 0.08)}
                             >
-                                <ellipse rx={24} ry={10.5} fill="#334155" stroke="#94A3B8" strokeWidth={1.2} />
-                                <text y={4.3} textAnchor="middle" fontSize={12} fill="#F1F5F9" className="font-mono" fontWeight={600}>
+                                <ellipse rx={30} ry={12.5} fill="#334155" stroke="#94A3B8" strokeWidth={1.2} />
+                                <text y={5.2} textAnchor="middle" fontSize={15} fill="#F1F5F9" className="font-mono" fontWeight={600}>
                                     HSP70
                                 </text>
                             </motion.g>
                             <Receptor color={GENOMIC_COLOR} />
-                            <motion.g initial={false} animate={{ opacity: on(2) ? 0 : 1 }} transition={t(0.4)}>
+                            <motion.g initial={false} animate={{ opacity: on(2) ? 0 : 1 }} transition={t(on(2) ? 0.12 : 0.4)}>
                                 <Label x={0} y={34} anchor="middle" color="#BFDBFE" weight={700}>
                                     AR
                                 </Label>
@@ -218,8 +218,8 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
             </motion.g>
 
             {/* Dimerização e coativador */}
-            <motion.g initial={false} animate={{ opacity: phase === 2 ? 1 : 0 }} transition={t(0.4)}>
-                <Label x={216} y={205} color="#BFDBFE" weight={700}>
+            <motion.g initial={false} animate={{ opacity: phase === 2 ? 1 : 0 }} transition={t(0.3, phase === 2 ? 0.3 : 0)}>
+                <Label x={220} y={205} color="#BFDBFE" weight={700}>
                     dimerização
                 </Label>
             </motion.g>

@@ -5,7 +5,7 @@ import { useSlideSteps } from '../../../store/useSlideSteps';
 import { LabPanel } from './LabPanel';
 import { ProfileCard } from './ProfileCard';
 import { ReasoningColumn } from './ReasoningColumn';
-import { CARD_BG, CASE_STEPS, type CaseData } from './types';
+import { CARD_BG, CASE_HEIGHT, CASE_STEPS, type CaseData } from './types';
 
 interface CaseFileProps {
     readonly data: CaseData;
@@ -34,15 +34,12 @@ export const CaseFile = ({ data }: CaseFileProps) => {
 
     return (
         <MotionConfig reducedMotion="user">
-            <div className="w-full font-body text-white pointer-events-auto select-none flex flex-col" style={{ height: 530 }}>
-                <div className="flex items-center justify-between gap-4 h-[40px] mb-2.5">
+            <div className="w-full font-body text-white pointer-events-auto select-none flex flex-col" style={{ height: CASE_HEIGHT }}>
+                <div className="flex items-center justify-between gap-4 h-[36px] mb-2 shrink-0">
                     <div className="flex items-center gap-3 min-w-0">
-                        <span className="shrink-0 font-mono text-[12px] tracking-widest uppercase px-2 py-1 rounded-md border border-white/15 text-gray-200">
-                            Passo {step + 1}/{CASE_STEPS}
-                        </span>
                         <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 truncate">
-                            <span className="font-display text-[16px] font-semibold" style={{ color: data.accent }}>{data.stepNames[step]}</span>
-                            <span className="text-[14px] text-gray-200"> · {data.stepCaptions[step]}</span>
+                            <span className="font-display text-[18px] font-semibold" style={{ color: data.accent }}>{data.stepNames[step]}</span>
+                            <span className="text-[15px] text-gray-200"> · {data.stepCaptions[step]}</span>
                         </motion.div>
                     </div>
                     <div className="shrink-0 flex items-center gap-2">
@@ -51,8 +48,8 @@ export const CaseFile = ({ data }: CaseFileProps) => {
                                 const active = i === step;
                                 return (
                                     <button key={name} type="button" onClick={() => setStep(i)}
-                                        className="relative px-2.5 py-1 rounded-lg text-[13px] font-semibold cursor-pointer transition-colors"
-                                        style={{ color: active ? '#fff' : i < step ? '#E5E7EB' : '#9CA3AF' }}>
+                                        className="relative px-2.5 py-1 rounded-lg text-[14px] font-semibold cursor-pointer transition-colors"
+                                        style={{ color: active ? '#fff' : i < step ? '#E5E7EB' : '#C4C9D2' }}>
                                         {active && (
                                             <motion.span layoutId={`cf-step-${data.caseNumber}`} className="absolute inset-0 rounded-lg"
                                                 style={{ background: `${data.accent}26`, border: `1px solid ${data.accent}99` }}
@@ -64,7 +61,7 @@ export const CaseFile = ({ data }: CaseFileProps) => {
                             })}
                         </div>
                         <button type="button" onClick={() => setHidden(h => !h)} aria-pressed={hidden}
-                            className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[13px] font-semibold cursor-pointer border transition-colors"
+                            className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[14px] font-semibold cursor-pointer border transition-colors"
                             style={hidden
                                 ? { borderColor: 'rgba(245,158,11,0.7)', background: 'rgba(245,158,11,0.14)', color: '#FDE68A' }
                                 : { borderColor: 'rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.03)', color: '#E5E7EB' }}>
@@ -74,10 +71,10 @@ export const CaseFile = ({ data }: CaseFileProps) => {
                     </div>
                 </div>
 
-                <div className="grid gap-3 flex-1 min-h-0" style={{ gridTemplateColumns: '290px minmax(0,1fr) 340px' }}>
+                <div className="grid gap-3 flex-1 min-h-0" style={{ gridTemplateColumns: '280px minmax(0,1fr) 370px' }}>
                     <ProfileCard data={data} step={step} revealed={revealed} />
-                    <div className="rounded-2xl border border-white/10 p-3.5 flex flex-col min-h-0" style={CARD_BG}>
-                        <div className="font-mono text-[12px] uppercase tracking-widest text-gray-200 mb-2.5">{center.title}</div>
+                    <div className="rounded-2xl border border-white/10 p-3 flex flex-col min-h-0" style={CARD_BG}>
+                        <div className="font-mono text-[14px] uppercase tracking-tight text-gray-200 mb-1.5">{center.title}</div>
                         <div className="flex-1 min-h-0">
                             {center.kind === 'labs'
                                 ? <LabPanel rows={center.rows} layout={center.layout} step={step} evidence={evidence} />

@@ -32,7 +32,7 @@ export const POWERLIFTER: CaseData = {
         layout: 'grid',
         rows: [
             { id: 'testo', label: 'Testosterona total', value: '1.850', unit: 'ng/dL', tone: 'red' },
-            { id: 'lhfsh', label: 'LH / FSH', value: '< 0,2', unit: 'mUI/mL', tone: 'red' },
+            { id: 'lhfsh', label: 'LH / FSH', value: '<\u00A00,2', unit: 'mUI/mL', tone: 'red' },
             { id: 'igf1', label: 'IGF-1', value: '380', unit: 'ng/mL', flag: 'Elevado', tone: 'amber' },
             { id: 'hct', label: 'Hematócrito', value: '52%', tone: 'red' },
         ],

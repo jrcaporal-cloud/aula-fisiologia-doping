@@ -52,12 +52,12 @@ export const UgtCallout = ({ width, reduced }: UgtCalloutProps) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: reduced ? 0 : 0.5, delay: reduced ? 0 : delay + 0.35, ease: EASE }}
             >
-                <p className="text-[15px] leading-snug text-gray-100">
+                <p className="text-[17px] leading-snug text-slate-50">
                     <span className="font-bold" style={{ color }}>*</span>{UGT_NOTE.slice(1)}
                 </p>
-                <p className="flex items-center gap-1.5 font-mono text-[13px] text-gray-300">
-                    <ArrowRight size={14} style={{ color }} />
-                    Slide 11: O Polimorfismo UGT2B17
+                <p className="flex items-center gap-1.5 font-mono text-[16px] leading-tight text-sky-200">
+                    <ArrowRight size={16} className="flex-shrink-0" style={{ color }} />
+                    Veja: O Polimorfismo UGT2B17
                 </p>
             </motion.div>
         </>

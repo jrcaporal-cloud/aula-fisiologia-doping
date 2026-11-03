@@ -4,6 +4,7 @@ import { useSlideSteps } from '../../store/useSlideSteps';
 import { COLORS, STEPS } from './ghkinetics/content';
 import { CONTROL_T, INJ_T, T_MAX, clockLabel, type Route } from './ghkinetics/model';
 import { SidePanel } from './ghkinetics/SidePanel';
+import { AcromegalyStage } from './ghkinetics/Acromegaly';
 import { TimelineChart } from './ghkinetics/TimelineChart';
 
 /**
@@ -23,14 +24,11 @@ const GhKineticsSim = () => {
     const info = STEPS[step];
 
     return (
-        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 540 }}>
-            <div className="flex items-center justify-between gap-4 h-[40px] mb-2.5">
+        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 488 }}>
+            <div className="flex items-center justify-between gap-4 h-[42px] mb-1.5">
                 <div className="flex items-center gap-3 min-w-0">
-                    <span className="shrink-0 font-mono text-[12px] tracking-widest uppercase px-2 py-1 rounded-md border border-white/15 text-gray-200">
-                        Passo {step + 1}/{STEPS.length}
-                    </span>
                     <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-                        className="font-display text-[16px] font-semibold truncate" style={{ color: info.color }}>
+                        className="font-display text-[18px] font-semibold truncate" style={{ color: info.color }}>
                         {info.title}
                     </motion.span>
                 </div>
@@ -39,7 +37,7 @@ const GhKineticsSim = () => {
                         const active = i === step;
                         return (
                             <button key={s.label} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative px-2.5 py-1.5 rounded-xl text-[13.5px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-2.5 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="ghk-step" className="absolute inset-0 rounded-xl"
@@ -47,7 +45,7 @@ const GhKineticsSim = () => {
                                         transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
                                 )}
                                 <span className="relative flex items-center gap-1.5">
-                                    <span className="font-mono text-[12px]" style={{ color: s.color }}>{i}</span>
+                                    <span className="font-mono text-[14px]" style={{ color: s.color }}>{i + 1}</span>
                                     {s.label}
                                 </span>
                             </button>
@@ -56,38 +54,38 @@ const GhKineticsSim = () => {
                 </div>
             </div>
 
-            <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 352px', height: 488 }}>
-                <div className="rounded-2xl border border-white/10 px-3.5 pt-2.5 pb-2 flex flex-col min-h-0" style={CARD_BG}>
-                    <div className="flex items-center justify-between gap-3 h-[30px]">
+            <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 360px', height: 440 }}>
+                <div className="rounded-2xl border border-white/10 px-3.5 pt-2 pb-1.5 flex flex-col min-h-0" style={CARD_BG}>
+                    <div className="flex items-center justify-between gap-3 min-h-[30px]">
                         <motion.span key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
-                            className="text-[14.5px] text-gray-100 truncate">{info.caption}</motion.span>
+                            className="text-[15px] leading-tight text-gray-100">{info.caption}</motion.span>
                         <div className="flex items-center gap-2 shrink-0">
                             {(step === 1 || step === 2) && (
                                 <div className="flex items-center gap-0.5 rounded-lg border border-white/15 p-0.5" role="radiogroup" aria-label="Via de aplicação">
                                     {ROUTES.map(r => (
                                         <button key={r.id} type="button" role="radio" aria-checked={route === r.id} onClick={() => setRoute(r.id)}
-                                            className="px-2.5 py-0.5 rounded-md text-[13px] font-semibold cursor-pointer transition-colors"
+                                            className="px-2.5 py-0.5 rounded-md text-[14px] font-semibold cursor-pointer transition-colors"
                                             style={route === r.id ? { background: 'rgba(245,158,11,0.22)', color: '#FDE68A' } : { color: '#D1D5DB' }}>
                                             {r.label}
                                         </button>
                                     ))}
                                 </div>
                             )}
-                            <span className="text-[12px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
+                            <span className="text-[14px] font-mono uppercase tracking-wide px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
                                 modelo ilustrativo
                             </span>
                         </div>
                     </div>
                     <div className="relative flex-1 min-h-0">
-                        <TimelineChart step={step} route={route} collectT={collectT} />
+                        {step === 5 ? <AcromegalyStage /> : <TimelineChart step={step} route={route} collectT={collectT} />}
                     </div>
                     {step === 3 && (
-                        <label className="flex items-center gap-3 h-[30px] text-[13.5px] text-gray-100">
+                        <label className="flex items-center gap-3 h-[28px] text-[15px] text-gray-100">
                             <span className="shrink-0 font-semibold" style={{ color: COLORS.iso20 }}>Hora da coleta</span>
                             <input type="range" min={INJ_T + 0.5} max={T_MAX - 0.5} step={0.25} value={collectT}
                                 onChange={e => setCollectT(Number(e.target.value))}
                                 className="flex-1 cursor-pointer" style={{ accentColor: COLORS.iso20 }} aria-label="Hora da coleta" />
-                            <span className="shrink-0 w-[52px] text-right font-mono">{clockLabel(collectT)}</span>
+                            <span className="shrink-0 w-[60px] text-right font-mono">{clockLabel(collectT)}</span>
                         </label>
                     )}
                 </div>

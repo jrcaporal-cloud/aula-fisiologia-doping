@@ -14,6 +14,7 @@ export type PresenterCommand =
 export type PresenterMessage = DeckState | PresenterCommand;
 
 export const openPresenterWindow = (index: number) => {
-    const url = `${window.location.pathname}?apresentador#/${index + 1}`;
+    const tempo = new URLSearchParams(window.location.search).get('tempo');
+    const url = `${window.location.pathname}?apresentador${tempo ? `&tempo=${tempo}` : ''}#/${index + 1}`;
     window.open(url, 'aula-apresentador', 'width=1280,height=800');
 };

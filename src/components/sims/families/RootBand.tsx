@@ -64,18 +64,18 @@ export const RootBand = ({ layout, width, step, still, onRoot }: RootBandProps) 
             <AnimatePresence initial={false}>
                 {intro ? (
                     <motion.div
-                        key="intro" className="absolute left-2 top-24 max-w-[260px] pointer-events-none"
+                        key="intro" className="absolute left-2 top-20 max-w-[280px] pointer-events-none"
                         initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }}
                         transition={{ delay: still ? 0 : 0.6, duration: 0.5 }}
                     >
-                        <div className="font-mono text-[12px] uppercase tracking-[0.2em] text-gray-300">Esqueleto de partida</div>
+                        <div className="font-mono text-[15px] uppercase tracking-[0.18em] text-gray-200">Esqueleto de partida</div>
                         <div className="font-display text-[38px] font-semibold leading-tight text-white mt-1">Testosterona</div>
                         <div className="text-[17px] text-gray-200 mt-1">O molde original humano.</div>
                     </motion.div>
                 ) : (
                     <motion.div
-                        key="small" className="absolute pointer-events-none font-display text-[15px] font-semibold text-gray-100"
-                        style={{ left: x0 + root.w / 2 + 10, top: root.y + root.h * 0.32 }}
+                        key="small" className="absolute pointer-events-none font-display text-[17px] font-semibold text-gray-100"
+                        style={{ left: x0 + root.w / 2 + 8, top: root.y + root.h * 0.25 }}
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.1 } }}
                         transition={{ delay: still ? 0 : 0.45, duration: 0.3 }}
                     >

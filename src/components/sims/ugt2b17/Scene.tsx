@@ -21,12 +21,12 @@ export const Scene = ({ step, genotype }: SceneProps) => {
         <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} className="w-full h-full block" role="img"
             aria-label="Esquema: testosterona no sangue, glucuronidação no fígado pela UGT2B17, rins, bexiga e frasco de coleta com a razão T/E">
             <OrganDefs />
-            <Fade on={step >= 1 && del} dim={0.16}><Intestine highlight={del && step >= 1} /></Fade>
+            <Fade on={step >= 1 && del} dim={0.8}><Intestine highlight={del && step >= 1} /></Fade>
             <Fade on={step >= 1}><Liver deleted={del} /></Fade>
-            <Fade on={testOn} dim={0.18}><Kidneys /></Fade>
-            <Fade on={testOn} dim={0.18}><Bladder urine={testOn} /></Fade>
-            <Fade on={doping} dim={0.2}><Muscle saturated={doping} /></Fade>
-            <Fade on={testOn} dim={0.18}><Cup urine={testOn} positive={doping && !del} /></Fade>
+            <Fade on={testOn} dim={0.8}><Kidneys /></Fade>
+            <Fade on={testOn} dim={0.8}><Bladder urine={testOn} /></Fade>
+            <Fade on={doping} dim={0.8}><Muscle saturated={doping} /></Fade>
+            <Fade on={testOn} dim={0.8}><Cup urine={testOn} positive={doping && !del} /></Fade>
             <Fade on={step >= 1} dim={0}><Legend /></Fade>
             <Vessel />
             <Syringe on={doping} />

@@ -46,7 +46,7 @@ export const FIGHTER: CaseData = {
             {
                 parts: [
                     { text: 'Ação preventiva: ', strong: true },
-                    { text: 'o prontuário clínico é defesa legal. Se você documentou alerta contra "fórmulas ocultas", protege a si e ajuda a estabelecer "ausência de intenção", reduzindo a suspensão de 4 para 1 ano.' },
+                    { text: 'o prontuário clínico é defesa legal. Se você documentou alerta contra "fórmulas ocultas", protege a si e ajuda a estabelecer "ausência de intenção", podendo reduzir a sanção (para produto contaminado, o Código prevê de advertência a 2 anos).' },
                 ],
             },
         ],

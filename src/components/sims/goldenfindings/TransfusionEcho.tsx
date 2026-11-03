@@ -66,24 +66,23 @@ export const TransfusionEcho = ({ compact }: EchoProps) => {
                 stroke="#60A5FA" strokeOpacity={0.35} strokeDasharray="4 5"
                 initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: d(0.5), delay: d(0.3) }}
             />
-            <Label compact={compact} x={(X(ALT_START) + xCollect) / 2} y={AXIS_Y - 10} anchor="middle" size={14} weight={600} fill="#BFDBFE" delay={0.4}>
-                treino de altitude
-            </Label>
+            <Label compact={compact} x={X(ALT_START) - 8} y={92} anchor="end" size={16} weight={600} fill="#BFDBFE" delay={0.4}>treino de</Label>
+            <Label compact={compact} x={X(ALT_START) - 8} y={112} anchor="end" size={16} weight={600} fill="#BFDBFE" delay={0.4}>altitude</Label>
 
             {/* eixo do tempo quebrado */}
             <line x1={LEFT} x2={X(T_WEEKS_END)} y1={AXIS_Y} y2={AXIS_Y} stroke="#fff" strokeOpacity={0.5} strokeWidth={1.5 * k} />
             <line x1={X(T_DAYS_START)} x2={RIGHT} y1={AXIS_Y} y2={AXIS_Y} stroke="#fff" strokeOpacity={0.5} strokeWidth={1.5 * k} />
             <path d={`M${BREAK_X - 9} ${AXIS_Y + 7} l6 -14 M${BREAK_X + 3} ${AXIS_Y + 7} l6 -14`} stroke="#fff" strokeOpacity={0.6} strokeWidth={1.5 * k} />
-            <Label compact={compact} x={(LEFT + X(T_WEEKS_END)) / 2} y={AXIS_Y + 22} anchor="middle" size={13} mono fill="#D1D5DB">semanas</Label>
-            <Label compact={compact} x={(X(T_DAYS_START) + RIGHT) / 2} y={AXIS_Y + 22} anchor="middle" size={13} mono fill="#D1D5DB">dias</Label>
+            <Label compact={compact} x={(LEFT + X(T_WEEKS_END)) / 2} y={AXIS_Y + 22} anchor="middle" size={16} mono fill="#D1D5DB">semanas</Label>
+            <Label compact={compact} x={(X(T_DAYS_START) + RIGHT) / 2} y={AXIS_Y + 22} anchor="middle" size={16} mono fill="#D1D5DB">dias</Label>
 
             {/* curvas */}
             <motion.path d={HCT_PATH} fill="none" stroke="#E11D48" strokeWidth={3 * k} strokeLinejoin="round"
                 initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: d(2.6), delay: d(0.2), ease: 'easeInOut' }} />
             <motion.path d={RET_PATH} fill="none" stroke="#22D3EE" strokeWidth={3 * k} strokeLinejoin="round"
                 initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: d(2.6), delay: d(0.2), ease: 'easeInOut' }} />
-            <Label compact={compact} x={LEFT} y={HY(hct(T_START)) - 14} size={15} weight={700} fill="#FDA4AF">Hct</Label>
-            <Label compact={compact} x={LEFT} y={RY(ret(T_START)) - 12} size={15} weight={700} fill="#A5F3FC">reticulócitos</Label>
+            <Label compact={compact} x={LEFT} y={HY(hct(T_START)) - 14} size={17} weight={700} fill="#FDA4AF">Hct</Label>
+            <Label compact={compact} x={LEFT} y={RY(ret(T_START)) - 12} size={17} weight={700} fill="#A5F3FC">reticulócitos</Label>
 
             {/* coleta e reinfusão */}
             {[{ x: xCollect, label: 'coleta', color: '#60A5FA', delay: 1.1, anchor: 'middle' as const },
@@ -91,12 +90,12 @@ export const TransfusionEcho = ({ compact }: EchoProps) => {
                 <g key={m.label}>
                     <motion.line x1={m.x} x2={m.x} y1={bagY + 26} y2={AXIS_Y} stroke={m.color} strokeWidth={1.5 * k} strokeDasharray="4 4"
                         initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 0.85 }} transition={{ duration: d(0.4), delay: d(m.delay) }} />
-                    <Label compact={compact} x={m.anchor === 'end' ? m.x - 8 : m.x} y={bagY + 44} anchor={m.anchor} size={14} weight={700} fill={m.color} delay={m.delay}>
+                    <Label compact={compact} x={m.anchor === 'end' ? m.x - 8 : m.x} y={bagY + 44} anchor={m.anchor} size={16} weight={700} fill={m.color} delay={m.delay}>
                         {m.label}
                     </Label>
                 </g>
             ))}
-            <Label compact={compact} x={xRace + 8} y={bagY + 44} size={14} weight={600} fill="#E5E7EB" delay={2.8}>prova</Label>
+            <Label compact={compact} x={xRace + 8} y={bagY + 44} size={16} weight={600} fill="#E5E7EB" delay={2.8}>prova</Label>
 
             {/* a bolsa: guardada por semanas e devolvida */}
             <motion.path d={`M${xCollect} ${bagY} L${xReinf} ${bagY}`} stroke="#BAE6FD" strokeOpacity={0.45} strokeWidth={1.5 * k} strokeDasharray="3 6"
@@ -105,12 +104,12 @@ export const TransfusionEcho = ({ compact }: EchoProps) => {
                 transition={{ x: { duration: d(1.3), delay: d(1.3), ease: EASE }, opacity: { duration: d(0.3), delay: d(1.1) } }}>
                 <g transform={compact ? 'scale(1.6)' : undefined}><Bag k={compact ? 1.4 : 1} /></g>
             </motion.g>
-            <Label compact={compact} x={xCollect + 4} y={bagY - 10} size={14} weight={600} fill="#BAE6FD" delay={1.6}>
+            <Label compact={compact} x={xReinf - 24} y={bagY - 10} anchor="end" size={16} weight={600} fill="#BAE6FD" delay={1.6}>
                 a própria bolsa · semanas
             </Label>
 
             {/* queda dos reticulócitos após a reinfusão */}
-            <Label compact={compact} x={RIGHT} y={RY(ret(T_END)) + 22} anchor="end" size={14} weight={700} fill="#A5F3FC" delay={3.1}>
+            <Label compact={compact} x={RIGHT} y={RY(ret(T_END)) + 22} anchor="end" size={16} weight={700} fill="#A5F3FC" delay={3.1}>
                 reticulócitos ↓
             </Label>
         </EchoSvg>

@@ -50,11 +50,11 @@ const Scene = ({ reduced, run }: { reduced: boolean; run: number }) => (
         {/* Membrana com β2: o GW1516 passa direto */}
         <rect x={20} y={66} width={210} height={20} rx={4} fill="rgba(252,211,77,0.12)" stroke="rgba(252,211,77,0.4)" />
         <Beta2Glyph x={92} y={70} on={false} color={C.cyan} scale={1.6} />
-        <text x={92} y={112} textAnchor="middle" className="font-mono" fontSize={13} fontWeight={700} fill="#A5F3FC">β2</text>
+        <text x={92} y={114} textAnchor="middle" className="font-mono" fontSize={18} fontWeight={700} fill="#A5F3FC">β2</text>
         <g transform="translate(92 34)">
             <path d="M -14 -14 L 14 14 M 14 -14 L -14 14" stroke={C.red} strokeWidth={5} strokeLinecap="round" />
         </g>
-        <text x={20} y={140} className="font-body" fontSize={15} fontWeight={700} fill="#FDA4AF">Não é Beta-2</text>
+        <text x={20} y={146} className="font-body" fontSize={19} fontWeight={700} fill="#FDA4AF">Não é Beta-2</text>
 
         {/* trajeto até o núcleo */}
         <path d="M 170 30 C 230 30, 300 60, 360 96" fill="none" stroke="rgba(168,85,247,0.6)" strokeWidth={2} strokeDasharray="5 5" />
@@ -63,25 +63,28 @@ const Scene = ({ reduced, run }: { reduced: boolean; run: number }) => (
             style={{ offsetPath: 'path("M 170 30 C 230 30, 300 60, 360 96")', offsetRotate: '0deg' }}>
             <GwMolecule x={0} y={0} />
         </motion.g>
-        <text x={176} y={58} className="font-mono" fontSize={13} fontWeight={700} fill="#E9D5FF">GW1516</text>
+        <text x={180} y={20} className="font-mono" fontSize={18} fontWeight={700} fill="#E9D5FF">GW1516</text>
 
         {/* Núcleo: PPARδ → PGC-1α → expressão gênica */}
         <circle cx={500} cy={110} r={100} fill="rgba(168,85,247,0.07)" stroke="#C084FC" strokeDasharray="6 5" strokeWidth={1.4} />
-        <text x={500} y={28} textAnchor="middle" className="font-mono" fontSize={12} fill="#E9D5FF">núcleo</text>
-        <path d="M 404 112 q 18 -30 52 -22 q 30 10 22 40 q -12 26 -46 20 q -30 -8 -28 -38 Z" fill="rgba(168,85,247,0.6)" stroke="#E9D5FF" />
-        <text x={441} y={124} textAnchor="middle" className="font-mono" fontSize={14} fontWeight={700} fill="#fff">PPARδ</text>
+        <text x={500} y={34} textAnchor="middle" className="font-mono" fontSize={18} fill="#F3E8FF">núcleo</text>
+        <g transform="translate(0 -8)"><path d="M 404 112 q 18 -30 52 -22 q 30 10 22 40 q -12 26 -46 20 q -30 -8 -28 -38 Z" fill="rgba(168,85,247,0.6)" stroke="#E9D5FF" />
+        <text x={441} y={126} textAnchor="middle" className="font-mono" fontSize={18} fontWeight={700} fill="#fff">PPARδ</text>
         <GwMolecule x={432} y={86} />
         <path d="M 486 116 L 520 116" stroke="#E9D5FF" strokeWidth={2} />
         <path d="M 514 110 L 522 116 L 514 122" fill="none" stroke="#E9D5FF" strokeWidth={2} />
-        <rect x={526} y={100} width={74} height={32} rx={9} fill="rgba(34,211,238,0.18)" stroke={C.cyan} />
-        <text x={563} y={121} textAnchor="middle" className="font-mono" fontSize={14} fontWeight={700} fill="#CFFAFE">PGC-1α</text>
-        <text x={500} y={170} textAnchor="middle" className="font-body" fontSize={13.5} fill="#E5E7EB">reprograma a expressão</text>
-        <text x={500} y={187} textAnchor="middle" className="font-body" fontSize={13.5} fill="#E5E7EB">genética</text>
+        <rect x={526} y={98} width={86} height={36} rx={9} fill="rgba(34,211,238,0.18)" stroke={C.cyan} />
+        <text x={569} y={123} textAnchor="middle" className="font-mono" fontSize={18} fontWeight={700} fill="#CFFAFE">PGC-1α</text></g>
+        <g className="font-body" fontSize={18} fill="#F3F4F6" textAnchor="middle">
+            <text x={500} y={158}>reprograma</text>
+            <text x={500} y={178}>a expressão</text>
+            <text x={500} y={198}>genética</text>
+        </g>
 
         {/* Feixe: rápidas → lentas oxidativas */}
-        <path d="M 500 212 C 490 222, 470 228, 440 234" fill="none" stroke="rgba(207,250,254,0.5)" strokeWidth={1.6} strokeDasharray="4 5" />
-        <g key={run} transform="translate(350 318)">
-            <ellipse cx={0} cy={0} rx={268} ry={86} fill="rgba(127,29,29,0.12)" stroke="#FCA5A5" strokeOpacity={0.4} />
+        <path d="M 500 212 C 490 224, 470 232, 440 240" fill="none" stroke="rgba(207,250,254,0.5)" strokeWidth={1.6} strokeDasharray="4 5" />
+        <g key={run} transform="translate(350 324)">
+            <ellipse cx={0} cy={0} rx={268} ry={80} fill="rgba(127,29,29,0.12)" stroke="#FCA5A5" strokeOpacity={0.4} />
             {FIBERS.map(f => (
                 <g key={f.k}>
                     <motion.circle cx={f.x} cy={f.y} r={15.5} stroke="#fff" strokeOpacity={0.25} initial={{ fill: FAST }} animate={{ fill: SLOW }}
@@ -93,13 +96,13 @@ const Scene = ({ reduced, run }: { reduced: boolean; run: number }) => (
                 </g>
             ))}
         </g>
-        <g className="font-body" fontSize={13.5} fontWeight={700}>
-            <rect x={20} y={226} width={14} height={14} rx={7} fill={FAST} />
-            <text x={40} y={238} fill="#FBCFE8">contração rápida</text>
-            <rect x={540} y={226} width={14} height={14} rx={7} fill={SLOW} stroke="#FCA5A5" />
-            <text x={560} y={238} fill="#FCA5A5">lenta oxidativa</text>
-            <circle cx={547} cy={252} r={2.4} fill="#FDE68A" />
-            <text x={560} y={256} fontWeight={400} fontSize={12} fill="#FDE68A">mitocôndrias</text>
+        <g className="font-body" fontSize={18} fontWeight={700}>
+            <rect x={20} y={216} width={16} height={16} rx={8} fill={FAST} />
+            <text x={44} y={230} fill="#FBCFE8">contração rápida</text>
+            <rect x={516} y={216} width={16} height={16} rx={8} fill={SLOW} stroke="#FCA5A5" />
+            <text x={540} y={230} fill="#FECACA">lenta oxidativa</text>
+            <circle cx={524} cy={246} r={2.8} fill="#FDE68A" />
+            <text x={540} y={252} fontWeight={600} fontSize={18} fill="#FDE68A">mitocôndrias</text>
         </g>
     </svg>
 );
@@ -110,13 +113,13 @@ export const Gw1516Scene = () => {
     return (
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-1">
-                <span className="font-display text-[16px] font-semibold text-white">Outra via: PPARδ, não β2</span>
+                <span className="font-display text-[17px] font-semibold text-white">Outra via: PPARδ, não β2</span>
                 <button type="button" onClick={() => setRun(r => r + 1)}
-                    className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-lg text-[13px] font-semibold border border-white/20 text-gray-100 cursor-pointer hover:bg-white/5">
+                    className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-lg text-[14px] font-semibold border border-white/25 text-gray-100 cursor-pointer hover:bg-white/5">
                     <RotateCcw size={14} /> repetir a conversão
                 </button>
                 <span style={{ width: 12 }} />
-                <span className="text-[12px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
+                <span className="text-[14px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
                     esquema
                 </span>
             </div>
@@ -126,13 +129,13 @@ export const Gw1516Scene = () => {
 };
 
 export const CarcinogenBox = () => (
-    <motion.div className="rounded-2xl border p-4" style={{ borderColor: 'rgba(225,29,72,0.6)', background: 'linear-gradient(160deg, rgba(225,29,72,0.22), rgba(8,8,18,0.7) 75%)' }}
+    <motion.div className="rounded-2xl border p-4 flex-1 flex flex-col justify-center" style={{ borderColor: 'rgba(225,29,72,0.6)', background: 'linear-gradient(160deg, rgba(225,29,72,0.22), rgba(8,8,18,0.7) 75%)' }}
         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.4 }}>
         <div className="flex items-center gap-2 text-rose-200">
-            <AlertOctagon size={20} />
-            <span className="font-display text-[22px] font-bold">{CARCINOGEN}</span>
+            <AlertOctagon size={24} />
+            <span className="font-display text-[26px] font-bold">{CARCINOGEN}</span>
         </div>
-        <p className="text-[14px] leading-snug mt-1.5" style={{ color: '#FFF1F2' }}>{CARCINOGEN_NOTE}</p>
-        <p className="font-mono text-[12px] text-gray-300 mt-1.5">detalhe do slide dos pilares (o caso GW501516)</p>
+        <p className="text-[18px] leading-snug mt-2" style={{ color: '#FFF1F2' }}>{CARCINOGEN_NOTE}</p>
+        <p className="font-mono text-[14px] text-gray-200 mt-2">detalhe do slide dos pilares (o caso GW501516)</p>
     </motion.div>
 );

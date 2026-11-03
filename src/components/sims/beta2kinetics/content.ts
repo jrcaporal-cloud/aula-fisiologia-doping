@@ -30,6 +30,8 @@ export const STEPS: readonly StepInfo[] = [
 export interface Para {
     readonly lead?: string;
     readonly text: string;
+    /** Trechos do próprio texto que recebem ênfase (só apresentação; o texto não muda). */
+    readonly marks?: readonly string[];
 }
 
 export interface StepText {
@@ -80,8 +82,8 @@ export const TEXTS: readonly StepText[] = [
         title: 'Zero Tolerância para Clembuterol',
         color: C.amber,
         paras: [
-            { text: 'A WADA possui Zero Tolerância (MRPL de 0,2 ng/mL) para Clembuterol.' },
-            { text: 'No entanto, devido ao histórico de contaminação alimentar mundial (China, México, onde o Clembuterol é usado clandestinamente em porcos/bois para aumento de carne magra), a WADA introduziu uma diretriz para "Gestão de Resultados" baseada na rastreabilidade isotópica quando se encontram frações de picogramas (limite de notificação < 5 ng/mL em carnes de países de risco).' },
+            { text: 'A WADA possui Zero Tolerância (MRPL de 0,2 ng/mL) para Clembuterol.', marks: ['Zero Tolerância (MRPL de 0,2 ng/mL)'] },
+            { text: 'No entanto, devido ao histórico de contaminação alimentar mundial (China, México, onde o Clembuterol é usado clandestinamente em porcos/bois para aumento de carne magra), a WADA introduziu uma diretriz para "Gestão de Resultados" baseada na rastreabilidade isotópica quando se encontram frações de picogramas (limite de notificação < 5 ng/mL em carnes de países de risco).', marks: ['Gestão de Resultados', 'limite de notificação < 5 ng/mL'] },
         ],
     },
 ];

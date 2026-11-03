@@ -10,16 +10,16 @@ export interface Rect {
 }
 
 /** Altura total do mapa (px no palco de 1280). */
-export const MAP_HEIGHT = 520;
+export const MAP_HEIGHT = 496;
 export const COL_GAP = 22;
 /** Coluna (sistema ou faixa) vai do topo até aqui; abaixo fica o rodapé. */
-export const COLUMN_HEIGHT = 470;
-export const HEADER_HEIGHT = 66;
+export const COLUMN_HEIGHT = 458;
+export const HEADER_HEIGHT = 56;
 
-const CARD_H = { system: 160, lane: 116 } as const;
-const ROW_GAP = { system: 30, lane: 16 } as const;
+const CARD_H = { system: 172, lane: 116 } as const;
+const ROW_GAP = { system: 34, lane: 16 } as const;
 const PAD_X = 12;
-const TOP = { system: HEADER_HEIGHT + 34, lane: HEADER_HEIGHT + 22 } as const;
+const TOP = { system: HEADER_HEIGHT + 16, lane: HEADER_HEIGHT + 22 } as const;
 
 export const columnRect = (width: number, col: number): Rect => {
     const w = (width - COL_GAP * 2) / 3;

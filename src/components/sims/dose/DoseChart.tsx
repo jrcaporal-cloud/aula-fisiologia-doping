@@ -54,7 +54,7 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
     const riseEndY = sy(gainAt(dose) + slope * TRIANGLE_RUN);
     /* etiqueta "+100 mg → +x kg": à direita do triângulo; perto do fim, à esquerda, sob a curva */
     const pillLeft = dose > 430;
-    const pillX = pillLeft ? cx - 112 : runEndX + 110;
+    const pillX = pillLeft ? cx - 124 : runEndX + 122;
     const pillY = pillLeft ? cy + 44 : (cy + riseEndY) / 2 + 8;
     const tanSpan = 95;
     const tan = {
@@ -114,7 +114,7 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
                         />
                         <motion.text
                             x={x0 + w / 2} y={M.top - 16} textAnchor="middle"
-                            className="font-mono" fontSize={13} fontWeight={600} letterSpacing="0.08em" fill={s.color}
+                            className="font-mono" fontSize={15} fontWeight={600} letterSpacing="0.04em" fill={s.color}
                             initial={false} animate={{ opacity: on ? 1 : 0.3 }} transition={{ duration: 0.6 }}
                         >
                             {s.bandLabel.toUpperCase()}
@@ -127,21 +127,21 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
             {Y_TICKS.map(t => (
                 <g key={`y${t}`}>
                     {t > 0 && <line x1={M.left} x2={M.left + PW} y1={sy(t)} y2={sy(t)} stroke="#FFFFFF" strokeOpacity={0.08} strokeDasharray="3 5" />}
-                    <text x={M.left - 12} y={sy(t) + 4.5} textAnchor="end" className="font-mono" fontSize={13} fill="#D4D4D8">{t}</text>
+                    <text x={M.left - 12} y={sy(t) + 5} textAnchor="end" className="font-mono" fontSize={15} fill="#E4E4E7">{t}</text>
                 </g>
             ))}
             {X_TICKS.map(t => (
                 <g key={`x${t}`}>
                     <line x1={sx(t)} x2={sx(t)} y1={sy(0)} y2={sy(0) + 6} stroke="#FFFFFF" strokeOpacity={0.5} />
-                    <text x={sx(t)} y={sy(0) + 24} textAnchor="middle" className="font-mono" fontSize={13} fill="#D4D4D8">{t}</text>
+                    <text x={sx(t)} y={sy(0) + 25} textAnchor="middle" className="font-mono" fontSize={15} fill="#E4E4E7">{t}</text>
                 </g>
             ))}
             <line x1={M.left} x2={M.left + PW} y1={sy(0)} y2={sy(0)} stroke="#FFFFFF" strokeOpacity={0.6} strokeWidth={1.5} />
             <line x1={M.left} x2={M.left} y1={M.top} y2={sy(0)} stroke="#FFFFFF" strokeOpacity={0.6} strokeWidth={1.5} />
-            <text x={M.left + PW / 2} y={CHART_H - 8} textAnchor="middle" className="font-body" fontSize={14} fill="#E4E4E7">
+            <text x={M.left + PW / 2} y={CHART_H - 8} textAnchor="middle" className="font-body" fontSize={15} fill="#E4E4E7">
                 Dose de testosterona exógena (mg)
             </text>
-            <text transform={`translate(12 ${M.top + PH / 2}) rotate(-90)`} textAnchor="middle" className="font-body" fontSize={14} fill="#E4E4E7">
+            <text transform={`translate(12 ${M.top + PH / 2}) rotate(-90)`} textAnchor="middle" className="font-body" fontSize={15} fill="#E4E4E7">
                 Ganho de massa magra (kg)
             </text>
 
@@ -216,8 +216,8 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
 
                 {/* etiqueta do triângulo */}
                 <g transform={`translate(${pillX} ${pillY})`}>
-                    <rect x={-98} y={-15} width={196} height={28} rx={14} fill="#050510" fillOpacity={0.92} stroke={cursorStage.color} strokeOpacity={0.7} />
-                    <text textAnchor="middle" y={5} className="font-mono" fontSize={13.5} fill="#F4F4F5">
+                    <rect x={-110} y={-16} width={220} height={30} rx={15} fill="#050510" fillOpacity={0.92} stroke={cursorStage.color} strokeOpacity={0.7} />
+                    <text textAnchor="middle" y={5} className="font-mono" fontSize={15} fill="#F4F4F5">
                         +100 mg → <tspan fill={cursorStage.color} fontWeight={700}>+{fmt(slope * 100, 2)} kg</tspan>
                     </text>
                 </g>
@@ -227,12 +227,12 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
 
                 {/* etiquetas nos eixos */}
                 <g transform={`translate(${cx} ${sy(0) + 24})`}>
-                    <rect x={-36} y={-16} width={72} height={26} rx={6} fill="#FFFFFF" />
-                    <text textAnchor="middle" y={2} className="font-mono" fontSize={13} fontWeight={700} fill="#050510">{Math.round(dose)} mg</text>
+                    <rect x={-40} y={-17} width={80} height={28} rx={6} fill="#FFFFFF" />
+                    <text textAnchor="middle" y={3} className="font-mono" fontSize={15} fontWeight={700} fill="#050510">{Math.round(dose)} mg</text>
                 </g>
                 <g transform={`translate(${M.left - 6} ${cy})`}>
-                    <rect x={-46} y={-13} width={44} height={26} rx={6} fill="#FFFFFF" />
-                    <text textAnchor="middle" x={-24} y={5} className="font-mono" fontSize={13} fontWeight={700} fill="#050510">{fmt(gainAt(dose))}</text>
+                    <rect x={-50} y={-14} width={48} height={28} rx={6} fill="#FFFFFF" />
+                    <text textAnchor="middle" x={-26} y={5.5} className="font-mono" fontSize={15} fontWeight={700} fill="#050510">{fmt(gainAt(dose))}</text>
                 </g>
             </motion.g>
 
@@ -240,11 +240,11 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
             <motion.g initial={false} animate={{ opacity: showCurve ? 1 : 0 }} transition={{ duration: 0.5, delay: showCurve && !reduce ? 0.9 : 0 }}>
                 <g transform={`translate(${M.left + 20} ${M.top + 22})`}>
                     <circle cx={6} cy={0} r={6} fill="#050510" stroke="#E4E4E7" strokeWidth={2.5} />
-                    <text x={20} y={4.5} className="font-body" fontSize={13.5} fill="#E4E4E7">Pontos: dados da aula</text>
-                    <rect x={0} y={22} width={14} height={4} rx={2} fill="url(#dose-legend-grad)" />
-                    <text x={20} y={28.5} className="font-body" fontSize={13.5} fill="#E4E4E7">Curva:</text>
-                    <rect x={64} y={13} width={146} height={22} rx={10} fill="#F59E0B" fillOpacity={0.16} stroke="#F59E0B" strokeOpacity={0.7} />
-                    <text x={137} y={28.5} textAnchor="middle" className="font-mono" fontSize={12} fontWeight={600} fill="#FBBF24">modelo ilustrativo</text>
+                    <text x={20} y={5} className="font-body" fontSize={15} fill="#E4E4E7">Pontos: dados da aula</text>
+                    <rect x={0} y={24} width={14} height={4} rx={2} fill="url(#dose-legend-grad)" />
+                    <text x={20} y={31} className="font-body" fontSize={15} fill="#E4E4E7">Curva:</text>
+                    <rect x={68} y={14} width={170} height={25} rx={12} fill="#F59E0B" fillOpacity={0.16} stroke="#F59E0B" strokeOpacity={0.7} />
+                    <text x={153} y={31} textAnchor="middle" className="font-mono" fontSize={15} fontWeight={600} fill="#FBBF24">modelo ilustrativo</text>
                 </g>
             </motion.g>
 

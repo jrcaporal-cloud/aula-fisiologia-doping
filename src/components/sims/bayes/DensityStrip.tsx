@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { PRIOR, Y_MAX, density, type Predictive } from './model';
-import { BOTTOM, STRIP_X0, STRIP_X1, TOP, yOf } from './layout';
+import { BOTTOM, FS, STRIP_X0, STRIP_X1, TOP, yOf } from './layout';
 
 /**
  * Faixa do Teorema de Bayes, no mesmo eixo vertical do gráfico: priori (população),
@@ -38,15 +38,15 @@ export interface DensityStripProps {
 export const DensityStrip = ({ visible, showPosterior, posterior, likelihood, likelihoodKey, flagged }: DensityStripProps) => (
     <g>
         <rect x={STRIP_X0} y={TOP} width={STRIP_X1 - STRIP_X0} height={BOTTOM - TOP} rx={8} fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.08)" />
-        <text x={(STRIP_X0 + STRIP_X1) / 2} y={TOP - 10} textAnchor="middle" fontSize={12.5} fontWeight={700} letterSpacing="0.1em" fill="#E5E7EB" style={{ fontFamily: 'var(--font-mono)' }}>
+        <text x={(STRIP_X0 + STRIP_X1) / 2} y={TOP - 10} textAnchor="middle" fontSize={FS} fontWeight={700} fill="#F3F4F6" style={{ fontFamily: 'var(--font-mono)' }}>
             TEOREMA DE BAYES
         </text>
         <line x1={BASE_X} x2={BASE_X} y1={TOP + 6} y2={BOTTOM - 6} stroke="rgba(255,255,255,0.35)" />
 
         {!visible && (
-            <text x={(STRIP_X0 + STRIP_X1) / 2} y={(TOP + BOTTOM) / 2} textAnchor="middle" fontSize={13} fill="#E5E7EB">
+            <text x={(STRIP_X0 + STRIP_X1) / 2} y={(TOP + BOTTOM) / 2} textAnchor="middle" fontSize={FS} fill="#E5E7EB">
                 <tspan x={(STRIP_X0 + STRIP_X1) / 2}>sem perfil</tspan>
-                <tspan x={(STRIP_X0 + STRIP_X1) / 2} dy={18}>individual</tspan>
+                <tspan x={(STRIP_X0 + STRIP_X1) / 2} dy={22}>individual</tspan>
             </text>
         )}
         {visible && (
@@ -74,13 +74,13 @@ export const DensityStrip = ({ visible, showPosterior, posterior, likelihood, li
         )}
 
         {/* Legenda */}
-        <g style={{ fontFamily: 'var(--font-body)', opacity: visible ? 1 : 0.35, transition: 'opacity 0.6s ease' }} fontSize={12.5}>
-            <line x1={STRIP_X0 + 4} x2={STRIP_X0 + 22} y1={BOTTOM + 18} y2={BOTTOM + 18} stroke="#CBD5E1" strokeWidth={2} strokeDasharray="5 3" />
-            <text x={STRIP_X0 + 28} y={BOTTOM + 22} fill="#E5E7EB">priori (população)</text>
-            <line x1={STRIP_X0 + 4} x2={STRIP_X0 + 22} y1={BOTTOM + 36} y2={BOTTOM + 36} stroke="#F59E0B" strokeWidth={2} />
-            <text x={STRIP_X0 + 28} y={BOTTOM + 40} fill="#E5E7EB">exame novo</text>
-            <rect x={STRIP_X0 + 4} y={BOTTOM + 47} width={18} height={9} rx={2} fill="rgba(96,165,250,0.45)" stroke="#60A5FA" />
-            <text x={STRIP_X0 + 28} y={BOTTOM + 56} fill="#E5E7EB">posteriori (atleta)</text>
+        <g style={{ fontFamily: 'var(--font-body)', opacity: visible ? 1 : 0.6, transition: 'opacity 0.6s ease' }} fontSize={FS - 1}>
+            <line x1={STRIP_X0 + 4} x2={STRIP_X0 + 22} y1={BOTTOM + 17} y2={BOTTOM + 17} stroke="#CBD5E1" strokeWidth={2} strokeDasharray="5 3" />
+            <text x={STRIP_X0 + 28} y={BOTTOM + 23} fill="#E5E7EB">priori (população)</text>
+            <line x1={STRIP_X0 + 4} x2={STRIP_X0 + 22} y1={BOTTOM + 42} y2={BOTTOM + 42} stroke="#F59E0B" strokeWidth={2} />
+            <text x={STRIP_X0 + 28} y={BOTTOM + 48} fill="#E5E7EB">exame novo</text>
+            <rect x={STRIP_X0 + 4} y={BOTTOM + 59} width={18} height={10} rx={2} fill="rgba(96,165,250,0.45)" stroke="#60A5FA" />
+            <text x={STRIP_X0 + 28} y={BOTTOM + 71} fill="#E5E7EB">posteriori (atleta)</text>
         </g>
     </g>
 );

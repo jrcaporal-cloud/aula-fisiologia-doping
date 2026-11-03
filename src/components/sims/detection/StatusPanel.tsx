@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle, CheckCircle2, type LucideIcon } from 'lucide-react';
 
 export type EffectState = 'ativo' | 'residual' | 'sem uso';
 export type TestState = 'detectável' | 'limpo';
@@ -30,24 +31,36 @@ const EFFECT_STYLE: Record<EffectState, { bg: string; fg: string }> = {
     'sem uso': { bg: 'rgba(148,163,184,0.08)', fg: '#94A3B8' },
 };
 
-const TEST_STYLE: Record<TestState, { bg: string; fg: string; border: string }> = {
-    detectável: { bg: 'rgba(225,29,72,0.18)', fg: '#FDA4AF', border: 'rgba(225,29,72,0.6)' },
-    limpo: { bg: 'rgba(16,185,129,0.16)', fg: '#6EE7B7', border: 'rgba(16,185,129,0.55)' },
+const TEST_STYLE: Record<TestState, { bg: string; fg: string; border: string; Icon: LucideIcon }> = {
+    detectável: { bg: 'rgba(225,29,72,0.18)', fg: '#FDA4AF', border: 'rgba(225,29,72,0.6)', Icon: AlertTriangle },
+    limpo: { bg: 'rgba(45,212,191,0.16)', fg: '#5EEAD4', border: 'rgba(45,212,191,0.55)', Icon: CheckCircle2 },
 };
 
-const Pill = ({ text, bg, fg, border, dot }: { text: string; bg: string; fg: string; border?: string; dot?: string }) => (
-    <span className="relative inline-flex h-7 min-w-[6.5rem] items-center justify-end overflow-hidden">
-        <AnimatePresence mode="popLayout" initial={false}>
+interface PillProps {
+    text: string;
+    bg: string;
+    fg: string;
+    border?: string;
+    dot?: string;
+    Icon?: LucideIcon;
+    compact?: boolean;
+}
+
+/** Selo de estado. Sai e entra em sequência (mode="wait"): nunca dois selos ao mesmo tempo. */
+const Pill = ({ text, bg, fg, border, dot, Icon, compact }: PillProps) => (
+    <span className={`relative inline-flex h-8 items-center justify-end ${compact ? '' : 'min-w-[8rem]'}`}>
+        <AnimatePresence mode="wait" initial={false}>
             <motion.span
                 key={text}
-                initial={{ y: 14, opacity: 0 }}
+                initial={{ y: 10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -14, opacity: 0 }}
-                transition={{ duration: 0.28, ease: 'easeOut' }}
-                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[13px] font-semibold uppercase tracking-wide"
+                exit={{ y: -10, opacity: 0 }}
+                transition={{ duration: 0.16, ease: 'easeOut' }}
+                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[14px] font-semibold uppercase tracking-wide"
                 style={{ background: bg, color: fg, border: `1px solid ${border ?? 'transparent'}` }}
             >
                 {dot && <span className="h-2 w-2 rounded-full" style={{ background: dot, boxShadow: `0 0 8px ${dot}` }} />}
+                {Icon && <Icon size={15} strokeWidth={2.4} aria-hidden />}
                 {text}
             </motion.span>
         </AnimatePresence>
@@ -56,7 +69,7 @@ const Pill = ({ text, bg, fg, border, dot }: { text: string; bg: string; fg: str
 
 const Row = ({ label, children }: { label: string; children: ReactNode }) => (
     <div className="flex items-center justify-between">
-        <span className="font-body text-[13px] text-slate-300">{label}</span>
+        <span className="font-body text-[15px] text-slate-200">{label}</span>
         {children}
     </div>
 );
@@ -64,9 +77,9 @@ const Row = ({ label, children }: { label: string; children: ReactNode }) => (
 export const StatusPanel = ({ caption, time, items, gain }: StatusPanelProps) => (
     <div className="flex h-full flex-col gap-2.5">
         <div className="rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-4 py-3">
-            <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-slate-400">Dia do teste</div>
-            <div className="mt-0.5 font-display text-[26px] font-semibold leading-tight text-white tabular-nums">{time}</div>
-            <div className="font-body text-[13px] text-slate-400">{caption}</div>
+            <div className="font-mono text-[14px] uppercase tracking-[0.12em] text-slate-300">Dia do teste</div>
+            <div className="mt-0.5 font-display text-[28px] font-semibold leading-tight text-white tabular-nums">{time}</div>
+            <div className="font-body text-[15px] text-slate-300">{caption}</div>
         </div>
         <AnimatePresence initial={false}>
             {items.map(item => (
@@ -80,7 +93,7 @@ export const StatusPanel = ({ caption, time, items, gain }: StatusPanelProps) =>
                     className="relative overflow-hidden rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] py-2.5 pl-5 pr-3"
                 >
                     <span className="absolute inset-y-0 left-0 w-1.5" style={{ background: item.color }} />
-                    <div className="mb-1 font-display text-[15px] font-semibold leading-tight text-white">{item.name}</div>
+                    <div className="mb-1 font-display text-[16.5px] font-semibold leading-tight text-white">{item.name}</div>
                     <Row label="Efeito">
                         <Pill text={item.effect} {...EFFECT_STYLE[item.effect]} dot={item.effect === 'ativo' ? item.color : undefined} />
                     </Row>
@@ -101,9 +114,9 @@ export const StatusPanel = ({ caption, time, items, gain }: StatusPanelProps) =>
                 >
                     <span className="absolute inset-y-0 left-0 w-1.5 bg-[#F59E0B]" />
                     <div className="mb-1.5 flex items-center justify-between">
-                        <span className="whitespace-nowrap font-display text-[15px] font-semibold text-white">Ganho estrutural</span>
+                        <span className="whitespace-nowrap font-display text-[16.5px] font-semibold text-white">Ganho estrutural</span>
                         <Pill text={gain.value < 0.02 ? 'ainda não' : gain.building ? 'construindo' : 'retido'}
-                            bg="rgba(245,158,11,0.16)" fg="#FCD34D" border="rgba(245,158,11,0.5)" />
+                            bg="rgba(245,158,11,0.16)" fg="#FCD34D" border="rgba(245,158,11,0.5)" compact />
                     </div>
                     <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
                         <motion.div className="h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-300"

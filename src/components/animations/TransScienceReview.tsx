@@ -17,12 +17,12 @@ const CHIPS: readonly StepChip[] = [
  * 4 diferença por modalidade · 5 o que sabemos.
  */
 export const TransScienceReview = () => {
-    const { step, count, setStep } = useSlideSteps(SCIENCE_STEPS.length);
+    const { step, setStep } = useSlideSteps(SCIENCE_STEPS.length);
     const view = step < GAP_STEP ? 'studies' : step === GAP_STEP ? 'gaps' : 'known';
     return (
         <MotionConfig reducedMotion="user">
-            <div className="not-prose w-full font-body text-white select-none flex flex-col gap-3" style={{ height: 490 }}>
-                <StepHeader step={step} count={count} title={SCIENCE_STEPS[step]} chips={CHIPS} accent="#A855F7" layoutId="ts-chip" onStep={setStep} />
+            <div className="not-prose w-full font-body text-white select-none flex flex-col gap-3" style={{ height: 510 }}>
+                <StepHeader step={step} title={SCIENCE_STEPS[step]} chips={CHIPS} accent="#A855F7" layoutId="ts-chip" onStep={setStep} />
                 <div className="flex-1 min-h-0">
                     <AnimatePresence mode="wait">
                         <motion.div key={view} className="h-full"

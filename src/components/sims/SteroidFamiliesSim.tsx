@@ -36,18 +36,15 @@ const SteroidFamiliesSim = () => {
 
     return (
         <div className="w-full font-body text-white select-none pointer-events-auto">
-            <div className="flex items-center justify-between gap-4 h-[30px] mb-2">
+            <div className="flex items-center justify-between gap-4 h-[28px] mb-1">
                 <div className="flex items-center gap-3 min-w-0">
-                    <span className="shrink-0 font-mono text-[12px] tracking-widest uppercase px-2 py-1 rounded-md border border-white/15 text-gray-200">
-                        Passo {step + 1}/{STEP_COUNT}
-                    </span>
                     <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-                        className="font-display text-[16px] font-semibold truncate"
+                        className="font-display text-[17px] font-semibold truncate"
                         style={{ color: focus >= 0 ? FAMILIES[focus].color : '#fff' }}>
                         {STEP_TITLES[step]}
                     </motion.span>
                 </div>
-                <span className="shrink-0 flex items-center gap-2 text-[13px] text-gray-200">
+                <span className="shrink-0 flex items-center gap-2 text-[15px] text-gray-100">
                     <span className="w-2.5 h-2.5 rounded-full" style={{ background: ACCENT, boxShadow: `0 0 8px ${ACCENT}` }} />
                     onde a molécula muda
                 </span>

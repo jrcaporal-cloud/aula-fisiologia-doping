@@ -8,6 +8,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 interface IllustrationProps {
     active: boolean;
     color: string;
+    /** Tamanho (unidades do viewBox) do rótulo "ATP": quem desenha escolhe para dar ~15 px na tela. */
+    labelSize?: number;
 }
 
 const VIEW = '0 0 240 170';
@@ -92,7 +94,7 @@ const Mitochondrion = ({ color }: { color: string }) => (
     </g>
 );
 
-export const MitoIllustration = ({ active, color }: IllustrationProps) => {
+export const MitoIllustration = ({ active, color, labelSize = 16 }: IllustrationProps) => {
     const still = useReducedMotion();
     return (
         <svg viewBox={VIEW} className="w-full h-full" aria-hidden>
@@ -129,10 +131,14 @@ export const MitoIllustration = ({ active, color }: IllustrationProps) => {
                         transition={{ duration: 2, repeat: Infinity, delay: i * 0.33, ease: 'easeOut' }}
                     >
                         <circle r="5" fill="#fbbf24" />
-                        <text y="2" textAnchor="middle" fontSize="5" fontWeight="700" fill="#78350f">ATP</text>
                     </motion.g>
                 </g>
             ))}
+
+            {/* Legenda das bolhas: texto fixo e legível (as bolhas animadas não carregam texto) */}
+            <text x="228" y={labelSize + 4} textAnchor="end" fontSize={labelSize} fontWeight="700" fill="#fbbf24">
+                ATP
+            </text>
         </svg>
     );
 };

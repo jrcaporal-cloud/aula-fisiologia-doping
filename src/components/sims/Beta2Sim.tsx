@@ -7,7 +7,7 @@ import { STEPS, TEXTS } from './beta2/content';
 import { CarcinogenBox, Gw1516Scene } from './beta2/Gw1516';
 import { DosePanel, TextCard } from './beta2/SidePanel';
 import { TissueScene } from './beta2/TissueScene';
-import { StepHeader } from './sarms/StepHeader';
+import { HEADER_H, StepHeader } from './sarms/StepHeader';
 
 /**
  * Slide "Beta-2 Agonistas: A Zona Cinzenta Clínica" (parsedPresentation.json, id 19).
@@ -17,7 +17,9 @@ import { StepHeader } from './sarms/StepHeader';
 
 const CARD = 'rounded-2xl border border-white/10';
 const CARD_BG = { background: 'rgba(8,8,18,0.72)' };
-const BODY_H = 470;
+const ROOT_H = 476;
+const BODY_H = ROOT_H - HEADER_H;
+const CASCADE_H = 152;
 
 const Fade = ({ id, children, className }: { id: string; children: ReactNode; className?: string }) => (
     <AnimatePresence mode="wait">
@@ -33,18 +35,18 @@ const Beta2Sim = () => {
     const scene = step <= 2 ? 'tissue' : step === 3 ? 'clen' : 'gw';
 
     return (
-        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 520 }}>
+        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: ROOT_H }}>
             <StepHeader steps={STEPS} step={step} onSelect={setStep} id="beta2" />
-            <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 400px', gridTemplateRows: 'minmax(0,1fr)', height: BODY_H }}>
+            <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 424px', gridTemplateRows: 'minmax(0,1fr)', height: BODY_H }}>
                 <Fade id={scene} className="h-full min-h-0">
                     {scene === 'tissue' && (
                         <div className="flex flex-col gap-3 h-full">
                             <div className={`${CARD} flex-1 min-h-0 relative p-2`} style={CARD_BG}>
                                 <div className="absolute" style={{ inset: 8 }}><TissueScene step={step} /></div>
                             </div>
-                            <div className={`${CARD} shrink-0 px-3 pt-2 pb-1`} style={{ ...CARD_BG, height: 178 }}>
-                                <div className="font-mono text-[12px] uppercase tracking-widest text-gray-300">Via PKA/cAMP</div>
-                                <div className="relative" style={{ height: 146 }}><Cascade step={step} /></div>
+                            <div className={`${CARD} shrink-0 px-3 pt-2 pb-2`} style={{ ...CARD_BG, height: CASCADE_H }}>
+                                <div className="font-mono text-[14px] uppercase tracking-wider text-gray-200">Via PKA/cAMP</div>
+                                <div style={{ height: CASCADE_H - 38 }}><Cascade step={step} /></div>
                             </div>
                         </div>
                     )}
@@ -56,8 +58,8 @@ const Beta2Sim = () => {
                     )}
                 </Fade>
                 <div className="flex flex-col gap-3 min-h-0">
-                    <TextCard text={TEXTS[step]} />
-                    <Fade id={scene} className="flex flex-col gap-3">
+                    <TextCard text={TEXTS[step]} compact={step === 2} />
+                    <Fade id={scene} className="flex flex-col gap-3 flex-1 min-h-0">
                         {scene === 'tissue' && <DosePanel step={step} onStep={setStep} />}
                         {scene === 'clen' && <HalfLifeChart />}
                         {scene === 'gw' && <CarcinogenBox />}

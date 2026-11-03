@@ -6,20 +6,23 @@ import {
 } from './model';
 import { useTween } from './useTween';
 
-const VB_W = 780;
-const VB_H = 452;
-const PL = 58;
-const PR = 14;
+const VB_W = 800;
+const VB_H = 379;
+const PL = 64;
+const PR = 12;
 const PLOT_R = VB_W - PR;
-const SLOT_PAD = 36;
+const SLOT_PAD = 40;
 const SLOT_W = (PLOT_R - PL - SLOT_PAD * 2) / (N_SAMPLES - 1);
 const RED = '#E11D48';
 const POP = 'rgba(255,255,255,0.62)';
+const MONO = { fontFamily: 'var(--font-mono)' } as const;
+/** Tamanho mínimo dos textos do gráfico: o SVG é desenhado em ~1:1 com a largura do slide. */
+const FS = 16;
 
 const PANELS: Readonly<Record<MarkerId, { top: number; h: number }>> = {
-    hb: { top: 30, h: 172 },
-    ret: { top: 236, h: 80 },
-    off: { top: 350, h: 76 },
+    hb: { top: 26, h: 104 },
+    ret: { top: 164, h: 72 },
+    off: { top: 270, h: 84 },
 };
 const COL_TOP = PANELS.hb.top - 4;
 const COL_BOTTOM = PANELS.off.top + PANELS.off.h + 4;
@@ -129,7 +132,7 @@ export const PassportChart = ({
                 return (
                     <motion.g key={`${protocol.id}-${ph.label}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
                         <rect x={x0} y={COL_TOP} width={x1 - x0} height={COL_BOTTOM - COL_TOP} rx={8} fill={ph.color} fillOpacity={0.07} stroke={ph.color} strokeOpacity={0.3} strokeDasharray="3 4" />
-                        <text x={(x0 + x1) / 2} y={PANELS.hb.top - 12} textAnchor="middle" fontSize={13} fontWeight={700} fill={ph.color}>{ph.label}</text>
+                        <text x={(x0 + x1) / 2} y={PANELS.hb.top - 12} textAnchor="middle" fontSize={FS} fontWeight={700} fill={ph.color}>{ph.label}</text>
                     </motion.g>
                 );
             })}
@@ -152,16 +155,15 @@ export const PassportChart = ({
                 const lo = band.slice(base, base + NODES);
                 const hi = band.slice(base + NODES, base + NODES * 2);
                 const pts = protocol.samples.slice(0, visibleCount).map((s, k) => ({ k, x: slotX(k), y: yOf(m, markerValue(s, m.id)), v: markerValue(s, m.id) }));
-                const lastHi = hi[hi.length - 1];
-                const n = analysis.currentN;
+                                const n = analysis.currentN;
                 const bandLabel = n === 0 ? 'priori populacional' : n < MIN_BASELINE ? `corredor em formação (${n}/${MIN_BASELINE})` : 'túnel individual';
 
                 return (
                     <g key={m.id}>
                         {/* Título do painel */}
-                        <text x={PL} y={top - 12} fontSize={14} fontWeight={700} fill="#F3F4F6" style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.02em' }}>
+                        <text x={PL} y={top - 12} fontSize={FS} fontWeight={700} fill="#F3F4F6" style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.02em' }}>
                             {m.name}
-                            <tspan dx={8} fontSize={12.5} fontWeight={500} fill="rgba(229,231,235,0.72)" style={{ fontFamily: 'var(--font-mono)' }}>{m.unit}</tspan>
+                            <tspan dx={8} fontSize={FS} fontWeight={500} fill="rgba(229,231,235,0.85)" style={MONO}>{m.unit}</tspan>
                         </text>
 
                         {/* Grade e eixo */}
@@ -169,21 +171,21 @@ export const PassportChart = ({
                         {m.ticks.map(t => (
                             <g key={t}>
                                 <line x1={PL} x2={PLOT_R} y1={yOf(m, t)} y2={yOf(m, t)} stroke="rgba(255,255,255,0.06)" />
-                                <text x={PL - 8} y={yOf(m, t) + 4} textAnchor="end" fontSize={12} fill="rgba(229,231,235,0.78)" style={{ fontFamily: 'var(--font-mono)' }}>
+                                <text x={PL - 8} y={yOf(m, t) + 5} textAnchor="end" fontSize={FS} fill="rgba(229,231,235,0.85)" style={MONO}>
                                     {fmt(t, m.id === 'ret' ? 1 : 0)}
                                 </text>
                             </g>
                         ))}
 
                         {/* Corredor individual (bayesiano) */}
-                        <g clipPath={`url(#pp-clip-${m.id})`} style={{ opacity: dimTunnel ? 0.32 : 1, transition: 'opacity 0.6s ease' }}>
+                        <g clipPath={`url(#pp-clip-${m.id})`} style={{ opacity: dimTunnel ? 0.6 : 1, transition: 'opacity 0.6s ease' }}>
                             <path d={bandPath(lo, hi)} fill={`url(#pp-band-${m.id})`} />
                             <path d={edgePath(hi)} fill="none" stroke={m.color} strokeOpacity={0.75} strokeWidth={1.6} />
                             <path d={edgePath(lo)} fill="none" stroke={m.color} strokeOpacity={0.75} strokeWidth={1.6} />
                         </g>
                         {m.id === 'hb' && (
-                            <text x={PLOT_R - 6} y={Math.max(top + 14, lastHi - 7)} textAnchor="end" fontSize={12.5} fontWeight={600} fill={m.color}
-                                style={{ opacity: dimTunnel ? 0.4 : 1, transition: 'opacity 0.6s ease' }}>
+                            <text x={PL + 240} y={top - 12} fontSize={FS} fontWeight={700} fill={m.color}
+                                style={{ opacity: dimTunnel ? 0.75 : 1, transition: 'opacity 0.6s ease' }}>
                                 {bandLabel}
                             </text>
                         )}
@@ -194,18 +196,21 @@ export const PassportChart = ({
                             ))}
                         </g>
                         {m.id === 'hb' && (
-                            <text x={PL + 8} y={yOf(m, 16) - 7} fontSize={12.5} fontWeight={600} fill="rgba(255,255,255,0.86)">
+                            <text x={PL + 8} y={yOf(m, 16) - 8} fontSize={FS} fontWeight={600} fill="rgba(255,255,255,0.9)">
                                 limite populacional fixo · 12,0–16,0 g/dL
                             </text>
                         )}
+                        {/* Limites de ret/OFF ficam na linha do título (fora da área plotada) */}
                         {m.id === 'ret' && (
-                            <text x={PL + 8} y={yOf(m, 1.5) - 5} fontSize={12} fill="rgba(255,255,255,0.8)">limite fixo · 0,5–1,5%</text>
+                            <text x={PLOT_R} y={top - 12} textAnchor="end" fontSize={FS} fill="rgba(255,255,255,0.92)">limite fixo · 0,5–1,5%</text>
                         )}
                         {m.id === 'off' && (
                             <>
                                 <line x1={PL} x2={PLOT_R} y1={yOf(m, OFF_SUSPECT)} y2={yOf(m, OFF_SUSPECT)} stroke="#F59E0B" strokeOpacity={0.7} strokeWidth={1.3} strokeDasharray="2 4" />
-                                <text x={PL + 8} y={yOf(m, 130) - 5} fontSize={12} fill="rgba(255,255,255,0.8)">limite fixo · 130 (&gt; 99,9%)</text>
-                                <text x={PL + 8} y={yOf(m, OFF_SUSPECT) - 5} fontSize={12} fill="#FBBF24">&gt; 85 suspeito</text>
+                                <text x={PLOT_R} y={top - 12} textAnchor="end" fontSize={FS} fill="rgba(255,255,255,0.92)">
+                                    limite fixo · 130 (&gt; 99,9%)
+                                    <tspan dx={18} fill="#FBBF24" fontWeight={700}>&gt; 85 suspeito</tspan>
+                                </text>
                             </>
                         )}
 
@@ -249,17 +254,17 @@ export const PassportChart = ({
                 const px = slotX(firstFlag);
                 const py = yOf(hb, s.hb);
                 const popY = yOf(hb, 16);
-                const bw = 214;
-                const bx = px - 30 - bw;
+                const bw = 300;
+                const bh = 28;
+                const bx = px - 28 - bw;
                 const by = popY + 9;
                 return (
                     <motion.g key={`callout-${protocol.id}-${firstFlag}`} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}>
-                        <line x1={bx + bw} y1={by + 23} x2={px - 9} y2={py} stroke={RED} strokeWidth={1.6} />
-                        <rect x={bx} y={by} width={bw} height={46} rx={10} fill="#1a0610" stroke={RED} strokeWidth={1.5} />
-                        <text x={bx + 12} y={by + 19} fontSize={13.5} fontWeight={800} fill="#FDA4AF" style={{ fontFamily: 'var(--font-display)' }}>⚠ Achado Atípico (ATF)</text>
-                        <text x={bx + 12} y={by + 37} fontSize={12.5} fill="#FFE4E6">fora do túnel · improbab. &gt; 99,9%</text>
-                        <text x={Math.min(px + 130, PLOT_R - 6)} y={popY - 7} textAnchor="end" fontSize={12.5} fontWeight={700} fill="#E5E7EB">
+                        <line x1={bx + bw} y1={by + bh / 2} x2={px - 9} y2={py} stroke={RED} strokeWidth={1.6} />
+                        <rect x={bx} y={by} width={bw} height={bh} rx={8} fill="#1a0610" stroke={RED} strokeWidth={1.5} />
+                        <text x={bx + 10} y={by + 20} fontSize={FS} fontWeight={800} fill="#FDA4AF" style={{ fontFamily: 'var(--font-display)' }}>⚠ ATF · fora do túnel (&gt; 99,9%)</text>
+                        <text x={PLOT_R - 6} y={popY - 8} textAnchor="end" fontSize={FS} fontWeight={700} fill="#E5E7EB">
                             {fmt(s.hb, 1)} &lt; 16,0 → limite fixo não detecta
                         </text>
                     </motion.g>
@@ -271,13 +276,13 @@ export const PassportChart = ({
                 const flagged = verdictOn && analysis.slots[k].flagged;
                 const vis = k < visibleCount;
                 return (
-                    <text key={k} x={slotX(k)} y={VB_H - 6} textAnchor="middle" fontSize={12.5} fontWeight={flagged ? 800 : 600}
-                        fill={flagged ? '#FB7185' : vis ? '#E5E7EB' : 'rgba(229,231,235,0.45)'} style={{ fontFamily: 'var(--font-mono)' }}>
+                    <text key={k} x={slotX(k)} y={VB_H - 5} textAnchor="middle" fontSize={FS} fontWeight={flagged ? 800 : 600}
+                        fill={flagged ? '#FB7185' : vis ? '#E5E7EB' : 'rgba(229,231,235,0.6)'} style={MONO}>
                         Ex.{k + 1}
                     </text>
                 );
             })}
-            <text x={4} y={VB_H - 6} fontSize={12} fill="rgba(229,231,235,0.7)">coletas →</text>
+            <text x={2} y={VB_H - 5} fontSize={FS} fill="rgba(229,231,235,0.85)">coletas →</text>
         </svg>
     );
 };

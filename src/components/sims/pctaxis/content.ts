@@ -66,7 +66,7 @@ export const SUPPRESSED = {
         'O eixo HPG (Hipotálamo–Hipófise–Gônadas) é suprimido por feedback negativo: T exógena → hipotálamo detecta T alta → para GnRH → Hipófise para LH/FSH → testículos param de produzir T e espermatozoides.',
         'Sem LH, células de Leydig atrofiam — produção endógena nula em semanas.',
     ],
-    source: 'texto do slide 7 (Base dos EAA · colaterais)',
+    source: 'texto da Base dos EAA (camada colaterais)',
     goal: 'Farmacologia de recuperação para burlar o hipogonadismo pós-ciclo',
 } as const;
 
@@ -74,7 +74,7 @@ export const NUMBERS = {
     sermDose: 'até 150 mg/dia',
     sermWhen: 'nas primeiras semanas de crash',
     e2Drop: 98,
-    iaRisk: 'Osteopenia vascular e disfunção endotelial',
+    iaRisk: 'Perda de massa óssea e disfunção endotelial',
     hcgDose: '250-500 UI 2x/sem',
     hcgWhen: 'uso intraciclo',
 } as const;

@@ -25,7 +25,7 @@ export const CASES: readonly SportCase[] = [
         sport: 'Atletismo 800m',
         color: '#F59E0B',
         case: 'IAAF exige teste de gênero. Semenya é mulher intersexual com hiperandrogenismo congênito (produção natural de T elevada).',
-        outcome: 'Obrigada a tomar anticoncepcionais para competir. TEDH negou recurso final em 2023. 3× ré nas regras da WA.',
+        outcome: 'Relatou ter sido pressionada a usar anticoncepcionais e recusou a medicação exigida pela regra de 2018. O CAS manteve a regra (2019). Em 2025, a Grande Câmara do TEDH concluiu que a Suíça violou seu direito a um julgamento justo (art. 6º).',
         regulation: 'World Athletics',
         impact: 'Criou precedente de vigilância biológica coercitiva para atletas femininas com T naturalmente alta.',
         twist: 'Semenya NUNCA fez doping. Suas T elevadas são endógenas — fruto de genética, não de manipulação.',
@@ -53,7 +53,7 @@ export const CASES: readonly SportCase[] = [
         case: 'Primeira atleta trans a competir nas Olimpíadas. Tóquio 2020, categoria +87kg feminino.',
         outcome: 'Eliminada sem medalha após falhar 3 tentativas no arranco. Nenhuma performance superior às finalistas cis.',
         regulation: 'COI',
-        impact: 'Debacle midiática sem vitória atlética. Abriu espaço para o framework do COI 2021 que aboliu regras universais de T.',
+        impact: 'Grande exposição midiática, sem resultado esportivo. Abriu espaço para o framework do COI 2021, que abandonou regras universais de T.',
         twist: 'Hubbard era competitiva internacionalmente, mas não alcançou o pódio. O "problema" esperado não aconteceu — mas o debate já estava posto.',
         result: 'neutral',
     },
@@ -85,7 +85,7 @@ export const POLICIES: readonly Policy[] = [
     { org: 'COI', year: 2021, rule: 'Eliminou limites de T. Delegou às federações. "Presunção de não vantagem."', color: '#10B981', stance: 'inclusivo' },
     { org: 'World Aquatics', year: 2022, rule: 'Exclui trans femininas que passaram por puberdade masculina. Permite transição pré-puberal.', color: '#F59E0B', stance: 'restritivo' },
     { org: 'NCAA', year: 2022, rule: 'Seguiu as regras de cada federação esportiva (caso a caso por modalidade).', color: '#60A5FA', stance: 'neutro' },
-    { org: 'World Athletics', year: 2023, rule: 'T < 2,5 nmol/L por 24 meses para provas de 60m–1500m. Trans femininas completamente excluídas.', color: '#E11D48', stance: 'restritivo' },
+    { org: 'World Athletics', year: 2023, rule: 'Mulheres trans pós-puberdade masculina fora da categoria feminina. Atletas com DSD: T < 2,5 nmol/L por 24 meses.', color: '#E11D48', stance: 'restritivo' },
 ];
 
 export const FRAGMENTATION = {

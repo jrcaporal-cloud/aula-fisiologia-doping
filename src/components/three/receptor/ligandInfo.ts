@@ -30,7 +30,7 @@ export const LIGANDS: Record<LigandKind, LigandInfo> = {
         relative: 1,
         family: 'Androgênio endógeno · C₁₉H₂₈O₂',
         fit: 'Referência: ocupa o bolsão do LBD, a hélice 12 fecha e as chaperonas se soltam.',
-        source: 'Slides 4 e 7 · Receptor Androgênico; Base do Doping Moderno',
+        source: 'Receptor Androgênico; Base do Doping Moderno',
     },
     trembolona: {
         name: 'Trembolona',
@@ -40,7 +40,7 @@ export const LIGANDS: Record<LigandKind, LigandInfo> = {
         relative: 3,
         family: 'Derivado 19-nor · sem o carbono 19',
         fit: 'Liga-se ao AR 3x mais forte que a testosterona basal.',
-        source: 'Slide 7 · A Base do Doping Moderno (EAA)',
+        source: 'A Base do Doping Moderno (EAA)',
     },
     sarm: {
         name: 'SARM (ostarina)',
@@ -50,7 +50,7 @@ export const LIGANDS: Record<LigandKind, LigandInfo> = {
         relative: null,
         family: 'Não esteroidal · AR (seletivo) · estrutura aproximada',
         fit: 'Altera a conformação do LBD (hélice 12 em outra posição): recruta coativadores específicos no músculo esquelético e antagoniza a transcrição na próstata.',
-        source: 'Slide 22 · SARMs; Slide 6 · Mapa do Doping de Elite',
+        source: 'SARMs; Mapa do Doping de Elite',
     },
 };
 

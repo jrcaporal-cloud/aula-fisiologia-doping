@@ -54,7 +54,7 @@ export const ShelfEcho = ({ compact }: EchoProps) => {
             <rect x={40} y={122} width={160} height={84} fill="rgba(16,185,129,0.18)" stroke="#34D399" strokeWidth={k} />
             <Label compact={compact} x={120} y={152} anchor="middle" size={20} weight={800} fill="#D1FAE5">VITAMINAS</Label>
             <Label compact={compact} x={120} y={174} anchor="middle" size={15} weight={600} fill="#A7F3D0">“naturais”</Label>
-            <Label compact={compact} x={120} y={194} anchor="middle" size={12} mono fill="#A7F3D0">fórmula proprietária</Label>
+            <Label compact={compact} x={120} y={196} anchor="middle" size={15} fill="#A7F3D0">fórmula proprietária</Label>
             <rect x={54} y={216} width={132} height={104} rx={10} fill="rgba(0,0,0,0.35)" stroke="rgba(255,255,255,0.15)" />
 
             {CAPSULES.map(c => <Capsule key={`${c.x}-${c.y}`} x={c.x} y={c.y} k={k} revealed={false} />)}
@@ -81,7 +81,8 @@ export const ShelfEcho = ({ compact }: EchoProps) => {
             {/* cápsula → urina */}
             <motion.path d="M214 214 C 240 176, 270 176, 296 210" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth={1.8 * k} strokeDasharray="5 6"
                 initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: d(0.6), delay: d(1.2) }} />
-            <path d="M289 200 L297 212 L284 214" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth={1.8 * k} />
+            <motion.path d="M289 200 L297 212 L284 214" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth={1.8 * k}
+                initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: d(0.2), delay: d(1.7) }} />
 
             <g transform="translate(306 132)">
                 <rect x={-4} y={0} width={96} height={18} rx={5} fill="#E5E7EB" />
@@ -98,7 +99,8 @@ export const ShelfEcho = ({ compact }: EchoProps) => {
             {/* urina → banimento */}
             <motion.path d="M406 222 L446 222" stroke="rgba(255,255,255,0.5)" strokeWidth={1.8 * k} strokeDasharray="5 6"
                 initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: d(0.4), delay: d(2.2) }} />
-            <path d="M440 215 L448 222 L440 229" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth={1.8 * k} />
+            <motion.path d="M440 215 L448 222 L440 229" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth={1.8 * k}
+                initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: d(0.2), delay: d(2.5) }} />
             <motion.g
                 initial={reduce ? false : { opacity: 0, scale: 1.7 }} animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: d(0.35), delay: d(2.6), ease: [0.5, 0, 0.75, 0] }}

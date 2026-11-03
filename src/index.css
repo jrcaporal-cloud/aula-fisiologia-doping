@@ -163,7 +163,7 @@ h6 {
   border-bottom-width: 2px;
   background: rgba(255, 255, 255, 0.06);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #e5e7eb;
   line-height: 1;
 }
@@ -211,3 +211,7 @@ h6 {
 .deck-stage .text-\[9px\] { font-size: 11px; }
 .deck-stage .text-\[10px\] { font-size: 11.5px; }
 .deck-stage .text-\[11px\] { font-size: 12.5px; }
+
+/* Elementos de apoio (botão de detalhamento etc.) somem com o mouse parado: projeção limpa. */
+.hide-when-idle { transition: opacity 500ms ease; }
+.deck-root[data-idle='true'] .hide-when-idle { opacity: 0; pointer-events: none; }

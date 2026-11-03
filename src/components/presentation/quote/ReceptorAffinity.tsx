@@ -89,7 +89,7 @@ export const ReceptorAffinity = () => {
                         L${CX + 34} ${CY - 40} Q${CX + 38} ${CY + 22} ${CX} ${CY + 24} Q${CX - 38} ${CY + 22} ${CX - 34} ${CY - 40} Z`}
                     fill="rgba(225,29,72,0.14)" stroke="#E11D48" strokeWidth="2" strokeLinejoin="round"
                 />
-                <text x={CX} y={CY + 76} textAnchor="middle" fill="#FDA4AF" {...LABEL} fontFamily="var(--font-mono, monospace)" letterSpacing={3} fontSize={13}>
+                <text x={CX} y={CY + 76} textAnchor="middle" fill="#FDA4AF" {...LABEL} fontFamily="var(--font-mono, monospace)" letterSpacing={3} fontSize={15}>
                     RECEPTOR
                 </text>
             </g>

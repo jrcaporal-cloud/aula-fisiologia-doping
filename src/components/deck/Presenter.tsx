@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
 import { DECK } from './slides';
+import { NOTES } from '../../data/notes';
 import { PRESENTER_CHANNEL, type PresenterCommand, type PresenterMessage } from './presenterChannel';
 
 const NOTES_KEY = 'aula-doping:notas';
@@ -53,6 +54,40 @@ const useStopwatch = () => {
         setElapsed(0);
     };
     return { elapsed, running, toggle: () => setRunning(r => !r), reset };
+};
+
+/** Minutos previstos até o início de cada slide (soma dos tempos-alvo das notas). */
+const PLANNED_START: number[] = DECK.reduce<number[]>((acc, _item, i) => {
+    const before = i === 0 ? 0 : acc[i - 1] + (NOTES[DECK[i - 1].slide.id]?.minutos ?? 3);
+    return [...acc, before];
+}, []);
+const PLANNED_TOTAL = PLANNED_START.length
+    ? PLANNED_START[PLANNED_START.length - 1] + (NOTES[DECK[DECK.length - 1].slide.id]?.minutos ?? 3)
+    : 0;
+
+const PaceBadge = ({ index, elapsedMs }: { index: number; elapsedMs: number }) => {
+    const planned = PLANNED_START[index] ?? 0;
+    const diff = Math.round(elapsedMs / 60000 - planned);
+    const onTime = Math.abs(diff) <= 1;
+    const label = onTime ? 'No ritmo' : diff > 0 ? `${diff} min atrasado` : `${-diff} min adiantado`;
+    return (
+        <span className={`text-sm font-mono px-3 py-1 rounded-full border ${onTime ? 'border-emerald-400/40 text-emerald-300' : diff > 0 ? 'border-amber-400/50 text-amber-300' : 'border-sky-400/40 text-sky-300'}`}>
+            {label} · previsto {planned} de {PLANNED_TOTAL} min
+        </span>
+    );
+};
+
+const NoteCard = ({ slideId }: { slideId: number }) => {
+    const note = NOTES[slideId];
+    if (!note) return null;
+    return (
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 flex flex-col gap-3 text-lg leading-snug">
+            <p><span className="text-[12px] uppercase tracking-[0.2em] text-brand-red mr-2">Mensagem</span><span className="text-gray-100">{note.mensagem}</span></p>
+            {note.pergunta && <p><span className="text-[12px] uppercase tracking-[0.2em] text-amber-300 mr-2">Pergunte</span><span className="text-gray-100">{note.pergunta}</span></p>}
+            {note.transicao && <p><span className="text-[12px] uppercase tracking-[0.2em] text-sky-300 mr-2">Transição</span><span className="text-gray-100">{note.transicao}</span></p>}
+            <p className="text-sm text-gray-400">Meta deste slide: {note.minutos} min</p>
+        </div>
+    );
 };
 
 const SlideCard = ({ index, label, dim }: { index: number; label: string; dim?: boolean }) => {
@@ -150,6 +185,8 @@ export const Presenter = () => {
             <main className="flex-1 grid grid-cols-[1.4fr_1fr] gap-6 p-8 min-h-0">
                 <section className="flex flex-col gap-5 min-h-0">
                     <SlideCard index={index} label="Agora" />
+                    <PaceBadge index={index} elapsedMs={stopwatch.elapsed} />
+                    <NoteCard slideId={DECK[index]?.slide.id ?? -1} />
                     {stepCount > 1 && (
                         <div className="flex items-center gap-3 text-sm text-gray-300">
                             <span>Passo {step + 1} de {stepCount}</span>
@@ -160,8 +197,8 @@ export const Presenter = () => {
                             </div>
                         </div>
                     )}
-                    <label className="flex-1 flex flex-col min-h-0">
-                        <span className="text-[11px] uppercase tracking-[0.25em] text-gray-400 mb-2">Minhas anotações deste slide (salvas neste navegador)</span>
+                    <label className="flex-1 flex flex-col min-h-[7rem]">
+                        <span className="text-[11px] uppercase tracking-[0.25em] text-gray-400 mb-2">Minhas anotações extras (salvas só neste navegador)</span>
                         <textarea
                             value={notes[slideKey] ?? ''}
                             onChange={e => updateNote(e.target.value)}
@@ -173,6 +210,9 @@ export const Presenter = () => {
 
                 <section className="flex flex-col gap-5">
                     <SlideCard index={index + 1} label="Próximo" dim />
+                    {DECK[index + 1] && NOTES[DECK[index + 1].slide.id] && (
+                        <p className="text-base text-gray-400 leading-snug">{NOTES[DECK[index + 1].slide.id].mensagem}</p>
+                    )}
                     <div className="mt-auto grid grid-cols-2 gap-4">
                         <button type="button" onClick={() => send({ type: 'prev' })}
                             className="h-24 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center gap-2 text-lg">

@@ -14,7 +14,7 @@ export const T_GROUPS: readonly TGroup[] = [
     { label: 'Homem Cis', range: [8, 29], mean: 18, color: '#60A5FA', note: 'testosterona fisiológica masculina adulta' },
     { label: 'Mulher Trans (sem TRT)', range: [8, 29], mean: 17, color: '#A78BFA' },
     { label: 'Mulher Trans (2 anos TRT)', range: [0.3, 3.5], mean: 1.8, color: '#C084FC', note: 'após 2 anos de TRT feminizante padrão' },
-    { label: 'Mulher Trans (WA: <2,5 nmol/L)', range: [0, 2.5], mean: 1.2, color: '#E879F9', note: 'limiar regulatório imposto pelo World Athletics' },
+    { label: 'Limite regulatório WA (<2,5 nmol/L)', range: [0, 2.5], mean: 1.2, color: '#E879F9', note: 'limiar da World Athletics para atletas com DSD; mulheres trans pós-puberdade masculina estão excluídas da categoria feminina' },
     { label: 'Mulher Cis', range: [0.2, 2.5], mean: 1.0, color: '#F0ABFC' },
 ];
 
@@ -31,7 +31,7 @@ export interface ReversibilityItem {
 
 /** O que a TRT feminizante reverte / não reverte (ordem do original). */
 export const REVERSIBILITY: readonly ReversibilityItem[] = [
-    { item: 'Força muscular relativa', reversed: true, note: '~80% normalizada em 2-3 anos', spot: 'forca' },
+    { item: 'Força muscular relativa', reversed: true, note: 'Parcial: reduz, mas persiste vantagem residual (10-14% após 2-3 anos)', spot: 'forca' },
     { item: 'VO₂máx relativo', reversed: true, note: 'Redução de ~10-12% documentada', spot: 'vo2' },
     { item: 'Número de mionúcleos', reversed: false, note: 'Memória muscular permanente', spot: 'mionucleos' },
     { item: 'Estatura e envergadura', reversed: false, note: 'Estrutura óssea irreversível', spot: 'estatura' },

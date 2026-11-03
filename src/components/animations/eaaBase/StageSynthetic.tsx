@@ -8,13 +8,13 @@ const BLUE_INK = LAYERS[0].ink;
 const AMBER = '#F59E0B';
 const AMBER_INK = '#FCD34D';
 
-const FRAME = fitMolecule(28, 40, 420, 240);
+const FRAME = fitMolecule(28, 40, 420, 270);
 const [c17x, c17y] = FRAME.map(C17);
 const [ohx, ohy] = FRAME.map(OH);
 const [ax, ay] = FRAME.map(ALPHA);
 
-const BAR_X = 186;
-const BAR_W = 380;
+const BAR_X = 196;
+const BAR_W = 370;
 
 /** Camada 1 — onde a química sintética mexe: o C17 (17α-alquilação e éster). */
 export const StageSynthetic = () => {
@@ -38,7 +38,7 @@ export const StageSynthetic = () => {
                     style={{ transformOrigin: `${c17x}px ${c17y}px` }}
                 />
             )}
-            <motion.text x={c17x - 19} y={c17y - 14} fill="#fff" fontSize={14} className="font-mono" fontWeight={600} textAnchor="end"
+            <motion.text x={c17x - 19} y={c17y - 14} fill="#fff" fontSize={15} className="font-mono" fontWeight={600} textAnchor="end"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(1)}>C17</motion.text>
 
             {/* 17α: alquila (hash wedge) */}
@@ -48,7 +48,7 @@ export const StageSynthetic = () => {
                 ))}
             </g>
             <motion.text x={ax + 6} y={ay + 6} fill={BLUE_INK} fontSize={15} fontWeight={700} className="font-body"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(1.6)}>CH₃</motion.text>
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(1.6)}>CH<tspan dy={5} fontSize={12}>3</tspan></motion.text>
 
             {/* Éster no O do C17 */}
             <motion.rect
@@ -58,27 +58,27 @@ export const StageSynthetic = () => {
 
             {/* Chamadas */}
             <motion.g initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={t(2.2)}>
-                <path d={`M${ohx + 30} ${ohy - 9} L${470} ${ohy - 9}`} stroke={AMBER} strokeWidth={1.2} strokeDasharray="3 3" />
-                <text x={476} y={ohy - 14} fill={AMBER_INK} fontSize={15} fontWeight={700} className="font-body">esterificação</text>
-                <text x={476} y={ohy + 4} fill={AMBER_INK} fontSize={15} fontWeight={700} className="font-body">do C17</text>
-                <text x={476} y={ohy + 22} fill="#E5E7EB" fontSize={13} className="font-body">ex.: Cipionato,</text>
-                <text x={476} y={ohy + 38} fill="#E5E7EB" fontSize={13} className="font-body">Decanoato</text>
+                <path d={`M${ohx + 30} ${ohy - 9} L${462} ${ohy - 9}`} stroke={AMBER} strokeWidth={1.2} strokeDasharray="3 3" />
+                <text x={468} y={ohy - 14} fill={AMBER_INK} fontSize={15} fontWeight={700} className="font-body">esterificação</text>
+                <text x={468} y={ohy + 4} fill={AMBER_INK} fontSize={15} fontWeight={700} className="font-body">do C17</text>
+                <text x={468} y={ohy + 24} fill="#E5E7EB" fontSize={15} className="font-body">ex.: Cipionato,</text>
+                <text x={468} y={ohy + 42} fill="#E5E7EB" fontSize={15} className="font-body">Decanoato</text>
             </motion.g>
             <motion.g initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={t(1.7)}>
-                <path d={`M${ax + 44} ${ay} L${470} ${ay + 48}`} stroke={BLUE} strokeWidth={1.2} strokeDasharray="3 3" />
-                <text x={476} y={ay + 52} fill={BLUE_INK} fontSize={15} fontWeight={700} className="font-body">17α-alquilação</text>
-                <text x={476} y={ay + 70} fill="#E5E7EB" fontSize={13} className="font-body">H no C17 → –CH₃</text>
+                <path d={`M${ax + 44} ${ay} L${462} ${ay + 52}`} stroke={BLUE} strokeWidth={1.2} strokeDasharray="3 3" />
+                <text x={468} y={ay + 58} fill={BLUE_INK} fontSize={15} fontWeight={700} className="font-body">17α-alquilação</text>
+                <text x={468} y={ay + 77} fill="#E5E7EB" fontSize={15} className="font-body">H no C17 → –CH<tspan dy={5} fontSize={12}>3</tspan></text>
             </motion.g>
 
             {/* Biodisponibilidade oral (números do texto da camada) */}
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(2.6)}>
-                <text x={20} y={318} fill="#9CA3AF" fontSize={12} className="font-mono" letterSpacing={1.5}>BIODISPONIBILIDADE ORAL</text>
+                <text x={20} y={352} fill="#CBD5E1" fontSize={15} className="font-mono" letterSpacing={1}>BIODISPONIBILIDADE ORAL</text>
                 {[
-                    { y: 348, label: '17α-alquilado', from: 0.95, to: 1, value: '95–100%', color: BLUE, ink: BLUE_INK },
-                    { y: 390, label: 'Testosterona base', from: 0.01, to: 0.01, value: '~1%', color: '#9CA3AF', ink: '#E5E7EB' },
+                    { y: 386, label: '17α-alquilado', from: 0.95, to: 1, value: '95–100%', color: BLUE, ink: BLUE_INK },
+                    { y: 430, label: 'Testosterona base', from: 0.01, to: 0.01, value: '~1%', color: '#CBD5E1', ink: '#E5E7EB' },
                 ].map((r, i) => (
                     <g key={r.label}>
-                        <text x={20} y={r.y + 5} fill="#E5E7EB" fontSize={14} className="font-body">{r.label}</text>
+                        <text x={20} y={r.y + 5} fill="#E5E7EB" fontSize={15} className="font-body">{r.label}</text>
                         <rect x={BAR_X} y={r.y - 9} width={BAR_W} height={18} rx={9} fill="rgba(255,255,255,0.05)" />
                         <motion.rect
                             x={BAR_X} y={r.y - 9} height={18} rx={9} fill={r.color} opacity={0.85}
@@ -93,7 +93,7 @@ export const StageSynthetic = () => {
                         )}
                         <motion.text
                             x={BAR_X + 16} y={r.y + 5}
-                            fill={r.to > 0.5 ? '#0B1220' : r.ink} fontSize={14} fontWeight={700} className="font-mono"
+                            fill={r.to > 0.5 ? '#0B1220' : r.ink} fontSize={15} fontWeight={700} className="font-mono"
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(3.3 + i * 0.2)}
                         >{r.value}</motion.text>
                     </g>

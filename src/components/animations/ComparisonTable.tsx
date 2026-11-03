@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { MousePointerClick } from 'lucide-react';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useSlideSteps } from '../../store/useSlideSteps';
@@ -10,7 +10,7 @@ import { cardRect, MAP_HEIGHT } from './dopingMap/geometry';
 import { SystemShape } from './dopingMap/Marker';
 import { UgtCallout } from './dopingMap/UgtCallout';
 
-const STEPS = ['O quê e como', 'Magnitude', 'Quem o antidoping pega'] as const;
+const STEP_COUNT = 3;
 
 /**
  * Slide 6 — O Mapa do Doping de Elite.
@@ -19,7 +19,7 @@ const STEPS = ['O quê e como', 'Magnitude', 'Quem o antidoping pega'] as const;
  * Passo 2: os marcadores migram para as faixas de detectabilidade (+ nota do UGT2B17).
  */
 export const ComparisonTable = () => {
-    const { step } = useSlideSteps(STEPS.length);
+    const { step } = useSlideSteps(STEP_COUNT);
     const reduced = useReducedMotion() ?? false;
     const ref = useRef<HTMLDivElement>(null);
     const [width, setWidth] = useState(0);
@@ -59,33 +59,20 @@ export const ComparisonTable = () => {
                 </>
             )}
 
-            <div className="absolute left-0 right-0 bottom-0 flex items-center justify-between gap-6 px-1 text-[13px]">
-                <div className="flex items-center gap-2 font-mono text-gray-300">
-                    <span className="tracking-[0.18em] text-gray-400">PASSO {step + 1}/{STEPS.length}</span>
-                    <span className="text-gray-500">·</span>
-                    <motion.span
-                        key={step}
-                        className="text-white"
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: reduced ? 0 : 0.3 }}
-                    >
-                        {STEPS[step]}
-                    </motion.span>
-                </div>
-                <div className="flex items-center gap-1.5 text-gray-400">
-                    <MousePointerClick size={15} />
-                    Clique num fármaco para ver os colaterais
-                </div>
-                <div className="flex items-center gap-4">
+            <div className="absolute left-0 right-0 bottom-0 flex items-center justify-between gap-6 px-1 text-[15px]">
+                <div className="flex items-center gap-5">
                     {SYSTEM_ORDER.map(id => (
-                        <span key={id} className="flex items-center gap-1.5 text-gray-300">
-                            <span className="relative w-[14px] h-[14px]">
-                                <SystemShape system={id} color={SYSTEMS[id].color} size={14} filled={0.5} />
+                        <span key={id} className="flex items-center gap-2 text-slate-200">
+                            <span className="relative w-[16px] h-[16px]">
+                                <SystemShape system={id} color={SYSTEMS[id].color} size={16} filled={0.5} />
                             </span>
                             {SYSTEMS[id].label}
                         </span>
                     ))}
+                </div>
+                <div className="flex items-center gap-1.5 text-slate-300">
+                    <MousePointerClick size={16} />
+                    Clique num fármaco: colaterais
                 </div>
             </div>
 

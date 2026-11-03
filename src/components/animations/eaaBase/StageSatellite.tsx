@@ -15,8 +15,8 @@ const OLD_NUCLEI: [number, number][] = [[90, 160], [205, 160], [430, 160], [525,
 const SAT = { x: 300, y: 140 };
 const NEW_NUCLEUS = { x: 345, y: 160 };
 const PHASES = ['Androgênios', 'proliferação', 'fusão à fibra', 'novos mionúcleos'];
-const CHIP_GAP = 26;
-const CHIP_W = PHASES.map(p => Math.round(p.length * 7.4 + 26));
+const CHIP_GAP = 22;
+const CHIP_W = PHASES.map(p => Math.round(p.length * 7.7 + 24));
 const CHIP_X = CHIP_W.map((_, i) => 20 + CHIP_W.slice(0, i).reduce((a, b) => a + b + CHIP_GAP, 0));
 /** Instantes (ms) em que cada fase começa. */
 const PHASE_AT = [250, 1900, 3300, 4700];
@@ -66,13 +66,13 @@ const Scene = () => {
                     animate={{ rx: fused ? 15 : 0, opacity: fused ? 1 : 0 }}
                     transition={{ ...ease, delay: still ? 0 : 0.7 }}
                 />
-                <text x={FIBER.x + 22} y={FIBER_MID + 5} fill={GREEN_INK} fontSize={14} fontWeight={600} className="font-body">fibra muscular</text>
+                <text x={FIBER.x + 22} y={FIBER_MID + 5} fill={GREEN_INK} fontSize={15} fontWeight={600} className="font-body">fibra muscular</text>
             </motion.g>
 
             {grown && (
                 <motion.g initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={ease}>
                     <circle cx={NEW_NUCLEUS.x} cy={NEW_NUCLEUS.y - 3} r={24} fill="none" stroke="#fff" strokeOpacity={0.55} strokeDasharray="3 4" />
-                    <text x={NEW_NUCLEUS.x + 30} y={NEW_NUCLEUS.y - 22} fill="#fff" fontSize={14} fontWeight={700} className="font-body">+ mionúcleo</text>
+                    <text x={NEW_NUCLEUS.x + 30} y={NEW_NUCLEUS.y - 22} fill="#fff" fontSize={15} fontWeight={700} className="font-body">+ mionúcleo</text>
                 </motion.g>
             )}
 
@@ -87,7 +87,7 @@ const Scene = () => {
                     transition={{ duration: still ? 0 : 1.1, delay: still ? 0 : i * 0.15, ease: EASE }}
                 />
             ))}
-            <text x={SAT.x + 34} y={56} fill={ANDROGEN} fontSize={14} fontWeight={600} className="font-body" opacity={phase >= 2 ? 0.45 : 1}>androgênio</text>
+            <text x={SAT.x + 34} y={56} fill={ANDROGEN} fontSize={15} fontWeight={600} className="font-body" opacity={phase >= 2 ? 0.7 : 1}>androgênio</text>
 
             {/* Célula satélite: divide-se; uma filha funde-se à fibra */}
             {[0, 1].map(k => {
@@ -106,8 +106,8 @@ const Scene = () => {
                     </motion.g>
                 );
             })}
-            <text x={SAT.x - 70} y={122} textAnchor="end" fill="#F3F4F6" fontSize={14} fontWeight={600} className="font-body">célula satélite</text>
-            <text x={SAT.x - 70} y={139} textAnchor="end" fill="#D1D5DB" fontSize={13} className="font-body">expressa RA</text>
+            <text x={SAT.x - 70} y={122} textAnchor="end" fill="#F3F4F6" fontSize={15} fontWeight={600} className="font-body">célula satélite</text>
+            <text x={SAT.x - 70} y={140} textAnchor="end" fill="#E5E7EB" fontSize={15} className="font-body">expressa RA</text>
 
             {/* Linha do processo */}
             <g>
@@ -119,12 +119,12 @@ const Scene = () => {
                     return (
                         <g key={p}>
                             <motion.rect
-                                x={x} y={292} width={w} height={28} rx={14}
+                                x={x} y={292} width={w} height={30} rx={15}
                                 animate={{ fill: on ? 'rgba(16,185,129,0.28)' : 'rgba(255,255,255,0.04)', stroke: on ? GREEN : done ? 'rgba(110,231,183,0.45)' : 'rgba(255,255,255,0.14)' }}
                                 transition={{ duration: 0.4 }}
                             />
-                            <text x={x + w / 2} y={311} textAnchor="middle" fill={on || done ? '#F3F4F6' : '#9CA3AF'} fontSize={13} fontWeight={on ? 700 : 500} className="font-body">{p}</text>
-                            {i < PHASES.length - 1 && <text x={x + w + CHIP_GAP / 2} y={311} textAnchor="middle" fill="#9CA3AF" fontSize={15}>→</text>}
+                            <text x={x + w / 2} y={312} textAnchor="middle" fill={on || done ? '#F3F4F6' : '#CBD5E1'} fontSize={15} fontWeight={on ? 700 : 500} className="font-body">{p}</text>
+                            {i < PHASES.length - 1 && <text x={x + w + CHIP_GAP / 2} y={312} textAnchor="middle" fill="#CBD5E1" fontSize={15}>→</text>}
                         </g>
                     );
                 })}
@@ -135,7 +135,7 @@ const Scene = () => {
 
 const BHASIN = [
     { label: 'T suprafisiológica + treino', kg: 6.1, value: '+6,1 kg', color: GREEN, ink: GREEN_INK },
-    { label: 'treino limpo', kg: 1.9, value: '+1,9 kg', color: '#9CA3AF', ink: '#E5E7EB' },
+    { label: 'treino limpo', kg: 1.9, value: '+1,9 kg', color: '#CBD5E1', ink: '#E5E7EB' },
 ];
 
 /** Camada 3 — célula satélite ativada por androgênio vira mionúcleo novo. */
@@ -145,22 +145,22 @@ export const StageSatellite = () => {
     return (
         <div className="relative w-full h-full">
             <svg viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} className="w-full h-full" role="img" aria-label="Célula satélite ativada por androgênio prolifera e se funde à fibra, acrescentando um mionúcleo">
-                <text x={20} y={30} fill="#9CA3AF" fontSize={12} className="font-mono" letterSpacing={1.5}>CÉLULA SATÉLITE → MIONÚCLEO</text>
+                <text x={20} y={28} fill="#CBD5E1" fontSize={15} className="font-mono" letterSpacing={1}>CÉLULA SATÉLITE → MIONÚCLEO</text>
                 <Scene key={run} />
-                <line x1={20} x2={580} y1={336} y2={336} stroke="rgba(255,255,255,0.1)" />
-                <text x={20} y={356} fill="#9CA3AF" fontSize={12} className="font-mono" letterSpacing={1}>BHASIN ET AL., NEJM · 16 SEMANAS · MASSA MAGRA</text>
+                <line x1={20} x2={580} y1={346} y2={346} stroke="rgba(255,255,255,0.1)" />
+                <text x={20} y={376} fill="#CBD5E1" fontSize={15} className="font-mono" letterSpacing={-0.3}>BHASIN ET AL., NEJM · 16 SEMANAS · MASSA MAGRA</text>
                 {BHASIN.map((r, i) => {
-                    const y = 378 + i * 28;
+                    const y = 410 + i * 34;
                     return (
                         <g key={r.label}>
-                            <text x={20} y={y + 5} fill="#E5E7EB" fontSize={14} className="font-body">{r.label}</text>
+                            <text x={20} y={y + 5} fill="#E5E7EB" fontSize={15} className="font-body">{r.label}</text>
                             <motion.rect
                                 key={`b${run}`}
-                                x={222} y={y - 8} height={16} rx={8} fill={r.color} opacity={0.85}
-                                initial={{ width: still ? r.kg * 46 : 0 }} animate={{ width: r.kg * 46 }}
+                                x={240} y={y - 9} height={18} rx={9} fill={r.color} opacity={0.85}
+                                initial={{ width: still ? r.kg * 42 : 0 }} animate={{ width: r.kg * 42 }}
                                 transition={{ duration: still ? 0 : 1, delay: still ? 0 : 0.4 + i * 0.2, ease: EASE }}
                             />
-                            <text x={222 + r.kg * 46 + 10} y={y + 5} fill={r.ink} fontSize={14} fontWeight={700} className="font-mono">{r.value}</text>
+                            <text x={240 + r.kg * 42 + 10} y={y + 5} fill={r.ink} fontSize={15} fontWeight={700} className="font-mono">{r.value}</text>
                         </g>
                     );
                 })}
@@ -168,7 +168,7 @@ export const StageSatellite = () => {
             <button
                 type="button"
                 onClick={() => setRun(r => r + 1)}
-                className="absolute top-[2%] right-[2%] flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[13px] text-gray-200 hover:bg-white/10 cursor-pointer"
+                className="absolute top-[2%] right-[2%] flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[15px] text-slate-100 hover:bg-white/10 cursor-pointer"
             >
                 <RotateCcw size={14} /> repetir
             </button>

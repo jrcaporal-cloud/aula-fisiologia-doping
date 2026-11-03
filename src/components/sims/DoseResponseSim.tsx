@@ -65,17 +65,15 @@ export default function DoseResponseSim() {
     const { dose, setDose, stop } = useDoseSweep(showCurve);
 
     return (
-        <div className="relative mx-auto flex w-full max-w-[1110px] flex-col font-body text-white" style={{ height: 520 }}>
+        <div className="relative mx-auto flex w-full max-w-[1110px] flex-col font-body text-white" style={{ height: 504 }}>
             <div className="mb-1 flex items-center justify-between">
-                <div className="font-mono text-[13px] uppercase tracking-[0.14em] text-zinc-400">
+                <div className="font-mono text-[14px] uppercase tracking-[0.12em] text-zinc-300">
                     Curva dose-resposta da testosterona · massa magra
                 </div>
-                <div className="font-mono text-[13px] text-zinc-400">
-                    <span className="text-zinc-200">{step + 1}/{STEPS}</span> · {STEP_LABELS[step]}
-                </div>
+                <div className="font-body text-[15px] font-semibold text-zinc-200">{STEP_LABELS[step]}</div>
             </div>
 
-            <div className="flex flex-1 gap-5">
+            <div className="flex flex-1 gap-4">
                 <div className="flex flex-col" style={{ width: CHART_W }}>
                     <DoseChart step={step} dose={dose} onDose={setDose} onDragStart={stop} />
                     <DoseSlider visible={showCurve} dose={dose} onDose={setDose} onDragStart={stop} />
@@ -135,8 +133,8 @@ const DoseSlider = ({ visible, dose, onDose, onDragStart }: DoseSliderProps) => 
                 <div className="absolute top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#050510] bg-white shadow-[0_0_16px_rgba(255,255,255,0.55)]"
                     style={{ left: `${frac * 100}%` }} />
             </div>
-            <div className="absolute top-1/2 -translate-y-1/2 font-mono text-[13px] text-zinc-400" style={{ left: left + width + 22 }}>
-                arraste ↔
+            <div className="absolute top-1/2 -translate-y-1/2 font-body text-[14px] text-zinc-300" style={{ left: left + width + 22 }}>
+                ↔ arraste
             </div>
         </motion.div>
     );

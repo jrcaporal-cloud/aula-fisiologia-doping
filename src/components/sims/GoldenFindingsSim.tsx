@@ -3,7 +3,7 @@ import { useSlideSteps } from '../../store/useSlideSteps';
 import { AllFive } from './goldenfindings/AllFive';
 import { ALL_STEP, FINDINGS, STEP_COUNT } from './goldenfindings/content';
 import { FocusView } from './goldenfindings/FocusView';
-import { seenPhrase, slideRef } from './goldenfindings/slideRefs';
+import { slideRef, slidesPhrase } from './goldenfindings/slideRefs';
 import { StepHeader, type HeaderStep } from './sarms/StepHeader';
 
 /**
@@ -17,7 +17,7 @@ const HEADER_STEPS: readonly HeaderStep[] = [
     ...FINDINGS.map(f => ({
         label: f.tab,
         title: f.title,
-        caption: seenPhrase(f.sources.map(slideRef)),
+        caption: slidesPhrase(f.sources.map(slideRef)),
         color: f.color,
     })),
     { label: 'Os cinco', title: 'Os cinco achados', caption: 'a aula em cinco ideias', color: '#E5E7EB' },

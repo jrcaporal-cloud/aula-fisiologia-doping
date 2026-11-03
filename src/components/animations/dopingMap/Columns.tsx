@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { LANES, LANE_ORDER, SYSTEMS, SYSTEM_ORDER } from './data';
 import { columnRect, HEADER_HEIGHT, type MapMode } from './geometry';
 import { EASE } from './DrugCard';
+import { LaneIcon } from './LaneBadge';
 import { SystemShape } from './Marker';
 
 interface ColumnsProps {
@@ -42,7 +43,7 @@ export const Columns = ({ width, mode, reduced }: ColumnsProps) => {
                     <motion.div
                         key="axis"
                         className="absolute left-0 right-0 pointer-events-none"
-                        style={{ top: HEADER_HEIGHT - 6, transformOrigin: 'left center' }}
+                        style={{ top: HEADER_HEIGHT - 2, transformOrigin: 'left center' }}
                         initial={{ opacity: 0, scaleX: 0 }}
                         animate={{ opacity: 1, scaleX: 1 }}
                         exit={{ opacity: 0 }}
@@ -67,19 +68,18 @@ export const Columns = ({ width, mode, reduced }: ColumnsProps) => {
                 return (
                     <div key={`h${col}`} className="absolute" style={{ left: r.x, top: 0, width: r.w, height: HEADER_HEIGHT }}>
                         <motion.div
-                            className="absolute left-5 right-5 top-4 flex items-baseline justify-between gap-3"
+                            className="absolute left-4 right-4 top-3 flex items-center gap-2.5 rounded-full border px-3.5 py-1.5"
+                            style={{ borderColor: `${lane.color}99`, background: `${lane.color}1f` }}
                             initial={false}
                             animate={{ opacity: inLane ? 1 : 0, y: inLane ? 0 : -8 }}
                             transition={{ ...fade, delay: inLane && !reduced ? 0.35 : 0 }}
                             aria-hidden={!inLane}
                         >
-                            <span className="font-display font-semibold text-[22px] leading-none" style={{ color: lane.color }}>{lane.label}</span>
-                            <span className="font-mono text-[13px] text-gray-300">
-                                Indetectável? <b style={{ color: lane.color }}>{lane.answer}</b>
-                            </span>
+                            <LaneIcon lane={lane.id} color={lane.color} size={24} />
+                            <span className="font-display font-semibold text-[21px] leading-none text-white whitespace-nowrap">{lane.label}</span>
                         </motion.div>
                         <motion.div
-                            className="absolute left-5 right-5 top-4 flex items-center gap-2.5"
+                            className="absolute left-5 right-5 top-[18px] flex items-center gap-2.5"
                             initial={false}
                             animate={{ opacity: inLane ? 0 : 1, y: inLane ? 8 : 0 }}
                             transition={{ ...fade, delay: !inLane && !reduced ? 0.25 : 0 }}
@@ -88,7 +88,7 @@ export const Columns = ({ width, mode, reduced }: ColumnsProps) => {
                             <span className="relative w-[22px] h-[22px] flex-shrink-0">
                                 <SystemShape system={system.id} color={system.color} size={22} filled={0.35} />
                             </span>
-                            <span className="font-display font-semibold text-[20px] leading-none" style={{ color: system.color }}>{system.label}</span>
+                            <span className="font-display font-semibold text-[21px] leading-none" style={{ color: system.color }}>{system.label}</span>
                         </motion.div>
                     </div>
                 );

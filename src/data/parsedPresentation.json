@@ -1,18 +1,18 @@
 [
   {
     "id": 0,
-    "sectionName": "",
+    "sectionName": "Ato I · Abertura",
     "number": "",
     "layout": "prose",
     "title": "Fisiologia do Doping no Esporte",
     "subtitle": "O que a fisiologia sabe — e o\n                antidoping ainda não consegue provar.",
-    "content": "<p class=\"reveal delay-2\" style=\"position: absolute; bottom: var(--slide-padding); right: var(--slide-padding); font-size: var(--small-size);\">\n                Prof. Mestre das Keide</p>",
+    "content": "<p class=\"reveal delay-2\" style=\"position: absolute; bottom: var(--slide-padding); right: var(--slide-padding); font-size: var(--small-size);\">\n                Rinaldo Caporal · Nutricionista · CRN6-21717</p>",
     "cards": []
   },
   {
     "id": 1,
-    "sectionName": "Abertura",
-    "number": "01",
+    "sectionName": "Ato I · Abertura",
+    "number": "",
     "layout": "prose",
     "title": "O Dado que Muda o Enquadramento",
     "subtitle": "Haveria um abismo entre o antidoping oficial e a vida real?",
@@ -20,9 +20,19 @@
     "cards": []
   },
   {
+    "id": 100,
+    "sectionName": "Ato I · Abertura",
+    "number": "",
+    "layout": "prose",
+    "title": "",
+    "subtitle": "",
+    "content": "<p class=\"quote-text reveal\">Por que um médico precisa<br><span class=\"highlight-red\">entender como o doping funciona?</span></p>\n            <p class=\"reveal delay-1\" style=\"margin-top: var(--content-gap); max-width: 800px;\">\n                Guarde a pergunta. A resposta fecha a aula.\n            </p>",
+    "cards": []
+  },
+  {
     "id": 2,
-    "sectionName": "Fundamentos Fisiológicos",
-    "number": "02",
+    "sectionName": "Ato I · Abertura",
+    "number": "",
     "layout": "prose",
     "title": "Os Três Pilares do Desempenho",
     "subtitle": "Eixos de atuação sistêmica na\n                otimização de performance",
@@ -30,9 +40,19 @@
     "cards": []
   },
   {
+    "id": 5,
+    "sectionName": "Ato I · Abertura",
+    "number": "",
+    "layout": "prose",
+    "title": "O Mapa do Doping de Elite",
+    "subtitle": "O que o teste enxerga e o que escapa",
+    "content": "<div class=\"reveal-scale delay-1\" style=\"width: 100%; max-width: 1000px; padding: 2rem;\">\n               [[COMP:ComparisonTable]] \n            </div>",
+    "cards": []
+  },
+  {
     "id": 3,
-    "sectionName": "Fundamentos Fisiológicos",
-    "number": "03",
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": "",
     "layout": "prose",
     "title": "O Receptor Androgênico (AR)",
     "subtitle": "A dupla via: Genômica e Não Genômica",
@@ -66,7 +86,7 @@
   },
   {
     "id": 4,
-    "sectionName": "",
+    "sectionName": "Ato II · Músculo e hormônios",
     "number": "",
     "layout": "prose",
     "title": "",
@@ -75,19 +95,9 @@
     "cards": []
   },
   {
-    "id": 5,
-    "sectionName": "Mapa do Doping",
-    "number": "04",
-    "layout": "prose",
-    "title": "O Mapa do Doping de Elite",
-    "subtitle": "",
-    "content": "<div class=\"reveal-scale delay-1\" style=\"width: 100%; max-width: 1000px; padding: 2rem;\">\n               [[COMP:ComparisonTable]] \n            </div>",
-    "cards": []
-  },
-  {
     "id": 6,
-    "sectionName": "EAA",
-    "number": "05",
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": "",
     "layout": "prose",
     "title": "A Base do Doping Moderno",
     "subtitle": "Esteroides Androgênicos Anabolizantes (EAA)",
@@ -100,16 +110,16 @@
           "\n                        Base transcricional (derivados 17α-alquilados e esterificados de Testosterona).",
           "\n                        Química sintética maximizada para Razão Anabólica/Androgênica (Ex.: Trembolona liga-se ao AR 3x mais forte que a Testosterona\n                                basal).",
           "\n                        Hipertrofia dose-dependente mediada primariamente pelo acréscimo massivo de\n                            mionúcleos (Satélites) ao longo de 12 a 20 semanas (Bhasin et al.).",
-          "\n                        Colaterais Estruturais:\n                            Supressão do eixo HPG permanente (induzida por falha nas células de Leydig), colapso do HDL\n                            colesterol, e hipertrofia ventricular concêntrica."
+          "\n                        Colaterais Estruturais:\n                            Supressão prolongada do eixo HPG (induzida por falha nas células de Leydig), colapso do HDL\n                            colesterol, e hipertrofia ventricular concêntrica."
         ],
-        "rawHtml": "<p style=\"margin-bottom: 2rem; font-size: 1.3rem; font-weight: bold; color: white;\">Perfil Fisiológico:\n                </p>\n                <ul style=\"gap: 1.5rem; list-style-type: none; padding-left: 0; display: flex; flex-direction: column;\">\n                    <li style=\"display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; color: #D1D5DB; line-height: 1.6;\">\n                        <span style=\"color: var(--accent-main); font-weight: bold; font-size: 1.2rem; transform: translateY(-2px);\">→</span>\n                        <span>Base transcricional (derivados 17α-alquilados e esterificados de Testosterona).</span>\n                    </li>\n                    <li style=\"display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; color: #D1D5DB; line-height: 1.6;\">\n                        <span style=\"color: var(--accent-main); font-weight: bold; font-size: 1.2rem; transform: translateY(-2px);\">→</span>\n                        <span>Química sintética maximizada para Razão Anabólica/Androgênica (Ex.: <em style=\"color: white;\">Trembolona liga-se ao AR 3x mais forte que a Testosterona\n                                basal</em>).</span>\n                    </li>\n                    <li style=\"display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; color: #D1D5DB; line-height: 1.6;\">\n                        <span style=\"color: var(--accent-main); font-weight: bold; font-size: 1.2rem; transform: translateY(-2px);\">→</span>\n                        <span>Hipertrofia dose-dependente mediada primariamente pelo acréscimo massivo de\n                            mionúcleos (Satélites) ao longo de 12 a 20 semanas (Bhasin et al.).</span>\n                    </li>\n                    <li style=\"display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; color: #D1D5DB; line-height: 1.6;\">\n                        <span style=\"color: var(--accent-main); font-weight: bold; font-size: 1.2rem; transform: translateY(-2px);\">→</span>\n                        <span><strong style=\"color: white; font-weight: bold;\">Colaterais Estruturais:</strong>\n                            Supressão do eixo HPG permanente (induzida por falha nas células de Leydig), colapso do HDL\n                            colesterol, e hipertrofia ventricular concêntrica.</span>\n                    </li>\n                </ul>"
+        "rawHtml": "<p style=\"margin-bottom: 2rem; font-size: 1.3rem; font-weight: bold; color: white;\">Perfil Fisiológico:\n                </p>\n                <ul style=\"gap: 1.5rem; list-style-type: none; padding-left: 0; display: flex; flex-direction: column;\">\n                    <li style=\"display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; color: #D1D5DB; line-height: 1.6;\">\n                        <span style=\"color: var(--accent-main); font-weight: bold; font-size: 1.2rem; transform: translateY(-2px);\">→</span>\n                        <span>Base transcricional (derivados 17α-alquilados e esterificados de Testosterona).</span>\n                    </li>\n                    <li style=\"display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; color: #D1D5DB; line-height: 1.6;\">\n                        <span style=\"color: var(--accent-main); font-weight: bold; font-size: 1.2rem; transform: translateY(-2px);\">→</span>\n                        <span>Química sintética maximizada para Razão Anabólica/Androgênica (Ex.: <em style=\"color: white;\">Trembolona liga-se ao AR 3x mais forte que a Testosterona\n                                basal</em>).</span>\n                    </li>\n                    <li style=\"display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; color: #D1D5DB; line-height: 1.6;\">\n                        <span style=\"color: var(--accent-main); font-weight: bold; font-size: 1.2rem; transform: translateY(-2px);\">→</span>\n                        <span>Hipertrofia dose-dependente mediada primariamente pelo acréscimo massivo de\n                            mionúcleos (Satélites) ao longo de 12 a 20 semanas (Bhasin et al.).</span>\n                    </li>\n                    <li style=\"display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; color: #D1D5DB; line-height: 1.6;\">\n                        <span style=\"color: var(--accent-main); font-weight: bold; font-size: 1.2rem; transform: translateY(-2px);\">→</span>\n                        <span><strong style=\"color: white; font-weight: bold;\">Colaterais Estruturais:</strong>\n                            Supressão prolongada do eixo HPG (induzida por falha nas células de Leydig), colapso do HDL\n                            colesterol, e hipertrofia ventricular concêntrica.</span>\n                    </li>\n                </ul>"
       }
     ]
   },
   {
     "id": 7,
-    "sectionName": "EAA - Aprofundamento",
-    "number": "05.1",
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": "",
     "layout": "bento",
     "title": "As Famílias de Esteroides",
     "subtitle": "Derivações estruturais e suas\n                assinaturas biológicas",
@@ -138,16 +148,16 @@
         "title": "3. Derivados\n                        19-Nortestosterona",
         "attributes": [
           "Principais:\n                            Deca-Durabolin (Nandrolona) e Trembolona (o rei absoluto dos EAAs sintéticos de criação\n                            bovina).",
-          "Foco Clínico: Hipertrofia monstruosa e força bruta.\n                            Efeito rebote cruel: toxicidade neurológica agressiva, supressão implacável e permanente da\n                            libido por picos irreversíveis de prolactina no córtex."
+          "Foco Clínico: Hipertrofia monstruosa e força bruta.\n                            Efeito rebote cruel: toxicidade neurológica agressiva, supressão prolongada da\n                            libido associada a picos de prolactina."
         ],
-        "rawHtml": "<p style=\"font-size: 0.85rem; color: #D1D5DB; margin-bottom: 1rem; line-height: 1.5;\">Sem o carbono\n                        na posição 19. Essas moléculas ligam-se ao Receptor Androgênico massivamente, somado à mortal\n                        <strong>atividade Progestínica</strong> periférica.\n                    </p>\n                    <ul style=\"padding-left: 1rem; font-size: 0.8rem; color: #9CA3AF; line-height: 1.5;\">\n                        <li style=\"margin-bottom: 0.5rem;\"><strong style=\"color: white;\">Principais:</strong>\n                            Deca-Durabolin (Nandrolona) e Trembolona (o rei absoluto dos EAAs sintéticos de criação\n                            bovina).</li>\n                        <li><strong style=\"color: white;\">Foco Clínico:</strong> Hipertrofia monstruosa e força bruta.\n                            Efeito rebote cruel: toxicidade neurológica agressiva, supressão implacável e permanente da\n                            libido por picos irreversíveis de prolactina no córtex.</li>\n                    </ul>"
+        "rawHtml": "<p style=\"font-size: 0.85rem; color: #D1D5DB; margin-bottom: 1rem; line-height: 1.5;\">Sem o carbono\n                        na posição 19. Essas moléculas ligam-se ao Receptor Androgênico massivamente, somado à mortal\n                        <strong>atividade Progestínica</strong> periférica.\n                    </p>\n                    <ul style=\"padding-left: 1rem; font-size: 0.8rem; color: #9CA3AF; line-height: 1.5;\">\n                        <li style=\"margin-bottom: 0.5rem;\"><strong style=\"color: white;\">Principais:</strong>\n                            Deca-Durabolin (Nandrolona) e Trembolona (o rei absoluto dos EAAs sintéticos de criação\n                            bovina).</li>\n                        <li><strong style=\"color: white;\">Foco Clínico:</strong> Hipertrofia monstruosa e força bruta.\n                            Efeito rebote cruel: toxicidade neurológica agressiva, supressão prolongada da\n                            libido associada a picos de prolactina.</li>\n                    </ul>"
       }
     ]
   },
   {
     "id": 75,
-    "sectionName": "EAA - Aprofundamento",
-    "number": "05.2",
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": "",
     "layout": "prose",
     "title": "Perfis Farmacológicos",
     "subtitle": "Dinâmica das Variáveis: Anabolismo, Androgenismo e Tempo",
@@ -156,8 +166,8 @@
   },
   {
     "id": 8,
-    "sectionName": "EAA - Aprofundamento",
-    "number": "05.2",
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": "",
     "layout": "prose",
     "title": "O Paradoxo da Dose",
     "subtitle": "Retornos decrescentes de ação limpa",
@@ -165,19 +175,38 @@
     "cards": []
   },
   {
-    "id": 9,
-    "sectionName": "EAA - Genética & Detecção",
-    "number": "06",
-    "layout": "prose",
-    "title": "O Polimorfismo UGT2B17",
-    "subtitle": "Como a genética cega o Teste Antidoping Padrão",
-    "content": "[[COMP:Ugt2b17Sim]]",
-    "cards": []
+    "id": 20,
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": "",
+    "layout": "bento",
+    "title": "TPC e Moduladores Hormonais",
+    "subtitle": "Farmacologia de recuperação para burlar o hipogonadismo pós-ciclo",
+    "content": "[[COMP:PctAxisSim]]",
+    "cards": [
+      {
+        "type": "bento",
+        "title": "",
+        "attributes": [],
+        "rawHtml": "<div style=\"width: 120px; font-weight: bold; color: #A78BFA;\">SERMs</div>\n                        <div style=\"flex: 1;\">\n                            <strong>Tamoxifeno / Clomifeno (Antagonistas Genômicos)</strong><br>\n                            <span style=\"font-size: var(--small-size); color: var(--text-secondary);\">Agem por\n                                competição estérica (domínio AF-2) bloqueando o receptor de estrogênio (ERα e ERβ) no\n                                hipotálamo/hipófise. Isso cega os quimiorreceptores ao <em>feedback</em> negativo do\n                                Estradiol (E2), forçando pulsações de GnRH (até 150mg/dia nas primeiras semanas de\n                                crash).</span>\n                        </div>"
+      },
+      {
+        "type": "bento",
+        "title": "",
+        "attributes": [],
+        "rawHtml": "<div style=\"width: 120px; font-weight: bold; color: #FBBF24;\">Inibidores de Aromatase (IA)</div>\n                        <div style=\"flex: 1;\">\n                            <strong>Anastrozol / Letrozol / Exemestano</strong><br>\n                            <span style=\"font-size: var(--small-size); color: var(--text-secondary);\">Anastrozol\n                                (competitivo não esteroidal) e Exemestano (suicida esteroidal irreversível). Bloqueiam\n                                ativamente a enzima CYP19A1 (citocromo P450), derrubando severamente a aromatização\n                                periférica (E2 cai até 98%). Risco: Osteopenia vascular e disfunção endotelial.</span>\n                        </div>"
+      },
+      {
+        "type": "bento",
+        "title": "",
+        "attributes": [],
+        "rawHtml": "<div style=\"width: 120px; font-weight: bold; color: #34D399;\">hCG e rhFSH</div>\n                        <div style=\"flex: 1;\">\n                            <strong>Gonadotrofina Coriônica Humana e FSH Recombinante</strong><br>\n                            <span style=\"font-size: var(--small-size); color: var(--text-secondary);\">Estrutura\n                                glicoproteica alfa idêntica ao LH humano. Liga-se aos receptores LHR nas células de\n                                Leydig induzindo ativação do cAMP/PKA mitocondrial via proteína StAR (Steroidogenic\n                                Acute Regulatory protein), mantendo o volume testicular sob forte supressão (uso\n                                intraciclo 250-500 UI 2x/sem).</span>\n                        </div>"
+      }
+    ]
   },
   {
     "id": 10,
-    "sectionName": "GH & Peptídeos",
-    "number": "07",
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": "",
     "layout": "prose",
     "title": "Eixo GH-IGF-1",
     "subtitle": "Os pontos de Hackeamento Fisiológico",
@@ -215,7 +244,9 @@
         "attributes": [],
         "rawHtml": "<p style='font-size:0.9rem;color:#d1d5db;line-height:1.6;'>Uso crônico de hGH em doses suprafisiológicas causa expansão progressiva do tecido conjuntivo e ósseo: <strong style='color:#fbbf24;'>mandíbula projetada, arcadas supraorbitais, mãos e pés alargados</strong> — Palumboísmo. Órgãos internos (coração, fígado, intestino) também sofrem hiperplasia. Cardiomegalia causa morte prematura documentada em ex-fisiculturistas profissionais.</p>"
       }
-    ]
+    ],
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": ""
   },
   {
     "id": 36,
@@ -248,15 +279,17 @@
         "attributes": [],
         "rawHtml": "<p style='font-size:0.9rem;color:#d1d5db;line-height:1.6;'>O GH, paradoxalmente, é <strong style='color:#f87171;'>diabetogênico</strong>: estimula neoglicogênese hepática e atenua sinalização de insulina em adipócitos. Atletas usando GH + Insulina exógena em stack navegam um equilíbrio metabólico de altíssimo risco — hipoglicemia noturna severa e resistência insulínica crônica são complicações documentadas em fisiculturistas profissionais da era 1990–2010.</p>"
       }
-    ]
+    ],
+    "sectionName": "Ato II · Músculo e hormônios",
+    "number": ""
   },
   {
     "id": 11,
-    "sectionName": "",
+    "sectionName": "Ato II · Músculo e hormônios",
     "number": "",
     "layout": "bento",
     "title": "O STACK OLÍMPICO",
-    "subtitle": "EAA",
+    "subtitle": "A sinergia entre os esquemas",
     "content": "[[COMP:StackSim]]",
     "cards": [
       {
@@ -281,8 +314,8 @@
   },
   {
     "id": 12,
-    "sectionName": "Insulina",
-    "number": "09",
+    "sectionName": "Ato III · Sangue e metabolismo",
+    "number": "",
     "layout": "prose",
     "title": "A Margem que Mata",
     "subtitle": "Anabolismo vs Hipoglicemia",
@@ -291,8 +324,8 @@
   },
   {
     "id": 13,
-    "sectionName": "Insulina",
-    "number": "09.1",
+    "sectionName": "Ato III · Sangue e metabolismo",
+    "number": "",
     "layout": "prose",
     "title": "Translocação Massiva do GLUT4",
     "subtitle": "A mágica molecular do anabolismo extremo\n                induzido pela insulina.",
@@ -301,8 +334,8 @@
   },
   {
     "id": 14,
-    "sectionName": "EPO & Endurance",
-    "number": "10",
+    "sectionName": "Ato III · Sangue e metabolismo",
+    "number": "",
     "layout": "bento",
     "title": "O Hematócrito que Mata",
     "subtitle": "Riscos do aumento da viscosidade sanguínea",
@@ -323,9 +356,94 @@
     ]
   },
   {
+    "id": 18,
+    "sectionName": "Ato III · Sangue e metabolismo",
+    "number": "",
+    "layout": "bento",
+    "title": "SARMs: A Zona Cinzenta Molecular",
+    "subtitle": "Moduladores Seletivos de\n                Receptores Androgênicos - vendidos como suplemento, detectados como doping.",
+    "content": "[[COMP:SarmsSim]]",
+    "cards": [
+      {
+        "type": "bento",
+        "title": "A Falsa Promessa de\n                        Segurança",
+        "attributes": [
+          "Mecanismo de Ação (MoA): Ligantes\n                            não esteroidais que ativam o receptor\n                            androgênico (AR) alterando diferencialmente a conformação do domínio de ligação (LBD),\n                            recrutando coativadores específicos no músculo esquelético e antagonizando a transcrição na\n                            próstata.",
+          "A realidade clínica (Hepatotoxicidade DILI):\n                            Elevação severa de ALT/AST\n                            induzida por dano colestático mitocondrial, além de profunda supressão do eixo HPG (LH/FSH\n                            zerados) em doses >5mg/dia.",
+          "Fronteiras Moleculares: Interagem\n                            primariamente com a enzima\n                            5α-redutase de forma limitada, o que previne a hiperplasia prostática benigna, mas\n                            falha em proteger contra toxicidade vascular."
+        ],
+        "rawHtml": "<ul style=\"padding-left: 1rem; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; display: block;\">\n                        <li style=\"margin-bottom: 0.8rem;\"><strong>Mecanismo de Ação (MoA):</strong> Ligantes\n                            não esteroidais que ativam o receptor\n                            androgênico (AR) alterando diferencialmente a conformação do domínio de ligação (LBD),\n                            recrutando coativadores específicos no músculo esquelético e antagonizando a transcrição na\n                            próstata.</li>\n                        <li style=\"margin-bottom: 0.8rem;\"><strong>A realidade clínica (Hepatotoxicidade DILI):</strong>\n                            Elevação severa de ALT/AST\n                            induzida por dano colestático mitocondrial, além de profunda supressão do eixo HPG (LH/FSH\n                            zerados) em doses &gt;5mg/dia.</li>\n                        <li style=\"margin-bottom: 0.8rem;\"><strong>Fronteiras Moleculares:</strong> Interagem\n                            primariamente com a enzima\n                            5α-redutase de forma limitada, o que previne a hiperplasia prostática benigna, mas\n                            falha em proteger contra toxicidade vascular.</li>\n                    </ul>"
+      },
+      {
+        "type": "bento",
+        "title": "Compostos em Destaque",
+        "attributes": [],
+        "rawHtml": "<div style=\"background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #60A5FA;\">\n                        <strong style=\"color: #93C5FD; font-size: 1.1rem; font-family: var(--font-mono);\">1. Ostarina\n                            (MK-2866)</strong>\n                        <p style=\"font-size: 0.85rem; color: #D1D5DB; margin-top: 0.5rem; line-height: 1.4;\">\n                            <strong>Ação:</strong> Moderada (Efeito focado em preservação de massa e osso).<br>\n                            <strong>Aparência Clínica:</strong> Caquexia e sarcopenia (Nunca aprovado humanamente).<br>\n                            <span style=\"color: #F87171;\"><strong>Colateral Subestimado:</strong> Derruba o perfil\n                                lipídico (HDL desaba) drasticamente nas primeiras semanas.</span>\n                        </p>\n                    </div>\n\n                    <div style=\"background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #3B82F6;\">\n                        <strong style=\"color: #60A5FA; font-size: 1.1rem; font-family: var(--font-mono);\">2. LGD-4033\n                            (Ligandrol)</strong>\n                        <p style=\"font-size: 0.85rem; color: #D1D5DB; margin-top: 0.5rem; line-height: 1.4;\">\n                            <strong>Ação:</strong> Alta (Forte anabolismo comparável a doses leves de EAA).<br>\n                            <strong>Aparência Clínica:</strong> Distrofia muscular e osteoporose severa.<br>\n                            <span style=\"color: #F87171;\"><strong>Colateral Subestimado:</strong> Supressão\n                                <strong>total</strong> da produção endógena de testosterona (Crash HPG) em testes de\n                                apenas 5mg.</span>\n                        </p>\n                    </div>\n\n                    <div style=\"background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #2563EB;\">\n                        <strong style=\"color: #3B82F6; font-size: 1.1rem; font-family: var(--font-mono);\">3. RAD-140\n                            (Testolone)</strong>\n                        <p style=\"font-size: 0.85rem; color: #D1D5DB; margin-top: 0.5rem; line-height: 1.4;\">\n                            <strong>Ação:</strong> Muito Alta (Potência neurotrópica e androgênica forte).<br>\n                            <strong>Aparência Clínica:</strong> TRT experimental e Câncer de Mama Receptor+.<br>\n                            <span style=\"color: #F87171;\"><strong>Colateral Subestimado:</strong> Hepatotoxicidade\n                                massiva severa (DILI de origem biliar colestática).</span>\n                        </p>\n                    </div>"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "sectionName": "Ato III · Sangue e metabolismo",
+    "number": "",
+    "layout": "bento",
+    "title": "Beta-2 Agonistas: A Zona Cinzenta Clínica",
+    "subtitle": "De medicamento para asma a anabolizante",
+    "content": "[[COMP:Beta2Sim]]",
+    "cards": [
+      {
+        "type": "bento",
+        "title": "Salbutamol / Formoterol",
+        "attributes": [],
+        "rawHtml": "<p style=\"font-size: var(--small-size);\"><strong>Via PKA/cAMP:</strong> Ativação da adenilato\n                            ciclase converte ATP em cAMP, ativando PKA que induz broncodilatação e fosforila a lipase\n                            hormônio-sensível (HSL) para lipólise. Limiar WADA: 1.600 µg/24 h (inalatório). Acima (via\n                            oral &gt;8mg), ativa a via PI3K/Akt para hipertrofia, aumentando a força isométrica\n                            pré-competição.</p>"
+      },
+      {
+        "type": "bento",
+        "title": "Clembuterol e GW1516",
+        "attributes": [],
+        "rawHtml": "<p style=\"font-size: var(--small-size);\"><strong>Clembuterol:</strong> Alta afinidade β2\n                            sistêmica (Meia-vida: ~35h). Down-regulation de receptores ocorre em 14 dias\n                            (taquifilaxia).<br><br><strong>Cardarine (GW1516):</strong> Não é Beta-2, é agonista PPARδ.\n                            Reprograma a expressão genética (PGC-1α) transformando fibras de contração rápida em lentas\n                            oxidativas. Carcinogênico.</p>"
+      }
+    ]
+  },
+  {
+    "id": 191,
+    "sectionName": "Ato III · Sangue e metabolismo",
+    "number": "",
+    "title": "A Máquina Metabólica: Beta-2 Detalhado",
+    "subtitle": "Farmacocinética e Detecção dos principais agentes",
+    "layout": "bento",
+    "content": "[[COMP:Beta2KineticsSim]]",
+    "cards": [
+      {
+        "type": "info",
+        "title": "Clembuterol (Clen)",
+        "attributes": [],
+        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'><strong>Meia-vida:</strong> ~35 horas.<br><strong>Efeito Anabólico:</strong> Mais pronunciado em modelos animais, mas em humanos atua fortemente como anticatabólico e um termogênico extremo. Ocorre rápida <span style='color:#F87171;'>taquifilaxia</span> (down-regulation dos receptores β2) em 14-21 dias, exigindo o uso de Cetotifeno para \"limpar\" os receptores.<br><strong>Doping:</strong> Historicamente o mais pego. Casos famosos incluem Alberto Contador e Canelo Álvarez (alegação de carne contaminada no México).</p>"
+      },
+      {
+        "type": "info",
+        "title": "Salbutamol / Albuterol",
+        "attributes": [],
+        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'><strong>Meia-vida:</strong> ~4 a 6 horas.<br><strong>Efeito:</strong> Menos potente que o Clembuterol para queima de gordura, mas muito utilizado (especialmente oral/xarope) por ser eliminado rapidamente, escapando da janela de detecção.<br><strong>Doping (TUE):</strong> Permitido via inalação para asma (limite de 1.600 µg/24 h). Chris Froome caiu no antidoping por exceder quase 2x esse limite urinário, culpando desidratação severa concentrando a urina.</p>"
+      },
+      {
+        "type": "warning",
+        "title": "O Falso Beta-2: Cardarine (GW1516)",
+        "attributes": [],
+        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'>Frequentemente vendido ao lado de SARMs e Beta-2, na verdade é um <strong style='color:white;'>Agonista PPAR-delta</strong>.<br><strong>Mecanismo:</strong> Reprograma o músculo esquelético para preferir ácidos graxos em vez de glicose. Converte fibras musculares rápidas (Tipo II) em lentas e oxidativas (Tipo I).<br><strong>Riscos Reais:</strong> Abandonado pela GlaxoSmithKline na fase 2 por induzir tumores cancerígenos sistêmicos rápidos e agressivos em modelos de ratos. Mesmo assim, <em>sucesso absoluto de vendas no mercado underground</em> de endurance.</p>"
+      },
+      {
+        "type": "alert",
+        "title": "Janelas e Detecção Analítica",
+        "attributes": [],
+        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'>A WADA possui <strong>Zero Tolerância (MRPL de 0,2 ng/mL)</strong> para Clembuterol. No entanto, devido ao histórico de contaminação alimentar mundial (China, México, onde o Clembuterol é usado clandestinamente em porcos/bois para aumento de carne magra), a WADA introduziu uma diretriz para \"Gestão de Resultados\" baseada na rastreabilidade isotópica quando se encontram frações de <span style='color:#F59E0B;'>picogramas</span> (limite de notificação < 5 ng/mL em carnes de países de risco).</p>"
+      }
+    ]
+  },
+  {
     "id": 15,
-    "sectionName": "Passaporte Biológico",
-    "number": "11",
+    "sectionName": "Ato IV · Detecção",
+    "number": "",
     "layout": "prose",
     "title": "Ação vs Detecção",
     "subtitle": "O segredo da microdosagem estratégica",
@@ -333,9 +451,19 @@
     "cards": []
   },
   {
+    "id": 9,
+    "sectionName": "Ato IV · Detecção",
+    "number": "",
+    "layout": "prose",
+    "title": "O Polimorfismo UGT2B17",
+    "subtitle": "Como a genética cega o Teste Antidoping Padrão",
+    "content": "[[COMP:Ugt2b17Sim]]",
+    "cards": []
+  },
+  {
     "id": 16,
-    "sectionName": "Antidoping",
-    "number": "12",
+    "sectionName": "Ato IV · Detecção",
+    "number": "",
     "layout": "bento",
     "title": "Passaporte Biológico (ABP)",
     "subtitle": "Análise Forense Longitudinal",
@@ -376,146 +504,22 @@
     ]
   },
   {
-    "id": 17,
-    "sectionName": "Antidoping",
-    "number": "12.1",
+    "id": 23,
+    "sectionName": "Ato IV · Detecção",
+    "number": "",
     "layout": "prose",
-    "title": "Transfusão Autóloga Homóloga",
-    "subtitle": "O Calcanhar de Aquiles do\n                Passaporte Biológico (ABP)",
-    "content": "[[COMP:TransfusionSim]]",
-    "cards": []
-  },
-  {
-    "id": 18,
-    "sectionName": "Fronteiras Atuais",
-    "number": "BLOCO 3.1",
-    "layout": "bento",
-    "title": "SARMs: A Zona Cinzenta Molecular",
-    "subtitle": "Moduladores Seletivos de\n                Receptores Androgênicos - vendidos como suplemento, detectados como doping.",
-    "content": "[[COMP:SarmsSim]]",
-    "cards": [
-      {
-        "type": "bento",
-        "title": "A Falsa Promessa de\n                        Segurança",
-        "attributes": [
-          "Mecanismo de Ação (MoA): Ligantes\n                            não esteroidais que ativam o receptor\n                            androgênico (AR) alterando diferencialmente a conformação do domínio de ligação (LBD),\n                            recrutando coativadores específicos no músculo esquelético e antagonizando a transcrição na\n                            próstata.",
-          "A realidade clínica (Hepatotoxicidade DILI):\n                            Elevação severa de ALT/AST\n                            induzida por dano colestático mitocondrial, além de profunda supressão do eixo HPG (LH/FSH\n                            zerados) em doses >5mg/dia.",
-          "Fronteiras Moleculares: Interagem\n                            primariamente com a enzima\n                            5α-redutase de forma limitada, o que previne a hiperplasia prostática benigna, mas\n                            falha em proteger contra toxicidade vascular."
-        ],
-        "rawHtml": "<ul style=\"padding-left: 1rem; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; display: block;\">\n                        <li style=\"margin-bottom: 0.8rem;\"><strong>Mecanismo de Ação (MoA):</strong> Ligantes\n                            não esteroidais que ativam o receptor\n                            androgênico (AR) alterando diferencialmente a conformação do domínio de ligação (LBD),\n                            recrutando coativadores específicos no músculo esquelético e antagonizando a transcrição na\n                            próstata.</li>\n                        <li style=\"margin-bottom: 0.8rem;\"><strong>A realidade clínica (Hepatotoxicidade DILI):</strong>\n                            Elevação severa de ALT/AST\n                            induzida por dano colestático mitocondrial, além de profunda supressão do eixo HPG (LH/FSH\n                            zerados) em doses &gt;5mg/dia.</li>\n                        <li style=\"margin-bottom: 0.8rem;\"><strong>Fronteiras Moleculares:</strong> Interagem\n                            primariamente com a enzima\n                            5α-redutase de forma limitada, o que previne a hiperplasia prostática benigna, mas\n                            falha em proteger contra toxicidade vascular.</li>\n                    </ul>"
-      },
-      {
-        "type": "bento",
-        "title": "Compostos em Destaque",
-        "attributes": [],
-        "rawHtml": "<div style=\"background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #60A5FA;\">\n                        <strong style=\"color: #93C5FD; font-size: 1.1rem; font-family: var(--font-mono);\">1. Ostarina\n                            (MK-2866)</strong>\n                        <p style=\"font-size: 0.85rem; color: #D1D5DB; margin-top: 0.5rem; line-height: 1.4;\">\n                            <strong>Ação:</strong> Moderada (Efeito focado em preservação de massa e osso).<br>\n                            <strong>Aparência Clínica:</strong> Caquexia e sarcopenia (Nunca aprovado humanamente).<br>\n                            <span style=\"color: #F87171;\"><strong>Colateral Subestimado:</strong> Derruba o perfil\n                                lipídico (HDL desaba) drasticamente nas primeiras semanas.</span>\n                        </p>\n                    </div>\n\n                    <div style=\"background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #3B82F6;\">\n                        <strong style=\"color: #60A5FA; font-size: 1.1rem; font-family: var(--font-mono);\">2. LGD-4033\n                            (Ligandrol)</strong>\n                        <p style=\"font-size: 0.85rem; color: #D1D5DB; margin-top: 0.5rem; line-height: 1.4;\">\n                            <strong>Ação:</strong> Alta (Forte anabolismo comparável a doses leves de EAA).<br>\n                            <strong>Aparência Clínica:</strong> Distrofia muscular e osteoporose severa.<br>\n                            <span style=\"color: #F87171;\"><strong>Colateral Subestimado:</strong> Supressão\n                                <strong>total</strong> da produção endógena de testosterona (Crash HPG) em testes de\n                                apenas 5mg.</span>\n                        </p>\n                    </div>\n\n                    <div style=\"background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #2563EB;\">\n                        <strong style=\"color: #3B82F6; font-size: 1.1rem; font-family: var(--font-mono);\">3. RAD-140\n                            (Testolone)</strong>\n                        <p style=\"font-size: 0.85rem; color: #D1D5DB; margin-top: 0.5rem; line-height: 1.4;\">\n                            <strong>Ação:</strong> Muito Alta (Potência neurotrópica e androgênica forte).<br>\n                            <strong>Aparência Clínica:</strong> TRT experimental e Câncer de Mama Receptor+.<br>\n                            <span style=\"color: #F87171;\"><strong>Colateral Subestimado:</strong> Hepatotoxicidade\n                                massiva severa (DILI de origem biliar colestática).</span>\n                        </p>\n                    </div>"
-      }
-    ]
-  },
-  {
-    "id": 19,
-    "sectionName": "Fronteiras Atuais",
-    "number": "BLOCO 3.2",
-    "layout": "bento",
-    "title": "Beta-2 Agonistas: A Zona Cinzenta Clínica",
-    "subtitle": "De medicamento para asma a anabolizante",
-    "content": "[[COMP:Beta2Sim]]",
-    "cards": [
-      {
-        "type": "bento",
-        "title": "Salbutamol / Formoterol",
-        "attributes": [],
-        "rawHtml": "<p style=\"font-size: var(--small-size);\"><strong>Via PKA/cAMP:</strong> Ativação da adenilato\n                            ciclase converte ATP em cAMP, ativando PKA que induz broncodilatação e fosforila a lipase\n                            hormônio-sensível (HSL) para lipólise. Limiar WADA: 1.600 µg/24 h (inalatório). Acima (via\n                            oral &gt;8mg), ativa a via PI3K/Akt para hipertrofia, aumentando a força isométrica\n                            pré-competição.</p>"
-      },
-      {
-        "type": "bento",
-        "title": "Clembuterol e GW1516",
-        "attributes": [],
-        "rawHtml": "<p style=\"font-size: var(--small-size);\"><strong>Clembuterol:</strong> Alta afinidade β2\n                            sistêmica (Meia-vida: ~35h). Down-regulation de receptores ocorre em 14 dias\n                            (taquifilaxia).<br><br><strong>Cardarine (GW1516):</strong> Não é Beta-2, é agonista PPARδ.\n                            Reprograma a expressão genética (PGC-1α) transformando fibras de contração rápida em lentas\n                            oxidativas. Carcinogênico.</p>"
-      }
-    ]
-  },
-  {
-    "id": 191,
-    "sectionName": "Fronteiras Atuais",
-    "number": "BLOCO 3.2b",
-    "title": "A Máquina Metabólica: Beta-2 Detalhado",
-    "subtitle": "Farmacocinética e Detecção dos principais agentes",
-    "layout": "bento",
-    "content": "[[COMP:Beta2KineticsSim]]",
-    "cards": [
-      {
-        "type": "info",
-        "title": "Clembuterol (Clen)",
-        "attributes": [],
-        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'><strong>Meia-vida:</strong> ~35 horas.<br><strong>Efeito Anabólico:</strong> Mais pronunciado em modelos animais, mas em humanos atua fortemente como anticatabólico e um termogênico extremo. Ocorre rápida <span style='color:#F87171;'>taquifilaxia</span> (down-regulation dos receptores β2) em 14-21 dias, exigindo o uso de Cetotifeno para \"limpar\" os receptores.<br><strong>Doping:</strong> Historicamente o mais pego. Casos famosos incluem Alberto Contador e Canelo Álvarez (alegação de carne contaminada no México).</p>"
-      },
-      {
-        "type": "info",
-        "title": "Salbutamol / Albuterol",
-        "attributes": [],
-        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'><strong>Meia-vida:</strong> ~4 a 6 horas.<br><strong>Efeito:</strong> Menos potente que o Clembuterol para queima de gordura, mas muito utilizado (especialmente oral/xarope) por ser eliminado rapidamente, escapando da janela de detecção.<br><strong>Doping (TUE):</strong> Permitido via inalação para asma (limite de 1.600 µg/24 h). Chris Froome caiu no antidoping por exceder quase 2x esse limite urinário, culpando desidratação severa concentrando a urina.</p>"
-      },
-      {
-        "type": "warning",
-        "title": "O Falso Beta-2: Cardarine (GW1516)",
-        "attributes": [],
-        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'>Frequentemente vendido ao lado de SARMs e Beta-2, na verdade é um <strong style='color:white;'>Agonista PPAR-delta</strong>.<br><strong>Mecanismo:</strong> Reprograma o músculo esquelético para preferir ácidos graxos em vez de glicose. Converte fibras musculares rápidas (Tipo II) em lentas e oxidativas (Tipo I).<br><strong>Riscos Reais:</strong> Abandonado pela GlaxoSmithKline na fase 2 por induzir tumores cancerígenos sistêmicos rápidos e agressivos em modelos de ratos. Mesmo assim, <em>sucesso absoluto de vendas no mercado underground</em> de endurance.</p>"
-      },
-      {
-        "type": "alert",
-        "title": "Janelas e Detecção Analítica",
-        "attributes": [],
-        "rawHtml": "<p style='font-size:0.9rem; line-height:1.6; color:#D1D5DB;'>A WADA possui <strong>Zero Tolerância (MRPL de 0,2 ng/mL)</strong> para Clembuterol. No entanto, devido ao histórico de contaminação alimentar mundial (China, México, onde o Clembuterol é usado clandestinamente em porcos/bois para aumento de carne magra), a WADA introduziu uma diretriz para \"Gestão de Resultados\" baseada na rastreabilidade isotópica quando se encontram frações de <span style='color:#F59E0B;'>picogramas</span> (limite de notificação < 5 ng/mL em carnes de países de risco).</p>"
-      }
-    ]
-  },
-  {
-    "id": 20,
-    "sectionName": "Fronteiras Atuais",
-    "number": "BLOCO 3.3",
-    "layout": "bento",
-    "title": "TPC e Moduladores Hormonais",
-    "subtitle": "Farmacologia de recuperação para burlar o hipogonadismo pós-ciclo",
-    "content": "[[COMP:PctAxisSim]]",
-    "cards": [
-      {
-        "type": "bento",
-        "title": "",
-        "attributes": [],
-        "rawHtml": "<div style=\"width: 120px; font-weight: bold; color: #A78BFA;\">SERMs</div>\n                        <div style=\"flex: 1;\">\n                            <strong>Tamoxifeno / Clomifeno (Antagonistas Genômicos)</strong><br>\n                            <span style=\"font-size: var(--small-size); color: var(--text-secondary);\">Agem por\n                                competição estérica (domínio AF-2) bloqueando o receptor de estrogênio (ERα e ERβ) no\n                                hipotálamo/hipófise. Isso cega os quimiorreceptores ao <em>feedback</em> negativo do\n                                Estradiol (E2), forçando pulsações de GnRH (até 150mg/dia nas primeiras semanas de\n                                crash).</span>\n                        </div>"
-      },
-      {
-        "type": "bento",
-        "title": "",
-        "attributes": [],
-        "rawHtml": "<div style=\"width: 120px; font-weight: bold; color: #FBBF24;\">Inibidores de Aromatase (IA)</div>\n                        <div style=\"flex: 1;\">\n                            <strong>Anastrozol / Letrozol / Exemestano</strong><br>\n                            <span style=\"font-size: var(--small-size); color: var(--text-secondary);\">Anastrozol\n                                (competitivo não esteroidal) e Exemestano (suicida esteroidal irreversível). Bloqueiam\n                                ativamente a enzima CYP19A1 (citocromo P450), derrubando severamente a aromatização\n                                periférica (E2 cai até 98%). Risco: Osteopenia vascular e disfunção endotelial.</span>\n                        </div>"
-      },
-      {
-        "type": "bento",
-        "title": "",
-        "attributes": [],
-        "rawHtml": "<div style=\"width: 120px; font-weight: bold; color: #34D399;\">hCG e rhFSH</div>\n                        <div style=\"flex: 1;\">\n                            <strong>Gonadotrofina Coriônica Humana e FSH Recombinante</strong><br>\n                            <span style=\"font-size: var(--small-size); color: var(--text-secondary);\">Estrutura\n                                glicoproteica alfa idêntica ao LH humano. Liga-se aos receptores LHR nas células de\n                                Leydig induzindo ativação do cAMP/PKA mitocondrial via proteína StAR (Steroidogenic\n                                Acute Regulatory protein), mantendo o volume testicular sob forte supressão (uso\n                                intraciclo 250-500 UI 2x/sem).</span>\n                        </div>"
-      }
-    ]
-  },
-  {
-    "id": 21,
-    "sectionName": "O Futuro do Antidoping",
-    "number": "BLOCO 4.0",
-    "layout": "prose",
-    "title": "O Paradoxo da Detecção",
-    "subtitle": "1–3%",
-    "content": "[[COMP:RealityCheck]]",
+    "title": "Como Funciona o Algoritmo Bayesiano?",
+    "subtitle": "Estatística de Probabilidade\n                Adaptativa em Tempo Real",
+    "content": "[[COMP:BayesSim]]",
     "cards": []
   },
   {
     "id": 22,
-    "sectionName": "O Futuro do Antidoping",
-    "number": "BLOCO 4.1",
+    "sectionName": "Ato IV · Detecção",
+    "number": "",
     "layout": "bento",
     "title": "Raio-X do Passaporte Biológico",
-    "subtitle": "ALGORITMO BAYESIANO ADAPTATIVO",
+    "subtitle": "Algoritmo bayesiano adaptativo",
     "content": "[[COMP:PassportSim]]\n<div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;\"><div style=\"background: rgba(8,8,18,0.72); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem;\"><p style=\"margin: 0 0 0.4rem; font-family: var(--font-display); font-weight: 600; color: #fff; font-size: 1.05rem;\">📊 Linha de Base Individual</p><p style=\"margin: 0; font-size: 0.95rem; line-height: 1.55; color: #cbd5e1;\">A WADA coleta amostras ao longo de meses para estabelecer valores de referência únicos para CADA atleta — não comparações com médias populacionais.</p></div><div style=\"background: rgba(8,8,18,0.72); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem;\"><p style=\"margin: 0 0 0.4rem; font-family: var(--font-display); font-weight: 600; color: #fff; font-size: 1.05rem;\">📐 Modelo Bayesiano</p><p style=\"margin: 0; font-size: 0.95rem; line-height: 1.55; color: #cbd5e1;\">O algoritmo ABPS calcula a probabilidade de que cada nova medição pertença à distribuição histórica do atleta. Valor &gt; 99,9% de improbabilidade = alerta.</p></div><div style=\"background: rgba(8,8,18,0.72); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem;\"><p style=\"margin: 0 0 0.4rem; font-family: var(--font-display); font-weight: 600; color: #fff; font-size: 1.05rem;\">🩸 Marcadores Monitorados</p><p style=\"margin: 0; font-size: 0.95rem; line-height: 1.55; color: #cbd5e1;\">Hemoglobina (Hb), Hematócrito (Hct), reticulócitos (%ret), OFF-Score (Hb − 60·√%ret), ABPS Score. Manipulação de um marcador distorce o padrão geral.</p></div><div style=\"background: rgba(8,8,18,0.72); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem;\"><p style=\"margin: 0 0 0.4rem; font-family: var(--font-display); font-weight: 600; color: #fff; font-size: 1.05rem;\">⏱️ Janela de Detecção Ampliada</p><p style=\"margin: 0; font-size: 0.95rem; line-height: 1.55; color: #cbd5e1;\">O ABP detecta o efeito, não a substância. EPO e transfusões deixam assinatura no sangue por semanas após clearance do composto. Isso burla a &quot;janela de detecção&quot; química.</p></div></div>",
     "cards": [
       {
@@ -534,24 +538,117 @@
         "type": "bento",
         "title": "Módulo Esteroide",
         "attributes": [],
-        "rawHtml": "<div style=\"display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(96, 165, 250, 0.3); padding-bottom: 0.5rem; margin-bottom: 1rem;\">\n                        \n                        <span style=\"font-size: 0.8rem; color: #9CA3AF; font-family: var(--font-mono);\">Rastreio: EAA\n                            Sintético</span>\n                    </div>\n\n                    <!-- HUD Data -->\n                    <div style=\"background: rgba(0,0,0,0.5); padding: 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 1rem; border-left: 3px solid #60A5FA;\">\n                        <div style=\"display: flex; justify-content: space-between; margin-bottom: 5px;\">\n                            <span style=\"color: #9CA3AF;\">Testo/Epitesto (T/E):</span>\n                            <span style=\"color: white; font-weight: bold;\">11,2 <span style=\"color: #F87171; animation: pulse-glow 2s infinite;\">[ERRO_1]</span></span>\n                        </div>\n                        <div style=\"display: flex; justify-content: space-between; margin-bottom: 5px;\">\n                            <span style=\"color: #9CA3AF;\">Androsterona (A):</span>\n                            <span style=\"color: white; font-weight: bold;\">Elevação de 314%</span>\n                        </div>\n                        <div style=\"display: flex; justify-content: space-between; padding-top: 5px; border-top: 1px dashed rgba(255,255,255,0.2);\">\n                            <span style=\"color: #10B981;\">LIMITE PREDITIVO:</span>\n                            <span style=\"color: #10B981;\">T/E máx. 4,0</span>\n                        </div>\n                    </div>\n\n                    <p style=\"font-size: var(--small-size); color: #D1D5DB; line-height: 1.5;\">O bayesiano cria um\n                        \"corredor estatístico\" preditivo. Não busca a Testosterona em si, mas as distorções brutais na\n                        proporção entre os metabólitos de excreção. Pontos fora da reta viram gatilhos de investigação\n                        IRMS.</p>\n\n                    <details class=\"abp-details\">\n                        \n                        <div class=\"detail-content\">\n                            A razão <strong>Testosterona/Epitestosterona</strong> natural varia de <em>0,5 a 2,0</em> na\n                            maioria dos humanos. O limite da WADA é <em>4,0</em>. Um valor de <em>11,2</em> é ~5x acima\n                            do limite, indicando administração exógena. No entanto, ~5% da população asiática tem\n                            polimorfismo genético (UGT2B17 del/del) que causa T/E naturalmente &lt;0,1 — por isso o ABP usa\n                                o corredor individual, não o fixo. </div>\n                    </details>\n                    <details class=\"abp-details\">\n                        \n                        <div class=\"detail-content\">\n                            O <strong>IRMS (Isotope Ratio Mass Spectrometry)</strong> mede a razão <em>¹³C/¹²C</em> dos\n                            esteroides urinários. Testosterona sintética vem de precursores vegetais (soja/inhame), que\n                            possuem assinatura isotópica diferente da produção endógena humana. Resultado: <strong>δ¹³C\n                                mais negativo = origem exógena confirmada</strong>. É a prova definitiva.\n                        </div>\n                    </details>\n                    <details class=\"abp-details\">\n                        \n                        <div class=\"detail-content\">\n                            • <strong>Androsterona (A)</strong> — Metabólito principal da testosterona<br>\n                            • <strong>Etiocolanolona (Etio)</strong> — Marcador de metabolismo 5β<br>\n                            • <strong>5α-Androstano-3α,17β-diol (5αAdiol)</strong> — Alta sensibilidade para T\n                            exógena<br>\n                            • <strong>5β-Androstano-3α,17β-diol (5βAdiol)</strong> — Referência endógena estável<br>\n                            • <strong>DHEA</strong> — Precursor adrenal (distingue fonte gonadal vs. adrenal)\n                        </div>\n                    </details>"
+        "rawHtml": "<div style=\"display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(96, 165, 250, 0.3); padding-bottom: 0.5rem; margin-bottom: 1rem;\">\n                        \n                        <span style=\"font-size: 0.8rem; color: #9CA3AF; font-family: var(--font-mono);\">Rastreio: EAA\n                            Sintético</span>\n                    </div>\n\n                    <!-- HUD Data -->\n                    <div style=\"background: rgba(0,0,0,0.5); padding: 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 1rem; border-left: 3px solid #60A5FA;\">\n                        <div style=\"display: flex; justify-content: space-between; margin-bottom: 5px;\">\n                            <span style=\"color: #9CA3AF;\">Testo/Epitesto (T/E):</span>\n                            <span style=\"color: white; font-weight: bold;\">11,2 <span style=\"color: #F87171; animation: pulse-glow 2s infinite;\">[ERRO_1]</span></span>\n                        </div>\n                        <div style=\"display: flex; justify-content: space-between; margin-bottom: 5px;\">\n                            <span style=\"color: #9CA3AF;\">Androsterona (A):</span>\n                            <span style=\"color: white; font-weight: bold;\">Elevação de 314%</span>\n                        </div>\n                        <div style=\"display: flex; justify-content: space-between; padding-top: 5px; border-top: 1px dashed rgba(255,255,255,0.2);\">\n                            <span style=\"color: #10B981;\">LIMITE PREDITIVO:</span>\n                            <span style=\"color: #10B981;\">T/E máx. 4,0</span>\n                        </div>\n                    </div>\n\n                    <p style=\"font-size: var(--small-size); color: #D1D5DB; line-height: 1.5;\">O bayesiano cria um\n                        \"corredor estatístico\" preditivo. Não busca a Testosterona em si, mas as distorções brutais na\n                        proporção entre os metabólitos de excreção. Pontos fora da reta viram gatilhos de investigação\n                        IRMS.</p>\n\n                    <details class=\"abp-details\">\n                        \n                        <div class=\"detail-content\">\n                            A razão <strong>Testosterona/Epitestosterona</strong> natural varia de <em>0,5 a 2,0</em> na\n                            maioria dos humanos. O limite da WADA é <em>4,0</em>. Um valor de <em>11,2</em> é ~5x acima\n                            do limite, indicando administração exógena. No entanto, uma grande parcela da população asiática (66% em coreanos) tem\n                            polimorfismo genético (UGT2B17 del/del) que causa T/E naturalmente &lt;0,1 — por isso o ABP usa\n                                o corredor individual, não o fixo. </div>\n                    </details>\n                    <details class=\"abp-details\">\n                        \n                        <div class=\"detail-content\">\n                            O <strong>IRMS (Isotope Ratio Mass Spectrometry)</strong> mede a razão <em>¹³C/¹²C</em> dos\n                            esteroides urinários. Testosterona sintética vem de precursores vegetais (soja/inhame), que\n                            possuem assinatura isotópica diferente da produção endógena humana. Resultado: <strong>δ¹³C\n                                mais negativo = origem exógena confirmada</strong>. É a prova definitiva.\n                        </div>\n                    </details>\n                    <details class=\"abp-details\">\n                        \n                        <div class=\"detail-content\">\n                            • <strong>Androsterona (A)</strong> — Metabólito principal da testosterona<br>\n                            • <strong>Etiocolanolona (Etio)</strong> — Marcador de metabolismo 5β<br>\n                            • <strong>5α-Androstano-3α,17β-diol (5αAdiol)</strong> — Alta sensibilidade para T\n                            exógena<br>\n                            • <strong>5β-Androstano-3α,17β-diol (5βAdiol)</strong> — Referência endógena estável<br>\n                            • <strong>DHEA</strong> — Precursor adrenal (distingue fonte gonadal vs. adrenal)\n                        </div>\n                    </details>"
       }
     ]
   },
   {
-    "id": 23,
-    "sectionName": "O Futuro do Antidoping",
-    "number": "BLOCO 4.1b",
+    "id": 17,
+    "sectionName": "Ato IV · Detecção",
+    "number": "",
     "layout": "prose",
-    "title": "Como Funciona o Algoritmo Bayesiano?",
-    "subtitle": "Estatística de Probabilidade\n                Adaptativa em Tempo Real",
-    "content": "[[COMP:BayesSim]]",
+    "title": "Transfusão Sanguínea: Homóloga e Autóloga",
+    "subtitle": "O Calcanhar de Aquiles do\n                Passaporte Biológico (ABP)",
+    "content": "[[COMP:TransfusionSim]]",
+    "cards": []
+  },
+  {
+    "id": 21,
+    "sectionName": "Ato IV · Detecção",
+    "number": "",
+    "layout": "prose",
+    "title": "O Paradoxo da Detecção",
+    "subtitle": "O que o teste oficial encontra × o que a pesquisa anônima estima",
+    "content": "[[COMP:RealityCheck]]",
+    "cards": []
+  },
+  {
+    "id": 26,
+    "sectionName": "Ato V · Clínica e ética",
+    "number": "",
+    "layout": "bento",
+    "title": "O Powerlifter com Exames \"Alterados\"",
+    "subtitle": "Perfil & Relato",
+    "content": "[[COMP:CasePowerlifterSim]]",
+    "cards": [
+      {
+        "type": "bento",
+        "title": "Perfil & Relato",
+        "attributes": [],
+        "rawHtml": "<p style=\"font-size: var(--small-size); color: #D1D5DB; margin-top: 0.5rem;\">\n                        <strong>Homem, 28 anos, Powerlifter (categoria -93kg)</strong><br><br>\n                        Relata uso de \"testosterona terapêutica\" prescrita há 6 meses por hipogonadismo. Busca\n                        otimização para mundial em 10 semanas. Relata energia excelente e progressão de carga.\n                    </p>"
+      },
+      {
+        "type": "bento",
+        "title": "Painel Laboratorial Crítico",
+        "attributes": [],
+        "rawHtml": "<div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; font-size: 0.85rem; font-family: var(--font-mono);\">\n                        <div style=\"background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--accent-main);\">\n                            <span style=\"color: var(--text-secondary);\">Testosterona Total:</span> <strong style=\"color: var(--accent-main);\">1.850 ng/dL</strong>\n                        </div>\n                        <div style=\"background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--accent-main);\">\n                            <span style=\"color: var(--text-secondary);\">LH / FSH:</span> <strong style=\"color: var(--accent-main);\">\n                                &lt; 0,2 mUI/mL</strong>\n                        </div>\n                        <div style=\"background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; border-left: 2px solid #F59E0B;\">\n                            <span style=\"color: var(--text-secondary);\">IGF-1:</span> <strong style=\"color: #F59E0B;\">380 ng/mL</strong> <span style=\"font-size: 0.7em;\">(Elevado)</span>\n                        </div>\n                        <div style=\"background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--accent-main);\">\n                            <span style=\"color: var(--text-secondary);\">Hematócrito:</span> <strong style=\"color: var(--accent-main);\">52%</strong>\n                        </div>\n                    </div>\n                    <div class=\"reveal delay-3\" style=\"margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.2);\">\n                        <strong style=\"color: #10B981;\">Diagnóstico Fisiológico Oculto:</strong><br>\n                        <span style=\"font-size: var(--small-size);\">Polifarmácia. Supressão HPG prova que o\n                            hipogonadismo é induzido (secundário). O IGF-1 elevado sugere uso cruzado de GH/IGF-1\n                            exógeno. A justificativa de \"reposição\" é álibi (\"TUE informal\").</span>\n                    </div>"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "sectionName": "Ato V · Clínica e ética",
+    "number": "",
+    "layout": "bento",
+    "title": "A Ciclista com Anemia \"Paradoxal\"",
+    "subtitle": "Cenário Sanguíneo",
+    "content": "[[COMP:CaseCyclistSim]]",
+    "cards": [
+      {
+        "type": "bento",
+        "title": "Cenário Sanguíneo",
+        "attributes": [],
+        "rawHtml": "<table style=\"width: 100%; font-size: 0.85rem; color: var(--text-primary); text-align: left; border-collapse: collapse;\">\n                        <tbody><tr style=\"border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary);\">\n                            <th style=\"padding: 8px;\">Parâmetro</th>\n                            <th style=\"padding: 8px;\">Valor do Atleta</th>\n                            <th style=\"padding: 8px;\">Referência</th>\n                        </tr>\n                        <tr>\n                            <td style=\"padding: 8px;\">Hemoglobina</td>\n                            <td style=\"padding: 8px; color: var(--accent-main); font-weight: bold;\">12,1 g/dL (Baixo)\n                            </td>\n                            <td style=\"padding: 8px; font-family: var(--font-mono);\">12,0–16,0</td>\n                        </tr>\n                        <tr style=\"background: rgba(255,255,255,0.02);\">\n                            <td style=\"padding: 8px;\">Reticulócitos</td>\n                            <td style=\"padding: 8px; color: var(--accent-main); font-weight: bold;\">0,2% (Supresso)</td>\n                            <td style=\"padding: 8px; font-family: var(--font-mono);\">0,5–1,5%</td>\n                        </tr>\n                        <tr>\n                            <td style=\"padding: 8px;\">EPO Sérica</td>\n                            <td style=\"padding: 8px; color: var(--accent-main); font-weight: bold;\">2,1 mUI/mL (Baixa)\n                            </td>\n                            <td style=\"padding: 8px; font-family: var(--font-mono);\">4,3–29,0</td>\n                        </tr>\n                        <tr style=\"background: rgba(255,255,255,0.02);\">\n                            <td style=\"padding: 8px;\">Ferro S./Ferritina</td>\n                            <td style=\"padding: 8px; color: #10B981; font-weight: bold;\">Normais</td>\n                            <td style=\"padding: 8px;\">-</td>\n                        </tr>\n                    </tbody></table>"
+      },
+      {
+        "type": "bento",
+        "title": "Interpretação Implacável",
+        "attributes": [],
+        "rawHtml": "<p style=\"font-size: var(--small-size); color: #D1D5DB; margin-top: 0.5rem; line-height: 1.5;\">\n                        Esta atleta feminina de elite reclama de \"fadiga inexplicável\" com queda de VO₂máx.<br><br>\n                        <strong>Não é anemia ferropriva.</strong> É padrão clássico de supressão eritropoiética pós-uso\n                        de rhEPO.<br><br>\n                        Ao interromper a EPO para burlar o teste (limpar a janela), o corpo desliga a produção natural\n                        devido ao feedback excessivo anterior, causando o \"crash\" paradoxal com reticulócitos zerados.\n                    </p>"
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "sectionName": "Ato V · Clínica e ética",
+    "number": "",
+    "layout": "bento",
+    "title": "O Lutador e o \"Suplemento Contaminado\"",
+    "subtitle": "O Evento",
+    "content": "[[COMP:CaseFighterSim]]",
+    "cards": [
+      {
+        "type": "bento",
+        "title": "O Evento",
+        "attributes": [],
+        "rawHtml": "<p style=\"font-size: var(--small-size); color: #D1D5DB; margin-top: 0.5rem;\">\n                        <strong>Homem, 31 anos, MMA Profissional (-77kg).</strong><br><br>\n                        Testou positivo para SARM LGD-4033 em controle surpresa. Quantidade detectada (0,8 ng/mL) indica\n                        traço baixo.<br>\n                        Nega uso intencional. Traz o rótulo de um \"Testo Booster Natural\" (Fórmula Proprietária +\n                        Tribulus).\n                    </p>"
+      },
+      {
+        "type": "bento",
+        "title": "A Defesa e Quem Orienta",
+        "attributes": [
+          "Doping Involuntário é Fato: 10-25% dos suplementos de nicho no mercado\n                            contêm SARMs ou Pró-hormonais cruzados mascarados na linha de chão de fábrica.",
+          "Responsabilidade Técnica: Só prescrever suplemento com selo (NSF\n                                Certified for Sport, Informed Sport).",
+          "Ação Preventiva: O prontuário clínico é defesa legal. Se você documentou\n                            alerta contra \"fórmulas ocultas\", protege a si e ajuda a estabelecer \"ausência de intenção\",\n                            podendo reduzir a sanção (para produto contaminado, o Código prevê de advertência a 2 anos)."
+        ],
+        "rawHtml": "<ul style=\"padding-left: 1.5rem; font-size: var(--small-size); color: var(--text-secondary); line-height: 1.6; margin-top: 0.5rem;\">\n                        <li><strong>Doping Involuntário é Fato:</strong> 10-25% dos suplementos de nicho no mercado\n                            contêm SARMs ou Pró-hormonais cruzados mascarados na linha de chão de fábrica.</li>\n                        <li><strong>Responsabilidade Técnica:</strong> Só prescrever suplemento com selo (<em>NSF\n                                Certified for Sport, Informed Sport</em>).</li>\n                        <li><strong>Ação Preventiva:</strong> O prontuário clínico é defesa legal. Se você documentou\n                            alerta contra \"fórmulas ocultas\", protege a si e ajuda a estabelecer \"ausência de intenção\",\n                            podendo reduzir a sanção (para produto contaminado, o Código prevê de advertência a 2 anos).</li>\n                    </ul>"
+      }
+    ]
+  },
+  {
+    "id": 101,
+    "sectionName": "Ato V · Clínica e ética",
+    "number": "",
+    "layout": "prose",
+    "title": "O Médico diante do Doping",
+    "subtitle": "Onde o médico entra na regra, e onde ela o limita",
+    "content": "[[COMP:MedicoSim]]",
     "cards": []
   },
   {
     "id": 24,
-    "sectionName": "O Futuro do Antidoping",
-    "number": "BLOCO 4.2",
+    "sectionName": "Ato V · Clínica e ética",
+    "number": "",
     "layout": "bento",
     "title": "O Triângulo das Controvérsias",
     "subtitle": "",
@@ -583,28 +680,44 @@
     "title": "O Dimorfismo Sexual como Variável Atlética",
     "subtitle": "Testosterona, estrutura corporal e o que a TRT feminizante reverte — ou não",
     "content": "[[COMP:TransBiologyViz]]",
-    "cards": []
+    "cards": [],
+    "sectionName": "Ato V · Clínica e ética",
+    "number": ""
   },
   {
     "id": 33,
     "layout": "prose",
     "title": "Casos que Mudaram as Regras do Esporte",
-    "subtitle": "Semenya, Chand, Hubbard e Thomas — e como cada um redefiniu as políticas das federações",
+    "subtitle": "Semenya, Chand, Hubbard e Thomas: como cada um redefiniu as políticas",
     "content": "[[COMP:TransCasesTimeline]]",
-    "cards": []
+    "cards": [],
+    "sectionName": "Ato V · Clínica e ética",
+    "number": ""
   },
   {
     "id": 34,
     "layout": "prose",
     "title": "O Abismo entre Ciência e Regulação",
-    "subtitle": "O que os estudos dizem, o que ainda não sabemos e por que as federações discordam entre si",
+    "subtitle": "O que os estudos dizem, o que não sabemos e por que as federações discordam",
     "content": "[[COMP:TransScienceReview]]",
+    "cards": [],
+    "sectionName": "Ato V · Clínica e ética",
+    "number": ""
+  },
+  {
+    "id": 29,
+    "sectionName": "Ato V · Clínica e ética",
+    "number": "",
+    "layout": "prose",
+    "title": "O\n                Dossiê Antidoping",
+    "subtitle": "8 Casos Históricos de Queda no Esporte de Elite",
+    "content": "[[COMP:AthleteDossier]]",
     "cards": []
   },
   {
     "id": 25,
-    "sectionName": "Encerramento",
-    "number": "OS 5 ACHADOS",
+    "sectionName": "Ato V · Clínica e ética",
+    "number": "",
     "layout": "prose",
     "title": "Os 5 Achados de Ouro da Imersão",
     "subtitle": "",
@@ -612,96 +725,23 @@
     "cards": []
   },
   {
-    "id": 26,
-    "sectionName": "Aplicação Prática",
-    "number": "CASO CLÍNICO 01",
-    "layout": "bento",
-    "title": "O Powerlifter com Exames \"Alterados\"",
-    "subtitle": "Perfil & Relato",
-    "content": "[[COMP:CasePowerlifterSim]]",
-    "cards": [
-      {
-        "type": "bento",
-        "title": "Perfil & Relato",
-        "attributes": [],
-        "rawHtml": "<p style=\"font-size: var(--small-size); color: #D1D5DB; margin-top: 0.5rem;\">\n                        <strong>Homem, 28 anos, Powerlifter (categoria -93kg)</strong><br><br>\n                        Relata uso de \"testosterona terapêutica\" prescrita há 6 meses por hipogonadismo. Busca\n                        otimização para mundial em 10 semanas. Relata energia excelente e progressão de carga.\n                    </p>"
-      },
-      {
-        "type": "bento",
-        "title": "Painel Laboratorial Crítico",
-        "attributes": [],
-        "rawHtml": "<div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; font-size: 0.85rem; font-family: var(--font-mono);\">\n                        <div style=\"background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--accent-main);\">\n                            <span style=\"color: var(--text-secondary);\">Testosterona Total:</span> <strong style=\"color: var(--accent-main);\">1.850 ng/dL</strong>\n                        </div>\n                        <div style=\"background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--accent-main);\">\n                            <span style=\"color: var(--text-secondary);\">LH / FSH:</span> <strong style=\"color: var(--accent-main);\">\n                                &lt; 0,2 mUI/mL</strong>\n                        </div>\n                        <div style=\"background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; border-left: 2px solid #F59E0B;\">\n                            <span style=\"color: var(--text-secondary);\">IGF-1:</span> <strong style=\"color: #F59E0B;\">380 ng/mL</strong> <span style=\"font-size: 0.7em;\">(Elevado)</span>\n                        </div>\n                        <div style=\"background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--accent-main);\">\n                            <span style=\"color: var(--text-secondary);\">Hematócrito:</span> <strong style=\"color: var(--accent-main);\">52%</strong>\n                        </div>\n                    </div>\n                    <div class=\"reveal delay-3\" style=\"margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.2);\">\n                        <strong style=\"color: #10B981;\">Diagnóstico Fisiológico Oculto:</strong><br>\n                        <span style=\"font-size: var(--small-size);\">Polifarmácia. Supressão HPG prova que o\n                            hipogonadismo é induzido (secundário). O IGF-1 elevado sugere uso cruzado de GH/IGF-1\n                            exógeno. A justificativa de \"reposição\" é álibi (\"TUE informal\").</span>\n                    </div>"
-      }
-    ]
-  },
-  {
-    "id": 27,
-    "sectionName": "Aplicação Prática",
-    "number": "CASO CLÍNICO 02",
-    "layout": "bento",
-    "title": "A Ciclista com Anemia \"Paradoxal\"",
-    "subtitle": "Cenário Sanguíneo",
-    "content": "[[COMP:CaseCyclistSim]]",
-    "cards": [
-      {
-        "type": "bento",
-        "title": "Cenário Sanguíneo",
-        "attributes": [],
-        "rawHtml": "<table style=\"width: 100%; font-size: 0.85rem; color: var(--text-primary); text-align: left; border-collapse: collapse;\">\n                        <tbody><tr style=\"border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary);\">\n                            <th style=\"padding: 8px;\">Parâmetro</th>\n                            <th style=\"padding: 8px;\">Valor do Atleta</th>\n                            <th style=\"padding: 8px;\">Referência</th>\n                        </tr>\n                        <tr>\n                            <td style=\"padding: 8px;\">Hemoglobina</td>\n                            <td style=\"padding: 8px; color: var(--accent-main); font-weight: bold;\">12,1 g/dL (Baixo)\n                            </td>\n                            <td style=\"padding: 8px; font-family: var(--font-mono);\">12,0–16,0</td>\n                        </tr>\n                        <tr style=\"background: rgba(255,255,255,0.02);\">\n                            <td style=\"padding: 8px;\">Reticulócitos</td>\n                            <td style=\"padding: 8px; color: var(--accent-main); font-weight: bold;\">0,2% (Supresso)</td>\n                            <td style=\"padding: 8px; font-family: var(--font-mono);\">0,5–1,5%</td>\n                        </tr>\n                        <tr>\n                            <td style=\"padding: 8px;\">EPO Sérica</td>\n                            <td style=\"padding: 8px; color: var(--accent-main); font-weight: bold;\">2,1 mUI/mL (Baixa)\n                            </td>\n                            <td style=\"padding: 8px; font-family: var(--font-mono);\">4,3–29,0</td>\n                        </tr>\n                        <tr style=\"background: rgba(255,255,255,0.02);\">\n                            <td style=\"padding: 8px;\">Ferro S./Ferritina</td>\n                            <td style=\"padding: 8px; color: #10B981; font-weight: bold;\">Normais</td>\n                            <td style=\"padding: 8px;\">-</td>\n                        </tr>\n                    </tbody></table>"
-      },
-      {
-        "type": "bento",
-        "title": "Interpretação Implacável",
-        "attributes": [],
-        "rawHtml": "<p style=\"font-size: var(--small-size); color: #D1D5DB; margin-top: 0.5rem; line-height: 1.5;\">\n                        Esta atleta feminina de elite reclama de \"fadiga inexplicável\" com queda de VO₂máx.<br><br>\n                        <strong>Não é anemia ferropriva.</strong> É padrão clássico de supressão eritropoiética pós-uso\n                        de rhEPO.<br><br>\n                        Ao interromper a EPO para burlar o teste (limpar a janela), o corpo desliga a produção natural\n                        devido ao feedback excessivo anterior, causando o \"crash\" paradoxal com reticulócitos zerados.\n                    </p>"
-      }
-    ]
-  },
-  {
-    "id": 28,
-    "sectionName": "Aplicação Prática",
-    "number": "CASO CLÍNICO 03",
-    "layout": "bento",
-    "title": "O Lutador e o \"Suplemento Contaminado\"",
-    "subtitle": "O Evento",
-    "content": "[[COMP:CaseFighterSim]]",
-    "cards": [
-      {
-        "type": "bento",
-        "title": "O Evento",
-        "attributes": [],
-        "rawHtml": "<p style=\"font-size: var(--small-size); color: #D1D5DB; margin-top: 0.5rem;\">\n                        <strong>Homem, 31 anos, MMA Profissional (-77kg).</strong><br><br>\n                        Testou positivo para SARM LGD-4033 em controle surpresa. Quantidade detectada (0,8 ng/mL) indica\n                        traço baixo.<br>\n                        Nega uso intencional. Traz o rótulo de um \"Testo Booster Natural\" (Fórmula Proprietária +\n                        Tribulus).\n                    </p>"
-      },
-      {
-        "type": "bento",
-        "title": "A Defesa e o Nutricionista",
-        "attributes": [
-          "Doping Involuntário é Fato: 10-25% dos suplementos de nicho no mercado\n                            contêm SARMs ou Pró-hormonais cruzados mascarados na linha de chão de fábrica.",
-          "Responsabilidade Técnica: Só prescrever suplemento com selo (NSF\n                                Certified for Sport, Informed Sport).",
-          "Ação Preventiva: O prontuário clínico é defesa legal. Se você documentou\n                            alerta contra \"fórmulas ocultas\", protege a si e ajuda a estabelecer \"ausência de intenção\",\n                            reduzindo a suspensão de 4 para 1 ano."
-        ],
-        "rawHtml": "<ul style=\"padding-left: 1.5rem; font-size: var(--small-size); color: var(--text-secondary); line-height: 1.6; margin-top: 0.5rem;\">\n                        <li><strong>Doping Involuntário é Fato:</strong> 10-25% dos suplementos de nicho no mercado\n                            contêm SARMs ou Pró-hormonais cruzados mascarados na linha de chão de fábrica.</li>\n                        <li><strong>Responsabilidade Técnica:</strong> Só prescrever suplemento com selo (<em>NSF\n                                Certified for Sport, Informed Sport</em>).</li>\n                        <li><strong>Ação Preventiva:</strong> O prontuário clínico é defesa legal. Se você documentou\n                            alerta contra \"fórmulas ocultas\", protege a si e ajuda a estabelecer \"ausência de intenção\",\n                            reduzindo a suspensão de 4 para 1 ano.</li>\n                    </ul>"
-      }
-    ]
-  },
-  {
-    "id": 29,
-    "sectionName": "Hall da Fama Revertida",
-    "number": "DOSSIÊ DE ATLETAS",
+    "id": 102,
+    "sectionName": "Ato V · Clínica e ética",
+    "number": "",
     "layout": "prose",
-    "title": "O\n                Dossiê Antidoping",
-    "subtitle": "10 Casos Históricos de\n                Queda no Esporte de Elite",
-    "content": "[[COMP:AthleteDossier]]",
+    "title": "O que Levar para o Consultório",
+    "subtitle": "Cinco ações para segunda-feira",
+    "content": "[[COMP:ConsultorioSim]]",
     "cards": []
   },
   {
     "id": 30,
-    "sectionName": "",
+    "sectionName": "Ato V · Clínica e ética",
     "number": "",
     "layout": "prose",
     "title": "",
     "subtitle": "",
-    "content": "<p class=\"quote-text reveal\" style=\"font-size: clamp(2rem, 5vw, 4rem); font-style: normal; font-family: var(--font-display);\">\n                Conhecimento não é cumplicidade — <br><span class=\"highlight-red\">é proteção.</span>\n            </p>\n\n            <p class=\"reveal delay-2\" style=\"font-size: var(--small-size); margin-top: var(--slide-padding); text-align: center; max-width: 600px; color: var(--text-secondary);\">\n                Handelsman DJ, et al. (2018). Circulating Testosterone as the Hormonal Basis of Sex Differences in\n                Athletic Performance.<br>\n                Eichner AK, Tygart T. (2022). Insulin as a PED: What do we know?<br>\n                Barker SB, et al. (2023). Autologous Blood Transfusion in Sport: The Detection Problem.\n            </p>",
+    "content": "<p class=\"quote-text reveal\" style=\"font-size: clamp(2rem, 5vw, 4rem); font-style: normal; font-family: var(--font-display);\">\n                Conhecimento não é cumplicidade — <br><span class=\"highlight-red\">é proteção.</span>\n            </p>\n\n            <p class=\"reveal delay-2\" style=\"font-size: var(--small-size); margin-top: var(--slide-padding); text-align: center; max-width: 600px; color: var(--text-secondary);\">\n                Handelsman DJ, Hirschberg AL, Bermon S. (2018). Circulating Testosterone as the Hormonal Basis of Sex Differences in Athletic Performance. Endocr Rev.<br>\n                Ulrich R, et al. (2018). Doping in Two Elite Athletics Championships Assessed by Randomized-Response Surveys. Sports Med.<br>\n                Sottas PE, Robinson N, Rabin O, Saugy M. (2011). The Athlete Biological Passport. Clin Chem.\n            </p>",
     "cards": []
   }
 ]

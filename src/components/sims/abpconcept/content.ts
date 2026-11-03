@@ -89,6 +89,7 @@ export const COLORS = {
     amber: '#F59E0B',
     red: '#E11D48',
     blue: '#60A5FA',
-    green: '#10B981',
+    /** "Dentro da faixa": ciano (não verde), para não depender de distinguir verde de vermelho. */
+    ok: '#22D3EE',
     hay: '#E8B04B',
 } as const;

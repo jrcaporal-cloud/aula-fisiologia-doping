@@ -31,7 +31,7 @@ export const PILLARS: Pillar[] = [
         drugs: ['EPO', 'Transfusões', 'AICAR'],
         color: '#F43F5E',
         soft: 'rgba(244,63,94,0.14)',
-        detail: 'A EPO estimula eritropoiese na medula óssea, elevando o VO₂máx em até 5–7%. Com Hct >55%, o sangue se torna viscoso — risco de trombose fatal durante bradicardia do sono. Janela de detecção da rhEPO: apenas 24–72h.',
+        detail: 'A EPO estimula eritropoiese na medula óssea, elevando o VO₂máx em até 5⁠–⁠7%. Com Hct >55%, o sangue se torna viscoso — risco de trombose fatal durante bradicardia do sono. Janela de detecção da rhEPO: apenas 24–72h.',
         chains: [[
             { title: 'EPO' },
             { title: 'Medula óssea', note: 'eritropoiese' },

@@ -71,7 +71,7 @@ const stratStatus = (d: number): StatusItem[] => [
 ];
 
 const DetectionWindowSim = () => {
-    const { step, count } = useSlideSteps(STEPS.length);
+    const { step } = useSlideSteps(STEPS.length);
     const reduced = useReducedMotion() ?? false;
     const mode: ChartMode = step < 2 ? 'log' : 'strat';
 
@@ -122,27 +122,30 @@ const DetectionWindowSim = () => {
     const caption = mode === 'log' ? 'após a injeção (dose única)' : 'em relação ao dia da prova';
 
     return (
-        <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-3 font-body text-white">
-            <div className="flex items-center gap-4">
-                <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[12px] uppercase tracking-[0.16em] text-slate-300">
-                    {step + 1}/{count} · {STEPS[step].label}
+        <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-2.5 font-body text-white">
+            <div className="flex min-h-[46px] items-center gap-3">
+                <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[14px] uppercase tracking-[0.1em] text-slate-200">
+                    {STEPS[step].label}
                 </span>
                 <div className="relative min-h-[1.5rem] flex-1">
                     <motion.p key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35 }} className="text-[15px] leading-snug text-slate-200">
+                        transition={{ duration: 0.35 }} className="text-[16px] leading-snug text-slate-100">
                         {STEPS[step].text}
                     </motion.p>
                 </div>
+                <span className="shrink-0 rounded-full border border-amber-500/60 bg-amber-500/10 px-2.5 py-0.5 font-mono text-[14px] uppercase tracking-[0.06em] text-amber-300">
+                    modelo ilustrativo
+                </span>
                 <button type="button" onClick={togglePlay}
-                    className="flex shrink-0 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-mono text-[13px] text-white transition-colors hover:bg-white/20"
+                    className="flex shrink-0 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-mono text-[14px] text-white transition-colors hover:bg-white/20"
                     aria-label={playing ? 'Pausar a linha do teste' : 'Animar a linha do teste ao longo do tempo'}>
-                    {playing ? <Pause size={15} /> : <Play size={15} />}
+                    {playing ? <Pause size={16} /> : <Play size={16} />}
                     {playing ? 'pausar' : 'percorrer'}
                 </button>
             </div>
 
             <div className="flex gap-4">
-                <div className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-3 pb-2 pt-3">
+                <div className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-3 pb-1.5 pt-2">
                     <DetectionChart mode={mode} mix={mix.value} u={u} pillText={`TESTE · ${time.toUpperCase()}`}
                         onScrubStart={handleScrubStart} onScrub={line.set} />
                     <Legend mode={mode} withMetabolite={step >= 1} />
@@ -156,7 +159,7 @@ const DetectionWindowSim = () => {
 };
 
 const LegendSwatch = ({ kind }: { kind: 'line' | 'dash' | 'dot' | 'det' | 'hatch' }) => (
-    <svg width="26" height="12" aria-hidden className="shrink-0">
+    <svg width="24" height="12" aria-hidden className="shrink-0">
         {kind === 'line' && <line x1="1" x2="25" y1="6" y2="6" stroke="#E5E7EB" strokeWidth="2.4" />}
         {kind === 'dash' && <line x1="1" x2="25" y1="6" y2="6" stroke="#E5E7EB" strokeWidth="2" strokeDasharray="6 4" />}
         {kind === 'dot' && <line x1="1" x2="25" y1="6" y2="6" stroke="#E5E7EB" strokeWidth="1.6" strokeDasharray="2 4" />}
@@ -171,15 +174,12 @@ const LegendSwatch = ({ kind }: { kind: 'line' | 'dash' | 'dot' | 'det' | 'hatch
 );
 
 const Legend = ({ mode, withMetabolite }: { mode: ChartMode; withMetabolite: boolean }) => (
-    <div className="mt-1 flex flex-wrap items-center gap-x-5 gap-y-1 px-1 font-body text-[13px] text-slate-300">
-        <span className="flex items-center gap-2"><LegendSwatch kind="line" />concentração</span>
-        {mode === 'log' && withMetabolite && <span className="flex items-center gap-2"><LegendSwatch kind="dash" />metabólito urinário (19-Nor)</span>}
-        <span className="flex items-center gap-2"><LegendSwatch kind="dot" />limiar de efeito</span>
-        <span className="flex items-center gap-2"><LegendSwatch kind="det" />limite de detecção</span>
-        <span className="flex items-center gap-2"><LegendSwatch kind="hatch" />detectável no teste</span>
-        <span className="ml-auto rounded-full border border-amber-500/60 bg-amber-500/10 px-2.5 py-0.5 font-mono text-[12px] uppercase tracking-[0.12em] text-amber-300">
-            modelo ilustrativo
-        </span>
+    <div className="flex min-h-[46px] flex-wrap content-start items-center gap-x-4 gap-y-0.5 px-1 font-body text-[15px] text-slate-200">
+        <span className="flex items-center gap-1.5"><LegendSwatch kind="line" />concentração</span>
+        {mode === 'log' && withMetabolite && <span className="flex items-center gap-1.5"><LegendSwatch kind="dash" />metabólito urinário (19-Nor)</span>}
+        <span className="flex items-center gap-1.5"><LegendSwatch kind="dot" />limiar de efeito</span>
+        <span className="flex items-center gap-1.5"><LegendSwatch kind="det" />limite de detecção</span>
+        <span className="flex items-center gap-1.5"><LegendSwatch kind="hatch" />detectável no teste</span>
     </div>
 );
 

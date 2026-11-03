@@ -31,8 +31,8 @@ export const DataDrawer = ({ panel, reduced, onClose }: DataDrawerProps) => {
             >
                 <div className="flex items-start justify-between gap-4">
                     <div>
-                        <p className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em]" style={{ color: panel.color }}>
-                            {Icon && <Icon size={14} strokeWidth={2.2} aria-hidden />}
+                        <p className="flex items-center gap-2 text-[15px] font-semibold uppercase tracking-[0.1em]" style={{ color: panel.color }}>
+                            {Icon && <Icon size={16} strokeWidth={2.2} aria-hidden />}
                             {panel.title} · {panel.subtitle}
                         </p>
                         <p className="mt-1.5 font-display text-[1.35rem] font-semibold text-white leading-tight">{panel.question}</p>
@@ -43,13 +43,13 @@ export const DataDrawer = ({ panel, reduced, onClose }: DataDrawerProps) => {
                     </button>
                 </div>
 
-                <ul className="mt-4 flex flex-col gap-3">
+                <ul className="mt-3 flex flex-col gap-2.5">
                     {panel.bullets.map((b, i) => (
                         <motion.li key={b}
                             initial={{ opacity: 0, x: reduced ? 0 : -8 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: reduced ? 0 : 0.08 + i * 0.05 }}
-                            className="flex items-start gap-3 text-[15px] leading-snug text-gray-200">
+                            className="flex items-start gap-3 text-[17px] leading-snug text-slate-100">
                             <span className="mt-[0.45em] h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: panel.color }} />
                             <span>{b}</span>
                         </motion.li>

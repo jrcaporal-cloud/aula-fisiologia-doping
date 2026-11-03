@@ -2,8 +2,8 @@ import { motion } from 'framer-motion';
 import type { SceneProps } from '../types';
 
 const ROWS = [
-    { who: 'O relato', text: '"testosterona terapêutica" por hipogonadismo', color: '#F59E0B' },
-    { who: 'Os exames', text: 'LH / FSH < 0,2 mUI/mL: hipogonadismo induzido (secundário)', color: '#60A5FA' },
+    { who: 'O relato', text: '"testosterona terapêutica" por hipogonadismo', color: '#FBBF24' },
+    { who: 'Os exames', text: 'LH / FSH < 0,2 mUI/mL: hipogonadismo induzido (secundário)', color: '#93C5FD' },
 ] as const;
 
 /** Passo 3 do powerlifter: o relato confrontado com o que os exames provam (frases do slide). */
@@ -15,8 +15,8 @@ export const PowerlifterContrast = ({ revealed }: SceneProps) => {
                 <motion.div key={r.who} className="rounded-lg px-3 py-2 border"
                     style={{ borderColor: `${r.color}77`, background: `${r.color}14` }}
                     initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.35 + i * 0.2 }}>
-                    <div className="font-mono text-[12px] uppercase tracking-widest" style={{ color: r.color }}>{r.who}</div>
-                    <div className="text-[14px] leading-snug text-white">{r.text}</div>
+                    <div className="font-mono text-[15px] uppercase tracking-wider" style={{ color: r.color }}>{r.who}</div>
+                    <div className="text-[17px] leading-snug text-white">{r.text}</div>
                 </motion.div>
             ))}
         </div>

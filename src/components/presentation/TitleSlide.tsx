@@ -73,7 +73,7 @@ export const TitleSlide = ({ slide }: { slide: SlideSchema }) => {
                 className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-3 text-gray-400"
             >
                 <kbd className="deck-kbd">→</kbd>
-                <span className="text-xs tracking-[0.25em] uppercase">avance com as setas ou o passador</span>
+                <span className="text-sm tracking-[0.25em] uppercase">avance com as setas ou o passador</span>
             </motion.div>
         </div>
     );

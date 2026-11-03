@@ -86,20 +86,20 @@ export default function InsulinGlut4Sim() {
     const hypo = telemetry.glucose < HYPO_THRESHOLD;
 
     return (
-        <div className="relative flex w-full flex-col gap-3 font-body text-white" style={{ height: 548 }}>
-            <div className="flex min-h-0 flex-1 gap-3">
+        <div className="relative flex w-full flex-col gap-2.5 font-body text-white" style={{ height: 516 }}>
+            <div className="flex min-h-0 flex-1 gap-2.5">
                 <div className="relative min-w-0 flex-1 overflow-hidden rounded-2xl border border-white/10 bg-[#050510]">
                     <InsulinScene step={step} dose={dose} reduced={reduced} telemetry={telemetry} onTelemetry={onTelemetry} />
 
-                    <div className="pointer-events-none absolute left-4 top-3 font-mono text-[13px] uppercase tracking-[0.16em] text-rose-200">
+                    <div className="pointer-events-none absolute left-3 top-2.5 rounded-md bg-[rgba(5,5,16,0.6)] px-2 py-0.5 font-mono text-[14px] uppercase tracking-[0.1em] text-rose-200">
                         Sangue · interstício
                     </div>
-                    <div className="pointer-events-none absolute bottom-3 left-4 font-mono text-[13px] uppercase tracking-[0.16em] text-sky-200">
+                    <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-[rgba(5,5,16,0.6)] px-2 py-0.5 font-mono text-[14px] uppercase tracking-[0.1em] text-sky-200">
                         Citoplasma · fibra muscular
                     </div>
                     <div className="pointer-events-none absolute bottom-3 right-3 flex gap-3 rounded-lg border border-white/10 bg-[rgba(5,5,16,0.78)] px-3 py-1.5">
                         {LEGEND.map(l => (
-                            <span key={l.label} className="flex items-center gap-1.5 font-mono text-[13px] text-gray-100">
+                            <span key={l.label} className="flex items-center gap-1.5 font-body text-[14.5px] text-gray-100">
                                 <LegendIcon shape={l.shape} color={l.color} />
                                 {l.label}
                             </span>
@@ -114,16 +114,16 @@ export default function InsulinGlut4Sim() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -12 }}
                                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                                className="pointer-events-none absolute left-4 top-10 rounded-xl border border-brand-red bg-[rgba(40,4,14,0.9)] px-4 py-2 text-center shadow-[0_0_30px_rgba(225,29,72,0.45)]"
+                                className="pointer-events-none absolute left-4 top-12 rounded-xl border border-brand-red bg-[rgba(40,4,14,0.9)] px-4 py-2 text-center shadow-[0_0_30px_rgba(225,29,72,0.45)]"
                             >
                                 <div className="font-display text-[20px] font-bold uppercase tracking-wide text-rose-100">⚠ Hipoglicemia</div>
-                                <div className="font-body text-[14px] text-rose-100">O cérebro desliga por falta de glicose</div>
+                                <div className="font-body text-[15px] text-rose-100">O cérebro desliga por falta de glicose</div>
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
 
-                <div className="flex w-[330px] flex-none flex-col gap-3">
+                <div className="flex w-[384px] flex-none flex-col gap-2.5">
                     <StepCard step={step} />
                     <Meters glucose={telemetry.glucose} glycogen={telemetry.glycogen} />
                 </div>

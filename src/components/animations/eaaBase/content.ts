@@ -56,7 +56,7 @@ export const LAYERS: Layer[] = [
         title: 'Colaterais Biológicos Críticos',
         color: '#E11D48',
         ink: '#FDA4AF',
-        summary: 'Supressão irreversível do eixo HPG. Hipertrofia ventricular concêntrica letal.',
+        summary: 'Supressão prolongada do eixo HPG. Hipertrofia ventricular concêntrica letal.',
         detail: 'O eixo HPG (Hipotálamo–Hipófise–Gônadas) é suprimido por feedback negativo: T exógena → hipotálamo detecta T alta → para GnRH → Hipófise para LH/FSH → testículos param de produzir T e espermatozoides. Sem LH, células de Leydig atrofiam — produção endógena nula em semanas.',
         mechanism: 'Cardiomiopatia: androgênios promovem hipertrofia de cardiomiócitos via RA cardíaco → parede do VE engrossa → função diastólica prejudicada → risco de morte súbita. Estudos de ecocardiografia: espessura do septo interventricular em fisiculturistas: 13,2mm vs. 9,8mm controles. Fibrose miocárdica detectada em RNM em 50% dos usuários de longa data.',
         risk: 'Análise de mortalidade (Pope et al., Biol Psychiatry): usuários de EAA têm mortalidade 4,6× maior que controles. Principais causas: cardiomiopatia, suicídio (efeito de abstinência), hepatocarcinoma. Expectativa de vida reduzida em 8–12 anos versus população geral nos estudos de fisiculturistas profissionais.',
@@ -73,6 +73,6 @@ export const TABS: { key: TabKey; label: string }[] = [
 
 /** Altura do palco das ilustrações (unidades do viewBox = px no palco de 1280). */
 export const STAGE_W = 600;
-export const STAGE_H = 420;
+export const STAGE_H = 460;
 
 export const EASE = [0.16, 1, 0.3, 1] as const;

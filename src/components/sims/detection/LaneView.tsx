@@ -6,7 +6,7 @@ import { VB, xFromU } from './scales';
 export const RED = '#E11D48';
 const RED_SOFT = '#FDA4AF';
 const MONO = 'JetBrains Mono, ui-monospace, monospace';
-const MONO_CHAR = 7.4; // largura média de um caractere mono a 12px
+const MONO_CHAR = 9.7; // largura média de um caractere mono a 16px
 
 export interface StripSpec {
     intervals: Interval[];
@@ -44,11 +44,11 @@ interface StripProps {
 const StripLabel = ({ end, y, text, color }: { end: number; y: number; text: string; color: string }) => {
     const w = text.length * MONO_CHAR;
     const outside = end + 8 + w < VB.pr;
-    const x = outside ? end + 8 : Math.max(end - 8 - w, VB.pl + 4);
+    const x = outside ? end + 8 : Math.max(end - 16 - w, VB.pl + 4);
     return (
         <g>
-            {!outside && <rect x={x - 5} y={y + 0.5} width={w + 10} height={STRIP_H - 1} rx={4} fill="#050510" fillOpacity={0.88} />}
-            <text x={x} y={y + STRIP_H / 2 + 4.2} fontSize={12} fontFamily={MONO} fill={color}>{text}</text>
+            <rect x={x - 5} y={y + 0.5} width={w + 10} height={STRIP_H - 1} rx={4} fill="#050510" fillOpacity={0.9} />
+            <text x={x} y={y + STRIP_H / 2 + 5.5} fontSize={16} fontFamily={MONO} fill={color}>{text}</text>
         </g>
     );
 };
@@ -70,7 +70,7 @@ const Strip = ({ spec, y, fill, textColor, stroke }: StripProps) => {
 const ThresholdLine = ({ y, color, dash, label, labelBelow }: { y: number; color: string; dash: string; label: string; labelBelow?: boolean }) => (
     <g>
         <line x1={VB.pl} x2={VB.pr} y1={y} y2={y} stroke={color} strokeWidth={1.4} strokeDasharray={dash} strokeOpacity={0.9} />
-        {label && <text x={VB.pr - 4} y={labelBelow ? y + 14 : y - 5} textAnchor="end" fontSize={12} fontFamily={MONO} fill={color}
+        {label && <text x={VB.pr - 4} y={labelBelow ? y + 16 : y - 6} textAnchor="end" fontSize={16} fontFamily={MONO} fill={color}
             stroke="#050510" strokeWidth={3} paintOrder="stroke">{label}</text>}
     </g>
 );
@@ -95,10 +95,10 @@ export const LaneView = ({ spec, hatchId }: LaneViewProps) => {
             </defs>
 
             {/* Cabeçalho da faixa */}
-            <circle cx={VB.pl + 5} cy={box.top + 10} r={5} fill={color} />
-            <text x={VB.pl + 17} y={box.top + 15} fontSize={15} fill="#fff" style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>
+            <circle cx={VB.pl + 6} cy={box.top + 11} r={5.5} fill={color} />
+            <text x={VB.pl + 18} y={box.top + 17} fontSize={16.5} fill="#fff" stroke="#050510" strokeWidth={4} paintOrder="stroke" style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>
                 {spec.title}
-                <tspan dx={10} fontSize={11.5} fontFamily={MONO} fill={color} letterSpacing={0.6}>{spec.badge}</tspan>
+                <tspan dx={10} fontSize={15.2} fontFamily={MONO} fill={color} letterSpacing={0.3}>{spec.badge}</tspan>
             </text>
 
             {/* Fundo do gráfico com décadas */}
@@ -128,7 +128,7 @@ export const LaneView = ({ spec, hatchId }: LaneViewProps) => {
             </g>
 
             {spec.effectThr !== undefined && (
-                <ThresholdLine y={y(spec.effectThr)} color={color} dash="2 4" label={spec.thresholdLabels ? 'limiar de efeito' : ''} labelBelow />
+                <ThresholdLine y={y(spec.effectThr)} color={color} dash="2 4" label={spec.thresholdLabels ? 'limiar de efeito' : ''} />
             )}
             {spec.detectThr !== undefined && (
                 <ThresholdLine y={y(spec.detectThr)} color={RED_SOFT} dash="8 5" label={spec.thresholdLabels ? 'limite de detecção' : ''} labelBelow />

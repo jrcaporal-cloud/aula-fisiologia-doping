@@ -84,7 +84,7 @@ export const LEVELS: readonly [Level, Level, Level] = [
             {
                 label: 'Risco: Acromegalia',
                 icon: 'warn',
-                content: 'Uso crônico em doses suprafisiológicas → hipertrofia progressiva de tecidos: mandíbula, arcadas supraorbitais, mãos, pés — Palumboísmo. Órgãos internos (coração, fígado, intestino) também hipertrofiam. Cardiomegalia documentada como causa de morte prematura em fisiculturistas.',
+                content: 'Uso crônico em doses suprafisiológicas → hipertrofia progressiva de tecidos: mandíbula, arcadas supraorbitais, mãos, pés — palumbismo. Órgãos internos (coração, fígado, intestino) também hipertrofiam. Cardiomegalia documentada como causa de morte prematura em fisiculturistas.',
             },
         ],
     },

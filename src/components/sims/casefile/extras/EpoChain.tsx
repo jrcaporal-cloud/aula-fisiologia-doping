@@ -4,9 +4,9 @@ import type { SceneProps } from '../types';
 
 /** Cadeia do "crash" (frases do slide 27): EPO interrompida → produção natural desligada → reticulócitos. */
 const LINKS = [
-    { text: 'EPO interrompida', sub: 'limpar a janela', color: '#F59E0B' },
-    { text: 'Produção natural desligada', sub: 'feedback excessivo anterior', color: '#A855F7' },
-    { text: 'Reticulócitos 0,2%', sub: '"crash" paradoxal', color: '#E11D48' },
+    { text: 'EPO interrompida', sub: 'limpar a janela', color: '#F59E0B', note: '#FCD34D' },
+    { text: 'Produção natural desligada', sub: 'feedback excessivo anterior', color: '#A855F7', note: '#D8B4FE' },
+    { text: 'Reticulócitos 0,2%', sub: '"crash" paradoxal', color: '#E11D48', note: '#FDA4AF' },
 ] as const;
 
 export const EpoChain = ({ revealed }: SceneProps) => {
@@ -20,11 +20,11 @@ export const EpoChain = ({ revealed }: SceneProps) => {
                             <ArrowDown size={12} className="text-gray-300" />
                         </motion.span>
                     )}
-                    <motion.div className="rounded-lg border px-2.5 py-1 flex items-baseline justify-between gap-2"
-                        style={{ borderColor: `${l.color}88`, background: `${l.color}18` }}
+                    <motion.div className="rounded-lg border px-3 py-1 flex flex-col leading-tight"
+                        style={{ borderColor: `${l.color}99`, background: `${l.color}1f` }}
                         initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35, delay: 0.4 + i * 0.35 }}>
-                        <span className="text-[13px] font-semibold text-white">{l.text}</span>
-                        <span className="text-[12px] text-right" style={{ color: l.color }}>{l.sub}</span>
+                        <span className="text-[16px] font-semibold text-white">{l.text}</span>
+                        <span className="text-[15px]" style={{ color: l.note }}>{l.sub}</span>
                     </motion.div>
                 </div>
             ))}

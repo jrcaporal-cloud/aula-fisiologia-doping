@@ -26,7 +26,7 @@ export const BULLETS: readonly Bullet[] = [
     { id: 'atualizacao', label: 'Atualização:', text: 'A cada novo exame de sangue/urina coletado, o algoritmo recalibra o centro genético daquele atleta exato.' },
     {
         id: 'corredor', label: 'Corredor Adaptativo:',
-        text: 'Após 3 exames, o software desenha um “túnel” de limites mínimo/máximo exclusivos para este indivíduo. Se a Hemoglobina subir fora desse túnel privativo — mesmo sendo um valor normal para outra pessoa — o sistema dispara um alerta de “Achado Atípico (ATF)”.',
+        text: 'Após 3 exames, o software desenha um “túnel” de limites mínimo/máximo exclusivos para este indivíduo. Se um valor (como a razão T/E) sair desse túnel privativo — mesmo sendo um valor normal para outra pessoa — o sistema dispara um alerta de “Achado Atípico (ATF)”.',
     },
 ];
 

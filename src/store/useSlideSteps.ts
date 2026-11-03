@@ -13,6 +13,9 @@ interface SlideStepState {
     enterAtEnd: boolean;
     /** Dono atual: o slide que sai (ainda animando) não pode zerar os passos do que entrou. */
     owner: number;
+    /** Passo vindo da URL, aplicado quando o slide declarar seus passos. */
+    pendingStep: number | null;
+    clearPendingStep: () => void;
     register: (count: number) => number;
     unregister: (owner: number) => void;
     setStep: (step: number) => void;
@@ -21,21 +24,38 @@ interface SlideStepState {
 
 let nextOwner = 1;
 
+/** Passo pedido na URL (#/27/3 = terceiro passo do slide 27): vale só para o slide da primeira carga. */
+const stepFromHash = (): number | null => {
+    if (typeof window === 'undefined') return null;
+    const match = window.location.hash.match(/^#\/\d+\/(\d+)$/);
+    const n = match ? parseInt(match[1], 10) : NaN;
+    return Number.isFinite(n) && n > 1 ? n - 1 : null;
+};
+
 export const useSlideStepStore = create<SlideStepState>((set, get) => ({
     step: 0,
     count: 1,
     enterAtEnd: false,
     owner: 0,
+    pendingStep: stepFromHash(),
+    clearPendingStep: () => set({ pendingStep: null }),
     register: (count) => {
         const owner = nextOwner++;
-        set(state => ({ count, owner, step: state.enterAtEnd ? count - 1 : 0 }));
+        set(state => ({
+            count,
+            owner,
+            pendingStep: null,
+            step: state.pendingStep != null
+                ? Math.min(state.pendingStep, count - 1)
+                : state.enterAtEnd ? count - 1 : 0,
+        }));
         return owner;
     },
     unregister: (owner) => {
         if (get().owner === owner) set({ count: 1, step: 0, owner: 0 });
     },
     setStep: (step) => set(state => ({ step: Math.min(Math.max(step, 0), state.count - 1) })),
-    prepareEntry: (atEnd) => set({ enterAtEnd: atEnd, step: 0, count: 1, owner: 0 }),
+    prepareEntry: (atEnd) => set({ enterAtEnd: atEnd, step: 0, count: 1, owner: 0, pendingStep: null }),
 }));
 
 export interface SlideSteps {

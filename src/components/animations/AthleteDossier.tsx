@@ -24,7 +24,7 @@ export const AthleteDossier = () => {
     const tab = selection.step === step ? selection.tab : 'ficha';
 
     return (
-        <div className="not-prose flex w-full select-none flex-col gap-2.5 font-body text-white pointer-events-auto" style={{ height: 510 }}>
+        <div className="not-prose flex w-full select-none flex-col gap-2 font-body text-white pointer-events-auto" style={{ height: 520 }}>
             <div className="shrink-0 rounded-2xl border border-white/10 px-3 pb-1.5 pt-2" style={{ background: 'rgba(8,8,18,0.72)' }}>
                 <Timeline active={step} onSelect={setStep} />
             </div>

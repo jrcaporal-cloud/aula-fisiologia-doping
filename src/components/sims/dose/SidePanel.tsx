@@ -37,16 +37,16 @@ const StageReadout = ({ stage, step }: { stage: Stage; step: number }) => (
     <>
         <div className={`${CARD} p-5`} style={{ boxShadow: `inset 0 0 0 1px ${stage.color}33, 0 0 40px -18px ${stage.color}` }}>
             <div className="flex items-center justify-between">
-                <span className="rounded-full px-3 py-1 font-mono text-[13px] font-semibold uppercase tracking-[0.12em]"
+                <span className="rounded-full px-3 py-1 font-mono text-[14px] font-semibold uppercase tracking-[0.12em]"
                     style={{ color: stage.color, background: `${stage.color}1f` }}>
                     {stage.name}
                 </span>
-                <span className="font-mono text-[15px] text-zinc-300">{stage.doseText}</span>
+                <span className="font-mono text-[16px] text-zinc-200">{stage.doseText}</span>
             </div>
             <div className="mt-4 font-display text-[56px] font-semibold leading-none" style={{ color: stage.color }}>
                 {stage.id === 'fisio' ? '~0 kg' : <AnimatedNumber value={stage.gain} prefix="+" suffix={stage.id === 'abuso' ? ' kg+' : ' kg'} delay={0.25} />}
             </div>
-            <div className="mt-1 font-body text-[14px] text-zinc-400">de massa magra</div>
+            <div className="mt-1 font-body text-[15px] text-zinc-300">de massa magra</div>
             <p className="mt-4 font-body text-[16px] leading-snug text-zinc-100">{stage.note}</p>
             {stage.risk && (
                 <div className="mt-4 flex items-center gap-2 rounded-xl border border-[#E11D48]/50 bg-[#E11D48]/15 px-3 py-2 font-body text-[15px] font-semibold text-[#FDA4AF]">
@@ -56,16 +56,16 @@ const StageReadout = ({ stage, step }: { stage: Stage; step: number }) => (
             )}
         </div>
 
-        <div className={`${CARD} px-5 py-4`}>
-            <div className="mb-2 font-mono text-[12px] uppercase tracking-[0.14em] text-zinc-400">Pontos da aula</div>
+        <div className={`${CARD} px-4 py-4`}>
+            <div className="mb-2 font-mono text-[14px] uppercase tracking-[0.12em] text-zinc-300">Pontos da aula</div>
             <ul className="flex flex-col gap-1.5">
                 {STAGES.map((s, i) => (
-                    <li key={s.id} className="flex items-center gap-3 font-body text-[15px] transition-opacity duration-500"
-                        style={{ opacity: i <= step ? 1 : 0.28 }}>
+                    <li key={s.id} className="flex items-center gap-2.5 font-body text-[15px] transition-opacity duration-500"
+                        style={{ opacity: i <= step ? 1 : 0.6 }}>
                         <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: s.color }} />
-                        <span className="flex-1 text-zinc-100">{s.name}</span>
-                        <span className="w-[68px] font-mono text-[13px] text-zinc-400">{s.doseText}</span>
-                        <span className="w-[72px] text-right font-mono text-[14px] font-semibold" style={{ color: s.color }}>
+                        <span className="min-w-0 flex-1 whitespace-nowrap text-zinc-100">{s.name}</span>
+                        <span className="w-[60px] shrink-0 whitespace-nowrap font-mono text-[14px] text-zinc-300">{s.doseText}</span>
+                        <span className="w-[74px] shrink-0 whitespace-nowrap text-right font-mono text-[15px] font-semibold" style={{ color: s.color }}>
                             {i <= step ? s.gainText : '—'}
                         </span>
                     </li>
@@ -87,8 +87,8 @@ const CurveReadout = ({ dose }: { dose: number }) => {
         <>
             <div className={`${CARD} p-5`}>
                 <div className="flex items-baseline justify-between">
-                    <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-zinc-400">Dose</span>
-                    <span className="font-mono text-[13px] font-semibold uppercase tracking-[0.1em]" style={{ color: stage.color }}>{stage.name}</span>
+                    <span className="font-mono text-[14px] uppercase tracking-[0.12em] text-zinc-300">Dose</span>
+                    <span className="font-mono text-[14px] font-semibold uppercase tracking-[0.08em]" style={{ color: stage.color }}>{stage.name}</span>
                 </div>
                 <div className="mt-1 flex items-baseline justify-between">
                     <span className="font-display text-[34px] font-semibold leading-none text-white">{Math.round(dose)} mg</span>
@@ -96,13 +96,13 @@ const CurveReadout = ({ dose }: { dose: number }) => {
                 </div>
 
                 {stage.risk && (
-                    <div className="mt-3 flex items-center gap-2 font-body text-[14px] font-semibold text-[#FDA4AF]">
+                    <div className="mt-3 flex items-center gap-2 font-body text-[15px] font-semibold text-[#FDA4AF]">
                         <AlertTriangle size={16} strokeWidth={2.4} />
                         {stage.risk}
                     </div>
                 )}
 
-                <div className="mt-5 font-mono text-[12px] uppercase tracking-[0.14em] text-zinc-400">kg por 100 mg adicionais</div>
+                <div className="mt-4 font-mono text-[14px] uppercase tracking-[0.1em] text-zinc-300">kg por 100 mg adicionais</div>
                 <div className="mt-1 font-display text-[60px] font-semibold leading-none tabular-nums" style={{ color: stage.color }}>
                     {fmt(perHundred, 2)}
                 </div>
@@ -110,22 +110,22 @@ const CurveReadout = ({ dose }: { dose: number }) => {
                     <div className="absolute inset-y-0 left-0 rounded-full"
                         style={{ width: `${(perHundred / (MAX_SLOPE * 100)) * 100}%`, background: stage.color, transition: 'background 0.4s' }} />
                 </div>
-                <div className="mt-2 font-body text-[13px] text-zinc-400">
+                <div className="mt-2 font-body text-[14px] text-zinc-300">
                     Inclinação da tangente · <span className="text-amber-400">modelo ilustrativo</span>
                 </div>
             </div>
 
             <div className={`${CARD} px-5 py-4`}>
-                <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-zinc-400">Ganho médio por 100 mg</div>
-                <div className="mb-3 font-body text-[13px] text-zinc-400">calculado entre os pontos da aula</div>
+                <div className="font-mono text-[14px] uppercase tracking-[0.1em] text-zinc-300">Ganho médio por 100 mg</div>
+                <div className="mb-3 font-body text-[14px] text-zinc-300">calculado entre os pontos da aula</div>
                 <ul className="flex flex-col gap-2.5">
                     {SEGMENT_YIELDS.map((seg, i) => {
                         const on = i === activeSeg;
                         return (
-                            <li key={seg.to.id} className="transition-opacity duration-300" style={{ opacity: on ? 1 : 0.55 }}>
-                                <div className="flex items-baseline justify-between font-mono text-[13px]">
+                            <li key={seg.to.id} className="transition-opacity duration-300" style={{ opacity: on ? 1 : 0.7 }}>
+                                <div className="flex items-baseline justify-between font-mono text-[14px]">
                                     <span className="text-zinc-200">{seg.from.dose} → {seg.to.dose} mg</span>
-                                    <span className="text-[15px] font-bold" style={{ color: seg.to.color }}>{fmt(seg.perHundred, 2)} kg</span>
+                                    <span className="text-[16px] font-bold" style={{ color: seg.to.color }}>{fmt(seg.perHundred, 2)} kg</span>
                                 </div>
                                 <div className="mt-1 h-2 rounded-full bg-white/10">
                                     <div className="h-full rounded-full"

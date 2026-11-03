@@ -71,17 +71,17 @@ export const ReceptorGlyph = ({ mode, active }: ReceptorGlyphProps) => {
                 <path d={STRAND_A} fill="none" stroke="#A78BFA" strokeWidth={2.2} />
                 <path d={STRAND_B} fill="none" stroke="#C4B5FD" strokeWidth={2.2} strokeOpacity={0.7} />
             </g>
-            <text x={DNA_X0} y={196} className="font-mono" fontSize={12} fill="#C4B5FD">DNA</text>
+            <text x={DNA_X0} y={197} className="font-mono" fontSize={19} fontWeight={700} fill="#DDD6FE">DNA</text>
 
             {/* DBD */}
             <rect x={100} y={140} width={56} height={26} rx={9} fill="#6d28d9" stroke="#C4B5FD" strokeWidth={1.2} />
-            <text x={128} y={157} textAnchor="middle" className="font-mono" fontSize={12} fontWeight={700} fill="#EDE9FE">DBD</text>
+            <text x={128} y={159} textAnchor="middle" className="font-mono" fontSize={19} fontWeight={700} fill="#EDE9FE">DBD</text>
             <rect x={122} y={128} width={12} height={14} fill="#4c1d95" />
 
             {/* LBD */}
             <ellipse cx={128} cy={96} rx={68} ry={40} fill={`url(#ar-lbd-${mode})`} stroke="#93C5FD" strokeWidth={1.4} />
             <circle cx={118} cy={92} r={17} fill="#0b1640" stroke="#60A5FA" strokeDasharray="3 3" strokeWidth={1.2} />
-            <text x={78} y={124} className="font-mono" fontSize={12} fontWeight={700} fill="#DBEAFE">LBD</text>
+            <text x={88} y={125} className="font-mono" fontSize={19} fontWeight={700} fill="#DBEAFE">LBD</text>
 
             {/* Hélice 12 (pivô na borda superior direita do LBD) */}
             <g transform="translate(172 64)">
@@ -89,7 +89,7 @@ export const ReceptorGlyph = ({ mode, active }: ReceptorGlyphProps) => {
                     <rect x={0} y={-7} width={50} height={14} rx={7} fill={agonist ? COLORS.cyan : '#94A3B8'} fillOpacity={0.85} stroke="#E0F2FE" strokeWidth={1} />
                 </motion.g>
             </g>
-            <text x={active && !agonist ? 210 : 202} y={active && !agonist ? 30 : 96} className="font-mono" fontSize={12} fill="#BAE6FD">H12</text>
+            <text x={active && !agonist ? 214 : 226} y={active && !agonist ? 34 : 104} className="font-mono" fontSize={19} fontWeight={700} fill="#BAE6FD">H12</text>
 
             {/* Ligante */}
             <motion.g initial={false} animate={{ y: active ? 0 : -86, opacity: active ? 1 : 0 }} transition={t(0.1, 0.7)}>
@@ -100,12 +100,12 @@ export const ReceptorGlyph = ({ mode, active }: ReceptorGlyphProps) => {
             {agonist ? (
                 <motion.g initial={false} animate={{ x: active ? 0 : 60, opacity: active ? 1 : 0 }} transition={t(1.4, 0.6)}>
                     <path d="M 196 50 q 18 -26 44 -10 q 22 14 4 34 q -18 16 -40 2 q -14 -10 -8 -26 Z" fill="rgba(16,185,129,0.85)" stroke="#A7F3D0" strokeWidth={1.2} />
-                    <text x={222} y={60} textAnchor="middle" className="font-mono" fontSize={12} fontWeight={700} fill="#ECFDF5">coat.</text>
+                    <text x={222} y={59} textAnchor="middle" className="font-mono" fontSize={19} fontWeight={700} fill="#ECFDF5">coat.</text>
                 </motion.g>
             ) : (
                 <motion.g initial={false} animate={{ opacity: active ? 1 : 0, x: active ? 0 : -20 }} transition={t(1.4, 0.6)}>
                     <path d="M 226 66 q 18 -26 44 -10 q 22 14 4 34 q -18 16 -40 2 q -14 -10 -8 -26 Z" fill="none" stroke="#6EE7B7" strokeWidth={1.4} strokeDasharray="4 4" />
-                    <text x={252} y={76} textAnchor="middle" className="font-mono" fontSize={12} fill="#A7F3D0">coat.</text>
+                    <text x={250} y={76} textAnchor="middle" className="font-mono" fontSize={19} fontWeight={700} fill="#A7F3D0">coat.</text>
                     <path d="M 210 92 l 14 14 M 224 92 l -14 14" stroke={COLORS.red} strokeWidth={3} strokeLinecap="round" />
                 </motion.g>
             )}

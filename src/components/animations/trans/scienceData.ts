@@ -12,10 +12,10 @@ export interface Study {
 }
 
 export const STUDIES: readonly Study[] = [
-    { name: 'Hilton & Lundberg 2021', n: 'Meta-análise', adv: 12, years: '2-3', color: '#E11D48', finding: 'Vantagem residual de 10-14% em força muscular após 2-3 anos de TRT feminizante.', limit: 'Maioria dos estudos com amostras pequenas (N<30). Atletas recreacionais, não de elite.' },
-    { name: 'Roberts et al. 2021', n: 'N=29 trans', adv: 0, years: '4+', color: '#10B981', finding: 'Após 4 anos de TRT, nenhuma diferença estatisticamente significativa em tempos de corrida vs. cis femininas.', limit: 'Militares da Força Aérea dos EUA — não atletas de elite. N muito pequeno.' },
-    { name: 'Harper et al. 2021', n: 'N≈50', adv: 6, years: '2', color: '#F59E0B', finding: 'Após 2 anos de TRT, tempo de corrida reduziu ~12%. Força de preensão: -17%. Vantagem residual ainda presente.', limit: 'Militares britânicos. Sem controle pelo nível atlético pré-transição.' },
-    { name: 'Handelsman 2017', n: 'Revisão', adv: 10, years: '1', color: '#A855F7', finding: 'Gap de força entre sexos: 10-12% em velocidade, 20-30% em força. Maior parte da diferença persiste após 12 meses de TRT.', limit: 'Baseado em dados fisiológicos gerais, não em estudos longitudinais de atletas trans.' },
+    { name: 'Hilton & Lundberg 2021', n: 'Revisão narrativa', adv: 12, years: '2-3', color: '#E11D48', finding: 'Vantagem residual de 10-14% em força muscular após 2-3 anos de TRT feminizante.', limit: 'Maioria dos estudos com amostras pequenas (N<30). Atletas recreacionais, não de elite.' },
+    { name: 'Roberts et al. 2021', n: 'N=29 trans', adv: 12, years: '2', color: '#10B981', finding: 'Após 2 anos de TRT, flexões e abdominais voltaram ao nível das mulheres cis, mas o tempo de corrida seguiu cerca de 12% mais rápido.', limit: 'Militares da Força Aérea dos EUA — não atletas de elite. N muito pequeno.' },
+    { name: 'Harper et al. 2021', n: 'Revisão sistemática', adv: 6, years: '1', color: '#F59E0B', finding: 'Após 12 meses de TRT, a hemoglobina chega ao nível feminino, mas a vantagem de força muscular persiste.', limit: 'Evidência de baixa qualidade: estudos pequenos e curtos, sem atletas de elite.' },
+    { name: 'Handelsman 2018', n: 'Revisão', adv: 10, years: '1', color: '#A855F7', finding: 'Gap de força entre sexos: 10-12% em velocidade, 20-30% em força. Maior parte da diferença persiste após 12 meses de TRT.', limit: 'Baseado em dados fisiológicos gerais, não em estudos longitudinais de atletas trans.' },
 ];
 
 export const GAPS: readonly { sport: string; gap: number }[] = [
@@ -34,7 +34,7 @@ export const KNOWN: readonly { item: string; confident: boolean }[] = [
     { item: 'T elevada durante puberdade cria vantagens estruturais', confident: true },
     { item: 'TRT feminizante por 2+ anos reduz força muscular significativamente', confident: true },
     { item: 'Vantagem residual de força de 10-14% persiste após 2-3 anos (Hilton 2021)', confident: true },
-    { item: 'Gap desaparece completamente após 4 anos (Roberts 2021)', confident: false },
+    { item: 'Gap desaparece completamente com a TRT', confident: false },
     { item: 'Trans femininas têm desempenho superior a cis femininas em elite', confident: false },
     { item: 'Períodos maiores de TRT eliminam totalmente a vantagem', confident: false },
     { item: 'Efeitos da TRT em atletas de elite são equivalentes aos de recreacionais', confident: false },

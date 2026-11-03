@@ -57,7 +57,7 @@ export const FAMILIES: readonly Family[] = [
         tag: 'Sem o carbono na posição 19',
         principais: ['Deca-Durabolin (Nandrolona)', 'Trembolona'],
         principaisNota: 'o rei absoluto dos EAAs sintéticos de criação bovina',
-        foco: 'Hipertrofia monstruosa e força bruta. Efeito rebote cruel: toxicidade neurológica agressiva, supressão implacável e permanente da libido por picos irreversíveis de prolactina no córtex.',
+        foco: 'Hipertrofia monstruosa e força bruta. Efeito rebote cruel: toxicidade neurológica agressiva, supressão prolongada da libido associada a picos de prolactina.',
         focoCurto: 'Hipertrofia monstruosa e força bruta.',
     },
 ];

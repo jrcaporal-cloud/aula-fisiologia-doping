@@ -109,7 +109,7 @@ const ThrombusLabel = ({ visible }: { visible: boolean }) => (
             className="flex flex-col items-center transition-all duration-500"
             style={{ opacity: visible ? 1 : 0, transform: `translateY(${visible ? 0 : 8}px)` }}
         >
-            <div className="whitespace-nowrap rounded-lg border border-brand-red/70 bg-[rgba(40,4,14,0.88)] px-3 py-1 font-mono text-[13px] font-bold uppercase tracking-[0.18em] text-rose-100 shadow-[0_0_24px_rgba(225,29,72,0.55)]">
+            <div className="whitespace-nowrap rounded-lg border border-brand-red/70 bg-[rgba(40,4,14,0.88)] px-3 py-1 font-mono text-[15px] font-bold uppercase tracking-[0.12em] text-rose-100 shadow-[0_0_24px_rgba(225,29,72,0.55)]">
                 Microtrombo
             </div>
             <div className="h-5 w-px bg-gradient-to-b from-brand-red to-transparent" />
@@ -168,7 +168,7 @@ const SceneCanvas = ({ hct, sleep, alert, live, onAlertChange, dpr }: BloodScene
     <Canvas
         dpr={dpr}
         resize={{ offsetSize: true, scroll: false }}
-        camera={{ position: [-0.3, 1.75, 9.4], fov: 30, near: 0.1, far: 60 }}
+        camera={{ position: [-0.3, 1.6, 8.5], fov: 30, near: 0.1, far: 60 }}
         gl={{ antialias: false, powerPreference: 'high-performance' }}
         onCreated={({ camera }) => camera.lookAt(0, -0.08, 0)}
     >

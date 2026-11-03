@@ -8,12 +8,12 @@ const BULLET_COLORS = { priori: '#CBD5E1', atualizacao: '#60A5FA', corredor: '#2
 export const TextPanel = ({ step }: { step: number }) => {
     const active = STEPS[step].bullet;
     return (
-        <div className="relative rounded-2xl border border-white/10 overflow-hidden h-full flex flex-col p-4 pl-5" style={{ background: 'rgba(8,8,18,0.72)' }}>
-            <div className="font-display text-[18px] font-semibold leading-tight" style={{ color: '#93C5FD' }}>{HEADING}</div>
+        <div className="relative rounded-2xl border border-white/10 overflow-hidden h-full flex flex-col p-3.5 pl-4" style={{ background: 'rgba(8,8,18,0.72)' }}>
+            <div className="font-display text-[17px] font-semibold leading-tight" style={{ color: '#93C5FD' }}>{HEADING}</div>
 
             <AnimatePresence initial={false}>
                 {active === null && (
-                    <motion.p key="intro" className="mt-2.5 text-[14.5px] leading-[1.55] text-gray-200 overflow-hidden"
+                    <motion.p key="intro" className="mt-2.5 text-[15px] leading-[1.5] text-gray-100 overflow-hidden"
                         initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.35 }}>
                         {PARAGRAPH.map((p, i) => (p.strong
@@ -23,21 +23,21 @@ export const TextPanel = ({ step }: { step: number }) => {
                 )}
             </AnimatePresence>
 
-            <ul className="mt-3 flex flex-col gap-2">
+            <ul className="mt-2.5 flex flex-col gap-1.5">
                 {BULLETS.map((b, i) => {
                     const on = b.id === active;
                     const color = BULLET_COLORS[b.id];
                     return (
-                        <li key={b.id} className="rounded-xl border px-3 py-2 transition-colors duration-500"
+                        <li key={b.id} className="rounded-xl border px-3 py-1.5 transition-colors duration-500"
                             style={{ borderColor: on ? `${color}88` : 'rgba(255,255,255,0.08)', background: on ? `${color}14` : 'transparent' }}>
                             <div className="flex items-center gap-2">
-                                <span className="font-mono text-[12px] w-5 h-5 grid place-items-center rounded-md" style={{ color, border: `1px solid ${color}77` }}>{i + 1}</span>
-                                <strong className="text-[15px] font-semibold" style={{ color: on ? '#fff' : '#D1D5DB' }}>{b.label.replace(':', '')}</strong>
+                                <span className="font-mono text-[14px] w-6 h-6 grid place-items-center rounded-md" style={{ color, border: `1px solid ${color}77` }}>{i + 1}</span>
+                                <strong className="text-[16px] font-semibold" style={{ color: on ? '#fff' : '#D1D5DB' }}>{b.label.replace(':', '')}</strong>
                             </div>
                             <AnimatePresence initial={false}>
                                 {on && (
-                                    <motion.p key="t" className="text-[14px] leading-[1.5] text-gray-100 overflow-hidden"
-                                        initial={{ opacity: 0, height: 0, marginTop: 0 }} animate={{ opacity: 1, height: 'auto', marginTop: 6 }}
+                                    <motion.p key="t" className="text-[14.5px] leading-[1.4] text-gray-100 overflow-hidden"
+                                        initial={{ opacity: 0, height: 0, marginTop: 0 }} animate={{ opacity: 1, height: 'auto', marginTop: 4 }}
                                         exit={{ opacity: 0, height: 0, marginTop: 0 }} transition={{ duration: 0.35 }}>
                                         {b.text}
                                     </motion.p>
@@ -48,15 +48,15 @@ export const TextPanel = ({ step }: { step: number }) => {
                 })}
             </ul>
 
-            <div className="mt-auto pt-3 border-t border-white/10">
-                <div className="font-mono text-[13px] text-gray-100 leading-relaxed">
+            <div className="mt-auto pt-2 border-t border-white/10">
+                <div className="font-mono text-[14.5px] text-gray-100 leading-relaxed">
                     <span style={{ color: '#93C5FD' }}>posteriori</span> ∝ <span style={{ color: '#FCD34D' }}>exame novo</span> × <span style={{ color: '#CBD5E1' }}>priori</span>
                 </div>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                    <span className="text-[12px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
+                <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                    <span className="text-[14px] font-mono uppercase tracking-wide px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
                         modelo ilustrativo
                     </span>
-                    <span className="text-[12.5px] text-gray-300">escala de T/E ilustrativa</span>
+                    <span className="text-[14px] text-gray-200">escala de T/E ilustrativa</span>
                 </div>
             </div>
         </div>

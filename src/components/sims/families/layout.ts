@@ -4,7 +4,7 @@ export type ColumnMode = 'bud' | 'collapsed' | 'expanded' | 'compare';
 
 export const GAP = 12;
 export const BODY_H = 480;
-const FOCUS_WEIGHT = 4.2;
+const FOCUS_WEIGHT = 4;
 const ASPECT = BOX.w / BOX.h;
 /** Fração da altura da caixa onde termina o desenho (base dos anéis A/B). */
 const RING_BOTTOM = (40 + 8 - BOX.y) / BOX.h;
@@ -48,11 +48,11 @@ export const computeLayout = (step: number, width: number): Layout => {
         return [...acc, { x, w, cx: x + w / 2, mode }];
     }, []);
 
-    const root = intro ? rootRect(width, 470, 22) : rootRect(width, 108, 2);
-    const bandH = intro ? 384 : 90;
+    const root = intro ? rootRect(width, 400, 16) : rootRect(width, 92, 0);
+    const bandH = intro ? 340 : 72;
     return {
         bandH,
-        busY: intro ? 352 : 78,
+        busY: intro ? 312 : 62,
         trunkTop: root.y + root.h * RING_BOTTOM,
         root,
         columns,

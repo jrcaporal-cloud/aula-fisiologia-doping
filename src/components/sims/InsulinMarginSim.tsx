@@ -21,7 +21,7 @@ const subscribeReduced = (cb: () => void) => {
 };
 const getReduced = () => window.matchMedia(REDUCED_QUERY).matches;
 
-const STEP_COLORS = ['#E5E7EB', '#10B981', '#F59E0B', '#E11D48', '#C084FC'] as const;
+const STEP_COLORS = ['#E5E7EB', '#22D3EE', '#F59E0B', '#E11D48', '#C084FC'] as const;
 
 export default function InsulinMarginSim() {
     const { step, setStep } = useSlideSteps(STEPS.length);
@@ -31,24 +31,19 @@ export default function InsulinMarginSim() {
     const [sceneRef, sceneW] = useBoxWidth<HTMLDivElement>(1100);
 
     return (
-        <div className="w-full select-none font-body text-white" style={{ height: 520 }}>
-            <div className="mb-2.5 flex h-[40px] items-center justify-between gap-4">
-                <div className="flex min-w-0 items-center gap-3">
-                    <span className="shrink-0 rounded-md border border-white/15 px-2 py-1 font-mono text-[12px] uppercase tracking-widest text-gray-200">
-                        Passo {step + 1}/{STEPS.length}
-                    </span>
-                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 truncate">
-                        <span className="font-display text-[16px] font-semibold" style={{ color: accent }}>{info.title}</span>
-                        <span className="text-[14px] text-gray-200"> · {info.caption}</span>
-                    </motion.div>
-                </div>
+        <div className="w-full select-none font-body text-white" style={{ height: 512 }}>
+            <div className="mb-1 flex h-[42px] items-center justify-between gap-4">
+                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 flex-1 text-balance leading-tight">
+                    <span className="font-display text-[17px] font-semibold" style={{ color: accent }}>{info.title}</span>
+                    <span className="text-[15px] text-gray-200"> · {info.caption}</span>
+                </motion.div>
                 <div className="flex shrink-0 items-center gap-1 rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] p-1" role="tablist" aria-label="Passos da régua">
                     {STEPS.map((s, i) => {
                         const active = i === step;
                         return (
                             <button
                                 key={s.tab} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative cursor-pointer rounded-xl px-3 py-1.5 text-[13.5px] font-semibold transition-colors"
+                                className="relative cursor-pointer rounded-xl px-3 py-1.5 text-[14.5px] font-semibold transition-colors"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}
                             >
                                 {active && (
@@ -69,9 +64,9 @@ export default function InsulinMarginSim() {
                 <Facts step={step} />
             </div>
 
-            <div ref={sceneRef} className="relative mt-2.5 overflow-hidden rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)]" style={{ height: SCENE_H }}>
+            <div ref={sceneRef} className="relative mt-5 overflow-hidden rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)]" style={{ height: SCENE_H }}>
                 <Bridge step={step} reduced={reduced} onZone={setStep} width={sceneW} />
-                <div className="absolute bottom-3 left-3 overflow-hidden rounded-xl border border-white/10" style={{ width: 500, height: 136, background: 'rgba(5,5,16,0.85)' }}>
+                <div className="absolute bottom-3 left-3 overflow-hidden rounded-xl border border-white/10" style={{ width: 532, height: 142, background: 'rgba(5,5,16,0.88)' }}>
                     <ZoneCard step={step} />
                 </div>
             </div>

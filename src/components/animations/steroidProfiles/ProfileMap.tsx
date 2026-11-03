@@ -1,5 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { REFERENCE_ID, STEROIDS, type SteroidData } from './data';
+import { Shape } from './markers';
+import { shapeOf } from './markerShapes';
 import {
     ANAB_DOMAIN, ANAB_TICKS, ANDRO_DOMAIN, ANDRO_TICKS, MAP_MARGIN, MAP_W, RATIO_LINES, mapGeometry,
     type MapGeometry,
@@ -16,15 +18,18 @@ type Anchor = 'start' | 'middle' | 'end';
 
 /** Posição do rótulo de cada ponto (os de anabólico ~320 ficam quase na mesma altura). */
 const LABEL_OFFSET: Record<string, { dx: number; dy: number; anchor: Anchor }> = {
-    test: { dx: 15, dy: 5, anchor: 'start' },
-    dianabol: { dx: 15, dy: 5, anchor: 'start' },
-    nandrolona: { dx: 15, dy: 5, anchor: 'start' },
-    trembolona: { dx: -15, dy: 5, anchor: 'end' },
-    winstrol: { dx: 0, dy: 26, anchor: 'middle' },
-    oxandrolona: { dx: -8, dy: -16, anchor: 'start' },
-    primobolan: { dx: 0, dy: 26, anchor: 'middle' },
-    hemogenin: { dx: 15, dy: 5, anchor: 'start' },
+    test: { dx: 16, dy: 5, anchor: 'start' },
+    dianabol: { dx: 16, dy: 5, anchor: 'start' },
+    nandrolona: { dx: 0, dy: -18, anchor: 'middle' },
+    trembolona: { dx: -16, dy: 5, anchor: 'end' },
+    winstrol: { dx: 0, dy: 28, anchor: 'middle' },
+    oxandrolona: { dx: -8, dy: -18, anchor: 'start' },
+    primobolan: { dx: 0, dy: 28, anchor: 'middle' },
+    hemogenin: { dx: 16, dy: 5, anchor: 'start' },
 };
+
+/** Texto de eixos, marcas e anotações do mapa: ≥ 16 px de projeto (o SVG é desenhado em px reais). */
+const AXIS_FONT = 16;
 
 const TEXT_HALO = { paintOrder: 'stroke', stroke: '#050510', strokeWidth: 4, strokeLinejoin: 'round' } as const;
 
@@ -58,21 +63,19 @@ export const ProfileMap = ({ height, step, selectedId, onSelect }: ProfileMapPro
             ))}
 
             {/* Títulos dos eixos */}
-            <text x={MAP_MARGIN.left + g.plotW / 2} y={height - 8} textAnchor="middle"
-                className="fill-zinc-300 font-mono" fontSize={12.5}>
+            <text x={MAP_MARGIN.left + g.plotW / 2} y={height - 7} textAnchor="middle"
+                className="fill-zinc-200 font-body" fontSize={AXIS_FONT}>
                 Potência androgênica (virilização) · Test = 100 · escala log
             </text>
-            <text transform={`translate(13 ${MAP_MARGIN.top + g.plotH / 2}) rotate(-90)`} textAnchor="middle"
-                className="fill-zinc-300 font-mono" fontSize={12.5}>
-                {g.plotH < COMPACT_PLOT_H ? 'Anabólica · Test = 100' : 'Potência anabólica · Test = 100 · log'}
+            <text transform={`translate(17 ${MAP_MARGIN.top + g.plotH / 2}) rotate(-90)`} textAnchor="middle"
+                className="fill-zinc-200 font-body" fontSize={AXIS_FONT}>
+                Potência anabólica · Test = 100 · log
             </text>
         </svg>
     );
 };
 
 /* ---------- Fundo: as duas zonas separadas pela diagonal 1:1 ---------- */
-
-const COMPACT_PLOT_H = 300;
 
 const Zones = ({ g, showLabels }: { g: MapGeometry; showLabels: boolean }) => {
     const reduce = useReducedMotion();
@@ -95,10 +98,10 @@ const Zones = ({ g, showLabels }: { g: MapGeometry; showLabels: boolean }) => {
             <polygon points={`${x0},${y0} ${x1},${y1} ${right},${top} ${right},${bottom}`} fill="rgba(225,29,72,0.07)" />
             <motion.g transform={`translate(${mx} ${my}) rotate(${angle})`} initial={false}
                 animate={{ opacity: showLabels ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.3 }}>
-                <text y={-12} textAnchor="middle" fontSize={13} className="fill-emerald-300 font-body font-semibold">
+                <text y={-12} textAnchor="middle" fontSize={AXIS_FONT} className="fill-emerald-300 font-body font-semibold">
                     ↑ mais anabólico que androgênico
                 </text>
-                <text y={24} textAnchor="middle" fontSize={13} className="fill-rose-300 font-body font-semibold">
+                <text y={24} textAnchor="middle" fontSize={AXIS_FONT} className="fill-rose-300 font-body font-semibold">
                     ↓ mais androgênico que anabólico
                 </text>
             </motion.g>
@@ -111,7 +114,7 @@ const Zones = ({ g, showLabels }: { g: MapGeometry; showLabels: boolean }) => {
 interface GridProps { g: MapGeometry; plotBottom: number; plotRight: number; guided: SteroidData | undefined }
 
 /** Distância mínima (px) entre uma marca do eixo e a etiqueta do valor selecionado. */
-const PILL_CLEARANCE = 26;
+const PILL_CLEARANCE = 30;
 
 const Grid = ({ g, plotBottom, plotRight, guided }: GridProps) => {
     const hideX = (t: number) => guided !== undefined && Math.abs(g.x(t) - g.x(guided.androgenic)) < PILL_CLEARANCE;
@@ -122,16 +125,16 @@ const Grid = ({ g, plotBottom, plotRight, guided }: GridProps) => {
                 <g key={`x${t}`}>
                     <line x1={g.x(t)} x2={g.x(t)} y1={MAP_MARGIN.top} y2={plotBottom}
                         stroke={t === 100 ? 'rgba(96,165,250,0.35)' : 'rgba(255,255,255,0.07)'} strokeDasharray={t === 100 ? '3 4' : undefined} />
-                    <text x={g.x(t)} y={plotBottom + 17} textAnchor="middle" fontSize={12} opacity={hideX(t) ? 0 : 1}
-                        className={t === 100 ? 'fill-blue-300 font-mono' : 'fill-zinc-400 font-mono'}>{t}</text>
+                    <text x={g.x(t)} y={plotBottom + 19} textAnchor="middle" fontSize={AXIS_FONT} opacity={hideX(t) ? 0 : 1}
+                        className={t === 100 ? 'fill-blue-300 font-mono' : 'fill-zinc-300 font-mono'}>{t}</text>
                 </g>
             ))}
             {ANAB_TICKS.map(t => (
                 <g key={`y${t}`}>
                     <line x1={MAP_MARGIN.left} x2={plotRight} y1={g.y(t)} y2={g.y(t)}
                         stroke={t === 100 ? 'rgba(96,165,250,0.35)' : 'rgba(255,255,255,0.07)'} strokeDasharray={t === 100 ? '3 4' : undefined} />
-                    <text x={MAP_MARGIN.left - 8} y={g.y(t) + 4} textAnchor="end" fontSize={12} opacity={hideY(t) ? 0 : 1}
-                        className={t === 100 ? 'fill-blue-300 font-mono' : 'fill-zinc-400 font-mono'}>{t}</text>
+                    <text x={MAP_MARGIN.left - 8} y={g.y(t) + 5} textAnchor="end" fontSize={AXIS_FONT} opacity={hideY(t) ? 0 : 1}
+                        className={t === 100 ? 'fill-blue-300 font-mono' : 'fill-zinc-300 font-mono'}>{t}</text>
                 </g>
             ))}
             <rect x={MAP_MARGIN.left} y={MAP_MARGIN.top} width={g.plotW} height={g.plotH}
@@ -163,9 +166,9 @@ const RatioLines = ({ g, step }: { g: MapGeometry; step: number }) => {
                             animate={{ pathLength: 1 }}
                             transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }} />
                         {/* 1:1 à direita da reta, logo abaixo do canto; 3:1 e 10:1 na borda de cima */}
-                        <text x={main ? x1 - 3 : x1 + 5} y={main ? y1 + 40 : y1 + 13} fontSize={12}
+                        <text x={main ? x1 - 3 : x1 + 5} y={main ? y1 + 40 : y1 + 15} fontSize={AXIS_FONT}
                             textAnchor={main ? 'end' : 'start'}
-                            className={main ? 'fill-white font-mono font-semibold' : 'fill-zinc-400 font-mono'}>
+                            className={main ? 'fill-white font-mono font-semibold' : 'fill-zinc-300 font-mono'}>
                             {label}
                         </text>
                     </motion.g>
@@ -189,8 +192,8 @@ const SelectionGuides = ({ g, plotBottom, selected }: GuidesProps) => {
                 transition={{ duration: 0.3 }}>
                 <line x1={px} x2={px} y1={py} y2={plotBottom} stroke={selected.color} strokeOpacity={0.7} strokeDasharray="2 4" />
                 <line x1={MAP_MARGIN.left} x2={px} y1={py} y2={py} stroke={selected.color} strokeOpacity={0.7} strokeDasharray="2 4" />
-                <ValuePill x={px} y={plotBottom + 13} value={selected.androgenic} color={selected.color} />
-                <ValuePill x={MAP_MARGIN.left - 20} y={py} value={selected.anabolic} color={selected.color} />
+                <ValuePill x={px} y={plotBottom + 15} value={selected.androgenic} color={selected.color} />
+                <ValuePill x={MAP_MARGIN.left - 24} y={py} value={selected.anabolic} color={selected.color} />
             </motion.g>
         </AnimatePresence>
     );
@@ -198,8 +201,8 @@ const SelectionGuides = ({ g, plotBottom, selected }: GuidesProps) => {
 
 const ValuePill = ({ x, y, value, color }: { x: number; y: number; value: number; color: string }) => (
     <g transform={`translate(${x} ${y})`}>
-        <rect x={-18} y={-10} width={36} height={20} rx={6} fill="#050510" stroke={color} strokeWidth={1.4} />
-        <text y={4.5} textAnchor="middle" fontSize={12.5} className="font-mono font-bold" fill={color}>{value}</text>
+        <rect x={-21} y={-11} width={42} height={22} rx={6} fill="#050510" stroke={color} strokeWidth={1.4} />
+        <text y={5.2} textAnchor="middle" fontSize={AXIS_FONT} className="font-mono font-bold" fill={color}>{value}</text>
     </g>
 );
 
@@ -228,21 +231,23 @@ const Point = ({ s, g, order, visible, selected, showReference, onSelect }: Poin
                 transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 20, delay: visible ? 0.1 + order * 0.09 : 0 }}
             >
                 {selected && (
-                    <motion.circle r={13} fill="none" stroke={s.color} strokeWidth={2}
+                    <motion.circle r={15} fill="none" stroke={s.color} strokeWidth={2}
                         initial={{ opacity: 0.9, scale: 1 }}
                         animate={reduce ? { opacity: 0.6 } : { opacity: [0.9, 0], scale: [1, 1.9] }}
                         transition={reduce ? { duration: 0 } : { duration: 1.6, repeat: Infinity, ease: 'easeOut' }} />
                 )}
                 <circle r={18} fill="transparent" />
-                <circle r={selected ? 10 : 7.5} fill={s.color} stroke={selected ? '#fff' : '#050510'} strokeWidth={selected ? 2.2 : 2}
-                    style={{ filter: `drop-shadow(0 0 ${selected ? 10 : 5}px ${s.color})` }} />
-                <text x={label.dx} y={label.dy} textAnchor={label.anchor} fontSize={13.5}
+                <g style={{ filter: `drop-shadow(0 0 ${selected ? 10 : 4}px ${s.color})` }}>
+                    <Shape shape={shapeOf(s.id)} r={selected ? 10.5 : 8.5} fill={s.color}
+                        stroke={selected ? '#fff' : '#050510'} strokeWidth={selected ? 2.2 : 2} />
+                </g>
+                <text x={label.dx} y={label.dy} textAnchor={label.anchor} fontSize={AXIS_FONT}
                     className={selected ? 'font-body font-bold' : 'font-body font-semibold'}
                     fill={selected ? '#fff' : s.color} style={TEXT_HALO}>
                     {s.short}
                 </text>
                 {showReference && (
-                    <text x={label.dx} y={label.dy + 17} fontSize={12} className="fill-blue-200 font-mono" style={TEXT_HALO}>
+                    <text x={label.dx} y={label.dy + 19} fontSize={AXIS_FONT} className="fill-blue-200 font-mono" style={TEXT_HALO}>
                         referência · 100 × 100
                     </text>
                 )}

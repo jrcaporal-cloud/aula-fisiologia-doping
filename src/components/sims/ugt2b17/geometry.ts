@@ -12,7 +12,7 @@ export const SYRINGE_X = 58;
 export const ENZYME = { x: 192, y: 206 } as const;
 export const MUSCLE = { x: 606, y: 172 } as const;
 export const BLADDER = { x: 462, y: 368 } as const;
-export const CUP = { x: 556, y: 396 } as const;
+export const CUP = { x: 542, y: 396 } as const;
 export const KIDNEYS = [{ x: 420, y: 212 }, { x: 504, y: 212 }] as const;
 
 /** Medidor T/E: escala linear 0–20. */

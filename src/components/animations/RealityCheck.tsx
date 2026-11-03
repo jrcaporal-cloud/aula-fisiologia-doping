@@ -54,10 +54,10 @@ export const RealityCheck = () => {
         <div className="not-prose mx-auto mt-1 w-full max-w-[1080px] font-body">
 
             {/* Palpite da turma: o professor registra o chute (mãos levantadas) antes da revelação. */}
-            <div className="mb-4 flex items-center gap-6 rounded-2xl border border-amber-400/25 bg-amber-400/[0.05] px-6 py-3">
+            <div className="mb-3 flex items-center gap-6 rounded-2xl border border-amber-400/30 bg-amber-400/[0.06] px-6 py-3">
                 <div className="flex-shrink-0">
-                    <p className="text-[12.5px] font-semibold uppercase tracking-[0.25em] text-amber-300/90">Palpite da turma</p>
-                    <p className="mt-0.5 text-[15px] text-gray-200">Quantos % dos atletas de elite usam doping?</p>
+                    <p className="text-[16px] font-bold uppercase tracking-[0.16em] text-amber-300">Palpite da turma</p>
+                    <p className="mt-0.5 text-[19px] text-slate-100">Quantos % dos atletas de elite usam doping?</p>
                 </div>
                 <input
                     type="range" min={0} max={100} step={1}
@@ -83,17 +83,16 @@ export const RealityCheck = () => {
                     <StatReadout panel={REAL} shown={isShown('real')} open={activePanel?.id === 'real'} reduced={reduced}
                         countDelay={0.05} countDuration={WAVE_TOTAL_S + 0.5} onToggle={() => toggle('real')}
                         footnote={
-                            <p className="text-[15px] text-amber-200">
+                            <p className="text-[18px] text-amber-200">
                                 A turma chutou <strong className="font-bold" style={{ color: COLORS.amberSoft }}>{shownGuess}%</strong>
                             </p>
                         } />
                 </div>
             </div>
 
-            <p className="mt-3 text-center text-[13px] uppercase tracking-[0.2em] text-gray-400">
-                {isRecap ? 'Recapitulação' : `Passo ${step + 1} de ${STEP_COUNT} · ${STEP_LABELS[step]}`}
-                {' · '}
-                {step < LAST_STEP ? 'avance para revelar' : 'clique nos painéis para expandir os dados'}
+            <p className="mt-2 h-5 text-center text-[15px] text-slate-300">
+                {isRecap && 'Recapitulação · '}
+                {(isRecap || step > 0) && 'clique num painel para ver os dados'}
             </p>
         </div>
     );

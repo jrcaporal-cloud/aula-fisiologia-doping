@@ -9,6 +9,9 @@ import type { LucideIcon } from 'lucide-react';
 
 export const CASE_STEPS = 4;
 
+/** Altura do prontuário (px na largura de desenho): compacta para o slide caber sem rolagem. */
+export const CASE_HEIGHT = 520;
+
 /** Trecho de texto. `mark` destaca o trecho a partir de um passo (ex.: o "álibi" no relato). */
 export interface TextPart {
     readonly text: string;

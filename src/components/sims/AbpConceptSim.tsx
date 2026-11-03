@@ -23,24 +23,19 @@ const AbpConceptSim = () => {
     const visualKey = step <= 1 ? `v${step}-${replay}` : 'panels';
 
     return (
-        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 540 }}>
+        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 516 }}>
             {/* Cabeçalho do passo + atalhos */}
-            <div className="flex items-center justify-between gap-4 h-[40px] mb-2.5">
-                <div className="flex items-center gap-3 min-w-0">
-                    <span className="shrink-0 font-mono text-[12px] tracking-widest uppercase px-2 py-1 rounded-md border border-white/15 text-gray-200">
-                        Passo {step + 1}/{STEP_COUNT}
-                    </span>
-                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 truncate">
-                        <span className="font-display text-[16px] font-semibold" style={{ color: info.color }}>{info.title}</span>
-                        <span className="text-[14px] text-gray-200"> · {info.caption}</span>
-                    </motion.div>
-                </div>
+            <div className="flex items-center justify-between gap-4 h-[46px] mb-2">
+                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 flex-1 text-balance leading-tight">
+                    <span className="font-display text-[17px] font-semibold" style={{ color: info.color }}>{info.title}</span>
+                    <span className="text-[15px] text-gray-200"> · {info.caption}</span>
+                </motion.div>
                 <div className="flex items-center gap-1 rounded-2xl border border-white/10 p-1 shrink-0" style={CARD_BG} role="tablist" aria-label="Partes do passaporte">
                     {STEPS.map((s, i) => {
                         const active = i === step;
                         return (
                             <button key={s.tab} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative px-3 py-1.5 rounded-xl text-[13.5px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-3 py-1.5 rounded-xl text-[14.5px] font-semibold cursor-pointer transition-colors"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="abp-step" className="absolute inset-0 rounded-xl"
@@ -48,7 +43,7 @@ const AbpConceptSim = () => {
                                         transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
                                 )}
                                 <span className="relative flex items-center gap-1.5">
-                                    <span className="font-mono text-[12px]" style={{ color: s.color }}>{i + 1}</span>
+                                    <span className="font-mono text-[14px]" style={{ color: s.color }}>{i + 1}</span>
                                     {s.tab}
                                 </span>
                             </button>
@@ -57,8 +52,8 @@ const AbpConceptSim = () => {
                 </div>
             </div>
 
-            <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 336px', height: 488 }}>
-                <div className="relative rounded-2xl border border-white/10 overflow-hidden px-2 py-1.5" style={CARD_BG}>
+            <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 360px', height: 462 }}>
+                <div className="relative rounded-2xl border border-white/10 overflow-hidden px-1.5 py-1" style={CARD_BG}>
                     <AnimatePresence mode="wait">
                         <motion.div key={visualKey} className="w-full h-full"
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}

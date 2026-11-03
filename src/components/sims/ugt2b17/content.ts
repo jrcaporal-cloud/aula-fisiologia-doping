@@ -86,7 +86,7 @@ export const DEL_TEXT: StepText = {
     title: 'Deleção UGT2B17',
     subtitle: 'Falso Negativo',
     color: '#FDA4AF',
-    pill: '66% dos Asiáticos (del/del)',
+    pill: '66% dos coreanos (del/del)',
     paragraphs: [
         [
             { text: 'Sem o gene, a enzima primária falha. A testosterona exógena ' },

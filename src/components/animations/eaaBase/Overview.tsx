@@ -5,8 +5,8 @@ import { C17, fitMolecule } from './steroidGeometry';
 import { EASE, LAYERS, type Layer } from './content';
 
 const CENTER_W = 330;
-const CENTER_H = 420;
-const FRAME = fitMolecule(16, 96, CENTER_W - 32, 200);
+const CENTER_H = 460;
+const FRAME = fitMolecule(16, 106, CENTER_W - 32, 210);
 const [c17x, c17y] = FRAME.map(C17);
 
 /** Miniatura de cada camada (sem emoji): o mesmo desenho do passo, em escala de ícone. */
@@ -66,12 +66,12 @@ const Tile = ({ layer, onPick, delay }: TileProps) => {
         >
             <div className="flex items-center justify-between">
                 <Glyph layer={layer} />
-                <span className="font-mono text-[13px] tracking-widest" style={{ color: layer.ink }}>0{layer.id + 1}</span>
+                <span className="font-mono text-[15px] tracking-widest" style={{ color: layer.ink }}>0{layer.id + 1}</span>
             </div>
-            <div className="font-display font-semibold text-[17px] leading-tight text-white">{layer.title}</div>
-            <p className="m-0 text-[13.5px] leading-snug text-gray-300">{layer.summary}</p>
-            <span className="mt-auto flex items-center gap-1.5 text-[13px] font-medium opacity-80 group-hover:opacity-100 transition-opacity" style={{ color: layer.ink }}>
-                Abrir camada <ArrowRight size={14} />
+            <div className="font-display font-semibold text-[18px] leading-tight text-white">{layer.title}</div>
+            <p className="m-0 text-[15px] leading-snug text-slate-200">{layer.summary}</p>
+            <span className="mt-auto flex items-center gap-1.5 text-[15px] font-medium opacity-90 group-hover:opacity-100 transition-opacity" style={{ color: layer.ink }}>
+                Abrir camada <ArrowRight size={16} />
             </span>
         </motion.button>
     );
@@ -87,7 +87,7 @@ export const Overview = ({ onPick }: { onPick: (id: number) => void }) => {
             <div className="row-start-2 col-start-3"><Tile layer={LAYERS[3]} onPick={onPick} delay={0.95} /></div>
             <div className="row-span-2 col-start-2 row-start-1 relative">
                 <svg viewBox={`0 0 ${CENTER_W} ${CENTER_H}`} className="w-full h-full" role="img" aria-label="Testosterona: a molécula-base dos EAA">
-                    <circle cx={CENTER_W / 2} cy={196} r={150} fill="url(#eaa-ov-halo)" />
+                    <circle cx={CENTER_W / 2} cy={206} r={150} fill="url(#eaa-ov-halo)" />
                     <defs>
                         <radialGradient id="eaa-ov-halo">
                             <stop offset="0%" stopColor="#E11D48" stopOpacity={0.14} />
@@ -96,8 +96,8 @@ export const Overview = ({ onPick }: { onPick: (id: number) => void }) => {
                     </defs>
                     <Molecule frame={FRAME} stroke={2.6} idPrefix="eaa-ov" />
                     <circle cx={c17x} cy={c17y} r={6} fill={LAYERS[0].color} opacity={0.9} />
-                    <text x={CENTER_W / 2} y={336} textAnchor="middle" fill="#F3F4F6" fontSize={17} fontWeight={600} className="font-display">Testosterona</text>
-                    <text x={CENTER_W / 2} y={358} textAnchor="middle" fill="#9CA3AF" fontSize={13} className="font-body">a base dos derivados sintéticos</text>
+                    <text x={CENTER_W / 2} y={366} textAnchor="middle" fill="#F3F4F6" fontSize={18} fontWeight={600} className="font-display">Testosterona</text>
+                    <text x={CENTER_W / 2} y={390} textAnchor="middle" fill="#CBD5E1" fontSize={15} className="font-body">a base dos derivados sintéticos</text>
                 </svg>
             </div>
         </div>

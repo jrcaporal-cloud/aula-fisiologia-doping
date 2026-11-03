@@ -1,8 +1,8 @@
 import { X_DOMAIN, Y_DOMAIN } from './model';
 
 /** Geometria do gráfico (px no palco de 1280). */
-export const CHART_W = 760;
-export const CHART_H = 440;
+export const CHART_W = 704;
+export const CHART_H = 424;
 export const M = { left: 70, right: 22, top: 48, bottom: 60 } as const;
 export const PW = CHART_W - M.left - M.right;
 export const PH = CHART_H - M.top - M.bottom;

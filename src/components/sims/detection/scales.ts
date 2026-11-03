@@ -2,16 +2,16 @@ import { HOURS_PER_DAY, STRAT } from './model';
 
 /** Geometria do SVG (unidades do viewBox). */
 export const VB = {
-    w: 860,
-    h: 452,
+    w: 780,
+    h: 404,
     pl: 44,
-    pr: 846,
+    pr: 756,
     bandTop: 2,
-    bandH: 26,
-    pillY: 33,
-    lanesTop: 60,
-    lanesBottom: 398,
-    axisY: 404,
+    bandH: 28,
+    pillY: 35,
+    lanesTop: 62,
+    lanesBottom: 354,
+    axisY: 358,
 } as const;
 
 const PLOT_W = VB.pr - VB.pl;
@@ -40,7 +40,7 @@ export const LOG_TICKS: Tick[] = [
     { u: uFromHours(1), label: '1 h' },
     { u: uFromHours(6), label: '6 h' },
     { u: uFromHours(24), label: '1 dia', major: true },
-    { u: uFromHours(72), label: '3 dias' },
+    { u: uFromHours(72), label: '' },
     { u: uFromHours(168), label: '1 sem', major: true },
     { u: uFromHours(30.4 * 24), label: '1 mês', major: true },
     { u: uFromHours(91 * 24), label: '3 meses' },
@@ -58,7 +58,7 @@ export const LOG_REGIONS: Region[] = [
     { u0: 0, u1: uFromHours(24), label: 'HORAS' },
     { u0: uFromHours(24), u1: uFromHours(168), label: 'DIAS' },
     { u0: uFromHours(168), u1: uFromHours(30.4 * 24), label: 'SEMANAS' },
-    { u0: uFromHours(30.4 * 24), u1: 1, label: 'MESES / ANOS (RASTREIO)' },
+    { u0: uFromHours(30.4 * 24), u1: 1, label: 'MESES / ANOS' },
 ];
 
 // ---------- Modo estratégia: dias até a prova, últimas 4 semanas ampliadas ----------

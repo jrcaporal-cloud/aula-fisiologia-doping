@@ -21,19 +21,19 @@ export const Chain = ({ links, color, delay = 0 }: ChainProps) => (
                         initial={{ opacity: 0, y: 10, scale: 0.94 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{ delay: at, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative flex-1 min-w-0 rounded-xl px-3 py-2.5 border text-center"
+                        className="relative flex-1 min-w-0 rounded-xl px-1.5 py-1.5 border text-center"
                         style={{
                             borderColor: i === links.length - 1 ? color : `${color}55`,
                             background: i === links.length - 1 ? `${color}26` : 'rgba(255,255,255,0.035)',
                             boxShadow: i === links.length - 1 ? `0 0 22px -6px ${color}` : 'none',
                         }}
                     >
-                        <div className="font-display font-semibold text-[15px] leading-tight text-white">{link.title}</div>
-                        {link.note && <div className="text-[12.5px] leading-snug mt-0.5" style={{ color }}>{link.note}</div>}
+                        <div className="font-display font-semibold text-[17px] leading-tight text-white">{link.title}</div>
+                        {link.note && <div className="text-[16px] leading-snug mt-0.5" style={{ color }}>{link.note}</div>}
                     </motion.div>
 
                     {i < links.length - 1 && (
-                        <div className="relative w-7 flex-shrink-0 h-[2px] mx-0.5" style={{ background: `${color}40` }}>
+                        <div className="relative w-5 flex-shrink-0 h-[2px] mx-0.5" style={{ background: `${color}40` }}>
                             <motion.span
                                 className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
                                 style={{ background: color, boxShadow: `0 0 10px ${color}` }}

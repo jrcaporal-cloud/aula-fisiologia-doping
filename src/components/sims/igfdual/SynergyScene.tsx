@@ -10,17 +10,17 @@ import { SCENE } from './SystemicLocalScene';
 const BODY = 'var(--font-body)';
 const CELL = { x: 150, y: 70, w: 420, h: 250 } as const;
 
-const Text = ({ x, y, text, color = '#E5E7EB', size = 13, anchor = 'middle', weight = 600 }: {
+const Text = ({ x, y, text, color = '#E5E7EB', size = 16, anchor = 'middle', weight = 600 }: {
     x: number; y: number; text: string; color?: string; size?: number; anchor?: 'start' | 'middle' | 'end'; weight?: number;
 }) => (
-    <text x={x} y={y} textAnchor={anchor} fontSize={size} fontWeight={weight} fill={color}
+    <text x={x} y={y} textAnchor={anchor} fontSize={size * 1.07} fontWeight={weight} fill={color}
         style={{ fontFamily: BODY, paintOrder: 'stroke', stroke: '#080812', strokeWidth: 4, strokeLinejoin: 'round' }}>{text}</text>
 );
 
 interface Anchor { readonly tag: { x: number; y: number; anchor: 'start' | 'end' }; readonly target: { x: number; y: number } }
 const ANCHORS: Record<SynergyId, Anchor> = {
     eaa: { tag: { x: 40, y: 64, anchor: 'start' }, target: { x: 250, y: 150 } },
-    ghigf: { tag: { x: 680, y: 64, anchor: 'end' }, target: { x: 452, y: 146 } },
+    ghigf: { tag: { x: 680, y: 64, anchor: 'end' }, target: { x: 452, y: 150 } },
     insulin: { tag: { x: 680, y: 300, anchor: 'end' }, target: { x: CELL.x + CELL.w, y: 250 } },
     epo: { tag: { x: 40, y: 388, anchor: 'start' }, target: { x: 250, y: 384 } },
 };
@@ -33,35 +33,35 @@ interface SynergySceneProps {
 export const SynergyScene = ({ revealed, focus }: SynergySceneProps) => {
     const reduce = useReducedMotion();
     const isOn = (i: number): boolean => i < revealed;
-    const lit = (id: SynergyId): number => (focus === null || focus === id ? 1 : 0.3);
+    const lit = (id: SynergyId): number => (focus === null || focus === id ? 1 : 0.6);
 
     return (
         <svg viewBox={`0 0 ${SCENE.w} ${SCENE.h}`} className="absolute inset-0 w-full h-full block" preserveAspectRatio="xMidYMid meet" role="img"
             aria-label="Fibra muscular com os quatro alvos do stack: núcleo, mTOR, proteassoma e GLUT4, e capilar com hemácias">
             {/* célula */}
             <rect x={CELL.x} y={CELL.y} width={CELL.w} height={CELL.h} rx={36} fill="rgba(76,16,39,0.55)" stroke="rgba(251,113,133,0.55)" strokeWidth={1.6} />
-            <Text x={CELL.x + CELL.w / 2} y={CELL.y + 26} text="fibra muscular" color="#FECDD3" size={14} />
+            <Text x={CELL.x + CELL.w / 2} y={CELL.y + 26} text="fibra muscular" color="#FECDD3" size={16.5} />
 
             {/* núcleo + RA (EAA) */}
-            <motion.g animate={{ opacity: isOn(0) ? lit('eaa') : 0.35 }}>
+            <motion.g animate={{ opacity: isOn(0) ? lit('eaa') : 0.6 }}>
                 <ellipse cx={250} cy={168} rx={62} ry={40} fill="rgba(196,181,253,0.18)" stroke={COLORS.nucleus} strokeWidth={1.6} />
                 <path d="M210,172 C225,156 240,186 255,170 S285,160 292,176" stroke="rgba(196,181,253,0.7)" strokeWidth={2} fill="none" />
                 {[[226, 150], [262, 152], [280, 184]].map(([x, y]) => (
                     <circle key={x} cx={x} cy={y} r={6} fill={isOn(0) ? COLORS.eaa : 'rgba(255,255,255,0.2)'} />
                 ))}
-                <Text x={250} y={226} text="núcleo · RA → transcrição" color="#E9D5FF" size={13} />
+                <Text x={256} y={234} text="núcleo · RA → transcrição" color="#E9D5FF" size={16} />
             </motion.g>
 
             {/* mTOR (GH/IGF-1) */}
-            <motion.g animate={{ opacity: isOn(1) ? lit('ghigf') : 0.35 }}>
-                <motion.circle cx={452} cy={166} fill="rgba(96,165,250,0.18)" stroke={COLORS.ghigf} strokeWidth={2}
+            <motion.g animate={{ opacity: isOn(1) ? lit('ghigf') : 0.6 }}>
+                <motion.circle cx={452} cy={150} fill="rgba(96,165,250,0.18)" stroke={COLORS.ghigf} strokeWidth={2}
                     initial={{ r: 30 }} animate={isOn(1) && !reduce ? { r: [30, 34, 30] } : { r: 30 }} transition={{ duration: 1.6, repeat: Infinity }} />
-                <Text x={452} y={171} text="mTOR" color="#FFFFFF" size={15} weight={700} />
-                <Text x={452} y={218} text="sinalização × hiperplasia" color="#BFDBFE" size={13} />
+                <Text x={452} y={155} text="mTOR" color="#FFFFFF" size={17} weight={700} />
+                <Text x={444} y={200} text="sinalização × hiperplasia" color="#DBEAFE" size={16} />
             </motion.g>
 
             {/* proteassoma bloqueado + GLUT4 (insulina) */}
-            <motion.g animate={{ opacity: isOn(2) ? lit('insulin') : 0.35 }}>
+            <motion.g animate={{ opacity: isOn(2) ? lit('insulin') : 0.6 }}>
                 <g transform="translate(330,262)">
                     {[0, 1, 2, 3].map(i => <rect key={i} x={-28 + i * 14} y={-14} width={12} height={28} rx={4} fill="rgba(148,163,184,0.35)" stroke="rgba(203,213,225,0.6)" />)}
                     {isOn(2) && (
@@ -70,7 +70,7 @@ export const SynergyScene = ({ revealed, focus }: SynergySceneProps) => {
                         </g>
                     )}
                 </g>
-                <Text x={330} y={302} text="ubiquitina-proteassoma" color="#A5F3FC" size={13} />
+                <Text x={330} y={302} text="ubiquitina-proteassoma" color="#CFFAFE" size={16} />
                 {[214, 244, 274].map(y => (
                     <g key={y}>
                         <rect x={CELL.x + CELL.w - 6} y={y - 9} width={12} height={18} rx={3} fill={COLORS.insulin} opacity={0.85} />
@@ -81,11 +81,11 @@ export const SynergyScene = ({ revealed, focus }: SynergySceneProps) => {
                         )}
                     </g>
                 ))}
-                <Text x={CELL.x + CELL.w - 16} y={196} text="GLUT4" color="#A5F3FC" size={13} anchor="end" />
+                <Text x={CELL.x + CELL.w - 16} y={235} text="GLUT4" color="#CFFAFE" size={16} anchor="end" />
             </motion.g>
 
             {/* capilar + hemácias (EPO) */}
-            <motion.g animate={{ opacity: isOn(3) ? lit('epo') : 0.35 }}>
+            <motion.g animate={{ opacity: isOn(3) ? lit('epo') : 0.6 }}>
                 <rect x={100} y={364} width={520} height={40} rx={20} fill="rgba(225,29,72,0.16)" stroke="rgba(251,113,133,0.45)" />
                 {Array.from({ length: isOn(3) ? 11 : 5 }, (_, i) => (
                     <motion.ellipse key={i} cy={384} rx={11} ry={7} fill="#E11D48" stroke="#FDA4AF" strokeWidth={1}
@@ -96,10 +96,10 @@ export const SynergyScene = ({ revealed, focus }: SynergySceneProps) => {
                 {isOn(3) && [260, 360, 460].map(x => (
                     <g key={x}>
                         <line x1={x} y1={360} x2={x} y2={CELL.y + CELL.h + 6} stroke="#FDA4AF" strokeWidth={2} strokeDasharray="3 4" />
-                        <Text x={x + 14} y={346} text="O₂" color="#FDA4AF" size={13} anchor="start" />
+                        <Text x={x + 14} y={346} text="O₂" color="#FECDD3" size={17} anchor="start" />
                     </g>
                 ))}
-                <Text x={636} y={389} text="capilar" color="#FDA4AF" size={13} anchor="start" />
+                <Text x={636} y={389} text="capilar" color="#FECDD3" size={17} anchor="start" />
             </motion.g>
 
             {/* rótulos das quatro drogas, ligados ao alvo */}
@@ -111,7 +111,7 @@ export const SynergyScene = ({ revealed, focus }: SynergySceneProps) => {
                             stroke={s.color} strokeWidth={1.6} strokeDasharray="5 4" />
                         <rect x={a.tag.anchor === 'start' ? a.tag.x - 10 : a.tag.x - 92} y={a.tag.y - 22} width={s.id === 'ghigf' || s.id === 'insulin' ? 102 : 80} height={30} rx={9}
                             fill="#080812" stroke={s.color} strokeWidth={1.6} />
-                        <Text x={a.tag.anchor === 'start' ? a.tag.x : a.tag.x - 82} y={a.tag.y - 2} text={s.name} color={s.color} size={15} weight={700} anchor="start" />
+                        <Text x={a.tag.anchor === 'start' ? a.tag.x : a.tag.x - 82} y={a.tag.y - 2} text={s.name} color={s.color} size={17} weight={700} anchor="start" />
                     </g>
                 );
             })}

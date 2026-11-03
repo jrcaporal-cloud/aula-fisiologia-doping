@@ -1,5 +1,9 @@
 import parsedPresentation from '../../data/parsedPresentation.json';
 import type { SlideSchema } from '../presentation/TitleSlide';
+import { keepsSlide, readTempo } from '../../data/modes';
+
+/** Versão da aula pedida na URL (?tempo=90 ou ?tempo=60). */
+export const TEMPO = readTempo(window.location.search);
 
 export interface DeckSlide {
     slide: SlideSchema;
@@ -22,7 +26,9 @@ const buildDeck = (raw: SlideSchema[]): DeckSlide[] => {
     });
 };
 
-export const DECK: DeckSlide[] = buildDeck(parsedPresentation as unknown as SlideSchema[]);
+// A seção é herdada na ordem completa; só depois a versão curta esconde slides.
+export const DECK: DeckSlide[] = buildDeck(parsedPresentation as unknown as SlideSchema[])
+    .filter(item => keepsSlide(TEMPO, item.slide.id));
 
 /** Slides que ganham o visualizador 3D do mecanismo genômico (por id do JSON). */
 export const SLIDES_WITH_3D = new Set<number>([3]);

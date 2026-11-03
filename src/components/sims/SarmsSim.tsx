@@ -4,7 +4,7 @@ import { Compounds } from './sarms/Compounds';
 import { STEPS } from './sarms/content';
 import { Ledger } from './sarms/Ledger';
 import { Opening } from './sarms/Opening';
-import { StepHeader } from './sarms/StepHeader';
+import { HEADER_H, StepHeader } from './sarms/StepHeader';
 
 /**
  * Slide "SARMs: A Zona Cinzenta Molecular" (parsedPresentation.json, id 18).
@@ -12,7 +12,8 @@ import { StepHeader } from './sarms/StepHeader';
  * · 2: a conta (fígado + eixo HPG) · 3: as três fichas de compostos.
  */
 
-const BODY_H = 470;
+const ROOT_H = 490;
+const BODY_H = ROOT_H - HEADER_H;
 
 /** Passos 1 e 2 compartilham a mesma cena (a promessa recua quando a conta aparece). */
 const sceneKey = (step: number) => (step === 0 ? 'opening' : step === 3 ? 'compounds' : 'ledger');
@@ -22,7 +23,7 @@ const SarmsSim = () => {
     const key = sceneKey(step);
 
     return (
-        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 520 }}>
+        <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: ROOT_H }}>
             <StepHeader steps={STEPS} step={step} onSelect={setStep} id="sarms" />
             <div className="relative" style={{ height: BODY_H }}>
                 <AnimatePresence mode="wait">

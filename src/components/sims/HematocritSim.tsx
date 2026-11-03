@@ -62,24 +62,23 @@ export default function HematocritSim() {
     const state = classify(hct, sleep);
 
     return (
-        <div className="relative flex w-full gap-4" style={{ height: 540 }}>
+        <div className="relative flex w-full gap-3" style={{ height: 516 }}>
             <div className="relative min-w-0 flex-1 overflow-hidden rounded-2xl border border-white/10 bg-[#050510]">
                 <BloodScene hct={hct} sleep={sleep} alert={alert} live={live} onAlertChange={setAlert} />
 
                 <div className="pointer-events-none absolute left-4 top-4 flex items-center gap-2.5">
                     <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-3.5 py-2 backdrop-blur-md">
-                        <span className="font-mono text-[12px] text-gray-400">{step + 1}/{STEPS.length}</span>
                         <AnimatePresence mode="wait">
-                            <motion.span key={step} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="font-body text-[14px] font-bold text-white">
+                            <motion.span key={step} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="font-body text-[15.5px] font-bold text-white">
                                 {STEPS[step].label}
                             </motion.span>
                         </AnimatePresence>
                     </div>
-                    <span className="rounded-md border border-amber-400/50 bg-[rgba(8,8,18,0.72)] px-2.5 py-1 font-mono text-[12px] text-amber-200">modelo ilustrativo</span>
+                    <span className="rounded-md border border-amber-400/50 bg-[rgba(8,8,18,0.72)] px-2.5 py-1 font-mono text-[14px] text-amber-200">modelo ilustrativo</span>
                 </div>
 
-                <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-4 rounded-xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-3.5 py-2 font-body text-[13px] text-gray-100 backdrop-blur-md">
-                    <span className="flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-[0.14em] text-sky-200">
+                <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-4 rounded-xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-3.5 py-2 font-body text-[14.5px] text-gray-100 backdrop-blur-md">
+                    <span className="flex items-center gap-1.5 font-mono text-[14px] uppercase tracking-[0.1em] text-sky-200">
                         fluxo <ArrowRight size={14} />
                     </span>
                     <Legend color="#e11d48" label="Hemácia" />
@@ -101,8 +100,8 @@ export default function HematocritSim() {
                             exit={{ opacity: 0, y: 10 }}
                             className="pointer-events-none absolute bottom-4 right-4 rounded-xl border border-brand-red/70 bg-[rgba(40,4,14,0.85)] px-4 py-2 shadow-[0_0_30px_-4px_rgba(225,29,72,0.7)]"
                         >
-                            <span className="font-display text-[16px] font-semibold uppercase tracking-wide text-rose-100">Microtrombose</span>
-                            <span className="ml-2 font-body text-[14px] text-gray-100">→ infarto agudo</span>
+                            <span className="font-display text-[17px] font-semibold uppercase tracking-wide text-rose-100">Microtrombose</span>
+                            <span className="ml-2 font-body text-[15px] text-gray-100">→ infarto agudo</span>
                         </motion.div>
                     )}
                 </AnimatePresence>

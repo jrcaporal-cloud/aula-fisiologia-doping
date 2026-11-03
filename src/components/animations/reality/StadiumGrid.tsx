@@ -131,7 +131,7 @@ export const StadiumGrid = ({ step, guess, reduced }: StadiumGridProps) => {
                     <line x1={guessEdge} y1={PAD_TOP} x2={guessEdge} y2={PAD_TOP - 12} stroke={COLORS.amber} strokeWidth={1.4} />
                     <text x={guessEdge} y={PAD_TOP - 16} textAnchor={guessEdge < 150 ? 'start' : 'end'}
                         dx={guessEdge < 150 ? -4 : 4}
-                        className="font-mono" fontSize={13} fontWeight={600} fill={COLORS.amberSoft} letterSpacing="0.06em">
+                        className="font-mono" fontSize={15} fontWeight={600} fill={COLORS.amberSoft} letterSpacing="0.02em">
                         palpite da turma · {guess}%
                     </text>
                 </motion.g>
@@ -151,7 +151,7 @@ export const StadiumGrid = ({ step, guess, reduced }: StadiumGridProps) => {
             </motion.g>
 
             {/* Escala */}
-            <text x={SVG_W - PAD_X} y={PAD_TOP + GRID_H + 26} textAnchor="end" className="font-mono" fontSize={13} fill="#94A3B8">
+            <text x={SVG_W - PAD_X} y={PAD_TOP + GRID_H + 26} textAnchor="end" className="font-mono" fontSize={15} fill="#CBD5E1">
                 1 figura = 1 atleta · 100 atletas
             </text>
         </svg>

@@ -9,8 +9,13 @@ const MAX_SCALE = 1.9;
 const MIN_READABLE_SCALE = 0.82;
 
 const PAD_X = 56;
-const PAD_TOP = 56;
-const PAD_BOTTOM = 64;
+
+/**
+ * Margens proporcionais à altura da tela: num projetor 1280×720 cada pixel conta,
+ * então o slide ganha espaço; em telas altas mantém o respiro de antes.
+ */
+const padTop = (h: number) => Math.min(56, Math.max(24, Math.round(h * 0.05)));
+const padBottom = (h: number) => Math.min(64, Math.max(44, Math.round(h * 0.07)));
 
 interface Fit {
     scale: number;
@@ -27,6 +32,7 @@ export const FitStage = ({ children }: { children: ReactNode }) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const [fit, setFit] = useState<Fit>({ scale: 1, height: 0, scrolls: false });
+    const [pads, setPads] = useState({ top: 56, bottom: 64 });
 
     useLayoutEffect(() => {
         const outer = outerRef.current;
@@ -35,7 +41,9 @@ export const FitStage = ({ children }: { children: ReactNode }) => {
 
         const measure = () => {
             const availW = Math.max(outer.clientWidth - PAD_X * 2, 320);
-            const availH = Math.max(outer.clientHeight - PAD_TOP - PAD_BOTTOM, 240);
+            const top = padTop(outer.clientHeight);
+            const bottom = padBottom(outer.clientHeight);
+            const availH = Math.max(outer.clientHeight - top - bottom, 240);
             // offsetHeight ignora transforms: é a altura "natural" na largura de desenho.
             const naturalH = inner.offsetHeight;
             const widthScale = availW / DESIGN_WIDTH;
@@ -48,6 +56,7 @@ export const FitStage = ({ children }: { children: ReactNode }) => {
                 scale = floor;
                 scrolls = true;
             }
+            setPads(prev => (prev.top === top && prev.bottom === bottom ? prev : { top, bottom }));
             setFit(prev =>
                 Math.abs(prev.scale - scale) < 0.002 && prev.height === naturalH && prev.scrolls === scrolls
                     ? prev
@@ -70,8 +79,8 @@ export const FitStage = ({ children }: { children: ReactNode }) => {
             style={{
                 overflowY: fit.scrolls ? 'auto' : 'hidden',
                 alignItems: fit.scrolls ? 'flex-start' : 'center',
-                paddingTop: PAD_TOP,
-                paddingBottom: PAD_BOTTOM,
+                paddingTop: pads.top,
+                paddingBottom: pads.bottom,
             }}
         >
             <div

@@ -4,9 +4,9 @@ import { NUMBERED, C_PERSISTS, C_REVERTS, type BodySpot } from './biologyData';
 /** Onde cada item aparece na silhueta (coordenadas do viewBox 0 0 220 400). */
 const SPOTS: Record<BodySpot, { x: number; y: number }> = {
     reacao: { x: 110, y: 44 },
-    vo2: { x: 93, y: 112 },
-    coracao: { x: 124, y: 122 },
-    forca: { x: 66, y: 124 },
+    vo2: { x: 93, y: 100 },
+    coracao: { x: 129, y: 128 },
+    forca: { x: 64, y: 130 },
     hematocrito: { x: 163, y: 176 },
     mionucleos: { x: 95, y: 246 },
     ossea: { x: 128, y: 322 },
@@ -59,7 +59,7 @@ export const BodyFigure = ({ step, hover }: BodyFigureProps) => (
             return (
                 <g key={r.spot}>
                     {shown && fresh && (
-                        <motion.circle cx={x} cy={y} r={10} fill="none" stroke={color} strokeWidth={2}
+                        <motion.circle cx={x} cy={y} r={14} fill="none" stroke={color} strokeWidth={2}
                             initial={{ scale: 1, opacity: 0.8 }} animate={{ scale: 2.4, opacity: 0 }}
                             transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
                             style={{ transformOrigin: `${x}px ${y}px` }} />
@@ -68,8 +68,8 @@ export const BodyFigure = ({ step, hover }: BodyFigureProps) => (
                         animate={{ scale: shown ? (isHover ? 1.3 : 1) : 0, opacity: shown ? (fresh || isHover ? 1 : 0.6) : 0 }}
                         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
                         style={{ transformOrigin: `${x}px ${y}px` }}>
-                        <circle cx={x} cy={y} r={11} fill={color} stroke="#050510" strokeWidth={2.5} />
-                        <text x={x} y={y + 4.5} textAnchor="middle" fontSize={13} fontWeight={800} fill="#050510" fontFamily="var(--font-mono)">{n}</text>
+                        <circle cx={x} cy={y} r={14} fill={color} stroke="#050510" strokeWidth={2.5} />
+                        <text x={x} y={y + 6} textAnchor="middle" fontSize={18} fontWeight={800} fill="#050510" fontFamily="var(--font-mono)">{n}</text>
                     </motion.g>
                 </g>
             );

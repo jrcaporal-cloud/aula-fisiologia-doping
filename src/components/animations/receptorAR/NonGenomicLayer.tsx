@@ -55,7 +55,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
     return (
         <motion.g
             initial={false}
-            animate={{ opacity: dim ? 0.2 : 1 }}
+            animate={{ opacity: dim ? 0.6 : 1 }}
             transition={t(0.5)}
             onClick={onSelect}
             style={{ cursor: 'pointer' }}
@@ -133,14 +133,14 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                     animate={{ scale: on(1) ? 1 : 0, opacity: on(1) ? 1 : 0 }}
                     transition={t(0.4, on(1) ? 0.35 + i * 0.15 : 0)}
                 >
-                    <circle cx={p.x + 44} cy={p.y - 12} r={9} fill="#FBBF24" stroke="#0A1124" strokeWidth={1.5} />
-                    <text x={p.x + 44} y={p.y - 7.7} textAnchor="middle" fontSize={12} fontWeight={800} fill="#1F1300" className="font-mono">
+                    <circle cx={p.x + 53} cy={p.y - 14} r={11} fill="#FBBF24" stroke="#0A1124" strokeWidth={1.5} />
+                    <text x={p.x + 53} y={p.y - 8.8} textAnchor="middle" fontSize={15} fontWeight={800} fill="#1F1300" className="font-mono">
                         P
                     </text>
                 </motion.g>
             ))}
             <motion.g initial={false} animate={{ opacity: on(1) ? 1 : 0 }} transition={t(0.4, on(1) ? 0.5 : 0)}>
-                <Label x={(MAPK.x + PI3K.x) / 2} y={194} anchor="middle" color="#FCD34D" size={12}>
+                <Label x={(MAPK.x + PI3K.x) / 2} y={194} anchor="middle" color="#FCD34D">
                     P = fosforilação
                 </Label>
             </motion.g>
@@ -166,7 +166,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                 animate={{ x: CHANNEL_X + (caOpen ? 6 : 1) }}
                 transition={t(0.4)}
             />
-            <Label x={CHANNEL_X - 18} y={106} anchor="end" color="#FDA4AF" size={12}>
+            <Label x={CHANNEL_X - 18} y={106} anchor="end" color="#FDA4AF">
                 canal iônico
             </Label>
             {IONS.map((ion, i) => (
@@ -193,7 +193,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
             <g transform={`translate(${CORT_RECEPTOR.x} ${CORT_RECEPTOR.y})`}>
                 <Receptor color={CORTISOL_COLOR} />
             </g>
-            <Label x={CORT_RECEPTOR.x} y={CORT_RECEPTOR.y + 34} anchor="middle" color="#6EE7B7" size={12}>
+            <Label x={CORT_RECEPTOR.x} y={CORT_RECEPTOR.y + 34} anchor="middle" color="#6EE7B7">
                 receptor de cortisol
             </Label>
             <motion.g
@@ -214,7 +214,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
             >
                 <g transform={`translate(0 ${CORT_RECEPTOR.y - 2})`}>
                     <Steroid s={4.2} color="#CBD5E1" />
-                    <Label x={0} y={-12} anchor="middle" color="#E2E8F0" size={12}>
+                    <Label x={0} y={-12} anchor="middle" color="#E2E8F0">
                         cortisol
                     </Label>
                 </g>

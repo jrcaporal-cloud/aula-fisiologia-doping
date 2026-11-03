@@ -7,12 +7,20 @@ import { COLORS, STEPS, SYNERGY, TEXT, type SynergyId } from './content';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
+/** O glifo "₂" sai minúsculo na fonte do corpo: troca "O₂" por O com subscrito legível. */
+const Sub = ({ text }: { text: string }): ReactNode => {
+    const parts = text.split('O₂');
+    return parts.map((part, i) => (
+        <span key={i}>{part}{i < parts.length - 1 && <>O<span style={{ fontSize: '0.95em', verticalAlign: '-0.25em' }}>2</span></>}</span>
+    ));
+};
+
 const P = ({ children, strong = false }: { children: ReactNode; strong?: boolean }) => (
-    <p className={`text-[14px] leading-[1.5] ${strong ? 'text-white font-semibold' : 'text-gray-200'}`}>{children}</p>
+    <p className={`text-[16px] leading-[1.45] ${strong ? 'text-white font-semibold' : 'text-gray-100'}`}>{children}</p>
 );
 
 const Chip = ({ text, color }: { text: string; color: string }) => (
-    <span className="px-2 py-1 rounded-md font-mono text-[13px] font-semibold border whitespace-nowrap"
+    <span className="px-2 py-1 rounded-md font-mono text-[14px] font-semibold border whitespace-nowrap"
         style={{ color, borderColor: `${color}88`, background: `${color}1a` }}>{text}</span>
 );
 
@@ -29,9 +37,9 @@ const Cascade = () => (
 
 const DualRow = ({ color, title, lines }: { color: string; title: string; lines: readonly string[] }) => (
     <div className="rounded-xl border px-3 py-2" style={{ borderColor: `${color}66`, background: `${color}12` }}>
-        <div className="font-display text-[15.5px] font-semibold" style={{ color }}>{title}</div>
+        <div className="font-display text-[17px] font-semibold" style={{ color }}>{title}</div>
         <ul className="mt-1 space-y-0.5">
-            {lines.map(l => <li key={l} className="text-[13.5px] text-gray-100 leading-snug">{l}</li>)}
+            {lines.map(l => <li key={l} className="text-[15px] text-gray-100 leading-snug">{l}</li>)}
         </ul>
     </div>
 );
@@ -66,10 +74,10 @@ const bodyFor = ({ step, boost, onBoost, revealed, focus, onFocus }: SidePanelPr
                         style={boost
                             ? { borderColor: 'rgba(245,158,11,0.8)', background: 'rgba(245,158,11,0.16)' }
                             : { borderColor: 'rgba(255,255,255,0.18)', background: 'rgba(255,255,255,0.03)' }}>
-                        <div className="text-[13.5px] font-semibold" style={{ color: boost ? '#FDE68A' : '#E5E7EB' }}>
+                        <div className="text-[15px] font-semibold" style={{ color: boost ? '#FDE68A' : '#E5E7EB' }}>
                             {boost ? 'Com GH exógeno (clique para tirar)' : '+ GH exógeno (clique)'}
                         </div>
-                        <div className="text-[14px] text-gray-100 mt-0.5">{TEXT.ghBoost}</div>
+                        <div className="text-[15.5px] text-gray-100 mt-0.5 leading-snug">{TEXT.ghBoost}</div>
                     </button>
                 </>
             );
@@ -88,14 +96,14 @@ const bodyFor = ({ step, boost, onBoost, revealed, focus, onFocus }: SidePanelPr
                         {SYNERGY.map((s, i) => (
                             <motion.button key={s.id} type="button" onMouseEnter={() => onFocus(s.id)} onClick={() => onFocus(focus === s.id ? null : s.id)}
                                 className="text-left rounded-xl border px-3 py-1.5 cursor-pointer"
-                                animate={{ opacity: i < revealed ? 1 : 0.15 }} transition={{ duration: 0.35 }}
+                                animate={{ opacity: i < revealed ? 1 : 0.6 }} transition={{ duration: 0.35 }}
                                 style={{ borderColor: focus === s.id ? s.color : `${s.color}55`, background: focus === s.id ? `${s.color}22` : `${s.color}0d` }}>
-                                <span className="font-display text-[15px] font-semibold" style={{ color: s.color }}>{s.name}</span>
-                                <span className="text-[13.5px] text-gray-100 leading-snug"> {s.role}</span>
+                                <span className="font-display text-[16px] font-semibold" style={{ color: s.color }}>{s.name}</span>
+                                <span className="text-[15px] text-gray-100 leading-snug"> <Sub text={s.role} /></span>
                             </motion.button>
                         ))}
                     </div>
-                    <div className="text-[13px] text-gray-300">EAA = Esteroides Androgênicos Anabolizantes (slide “A Base do Doping Moderno”).</div>
+                    <div className="text-[14px] text-gray-200 leading-snug">EAA = Esteroides Androgênicos Anabolizantes (slide “A Base do Doping Moderno”).</div>
                 </>
             );
         default:
@@ -105,7 +113,7 @@ const bodyFor = ({ step, boost, onBoost, revealed, focus, onFocus }: SidePanelPr
                     <P strong>{TEXT.stackRisk}</P>
                     <div className="rounded-xl border border-rose-500/50 px-3 py-2 flex items-start gap-2.5" style={{ background: 'rgba(225,29,72,0.14)' }}>
                         <AlertTriangle size={18} className="text-rose-300 shrink-0 mt-0.5" />
-                        <span className="text-[14px] text-rose-100 leading-snug">{TEXT.documented}</span>
+                        <span className="text-[15.5px] text-rose-100 leading-snug">{TEXT.documented}</span>
                     </div>
                 </>
             );
@@ -118,10 +126,10 @@ export const SidePanel = (props: SidePanelProps) => {
         <div className="relative h-full rounded-2xl border overflow-hidden"
             style={{ borderColor: `${info.color}55`, background: `linear-gradient(165deg, ${info.color}1c, rgba(8,8,18,0.86) 55%)` }}>
             <AnimatePresence initial={false}>
-                <motion.div key={props.step} className="absolute inset-0 p-4 flex flex-col gap-2.5"
+                <motion.div key={props.step} className="absolute inset-0 p-3.5 flex flex-col gap-2.5"
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.35, delay: 0.12, ease: EASE } }}
                     exit={{ opacity: 0, transition: { duration: 0.12 } }}>
-                    <span className="font-display text-[19px] font-semibold leading-tight" style={{ color: info.color }}>{info.title}</span>
+                    <span className="font-display text-[20px] font-semibold leading-tight" style={{ color: info.color }}>{info.title}</span>
                     {bodyFor(props)}
                 </motion.div>
             </AnimatePresence>

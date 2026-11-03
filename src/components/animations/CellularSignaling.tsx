@@ -60,10 +60,9 @@ export const CellularSignaling = () => {
                         />
                     </svg>
                 </div>
-                <div style={{ height: VIEW_H }}>
+                <div style={{ minHeight: VIEW_H }}>
                     <SidePanel
                         step={step}
-                        setStep={setStep}
                         gPhase={gPhase}
                         nPhase={nPhase}
                         run={run}

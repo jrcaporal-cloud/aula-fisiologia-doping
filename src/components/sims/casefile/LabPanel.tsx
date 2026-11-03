@@ -22,7 +22,7 @@ const Badges = ({ ids }: { ids: readonly number[] }) => (
     <span className="flex items-center gap-1">
         {ids.map(i => (
             <motion.span key={i} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 420, damping: 22, delay: 0.15 + i * 0.12 }}
-                className="w-[22px] h-[22px] rounded-full flex items-center justify-center font-mono text-[12px] font-bold"
+                className="w-[24px] h-[24px] rounded-full flex items-center justify-center font-mono text-[14px] font-bold"
                 style={{ background: EVIDENCE_COLORS[i % EVIDENCE_COLORS.length], color: '#0b0b14' }}>
                 {i + 1}
             </motion.span>
@@ -31,14 +31,14 @@ const Badges = ({ ids }: { ids: readonly number[] }) => (
 );
 
 const Flag = ({ text, color }: { text: string; color: string }) => (
-    <span className="font-mono text-[12px] font-bold uppercase tracking-wider px-1.5 py-[2px] rounded border"
+    <span className="font-mono text-[14px] font-bold uppercase tracking-wide px-1.5 py-[1px] rounded border"
         style={{ color, borderColor: `${color}88`, background: `${color}1a` }}>
         {text}
     </span>
 );
 
 const Pending = () => (
-    <motion.span className="font-mono text-[13px] text-gray-300 px-2 py-0.5 rounded border border-dashed border-white/25"
+    <motion.span className="font-mono text-[14px] text-gray-300 px-2 py-0.5 rounded border border-dashed border-white/25"
         animate={{ opacity: [0.55, 1, 0.55] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}>
         aguardando
     </motion.span>
@@ -51,12 +51,12 @@ const Ruler = ({ value, reference, shown, out, delay }: { value: number; referen
     const x = pct(value, reference.domain);
     const markColor = out ? '#E11D48' : '#F3F4F6';
     return (
-        <div className="relative h-[40px] mt-1.5">
+        <div className="relative h-[42px] mt-1">
             <div className="absolute left-0 right-0 top-[8px] h-[8px] rounded-full bg-white/10" />
             <div className="absolute top-[6px] h-[12px] rounded-[4px]"
                 style={{ left: `${lo}%`, width: `${hi - lo}%`, background: 'rgba(16,185,129,0.30)', border: '1px solid rgba(52,211,153,0.75)' }} />
-            <span className="absolute top-[22px] font-mono text-[12px] text-emerald-300 -translate-x-1/2" style={{ left: `${lo}%` }}>{reference.lowLabel}</span>
-            <span className="absolute top-[22px] font-mono text-[12px] text-emerald-300 -translate-x-1/2" style={{ left: `${hi}%` }}>{reference.highLabel}</span>
+            <span className="absolute top-[22px] font-mono text-[15px] text-emerald-300 -translate-x-1/2" style={{ left: `${lo}%` }}>{reference.lowLabel}</span>
+            <span className="absolute top-[22px] font-mono text-[15px] text-emerald-300 -translate-x-1/2" style={{ left: `${hi}%` }}>{reference.highLabel}</span>
             {shown && (
                 <motion.div className="absolute top-[2px] -ml-[10px] w-[20px] h-[20px] rounded-full border-2"
                     style={{ borderColor: '#0b0b14', background: markColor, boxShadow: out ? '0 0 0 4px rgba(225,29,72,0.28), 0 0 18px rgba(225,29,72,0.8)' : '0 0 10px rgba(255,255,255,0.45)' }}
@@ -77,7 +77,7 @@ const ListRow = ({ row, i, step, ids, dim }: { row: LabRow; i: number; step: num
     const out = isOut(row);
     const color = TONE_COLOR[row.tone];
     return (
-        <motion.div className="rounded-xl border px-3.5 py-2" animate={{ opacity: dim ? 0.7 : 1, borderColor: rowBorder(ids, dim) }}
+        <motion.div className="rounded-xl border px-3.5 py-1.5" animate={{ opacity: dim ? 0.8 : 1, borderColor: rowBorder(ids, dim) }}
             style={{ background: 'rgba(0,0,0,0.32)' }} transition={{ duration: 0.4 }}>
             <div className="flex items-center justify-between gap-3">
                 <span className="text-[15px] font-semibold text-white">{row.label}</span>
@@ -96,7 +96,7 @@ const ListRow = ({ row, i, step, ids, dim }: { row: LabRow; i: number; step: num
             {row.reference && row.numeric !== undefined ? (
                 <Ruler value={row.numeric} reference={row.reference} shown={shown} out={out} delay={0.25 + 0.12 * i} />
             ) : (
-                <div className="font-mono text-[12px] text-gray-300 mt-1">referência: {shown ? '—' : '…'}</div>
+                <div className="font-mono text-[15px] text-gray-300 mt-0.5">referência: {shown ? '—' : '…'}</div>
             )}
         </motion.div>
     );
@@ -106,31 +106,32 @@ const GridTile = ({ row, i, step, ids, dim }: { row: LabRow; i: number; step: nu
     const shown = step >= 1;
     const color = TONE_COLOR[row.tone];
     return (
-        <motion.div className="rounded-xl border px-4 py-3.5 flex flex-col gap-2 relative overflow-hidden"
-            animate={{ opacity: dim ? 0.7 : 1, borderColor: rowBorder(ids, dim) }} transition={{ duration: 0.4 }}
+        <motion.div className="rounded-xl border px-4 py-3 flex flex-col gap-1.5 relative overflow-hidden"
+            animate={{ opacity: dim ? 0.8 : 1, borderColor: rowBorder(ids, dim) }} transition={{ duration: 0.4 }}
             style={{ background: 'rgba(0,0,0,0.32)' }}>
             <div className="absolute left-0 top-0 bottom-0 w-[3px]" style={{ background: shown ? color : 'rgba(255,255,255,0.15)' }} />
             <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-[13px] uppercase tracking-wider text-gray-200">{row.label}</span>
+                <span className="font-mono text-[14px] uppercase tracking-wide text-gray-200">{row.label}</span>
                 {ids && ids.length > 0 && <Badges ids={ids} />}
             </div>
-            <div className="flex-1 min-h-[46px] flex items-center gap-2 flex-wrap">
+            <div className="flex-1 min-h-[46px] flex items-center">
                 {shown ? (
-                    <motion.span className="flex items-baseline gap-2" initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    <motion.span className="flex flex-col items-start gap-1 whitespace-nowrap" initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                         transition={{ duration: 0.45, delay: 0.14 * i }}>
-                        <span className="font-mono text-[40px] font-bold leading-none" style={{ color, textShadow: `0 0 18px ${color}55` }}>{row.value}</span>
-                        {row.unit && <span className="font-mono text-[17px] font-semibold" style={{ color }}>{row.unit}</span>}
+                        <span className="font-mono text-[38px] font-bold leading-none" style={{ color, textShadow: `0 0 18px ${color}55` }}>{row.value}</span>
+                        {row.unit && <span className="font-mono text-[18px] font-semibold leading-none" style={{ color }}>{row.unit}</span>}
                     </motion.span>
                 ) : <Pending />}
             </div>
-            <div className="h-[22px]">{row.flag && shown && <Flag text={row.flag} color={color} />}</div>
+            <div className="h-[24px]">{row.flag && shown && <Flag text={row.flag} color={color} />}</div>
         </motion.div>
     );
 };
 
 /** Painel de exames do caso: régua com referência (quando o slide dá) ou bloco de valor. */
 export const LabPanel = ({ rows, layout, step, evidence }: LabPanelProps) => {
-    const highlighting = evidence.size > 0;
+    // Só a hipótese (passo 3) separa as linhas que sustentam a frase; na lição nada fica apagado.
+    const highlighting = evidence.size > 0 && step === 2;
     const noRef = rows.filter(r => !r.reference).length;
     return (
         <div className="flex flex-col h-full min-h-0">
@@ -143,11 +144,11 @@ export const LabPanel = ({ rows, layout, step, evidence }: LabPanelProps) => {
                         : <ListRow key={row.id} row={row} i={i} step={step} ids={ids} dim={dim} />;
                 })}
             </div>
-            <div className="mt-auto pt-2 flex items-center gap-3 flex-wrap text-[13px] text-gray-300">
-                <span className="flex items-center gap-1.5"><FlaskConical size={14} /> valores e marcações do slide</span>
+            <div className="mt-auto pt-1.5 flex items-center gap-x-3.5 gap-y-0.5 flex-wrap text-[15px] text-gray-200">
+                <span className="flex items-center gap-1.5"><FlaskConical size={15} /> valores do slide</span>
                 {layout === 'list' && (
                     <span className="flex items-center gap-1.5">
-                        <span className="w-4 h-2.5 rounded-[3px]" style={{ background: 'rgba(16,185,129,0.30)', border: '1px solid rgba(52,211,153,0.75)' }} />
+                        <span className="w-3.5 h-2.5 rounded-[3px]" style={{ background: 'rgba(16,185,129,0.30)', border: '1px solid rgba(52,211,153,0.75)' }} />
                         faixa de referência
                     </span>
                 )}
@@ -157,7 +158,7 @@ export const LabPanel = ({ rows, layout, step, evidence }: LabPanelProps) => {
                         fora da faixa
                     </span>
                 )}
-                {layout === 'grid' && noRef > 0 && <span>· o caso não traz faixas de referência</span>}
+                {layout === 'grid' && noRef > 0 && <span>o caso não traz faixas de referência</span>}
             </div>
         </div>
     );

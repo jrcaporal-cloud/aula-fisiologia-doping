@@ -7,7 +7,8 @@ const WHEEL_THRESHOLD = 70;
 const WHEEL_COOLDOWN_MS = 850;
 
 const readHash = (total: number): number => {
-    const n = parseInt(window.location.hash.replace(/[^0-9]/g, ''), 10);
+    const match = window.location.hash.match(/^#\/?(\d+)/);
+    const n = match ? parseInt(match[1], 10) : NaN;
     return Number.isFinite(n) ? Math.min(Math.max(n - 1, 0), total - 1) : 0;
 };
 
@@ -72,10 +73,19 @@ export const useDeckNavigation = ({ total, paused, rootRef, onToggleOverview, on
         else goTo(indexRef.current - 1, true);
     }, [goTo]);
 
+    // O endereço acompanha slide e passo (#/27/3): recarregar no meio do slide volta ao mesmo ponto.
+    const step = useSlideStepStore(s => s.step);
+    const pendingStep = useSlideStepStore(s => s.pendingStep);
     useEffect(() => {
-        const hash = `#/${index + 1}`;
+        // Slides sem passos nunca consomem o passo da URL: libera depois da primeira carga.
+        const timer = window.setTimeout(() => useSlideStepStore.getState().clearPendingStep(), 1500);
+        return () => window.clearTimeout(timer);
+    }, []);
+    useEffect(() => {
+        if (pendingStep != null) return;
+        const hash = step > 0 ? `#/${index + 1}/${step + 1}` : `#/${index + 1}`;
         if (window.location.hash !== hash) window.history.replaceState(null, '', hash);
-    }, [index]);
+    }, [index, step, pendingStep]);
 
     useEffect(() => {
         const onHashChange = () => goTo(readHash(total));

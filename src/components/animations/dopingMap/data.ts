@@ -16,9 +16,11 @@ export interface SystemInfo {
 
 export interface LaneInfo {
     id: LaneId;
+    /** Selo da faixa, sem dupla negação: Detectável / Quase não detectável / Não detectável. */
     label: string;
-    /** Resposta da coluna "Indetectável?" que define a faixa. */
+    /** Resposta da coluna "Indetectável?" da tabela original (Não / Quase / Sim) que define a faixa. */
     answer: string;
+    /** Azul-ciano / âmbar / vermelho: distinguíveis em daltonismo; o selo ainda leva ícone e texto. */
     color: string;
 }
 
@@ -46,12 +48,15 @@ export const SYSTEMS: Record<SystemId, SystemInfo> = {
 export const SYSTEM_ORDER: SystemId[] = ['androgenico', 'oxigenio', 'metabolico'];
 
 export const LANES: Record<LaneId, LaneInfo> = {
-    detectavel: { id: 'detectavel', label: 'Detectável', answer: 'Não', color: '#10B981' },
-    quase: { id: 'quase', label: 'Quase', answer: 'Quase', color: '#F59E0B' },
-    indetectavel: { id: 'indetectavel', label: 'Indetectável', answer: 'Sim', color: '#E11D48' },
+    detectavel: { id: 'detectavel', label: 'Detectável', answer: 'Não', color: '#22D3EE' },
+    quase: { id: 'quase', label: 'Quase não detectável', answer: 'Quase', color: '#F59E0B' },
+    indetectavel: { id: 'indetectavel', label: 'Não detectável', answer: 'Sim', color: '#E11D48' },
 };
 
 export const LANE_ORDER: LaneId[] = ['detectavel', 'quase', 'indetectavel'];
+
+/** Selo do fármaco: rótulo da faixa, mantendo o asterisco do UGT2B17 ("Não*" → "Detectável*"). */
+export const verdictLabel = (drug: Drug): string => `${LANES[drug.lane].label}${drug.hidden.endsWith('*') ? '*' : ''}`;
 
 export const UGT_NOTE = '* Exceto em casos de deleção do gene UGT2B17.';
 
@@ -69,7 +74,7 @@ export const DRUGS: Drug[] = [
     {
         id: 'gh', name: 'GH / IGF-1', action: 'Via mTOR', effect: 'Massa / Lipólise', magnitude: 'Sinergia Alta',
         hidden: 'Quase', system: 'metabolico', lane: 'quase', icon: 'growth',
-        detail: "Potencia a síntese colagênica e óssea, reduzindo a gordura corporal. Uso abusivo gera 'Palumboísmo' (crescimento das vísceras/alargamento de extremidades) e resistência insulínica maciça. É dificílimo flagrar o GH recombinante por sua meia-vida em plasma de meros ~20 minutos.",
+        detail: "Potencia a síntese colagênica e óssea, reduzindo a gordura corporal. Uso abusivo gera 'palumbismo' (crescimento das vísceras/alargamento de extremidades) e resistência insulínica maciça. É dificílimo flagrar o GH recombinante por sua meia-vida em plasma de meros ~20 minutos.",
     },
     {
         id: 'insulina', name: 'Insulina', action: 'Receptor IR', effect: 'Anabolismo Máximo', magnitude: '+5-8kg (Stack)',

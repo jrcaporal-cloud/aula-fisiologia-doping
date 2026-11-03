@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion, type Variants } from 'framer-motion';
-import { Dna, FlaskConical, AlertTriangle, Zap, Shield, Activity, ChevronDown } from 'lucide-react';
+import { Dna, FlaskConical, AlertTriangle, Zap, Shield, Activity } from 'lucide-react';
 import type { SlideSchema } from './TitleSlide';
 import { cn } from '../../lib/utils';
 import { renderSlideContent } from './slideContent';
+import { SlideHeader } from './SlideHeader';
+import { useDetailsToggle } from '../../lib/detailsEvent';
+import { useDetailsStore } from '../../lib/detailsStore';
 
 // Map card index to a contextual icon and accent color
 const CARD_THEMES = [
@@ -166,6 +169,17 @@ const gridColumns = (count: number) =>
 export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
     const collapsible = COLLAPSED_CARD_SLIDES.has(slide.id) && Boolean(slide.content);
     const [showCards, setShowCards] = useState(!collapsible);
+    useDetailsToggle(() => setShowCards(v => !v), collapsible);
+    const hasCards = collapsible && slide.cards.length > 0;
+    useEffect(() => {
+        if (!hasCards) return;
+        const { addAvailable } = useDetailsStore.getState();
+        addAvailable(1);
+        return () => addAvailable(-1);
+    }, [hasCards]);
+    useEffect(() => {
+        if (hasCards) useDetailsStore.getState().setOpen(showCards);
+    }, [hasCards, showCards]);
 
     const container = {
         hidden: { opacity: 0 },
@@ -180,37 +194,7 @@ export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
 
             <div className="flex flex-col w-full justify-center">
 
-                {/* Header */}
-                <div className="mb-10 pointer-events-none">
-                    <motion.div
-                        initial={{ scaleX: 0 }}
-                        whileInView={{ scaleX: 1 }}
-                        viewport={{ once: false, amount: 0.3 }}
-                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                        className="h-[3px] w-20 mb-5 rounded-full origin-left"
-                        style={{ background: 'linear-gradient(90deg, #e11d48, #9c27b0)' }}
-                    />
-                    <motion.h2
-                        initial={{ opacity: 0, x: -40, filter: 'blur(8px)' }}
-                        whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                        viewport={{ once: false, amount: 0.3 }}
-                        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-4xl md:text-6xl font-display font-semibold mb-4 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
-                    >
-                        {slide.title}
-                    </motion.h2>
-                    {slide.subtitle && (
-                        <motion.p
-                            initial={{ opacity: 0, y: 12 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: false, amount: 0.3 }}
-                            transition={{ delay: 0.25, duration: 0.6 }}
-                            className="text-xl md:text-2xl text-brand-red font-light drop-shadow-md max-w-3xl"
-                        >
-                            {slide.subtitle}
-                        </motion.p>
-                    )}
-                </div>
+                <SlideHeader title={slide.title} subtitle={slide.subtitle} />
 
                 {/* Custom component content */}
                 {slide.content && (
@@ -219,22 +203,10 @@ export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: false, amount: 0.3 }}
                         transition={{ duration: 0.7 }}
-                        className="prose prose-invert prose-lg max-w-none mb-10 text-gray-200 drop-shadow-md pointer-events-auto"
+                        className="prose prose-invert prose-lg max-w-none mb-6 text-gray-200 drop-shadow-md pointer-events-auto"
                     >
                         {renderSlideContent(slide.content, { collapseAfter: collapsible })}
                     </motion.div>
-                )}
-
-                {collapsible && slide.cards.length > 0 && (
-                    <button
-                        type="button"
-                        onClick={() => setShowCards(v => !v)}
-                        aria-expanded={showCards}
-                        className="self-center -mt-4 mb-6 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-gray-200 bg-white/[0.05] border border-white/15 hover:border-brand-red/60 hover:text-white hover:bg-brand-red/10 transition-colors"
-                    >
-                        {showCards ? 'Ocultar detalhamento' : `Mostrar detalhamento (${slide.cards.length} cartões)`}
-                        <ChevronDown size={16} className={`transition-transform duration-300 ${showCards ? 'rotate-180' : ''}`} />
-                    </button>
                 )}
 
                 {/* Cards grid */}

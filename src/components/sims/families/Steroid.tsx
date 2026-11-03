@@ -20,6 +20,8 @@ export interface SteroidProps {
     readonly showAtoms?: boolean;
     readonly stroke?: number;
     readonly font?: number;
+    /** Tamanho do rótulo C19 (padrão: 0,8 × font). */
+    readonly labelFont?: number;
     /** Segundos até começar a desenhar. */
     readonly delay?: number;
     /** Segundos até a metila C19 sumir (só com c19="ghost"). */
@@ -61,12 +63,15 @@ const fadeIn = (still: boolean, at: number, to = 1) => ({
 /** Esqueleto esteroide parametrizável, desenhado ligação por ligação (coordenadas locais). */
 export const Steroid = ({
     color, ringA = 'enone', c19 = 'on', accent, showRings = false, showC19Label = false, showAtoms = true,
-    stroke = 4.5, font = 22, delay = 0, ghostDelay = 1.2, still = false,
+    stroke = 4.5, font = 22, labelFont, delay = 0, ghostDelay = 1.2, still = false,
 }: SteroidProps) => {
     const sig = accent ?? color;
     const t = (i: number) => delay + i * 0.12;
     const atomAt = delay + 0.9;
     const aromatic = ringA === 'aromatic';
+    const c19Font = labelFont ?? font * 0.8;
+    // Largura aproximada de "C19" em fonte mono (0,6 em por caractere) + traço-guia de 0,7 × font.
+    const labelEnd = C19_END[0] - 8 - font * 0.7;
 
     return (
         <g fill="none" stroke={color} strokeWidth={stroke} strokeLinejoin="round" strokeLinecap="round">
@@ -128,11 +133,12 @@ export const Steroid = ({
                     </motion.g>
                 )}
                 {(showC19Label || c19 === 'ghost') && c19 !== 'off' && (
-                    <motion.g {...fadeIn(still, c19 === 'ghost' ? ghostDelay + 0.5 : atomAt + 0.3)} fontFamily={MONO_FONT} fontSize={font * 0.8}>
-                        <text x={C19_END[0] - 7} y={C19_END[1] + font * 0.3} textAnchor="end" fill={c19 === 'ghost' ? sig : '#CBD5E1'}>C19</text>
+                    <motion.g {...fadeIn(still, c19 === 'ghost' ? ghostDelay + 0.5 : atomAt + 0.3)} fontFamily={MONO_FONT} fontSize={c19Font}>
+                        {/* Fantasma: o traço-guia sai da metila e termina ANTES do rótulo (nunca o atravessa). */}
+                        <text x={c19 === 'ghost' ? labelEnd : C19_END[0] - 7} y={C19_END[1] + c19Font * 0.3} textAnchor="end" fill={c19 === 'ghost' ? sig : '#CBD5E1'}>C19</text>
                         {c19 === 'ghost' && (
                             <motion.line
-                                x1={C19_END[0] - 4} x2={C19_END[0] - 10 - font * 1.6} y1={C19_END[1]} y2={C19_END[1]}
+                                x1={C19_END[0] - 4} x2={labelEnd + 6} y1={C19_END[1]} y2={C19_END[1]}
                                 stroke={sig} strokeWidth={2.2}
                                 initial={still ? false : { pathLength: 0 }} animate={{ pathLength: 1 }}
                                 transition={{ delay: ghostDelay + 0.9, duration: 0.4 }}

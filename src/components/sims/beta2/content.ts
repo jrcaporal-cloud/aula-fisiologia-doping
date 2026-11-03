@@ -9,6 +9,8 @@ export const C = {
     rose: '#FB7185',
     blue: '#60A5FA',
     green: '#10B981',
+    /** Via inalatória: azul (e não verde) para não competir com âmbar/vermelho em daltonismo. */
+    inhaled: '#60A5FA',
     amber: '#F59E0B',
     purple: '#A855F7',
     cyan: '#22D3EE',
@@ -23,9 +25,9 @@ export interface StepInfo {
 
 export const STEPS: readonly StepInfo[] = [
     { label: 'Receptor', title: 'Dois tecidos, um receptor', caption: 'β2 no brônquio e no músculo esquelético', color: C.cyan },
-    { label: 'Inalatório', title: 'Dose inalatória: medicamento para asma', caption: 'limiar WADA 1.600 µg/24 h', color: C.green },
+    { label: 'Inalatório', title: 'Dose inalatória: medicamento para asma', caption: 'limiar WADA 1.600 µg/24 h', color: C.inhaled },
     { label: 'Sistêmico', title: 'Dose sistêmica: a zona cinzenta', caption: 'via oral >8 mg', color: C.amber },
-    { label: 'Clembuterol', title: 'Clembuterol: meia-vida longa, taquifilaxia', caption: 'down-regulation em 14 dias', color: C.rose },
+    { label: 'Clembuterol', title: 'Clembuterol: meia-vida longa, taquifilaxia', caption: 'down-regulation em 14-21 dias', color: C.rose },
     { label: 'GW1516', title: 'Cardarine (GW1516): não é beta-2', caption: 'agonista PPARδ → PGC-1α', color: C.purple },
 ];
 
@@ -54,7 +56,7 @@ export const TEXTS: readonly StepText[] = [
     {
         kicker: 'Salbutamol / Formoterol',
         title: 'Via PKA/cAMP → broncodilatação',
-        color: C.green,
+        color: C.inhaled,
         paras: [
             { lead: 'Via PKA/cAMP:', text: 'ativação da adenilato ciclase converte ATP em cAMP, ativando PKA que induz broncodilatação.' },
             { lead: 'Limiar WADA:', text: '1.600 µg/24 h (inalatório).' },
@@ -76,7 +78,7 @@ export const TEXTS: readonly StepText[] = [
         color: C.rose,
         paras: [
             { lead: 'Meia-vida:', text: '~35 h.' },
-            { lead: 'Down-regulation', text: 'de receptores ocorre em 14 dias (taquifilaxia).' },
+            { lead: 'Down-regulation', text: 'de receptores ocorre em 14-21 dias (taquifilaxia).' },
         ],
     },
     {

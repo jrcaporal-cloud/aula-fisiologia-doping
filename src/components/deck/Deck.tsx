@@ -6,12 +6,15 @@ import { BentoSlide } from '../presentation/BentoSlide';
 import { ProseSlide } from '../presentation/ProseSlide';
 import { QuoteSlide } from '../presentation/QuoteSlide';
 import { FitStage } from './FitStage';
+import { SlideErrorBoundary } from './SlideErrorBoundary';
+import { preloadAllSims } from '../presentation/slideContent';
 import { DeckChrome } from './DeckChrome';
 import { Overview } from './Overview';
 import { DECK, SLIDES_WITH_3D, type DeckSlide } from './slides';
 import { useDeckNavigation } from './useDeckNavigation';
 import { useSlideStepStore } from '../../store/useSlideSteps';
 import { PRESENTER_CHANNEL, openPresenterWindow, type PresenterMessage } from './presenterChannel';
+import { toggleDetails } from '../../lib/detailsEvent';
 
 const renderSlide = ({ slide }: DeckSlide) => {
     if (slide.id === 0) return <TitleSlide slide={slide} />;
@@ -52,6 +55,14 @@ export const Deck = () => {
 
     useEffect(() => setSlide(index), [index, setSlide]);
 
+    // Depois que a capa aparece, baixa o resto da aula em segundo plano.
+    useEffect(() => {
+        const start = window.setTimeout(() => {
+            void preloadAllSims().then(() => import('../three/Mechanism3DModal').catch(() => undefined));
+        }, 2500);
+        return () => window.clearTimeout(start);
+    }, []);
+
     // Sincroniza com a janela do apresentador (P): envia estado, recebe comandos.
     const step = useSlideStepStore(st => st.step);
     const stepCount = useSlideStepStore(st => st.count);
@@ -82,6 +93,7 @@ export const Deck = () => {
         const onKey = (e: KeyboardEvent) => {
             if (modalOpen || e.metaKey || e.ctrlKey || e.altKey) return;
             if (e.key === 'p' || e.key === 'P') openPresenterWindow(stateRef.current.index);
+            if (e.key === 'd' || e.key === 'D') toggleDetails();
         };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
@@ -116,7 +128,8 @@ export const Deck = () => {
     return (
         <div
             ref={rootRef}
-            className={`absolute inset-0 z-10 overflow-hidden font-body selection:bg-brand-crimson selection:text-white ${idle && !overview ? 'cursor-none' : ''}`}
+            data-idle={idle || undefined}
+            className={`deck-root absolute inset-0 z-10 overflow-hidden font-body selection:bg-brand-crimson selection:text-white ${idle && !overview ? 'cursor-none' : ''}`}
         >
             <AnimatePresence initial={false} custom={direction}>
                 <motion.section
@@ -135,7 +148,7 @@ export const Deck = () => {
                     exit="exit"
                     transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <FitStage>{renderSlide(current)}</FitStage>
+                    <FitStage><SlideErrorBoundary resetKey={index}>{renderSlide(current)}</SlideErrorBoundary></FitStage>
                 </motion.section>
             </AnimatePresence>
 
@@ -143,7 +156,6 @@ export const Deck = () => {
                 index={index}
                 total={DECK.length}
                 section={current.section}
-                number={current.slide.number}
                 idle={idle}
                 has3D={has3D}
                 onPrev={prev}

@@ -24,7 +24,7 @@ interface GearText {
 const TEXT: readonly GearText[] = [
     { name: 'Testosterona', nameSize: 17, color: '#60A5FA', role: ['Músculo Bruto'], roleAt: { x: GEARS[0].cx, y: GEARS[0].cy + GEARS[0].r + 36, anchor: 'middle' } },
     { name: 'GH', nameSize: 28, color: '#10B981', role: ['Agente Abridor de Vias'], roleAt: { x: GEARS[1].cx, y: GEARS[1].cy - GEARS[1].r - 24, anchor: 'middle' } },
-    { name: 'Insulina', nameSize: 14, color: '#E11D48', role: ['Condutor e Bloqueador', 'Máximo da Quebra'], roleAt: { x: 592, y: 62, anchor: 'end' } },
+    { name: 'Insulina', nameSize: 15, color: '#E11D48', role: ['Condutor e Bloqueador', 'Máximo da Quebra'], roleAt: { x: 592, y: 62, anchor: 'end' } },
 ];
 
 const MTOR = { x: 520, y: 312, r: 40 } as const;

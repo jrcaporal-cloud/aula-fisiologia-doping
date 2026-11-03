@@ -30,20 +30,20 @@ export const StatReadout = ({ panel, shown, open, reduced, countDelay, countDura
                 <span className="block min-w-[7.6rem] font-display text-[3.5rem] font-bold leading-none tabular-nums">
                     {shown
                         ? <motion.span style={{ color: panel.color, textShadow: `0 0 26px ${panel.glow}` }}>{label}</motion.span>
-                        : <span className="text-white/40">?</span>}
+                        : <span className="text-white/55">?</span>}
                 </span>
                 <p className={`font-display text-[1.3rem] font-semibold leading-tight transition-colors duration-500 ${shown ? 'text-white' : 'text-white/60'}`}>
                     {panel.title}
                 </p>
             </div>
-            <p className="mt-1.5 flex items-center gap-1.5 text-[12.5px] font-semibold uppercase tracking-[0.12em] transition-colors duration-500"
-                style={{ color: shown ? panel.color : 'rgba(148,163,184,0.9)' }}>
-                <Icon size={14} strokeWidth={2.2} aria-hidden />
+            <p className="mt-1.5 flex items-center gap-1.5 text-[15px] font-semibold uppercase tracking-[0.08em] transition-colors duration-500"
+                style={{ color: shown ? panel.color : '#CBD5E1' }}>
+                <Icon size={16} strokeWidth={2.2} aria-hidden />
                 {panel.subtitle}
             </p>
 
             {footnote !== undefined && (
-                <div className="mt-1.5 min-h-[1.5rem]">
+                <div className="mt-1.5 min-h-[1.75rem]">
                     <AnimatePresence>
                         {shown && (
                             <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
@@ -56,8 +56,8 @@ export const StatReadout = ({ panel, shown, open, reduced, countDelay, countDura
             )}
 
             <button type="button" onClick={onToggle} disabled={!shown} aria-expanded={open}
-                className={`mt-3 flex w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-[14px] font-semibold transition-all duration-300
-                    ${shown ? 'cursor-pointer hover:bg-white/[0.06]' : 'cursor-default opacity-40'}`}
+                className={`mt-3 flex w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-[16px] font-semibold transition-all duration-300
+                    ${shown ? 'cursor-pointer hover:bg-white/[0.06]' : 'cursor-default opacity-60'}`}
                 style={{
                     color: open ? '#fff' : COLORS.amberSoft,
                     borderColor: open ? panel.color : 'rgba(255,255,255,0.10)',

@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type { ComponentType } from 'react';
 import { useSlideSteps } from '../../store/useSlideSteps';
-import { EASE, LAYERS } from './eaaBase/content';
+import { EASE, LAYERS, TABS } from './eaaBase/content';
 import { LayerPanel } from './eaaBase/LayerPanel';
 import { Overview } from './eaaBase/Overview';
 import { StageRatio } from './eaaBase/StageRatio';
@@ -10,39 +10,45 @@ import { StageSideEffects } from './eaaBase/StageSideEffects';
 import { StageSynthetic } from './eaaBase/StageSynthetic';
 
 const STAGES: ComponentType[] = [StageSynthetic, StageRatio, StageSatellite, StageSideEffects];
-const STEP_COUNT = LAYERS.length + 1;
+const TAB_COUNT = TABS.length;
+/** Passo 0 = visão geral; depois, cada camada gasta um passo por aba (Química → Mecanismo → Risco Real). */
+const STEP_COUNT = 1 + LAYERS.length * TAB_COUNT;
+const firstStepOf = (layerId: number) => 1 + layerId * TAB_COUNT;
 
 /**
  * Slide "A Base do Doping Moderno": a testosterona no centro e quatro camadas
- * (química sintética, razão A/A, células satélite, colaterais) reveladas pelo passador.
+ * (química sintética, razão A/A, células satélite, colaterais) reveladas pelo passador,
+ * cada uma com suas três abas de texto em passos próprios.
  */
 export const EAAInteractive = () => {
     const { step, setStep } = useSlideSteps(STEP_COUNT);
-    const layer = step > 0 ? LAYERS[step - 1] : null;
+    const layerIndex = step > 0 ? Math.floor((step - 1) / TAB_COUNT) : -1;
+    const layer = layerIndex >= 0 ? LAYERS[layerIndex] : null;
+    const tab = TABS[(step - 1 + TAB_COUNT) % TAB_COUNT].key;
     const Stage = layer ? STAGES[layer.id] : null;
+    const crumbs = [{ label: 'Visão geral', color: '#E11D48', at: 0 }, ...LAYERS.map(l => ({ label: `${l.id + 1} · ${l.short}`, color: l.color, at: firstStepOf(l.id) }))];
 
     return (
         <div className="not-prose w-full font-body mt-2 select-none">
-            {/* Trilha de passos */}
+            {/* Trilha das camadas */}
             <div className="flex items-center gap-1.5 mb-3">
-                {[{ label: 'Visão geral', color: '#E11D48' }, ...LAYERS.map(l => ({ label: `${l.id + 1} · ${l.short}`, color: l.color }))].map((s, i) => {
-                    const on = i === step;
+                {crumbs.map((c, i) => {
+                    const on = i === layerIndex + 1;
                     return (
                         <button
-                            key={s.label}
+                            key={c.label}
                             type="button"
-                            onClick={() => setStep(i)}
-                            className="text-[13px] px-3 py-1 rounded-full border cursor-pointer transition-colors"
+                            onClick={() => setStep(c.at)}
+                            className="text-[15px] px-3.5 py-1 rounded-full border cursor-pointer transition-colors"
                             style={on
-                                ? { borderColor: s.color, color: '#fff', background: `${s.color}2e` }
-                                : { borderColor: 'rgba(255,255,255,0.12)', color: '#9CA3AF', background: 'rgba(255,255,255,0.02)' }}
-                        >{s.label}</button>
+                                ? { borderColor: c.color, color: '#fff', background: `${c.color}2e` }
+                                : { borderColor: 'rgba(255,255,255,0.2)', color: '#CBD5E1', background: 'rgba(255,255,255,0.02)' }}
+                        >{c.label}</button>
                     );
                 })}
-                <span className="ml-auto font-mono text-[12px] tracking-[0.2em] text-gray-400">PASSO {step + 1}/{STEP_COUNT}</span>
             </div>
 
-            <div className="relative h-[420px]">
+            <div className="relative h-[460px]">
                 <AnimatePresence initial={false}>
                     {layer && Stage ? (
                         <motion.div
@@ -57,7 +63,7 @@ export const EAAInteractive = () => {
                             <div className="rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] overflow-hidden">
                                 <Stage />
                             </div>
-                            <LayerPanel layer={layer} />
+                            <LayerPanel layer={layer} tab={tab} onTab={key => setStep(firstStepOf(layer.id) + TABS.findIndex(t => t.key === key))} />
                         </motion.div>
                     ) : (
                         <motion.div

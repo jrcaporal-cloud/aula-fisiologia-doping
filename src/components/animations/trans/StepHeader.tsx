@@ -11,7 +11,6 @@ export interface StepChip {
 
 interface StepHeaderProps {
     readonly step: number;
-    readonly count: number;
     readonly title: string;
     readonly chips: readonly StepChip[];
     readonly accent: string;
@@ -22,15 +21,12 @@ interface StepHeaderProps {
 export const CARD = 'rounded-2xl border border-white/10';
 export const CARD_BG = { background: 'rgba(8,8,18,0.72)' } as const;
 
-/** Faixa de cima: "Passo x/N" + título do passo + atalhos por grupo de passos. */
-export const StepHeader = ({ step, count, title, chips, accent, layoutId, onStep }: StepHeaderProps) => (
-    <div className="flex items-center justify-between gap-4 h-[40px] shrink-0">
+/** Faixa de cima: título do passo + atalhos por grupo de passos (o contador de passos fica no rodapé do deck). */
+export const StepHeader = ({ step, title, chips, accent, layoutId, onStep }: StepHeaderProps) => (
+    <div className="flex items-center justify-between gap-4 h-[36px] shrink-0">
         <div className="flex items-center gap-3 min-w-0">
-            <span className="shrink-0 font-mono text-[13px] tracking-widest uppercase px-2 py-1 rounded-md border border-white/15 text-gray-200">
-                Passo {step + 1}/{count}
-            </span>
             <motion.span key={title} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-                className="font-display text-[19px] font-semibold text-white truncate">
+                className="font-display text-[20px] font-semibold text-white whitespace-nowrap">
                 {title}
             </motion.span>
         </div>
@@ -39,8 +35,8 @@ export const StepHeader = ({ step, count, title, chips, accent, layoutId, onStep
                 const active = c.steps.includes(step);
                 return (
                     <button key={c.label} type="button" onClick={() => onStep(c.to)}
-                        className="relative px-3 py-1.5 rounded-lg text-[14px] font-semibold cursor-pointer transition-colors"
-                        style={{ color: active ? '#fff' : '#C4C9D2' }}>
+                        className="relative px-3 py-1 rounded-lg text-[15px] font-semibold cursor-pointer transition-colors"
+                        style={{ color: active ? '#fff' : '#D1D5DB' }}>
                         {active && (
                             <motion.span layoutId={layoutId} className="absolute inset-0 rounded-lg"
                                 style={{ background: `${accent}26`, border: `1px solid ${accent}99` }}

@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DensityStrip } from './DensityStrip';
 import {
-    BOTTOM, NODE_X, PL, PLOT_R, SLOT_W, TOP, VB_H, VB_W, bandPath, edgePath, slotX, vOf, yOf,
+    BOTTOM, FS, NODE_X, PL, PLOT_R, SLOT_W, TOP, VB_H, VB_W, bandPath, edgePath, slotX, vOf, yOf,
 } from './layout';
 import {
     FIXED_LIMIT, MIN_BASELINE, MONTHS, N_EXAMS, POP_CENTER, PRIOR, clampValue, likelihoodOf, toInterval,
@@ -100,9 +100,9 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
             <line x1={PL} x2={PL} y1={TOP} y2={BOTTOM} stroke="rgba(255,255,255,0.35)" />
             <line x1={PL} x2={PLOT_R} y1={BOTTOM} y2={BOTTOM} stroke="rgba(255,255,255,0.35)" />
             <line x1={PL} x2={PLOT_R} y1={yOf(POP_CENTER)} y2={yOf(POP_CENTER)} stroke="rgba(255,255,255,0.10)" />
-            <text x={PL - 8} y={yOf(POP_CENTER) + 4} textAnchor="end" fontSize={12.5} fill="#E5E7EB" style={{ fontFamily: 'var(--font-mono)' }}>1:1</text>
-            <text x={PL - 8} y={FIXED_Y + 4} textAnchor="end" fontSize={12.5} fontWeight={700} fill="#FCA5A5" style={{ fontFamily: 'var(--font-mono)' }}>4,0</text>
-            <text transform={`translate(${PL - 40} ${(TOP + BOTTOM) / 2}) rotate(-90)`} textAnchor="middle" fontSize={12.5} letterSpacing="0.12em" fill="#D1D5DB" style={{ fontFamily: 'var(--font-mono)' }}>
+            <text x={PL - 8} y={yOf(POP_CENTER) + 5} textAnchor="end" fontSize={FS} fill="#E5E7EB" style={{ fontFamily: 'var(--font-mono)' }}>1:1</text>
+            <text x={PL - 8} y={FIXED_Y + 5} textAnchor="end" fontSize={FS} fontWeight={700} fill="#FCA5A5" style={{ fontFamily: 'var(--font-mono)' }}>4,0</text>
+            <text transform={`translate(${PL - 56} ${(TOP + BOTTOM) / 2}) rotate(-90)`} textAnchor="middle" fontSize={FS} letterSpacing="0.1em" fill="#E5E7EB" style={{ fontFamily: 'var(--font-mono)' }}>
                 RAZÃO T/E
             </text>
 
@@ -110,7 +110,7 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
             <motion.rect x={PL} y={FIXED_Y} width={PLOT_R - PL} height={BOTTOM - FIXED_Y} fill="#10B981"
                 animate={{ opacity: fixedOnly ? 0.07 : 0 }} transition={{ duration: 0.6 }} />
             {fixedOnly && (
-                <motion.text x={PLOT_R - 12} y={BOTTOM - 14} textAnchor="end" fontSize={14} fontWeight={600} fill="#6EE7B7"
+                <motion.text x={PLOT_R - 12} y={BOTTOM - 14} textAnchor="end" fontSize={FS} fontWeight={600} fill="#6EE7B7"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
                     abaixo de 4,0 = “normal” para qualquer atleta
                 </motion.text>
@@ -124,7 +124,7 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
                         <path d={edgePath(hi)} fill="none" stroke={BLUE} strokeWidth={1.8} strokeDasharray={tunnel ? undefined : '6 5'} />
                         <path d={edgePath(lo)} fill="none" stroke={BLUE} strokeWidth={1.8} strokeDasharray={tunnel ? undefined : '6 5'} />
                     </g>
-                    <text x={PLOT_R - 8} y={flag !== null ? lastLo + 20 : Math.max(TOP + 16, Math.min(lastHi - 9, FIXED_Y + 30))} textAnchor="end" fontSize={13} fontWeight={700} fill={BLUE}>
+                    <text x={PLOT_R - 8} y={flag !== null ? lastLo + 22 : Math.max(FIXED_Y + 28, Math.min(lastHi - 9, FIXED_Y + 32))} textAnchor="end" fontSize={FS} fontWeight={700} fill={BLUE}>
                         {bandLabel}
                     </text>
                 </motion.g>
@@ -132,7 +132,7 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
 
             {/* Régua fixa */}
             <line x1={PL} x2={PLOT_R} y1={FIXED_Y} y2={FIXED_Y} stroke="#F87171" strokeWidth={fixedOnly ? 2.6 : 1.8} strokeDasharray="8 6" />
-            <text x={PL + 10} y={FIXED_Y - 9} fontSize={13} fontWeight={700} fill="#FCA5A5">Limite universal estático · T/E 4,0</text>
+            <text x={PL + 10} y={FIXED_Y - 9} fontSize={FS} fontWeight={700} fill="#FCA5A5">Limite universal estático · T/E 4,0</text>
 
             {/* Coluna da coleta com ATF */}
             {flag !== null && (
@@ -159,11 +159,13 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
                 const fill = fixedOnly ? '#9CA3AF' : flagged ? RED : k === newest ? '#F59E0B' : BLUE;
                 const grab = (e: React.PointerEvent) => { e.preventDefault(); setDragging(k); };
                 if (isGhost) {
+                    // Perto da borda direita, o rótulo alinha pelo fim para não invadir a faixa de Bayes.
+                    const ghostAnchor = x > PLOT_R - 110 ? { x: x + 14, anchor: 'end' as const } : { x, anchor: 'middle' as const };
                     return (
                         <g key={`ghost-${k}`} onPointerDown={grab} style={{ cursor: 'ns-resize' }}>
+                            <title>arraste na vertical para simular o próximo exame</title>
                             <circle cx={x} cy={y} r={9} fill="rgba(8,8,18,0.9)" stroke="#E5E7EB" strokeWidth={2} strokeDasharray="3 3" />
-                            <text x={x} y={y - 18} textAnchor="middle" fontSize={12.5} fontWeight={600} fill="#E5E7EB">próximo exame</text>
-                            <text x={x} y={y + 26} textAnchor="middle" fontSize={12} fill="#D1D5DB">arraste ↕</text>
+                            <text x={ghostAnchor.x} y={y - 18} textAnchor={ghostAnchor.anchor} fontSize={FS} fontWeight={600} fill="#E5E7EB">próximo exame</text>
                             <circle cx={x} cy={y} r={20} fill="transparent" />
                         </g>
                     );
@@ -186,7 +188,7 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
 
             {/* Passo 0: a régua fixa aprova todos os exames */}
             {fixedOnly && (
-                <motion.text x={slotX(3)} y={yOf(values[3]) - 18} textAnchor="middle" fontSize={13} fontWeight={600} fill="#E5E7EB"
+                <motion.text x={slotX(3) + 14} y={yOf(values[3]) - 18} textAnchor="end" fontSize={FS} fontWeight={600} fill="#E5E7EB"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
                     todos “normais”
                 </motion.text>
@@ -196,36 +198,37 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
             {flag !== null && (() => {
                 const px = slotX(flag);
                 const py = yOf(values[flag]);
-                const bw = 262;
-                const bx = px - 34 - bw;
-                const by = Math.max(FIXED_Y + 16, py - 70);
+                const bw = 268;
+                const bh = 116;
+                const bx = px - 28 - bw;
+                const by = Math.max(TOP, Math.min(FIXED_Y + 12, py - bh / 2));
                 return (
                     <motion.g key={`callout-${flag}`} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}>
-                        <line x1={bx + bw} y1={by + 30} x2={px - 10} y2={py} stroke={RED} strokeWidth={1.6} />
-                        <rect x={bx} y={by} width={bw} height={60} rx={10} fill="#1a0610" stroke={RED} strokeWidth={1.5} />
-                        <text x={bx + 12} y={by + 21} fontSize={14} fontWeight={800} fill="#FDA4AF" style={{ fontFamily: 'var(--font-display)' }}>Achado Atípico (ATF)</text>
-                        <text x={bx + 12} y={by + 38} fontSize={12.5} fill="#FFE4E6">fora do túnel privativo</text>
-                        <text x={bx + 12} y={by + 53} fontSize={12.5} fill="#FFE4E6">abaixo de 4,0: normal para outra pessoa</text>
+                        <line x1={bx + bw} y1={by + bh / 2} x2={px - 10} y2={py} stroke={RED} strokeWidth={1.6} />
+                        <rect x={bx} y={by} width={bw} height={bh} rx={10} fill="#1a0610" stroke={RED} strokeWidth={1.5} />
+                        <text x={bx + 12} y={by + 26} fontSize={FS} fontWeight={800} fill="#FDA4AF" style={{ fontFamily: 'var(--font-display)' }}>⚠ Achado Atípico (ATF)</text>
+                        <text x={bx + 12} y={by + 52} fontSize={FS} fill="#FFE4E6">fora do túnel privativo</text>
+                        <text x={bx + 12} y={by + 77} fontSize={FS} fill="#FFE4E6">abaixo de 4,0: normal</text>
+                        <text x={bx + 12} y={by + 102} fontSize={FS} fill="#FFE4E6">para outra pessoa</text>
                     </motion.g>
                 );
             })()}
 
             {/* Eixo do tempo */}
-            <text x={PL} y={BOTTOM + 22} textAnchor="middle" fontSize={12.5} fontWeight={600} fill={fixedOnly ? 'rgba(229,231,235,0.4)' : '#CBD5E1'} style={{ fontFamily: 'var(--font-mono)' }}>priori</text>
+            <text x={PL} y={BOTTOM + 24} textAnchor="middle" fontSize={FS} fontWeight={600} fill={fixedOnly ? 'rgba(229,231,235,0.75)' : '#E5E7EB'} style={{ fontFamily: 'var(--font-mono)' }}>priori</text>
             {MONTHS.map((m, k) => {
                 const isFlag = flag === k;
                 const vis = fixedOnly || k < visibleCount;
                 return (
-                    <g key={m}>
-                        <text x={slotX(k)} y={BOTTOM + 22} textAnchor="middle" fontSize={12.5} fontWeight={isFlag ? 800 : 600}
-                            fill={isFlag ? '#FB7185' : vis ? '#E5E7EB' : 'rgba(229,231,235,0.5)'} style={{ fontFamily: 'var(--font-mono)' }}>
-                            Ex.{k + 1} · {m}
-                        </text>
-                    </g>
+                    <text key={m} x={slotX(k)} y={BOTTOM + 24} textAnchor="middle" fontSize={FS} fontWeight={isFlag ? 800 : 600}
+                        fill={isFlag ? '#FB7185' : vis ? '#F3F4F6' : 'rgba(229,231,235,0.75)'} style={{ fontFamily: 'var(--font-mono)' }}>
+                        <tspan x={slotX(k)}>Ex.{k + 1}</tspan>
+                        <tspan x={slotX(k)} dy={22}>{m}</tspan>
+                    </text>
                 );
             })}
-            <text x={PLOT_R} y={BOTTOM + 44} textAnchor="end" fontSize={12} letterSpacing="0.1em" fill="#D1D5DB" style={{ fontFamily: 'var(--font-mono)' }}>TEMPO (MESES) →</text>
+            <text x={PLOT_R} y={BOTTOM + 72} textAnchor="end" fontSize={FS} letterSpacing="0.02em" fill="#E5E7EB" style={{ fontFamily: 'var(--font-mono)' }}>TEMPO (MESES) →</text>
 
             <DensityStrip visible={!fixedOnly} showPosterior={!fixedOnly && n > 0} posterior={posterior}
                 likelihood={showLikelihood && newest >= 0 ? likelihoodOf(values[newest]) : null}

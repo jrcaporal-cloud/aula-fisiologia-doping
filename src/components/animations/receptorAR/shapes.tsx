@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 /** Coordenadas do corte da célula (viewBox 680×390, 1 unidade ≈ 1 px no palco de 1280). */
 export const VIEW_W = 680;
-export const VIEW_H = 390;
+export const VIEW_H = 400;
 export const MEM_TOP = 60;
 export const MEM_BOT = 88;
 export const NUCLEUS = { cx: 175, cy: 308, rx: 152, ry: 70 } as const;
@@ -91,10 +91,10 @@ interface PillProps {
 }
 
 /** Etiqueta arredondada (proteína/cascata) com texto centralizado. */
-export const Pill = ({ x, y, w, color, children, fontSize = 13 }: PillProps) => (
+export const Pill = ({ x, y, w, color, children, fontSize = 15 }: PillProps) => (
     <g>
-        <rect x={x - w / 2} y={y - 12} width={w} height={24} rx={12} fill={`${color}33`} stroke={color} strokeWidth={1.4} />
-        <text x={x} y={y + 4.5} textAnchor="middle" fontSize={fontSize} fill="#F8FAFC" className="font-mono" fontWeight={600}>
+        <rect x={x - w / 2} y={y - 13} width={w} height={26} rx={13} fill={`${color}33`} stroke={color} strokeWidth={1.4} />
+        <text x={x} y={y + 5.2} textAnchor="middle" fontSize={fontSize} fill="#F8FAFC" className="font-mono" fontWeight={600}>
             {children}
         </text>
     </g>
@@ -110,7 +110,7 @@ interface LabelProps {
     weight?: number;
 }
 
-export const Label = ({ x, y, children, anchor = 'start', color = LABEL, size = 13, weight = 500 }: LabelProps) => (
+export const Label = ({ x, y, children, anchor = 'start', color = LABEL, size = 15, weight = 500 }: LabelProps) => (
     <text x={x} y={y} textAnchor={anchor} fontSize={size} fill={color} fontWeight={weight} className="font-mono">
         {children}
     </text>

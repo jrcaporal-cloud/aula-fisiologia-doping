@@ -7,7 +7,7 @@ import {
 /** Desenho dos órgãos do esquema (SVG puro). `on` = órgão em foco no passo atual. */
 
 const LABEL = 'font-body';
-const DIM = 0.2;
+const DIM = 0.8;
 
 export const Fade = ({ on, children, dim = DIM }: { on: boolean; children: ReactNode; dim?: number }) => (
     <motion.g initial={false} animate={{ opacity: on ? 1 : dim }} transition={{ duration: 0.6, ease: 'easeOut' }}>
@@ -53,7 +53,7 @@ export const Vessel = () => (
         <rect x={VESSEL.x0} y={VESSEL.y - VESSEL.half} width={VESSEL.x1 - VESSEL.x0} height={VESSEL.half * 2} rx={VESSEL.half}
             fill="url(#ug-vessel)" stroke="#fb7185" strokeOpacity={0.45} strokeWidth={1.2} />
         <line x1={VESSEL.x0 + 14} x2={VESSEL.x1 - 14} y1={VESSEL.y - 8} y2={VESSEL.y - 8} stroke="#fda4af" strokeOpacity={0.18} strokeWidth={2} strokeLinecap="round" />
-        <text x={VESSEL.x1} y={VESSEL.y - VESSEL.half - 10} textAnchor="end" className={LABEL} fontSize={14} fontWeight={600} fill="#FDA4AF">
+        <text x={VESSEL.x1} y={VESSEL.y - VESSEL.half - 10} textAnchor="end" className={LABEL} fontSize={15} fontWeight={600} fill="#FDA4AF">
             Corrente sanguínea
         </text>
     </g>
@@ -71,8 +71,8 @@ export const Syringe = ({ on }: { on: boolean }) => {
                 initial={false} animate={still || !on ? { y: 30, height: 20 } : { y: [22, 40], height: [28, 10] }}
                 transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', repeatType: 'reverse' }} />
             <rect x={x - 13} y={10} width={26} height={4} rx={1.5} fill="#E5E7EB" />
-            <text x={x + 18} y={30} className={LABEL} fontSize={14} fontWeight={700} fill="#FCD34D">Cipionato</text>
-            <text x={x + 18} y={47} className={LABEL} fontSize={13} fill="#E5E7EB">testosterona exógena</text>
+            <text x={x + 18} y={30} className={LABEL} fontSize={15} fontWeight={700} fill="#FCD34D">Cipionato</text>
+            <text x={x + 18} y={47} className={LABEL} fontSize={15} fill="#E5E7EB">testosterona exógena</text>
         </motion.g>
     );
 };
@@ -96,15 +96,15 @@ export const Liver = ({ deleted }: { deleted: boolean }) => {
             <path d={DUCTS.hepaticIn} fill="none" stroke="#9f1239" strokeWidth={10} strokeLinecap="round" />
             <path d={LIVER_PATH} fill="url(#ug-liver)" stroke="#fdba74" strokeOpacity={0.35} strokeWidth={1.2} />
             <path d="M96 170 C 120 156 160 152 196 154" fill="none" stroke="#fed7aa" strokeOpacity={0.22} strokeWidth={3} strokeLinecap="round" />
-            <text x={86} y={190} className={LABEL} fontSize={15} fontWeight={700} fill="#FED7AA">Fígado</text>
+            <text x={86} y={190} className={LABEL} fontSize={16} fontWeight={700} fill="#FED7AA">Fígado</text>
 
             {deleted ? (
                 <g>
                     <circle cx={ENZYME.x} cy={ENZYME.y} r={18} fill="rgba(0,0,0,0.25)" stroke="#FDA4AF" strokeWidth={1.4} strokeDasharray="4 4" />
                     <path d={`M${ENZYME.x - 8} ${ENZYME.y - 8} L ${ENZYME.x + 8} ${ENZYME.y + 8} M${ENZYME.x + 8} ${ENZYME.y - 8} L ${ENZYME.x - 8} ${ENZYME.y + 8}`}
                         stroke="#FB7185" strokeWidth={2.6} strokeLinecap="round" />
-                    <text x={ENZYME.x - 26} y={ENZYME.y + 24} textAnchor="end" className="font-mono" fontSize={13} fontWeight={700} fill="#FDA4AF">UGT2B17</text>
-                    <text x={ENZYME.x - 26} y={ENZYME.y + 40} textAnchor="end" className={LABEL} fontSize={13} fill="#FECDD3">gene deletado</text>
+                    <text x={ENZYME.x - 26} y={ENZYME.y + 24} textAnchor="end" className="font-mono" fontSize={15} fontWeight={700} fill="#FDA4AF">UGT2B17</text>
+                    <text x={ENZYME.x - 26} y={ENZYME.y + 40} textAnchor="end" className={LABEL} fontSize={15} fill="#FECDD3">gene deletado</text>
                 </g>
             ) : (
                 <g>
@@ -115,12 +115,12 @@ export const Liver = ({ deleted }: { deleted: boolean }) => {
                         <path d={`M${ENZYME.x - 6} ${ENZYME.y - 17} A 18 18 0 1 0 ${ENZYME.x + 6} ${ENZYME.y - 17} L ${ENZYME.x} ${ENZYME.y - 4} Z`}
                             fill="url(#ug-enzyme)" stroke="#A7F3D0" strokeWidth={1.2} />
                     </motion.g>
-                    <text x={ENZYME.x} y={ENZYME.y + 38} textAnchor="middle" className="font-mono" fontSize={13} fontWeight={700} fill="#6EE7B7">UGT2B17</text>
+                    <text x={ENZYME.x} y={ENZYME.y + 38} textAnchor="middle" className="font-mono" fontSize={15} fontWeight={700} fill="#6EE7B7">UGT2B17</text>
                     <Sugar x={232} y={166} delay={0} active />
                     <Sugar x={252} y={180} delay={0.5} active />
                     <Sugar x={214} y={176} delay={1} active />
-                    <text x={264} y={160} className={LABEL} fontSize={13} fill="#FCD34D">ácido</text>
-                    <text x={264} y={175} className={LABEL} fontSize={13} fill="#FCD34D">glucurônico</text>
+                    <text x={256} y={157} className={LABEL} fontSize={15} fill="#FCD34D" stroke="#2a0d0a" strokeWidth={3} paintOrder="stroke">ácido</text>
+                    <text x={256} y={173} className={LABEL} fontSize={15} fill="#FCD34D" stroke="#2a0d0a" strokeWidth={3} paintOrder="stroke">glucurônico</text>
                 </g>
             )}
         </g>
@@ -135,7 +135,7 @@ export const Kidneys = () => (
         {KIDNEY_PATHS.map((d, i) => (
             <path key={i} d={d} fill="url(#ug-kidney)" stroke="#fecdd3" strokeOpacity={0.4} strokeWidth={1.2} />
         ))}
-        <text x={(KIDNEYS[0].x + KIDNEYS[1].x) / 2} y={KIDNEYS[0].y - 52} textAnchor="middle" className={LABEL} fontSize={15} fontWeight={700} fill="#FECDD3">Rins</text>
+        <text x={(KIDNEYS[0].x + KIDNEYS[1].x) / 2} y={KIDNEYS[0].y - 52} textAnchor="middle" className={LABEL} fontSize={16} fontWeight={700} fill="#FECDD3">Rins</text>
     </g>
 );
 
@@ -148,7 +148,7 @@ export const Bladder = ({ urine }: { urine: boolean }) => (
         </g>
         <path d={DUCTS.urethra} stroke="#fde68a" strokeOpacity={0.6} strokeWidth={5} strokeLinecap="round" />
         <path d={DUCTS.collect} fill="none" stroke="#fde68a" strokeOpacity={0.6} strokeWidth={1.6} strokeDasharray="5 5" />
-        <text x={BLADDER.x - 42} y={BLADDER.y + 2} textAnchor="end" className={LABEL} fontSize={15} fontWeight={700} fill="#FDE68A">Bexiga</text>
+        <text x={BLADDER.x - 42} y={BLADDER.y + 2} textAnchor="end" className={LABEL} fontSize={16} fontWeight={700} fill="#FDE68A">Bexiga</text>
     </g>
 );
 
@@ -157,8 +157,8 @@ export const Intestine = ({ highlight }: { highlight: boolean }) => (
         <path d={DUCTS.bile} fill="none" stroke="#a16207" strokeWidth={7} strokeLinecap="round" />
         <path d={DUCTS.gut} fill="none" stroke="#7c3a2d" strokeWidth={22} strokeLinecap="round" strokeLinejoin="round" />
         <path d={DUCTS.gut} fill="none" stroke="#c2795f" strokeOpacity={0.55} strokeWidth={14} strokeLinecap="round" strokeLinejoin="round" />
-        <text x={312} y={414} className={LABEL} fontSize={15} fontWeight={700} fill="#FDBA74">Intestino</text>
+        <text x={312} y={414} className={LABEL} fontSize={16} fontWeight={700} fill="#FED7AA">Intestino</text>
         <path d="M44 446 L 26 455 M26 455 L 36 443 M26 455 L 40 456" stroke={highlight ? '#FB7185' : '#FDBA74'} strokeWidth={2.4} strokeLinecap="round" fill="none" />
-        <text x={14} y={420} className={LABEL} fontSize={15} fontWeight={700} fill={highlight ? '#FDA4AF' : '#FDBA74'}>Fezes</text>
+        <text x={14} y={420} className={LABEL} fontSize={16} fontWeight={700} fill={highlight ? '#FDA4AF' : '#FED7AA'}>Fezes</text>
     </g>
 );

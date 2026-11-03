@@ -15,19 +15,22 @@ export const COLLECT_T = -56;
 export const REINFUSE_T = -0.75;
 export const RACE_T = 0;
 
-/** Geometria do gráfico (viewBox 792 × 460). */
-export const VIEW_W = 792;
-export const VIEW_H = 460;
-export const PLOT_X0 = 66;
-export const WEEKS_X1 = 520;
-export const DAYS_X0 = 556;
-export const PLOT_X1 = 770;
-export const HCT_TOP = 120;
-export const HCT_BOTTOM = 340;
+/**
+ * Geometria do gráfico (viewBox 706 × 486). A largura do viewBox é próxima da largura real do
+ * cartão (~650 px), então 1 unidade ≈ 0,92 px: os textos de 16,5 ficam com ~15 px na tela.
+ */
+export const VIEW_W = 706;
+export const VIEW_H = 486;
+export const PLOT_X0 = 84;
+export const WEEKS_X1 = 470;
+export const DAYS_X0 = 498;
+export const PLOT_X1 = 700;
+export const HCT_TOP = 140;
+export const HCT_BOTTOM = 350;
 export const HCT_MIN = 40;
 export const HCT_MAX = 56;
-export const RET_TOP = 376;
-export const RET_BOTTOM = 420;
+export const RET_TOP = 388;
+export const RET_BOTTOM = 436;
 
 export const BASAL_LO = 42;
 export const BASAL_HI = 45;

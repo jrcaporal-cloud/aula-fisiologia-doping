@@ -8,7 +8,9 @@ import {
 
 /** Gráfico da noite do controle: 22h → 23h do dia seguinte. Camadas aparecem conforme o passo. */
 
-export const CHART = { w: 720, h: 410, l: 50, r: 56, t: 48, base: 330 } as const;
+export const CHART = { w: 720, h: 388, l: 56, r: 60, t: 46, base: 296 } as const;
+/** Texto do gráfico: 16 un. × escala ≈ 0,96 ≈ 15,4 px reais. */
+const FONT = 16;
 const MONO = 'var(--font-mono)';
 const BODY = 'var(--font-body)';
 const Y_MAX = 2.25;
@@ -23,7 +25,7 @@ const toBand = (top: Pt[], bottom: Pt[]): string =>
     `${toPath(top)}${[...bottom].reverse().map(p => `L${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join('')}Z`;
 
 interface LabelProps { x: number; y: number; text: string; color: string; anchor?: 'start' | 'middle' | 'end'; size?: number; weight?: number }
-const Label = ({ x, y, text, color, anchor = 'start', size = 13, weight = 600 }: LabelProps) => (
+const Label = ({ x, y, text, color, anchor = 'start', size = FONT, weight = 600 }: LabelProps) => (
     <text x={x} y={y} textAnchor={anchor} fontSize={size} fontWeight={weight} fill={color}
         style={{ fontFamily: BODY, paintOrder: 'stroke', stroke: '#080812', strokeWidth: 4, strokeLinejoin: 'round' }}>{text}</text>
 );
@@ -43,16 +45,16 @@ const Axes = ({ showRight }: { showRight: boolean }) => (
             <line key={t} x1={sx(t)} x2={sx(t)} y1={CHART.base} y2={CHART.base + (TICK_LABEL[t] ? 6 : 3)} stroke="rgba(255,255,255,0.5)" />
         ))}
         {TICKS.map(t => (
-            <text key={t} x={sx(t)} y={CHART.base + 21} textAnchor="middle" fontSize={12.5} fontFamily={MONO} fill="#E5E7EB">{TICK_LABEL[t]}</text>
+            <text key={t} x={sx(t)} y={CHART.base + 22} textAnchor="middle" fontSize={FONT} fontFamily={MONO} fill="#E5E7EB">{TICK_LABEL[t]}</text>
         ))}
-        <text transform={`translate(16,${(CHART.t + CHART.base) / 2}) rotate(-90)`} textAnchor="middle" fontSize={12.5} fill="#D1D5DB" style={{ fontFamily: BODY }}>
+        <text transform={`translate(18,${(CHART.t + CHART.base) / 2}) rotate(-90)`} textAnchor="middle" fontSize={FONT} fill="#E5E7EB" style={{ fontFamily: BODY }}>
             GH plasmático (u.a.)
         </text>
         <AnimatePresence>
             {showRight && (
                 <Fade k="right-axis">
                     <line x1={CHART.w - CHART.r} x2={CHART.w - CHART.r} y1={CHART.t} y2={CHART.base} stroke="rgba(96,165,250,0.55)" />
-                    <text transform={`translate(${CHART.w - 18},${(CHART.t + CHART.base) / 2}) rotate(90)`} textAnchor="middle" fontSize={12.5} fill="#93C5FD" style={{ fontFamily: BODY }}>
+                    <text transform={`translate(${CHART.w - 20},${(CHART.t + CHART.base) / 2}) rotate(90)`} textAnchor="middle" fontSize={FONT} fill="#93C5FD" style={{ fontFamily: BODY }}>
                         IGF-1 (u.a.)
                     </text>
                 </Fade>
@@ -64,11 +66,11 @@ const Axes = ({ showRight }: { showRight: boolean }) => (
 const SleepStrip = () => (
     <g>
         <rect x={sx(SLEEP[0])} y={CHART.t} width={sx(SLEEP[1]) - sx(SLEEP[0])} height={CHART.base - CHART.t} fill="rgba(129,140,248,0.06)" />
-        <rect x={sx(SLEEP[0])} y={16} width={sx(SLEEP[1]) - sx(SLEEP[0])} height={18} rx={4} fill="rgba(129,140,248,0.16)" stroke="rgba(129,140,248,0.4)" />
+        <rect x={sx(SLEEP[0])} y={12} width={sx(SLEEP[1]) - sx(SLEEP[0])} height={22} rx={4} fill="rgba(129,140,248,0.16)" stroke="rgba(129,140,248,0.4)" />
         {N3_BLOCKS.map(([a, b]) => (
-            <rect key={a} x={sx(a)} y={16} width={sx(b) - sx(a)} height={18} rx={3} fill="rgba(129,140,248,0.62)" />
+            <rect key={a} x={sx(a)} y={12} width={sx(b) - sx(a)} height={22} rx={3} fill="rgba(129,140,248,0.62)" />
         ))}
-        <text x={sx(SLEEP[1]) + 6} y={29} fontSize={12.5} fontWeight={600} fill="#C7D2FE" style={{ fontFamily: BODY }}>sono · blocos escuros = N3</text>
+        <text x={sx(SLEEP[1]) + 8} y={29} fontSize={FONT} fontWeight={600} fill="#C7D2FE" style={{ fontFamily: BODY }}>sono · blocos escuros = N3</text>
     </g>
 );
 
@@ -85,6 +87,7 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
     const zero = endoPts.map(p => ({ x: p.x, y: 0 }));
     const totalPts = sampleFn(t => ghEndo(t) + exo(t), 0, T_MAX, 500);
     const igfPts = sampleFn(igf, 0, T_MAX, 200);
+    const igfPeak = Math.max(...igfPts.map(p => p.y));
     const showExo = step >= 1;
     const dur = (s: number): number => (reduce ? 0 : s);
 
@@ -95,7 +98,7 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
     return (
         <svg viewBox={`0 0 ${CHART.w} ${CHART.h}`} className="absolute inset-0 w-full h-full block" preserveAspectRatio="xMidYMid meet" role="img"
             aria-label="Linha do tempo de uma noite: pulsos de GH, injeção às 23h, controle às 6h e IGF-1 (modelo ilustrativo)">
-            <motion.g animate={{ opacity: step === 5 ? 0.32 : 1 }} transition={{ duration: 0.6 }}>
+            <motion.g animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
                 <SleepStrip />
 
                 {/* janela do teste de isoformas (< 12 h após o uso) */}
@@ -104,7 +107,8 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                         <Fade k="iso-win">
                             <rect x={sx(INJ_T)} y={CHART.t} width={sx(INJ_T + ISO_WINDOW_H) - sx(INJ_T)} height={CHART.base - CHART.t} fill="rgba(168,85,247,0.12)" />
                             <line x1={sx(INJ_T + ISO_WINDOW_H)} x2={sx(INJ_T + ISO_WINDOW_H)} y1={CHART.t} y2={CHART.base} stroke={COLORS.iso} strokeWidth={1.6} strokeDasharray="5 4" />
-                            <Label x={sx(INJ_T + ISO_WINDOW_H) - 8} y={CHART.t + 18} text="teste de isoformas: amostra < 12 h após o uso" color="#E9D5FF" anchor="end" />
+                            <Label x={sx(INJ_T) + 10} y={CHART.t + 16} text="teste de isoformas:" color="#E9D5FF" />
+                            <Label x={sx(INJ_T) + 10} y={CHART.t + 35} text="amostra < 12 h após o uso" color="#E9D5FF" />
                         </Fade>
                     )}
                 </AnimatePresence>
@@ -132,9 +136,9 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                 <AnimatePresence>
                     {showExo && (
                         <Fade k="inj">
-                            <line x1={sx(INJ_T)} x2={sx(INJ_T)} y1={CHART.t + 4} y2={CHART.base + 26} stroke={COLORS.exo} strokeWidth={1.4} strokeDasharray="3 4" />
-                            <circle cx={sx(INJ_T)} cy={CHART.base + 30} r={4} fill={COLORS.exo} />
-                            <Label x={sx(INJ_T) + 8} y={CHART.base + 35} text={`injeção de rhGH ${route === 'sc' ? 'SC' : 'IV'} às 23h`} color="#FCD34D" />
+                            <line x1={sx(INJ_T)} x2={sx(INJ_T)} y1={CHART.t + 4} y2={CHART.base + 34} stroke={COLORS.exo} strokeWidth={1.4} strokeDasharray="3 4" />
+                            <circle cx={sx(INJ_T)} cy={CHART.base + 38} r={4} fill={COLORS.exo} />
+                            <Label x={sx(INJ_T) + 8} y={CHART.base + 44} text={`injeção de rhGH ${route === 'sc' ? 'SC' : 'IV'} às 23h`} color="#FCD34D" />
                         </Fade>
                     )}
                 </AnimatePresence>
@@ -150,7 +154,7 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                     {step === 1 && (
                         <Fade k="l1" delay={dur(1.2)}>
                             <Label x={sx(5.2)} y={sy(1.55)} text="o laboratório mede só o total (linha branca)" color="#F3F4F6" />
-                            <Label x={sx(5.2)} y={sy(1.55) + 18} text="exógeno (âmbar) e endógeno: mesma molécula" color="#FCD34D" />
+                            <Label x={sx(5.2)} y={sy(1.55) + 21} text="exógeno (âmbar) e endógeno: mesma molécula" color="#FCD34D" />
                         </Fade>
                     )}
                     {step === 2 && route === 'sc' && (
@@ -183,7 +187,7 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                             <motion.path d={toPath(igfPts, syR)} fill="none" stroke={COLORS.igf} strokeWidth={3.2} strokeLinecap="round"
                                 initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: dur(2.2), ease: 'easeInOut' }} />
                             <Fade k="igf-l" delay={dur(1.6)}>
-                                <Label x={sx(17)} y={syR(igf(17)) - 14} text="IGF-1: sobe devagar e cai devagar (t½ ~15 h)" color="#93C5FD" anchor="middle" />
+                                <Label x={sx(15)} y={syR(igfPeak) - 16} text="IGF-1: sobe devagar e cai devagar (t½ ~15 h)" color="#93C5FD" anchor="middle" />
                             </Fade>
                         </motion.g>
                     )}
@@ -195,12 +199,12 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                         <Fade k="ctrl" delay={dur(0.2)}>
                             <rect x={sx(CONTROL_T) - 1.5} y={sy(1.9)} width={3} height={CHART.base - sy(1.9)} fill={COLORS.control} />
                             <circle cx={sx(CONTROL_T)} cy={sy(exo(CONTROL_T))} r={5} fill="#080812" stroke={COLORS.control} strokeWidth={2} />
-                            <Label x={sx(CONTROL_T) + 8} y={CHART.base - 58} text="controle 6h" color="#FDA4AF" size={14} />
-                            <Label x={sx(CONTROL_T) + 8} y={CHART.base - 38} text="rhGH: já eliminado" color="#F3F4F6" />
+                            <Label x={sx(CONTROL_T) + 8} y={CHART.base - 62} text="controle 6h" color="#FDA4AF" />
+                            <Label x={sx(CONTROL_T) + 8} y={CHART.base - 40} text="rhGH: já eliminado" color="#F3F4F6" />
                             {step === 4 && (
                                 <>
                                     <circle cx={sx(CONTROL_T)} cy={syR(igf(CONTROL_T))} r={5.5} fill={COLORS.igf} stroke="#080812" strokeWidth={2} />
-                                    <Label x={sx(CONTROL_T) + 10} y={syR(igf(CONTROL_T)) - 14} text="IGF-1 ainda elevado" color="#93C5FD" size={14} />
+                                    <Label x={sx(CONTROL_T) + 12} y={syR(igf(CONTROL_T)) + 62} text="IGF-1 ainda elevado" color="#93C5FD" />
                                 </>
                             )}
                         </Fade>
@@ -210,9 +214,9 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                 {/* coleta móvel (passo 3) */}
                 {isoStep && (
                     <g>
-                        <line x1={sx(collectT)} x2={sx(collectT)} y1={CHART.t + 26} y2={CHART.base} stroke={COLORS.iso20} strokeWidth={2.4} />
+                        <line x1={sx(collectT)} x2={sx(collectT)} y1={CHART.t + 46} y2={CHART.base} stroke={COLORS.iso20} strokeWidth={2.4} />
                         <circle cx={sx(collectT)} cy={sy(ghEndo(collectT) + exoAtCollect)} r={5} fill="#080812" stroke={COLORS.iso20} strokeWidth={2} />
-                        <path d={`M${sx(collectT) - 7},${CHART.base + 58} L${sx(collectT) + 7},${CHART.base + 58} L${sx(collectT)},${CHART.base + 49} Z`} fill={COLORS.iso20} />
+                        <path d={`M${sx(collectT) - 7},${CHART.base + 70} L${sx(collectT) + 7},${CHART.base + 70} L${sx(collectT)},${CHART.base + 60} Z`} fill={COLORS.iso20} />
                     </g>
                 )}
 
@@ -220,22 +224,14 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                 <AnimatePresence>
                     {step === 2 && (
                         <Fade k="w24" delay={dur(1)}>
-                            <line x1={sx(INJ_T)} x2={sx(INJ_T + DETECT_WINDOW_H) - 26} y1={CHART.base + 56} y2={CHART.base + 56} stroke="#FDA4AF" strokeWidth={1.6} />
-                            <line x1={sx(INJ_T)} x2={sx(INJ_T)} y1={CHART.base + 50} y2={CHART.base + 62} stroke="#FDA4AF" strokeWidth={1.6} />
-                            <path d={`M${sx(INJ_T + DETECT_WINDOW_H) - 26},${CHART.base + 51} l9,5 l-9,5 Z`} fill="#FDA4AF" />
-                            <Label x={sx(13)} y={CHART.base + 75} text="janela de detecção urinária/sanguínea: fecha em menos de 24 h" color="#FDA4AF" anchor="middle" />
+                            <line x1={sx(INJ_T)} x2={sx(INJ_T + DETECT_WINDOW_H) - 26} y1={CHART.base + 62} y2={CHART.base + 62} stroke="#FDA4AF" strokeWidth={1.6} />
+                            <line x1={sx(INJ_T)} x2={sx(INJ_T)} y1={CHART.base + 56} y2={CHART.base + 68} stroke="#FDA4AF" strokeWidth={1.6} />
+                            <path d={`M${sx(INJ_T + DETECT_WINDOW_H) - 26},${CHART.base + 57} l9,5 l-9,5 Z`} fill="#FDA4AF" />
+                            <Label x={sx(13)} y={CHART.base + 88} text="janela de detecção urinária/sanguínea: fecha em menos de 24 h" color="#FDA4AF" anchor="middle" />
                         </Fade>
                     )}
                 </AnimatePresence>
             </motion.g>
-            <AnimatePresence>
-                {step === 5 && (
-                    <Fade k="l5" delay={dur(0.4)}>
-                        <Label x={sx(13.5)} y={sy(1.25)} text="noite após noite, o rhGH some do plasma antes das 6h…" color="#F3F4F6" anchor="middle" size={16} />
-                        <Label x={sx(13.5)} y={sy(1.25) + 24} text="…mas o uso crônico expande tecido conjuntivo e ósseo" color="#FCD34D" anchor="middle" size={16} />
-                    </Fade>
-                )}
-            </AnimatePresence>
         </svg>
     );
 };

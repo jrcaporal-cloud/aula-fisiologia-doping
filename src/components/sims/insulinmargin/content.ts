@@ -26,16 +26,16 @@ export interface Fact {
 }
 
 export const FACTS: readonly Fact[] = [
-    { icon: 'anabolic', pre: 'Insulina é o ', hi: 'agente anabolizante mais potente', post: ' do corpo humano.', color: '#10B981', from: 0 },
+    { icon: 'anabolic', pre: 'Insulina é o ', hi: 'agente anabolizante mais potente', post: ' do corpo humano.', color: '#22D3EE', from: 0 },
     {
         icon: 'hidden',
         pre: 'Por ser idêntica à forma endógena, a insulina humana injetada é ',
-        hi: 'completamente indetectável',
-        post: ' em 2–4 horas.',
+        hi: 'muito difícil de detectar',
+        post: ' depois de 2–4 horas.',
         color: '#A855F7',
         from: 4,
     },
-    { icon: 'antidote', pre: '', hi: 'Não há antídoto oral eficaz', post: ' para doses maciças incorretas.', color: '#E11D48', from: 3 },
+    { icon: 'antidote', pre: '', hi: 'Hipoglicemia grave é emergência', post: ' em dose maciça incorreta.', color: '#E11D48', from: 3 },
 ];
 
 export interface StepInfo {
@@ -51,7 +51,7 @@ export const STEPS: readonly StepInfo[] = [
     { tab: '~10 UI', title: '~10 UI · microdose (stack)', caption: 'máximo anabolismo', dose: 10 },
     { tab: '~12 UI', title: 'Acima de ~12 UI', caption: 'receptores saturados', dose: 12 },
     { tab: '~15+ UI', title: '~15+ UI · gatilho de coma hipoglicêmico', caption: 'margem de erro de 2 a 4 unidades extras', dose: null },
-    { tab: 'Sem volta', title: 'Indetectável e sem antídoto', caption: 'a margem que mata', dose: null },
+    { tab: 'Sem volta', title: 'Difícil de detectar, sem margem de erro', caption: 'a margem que mata', dose: null },
 ];
 
 export const LABELS = {

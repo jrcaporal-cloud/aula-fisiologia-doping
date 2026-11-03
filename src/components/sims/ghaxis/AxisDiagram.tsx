@@ -16,24 +16,24 @@ const HALO = { paintOrder: 'stroke', stroke: '#050510', strokeWidth: 4, strokeLi
 
 /** Etiqueta com fundo (chip) desenhada no SVG. */
 const Chip = ({ x, y, text, color, anchor = 'middle' }: { x: number; y: number; text: string; color: string; anchor?: 'start' | 'middle' | 'end' }) => {
-    const w = text.length * 7.1 + 18;
+    const w = text.length * 8.1 + 20;
     const left = anchor === 'middle' ? x - w / 2 : anchor === 'end' ? x - w : x;
     return (
         <g>
-            <rect x={left} y={y - 12} width={w} height={23} rx={11.5} fill="#0a0d1c" fillOpacity={0.92} stroke={color} strokeOpacity={0.75} />
-            <text x={left + w / 2} y={y + 4.5} textAnchor="middle" fontSize={13} fontWeight={600} fill="#F9FAFB" style={{ fontFamily: 'var(--font-body)' }}>{text}</text>
+            <rect x={left} y={y - 13} width={w} height={27} rx={13.5} fill="#0a0d1c" fillOpacity={0.92} stroke={color} strokeOpacity={0.75} />
+            <text x={left + w / 2} y={y + 5.5} textAnchor="middle" fontSize={15} fontWeight={600} fill="#F9FAFB" style={{ fontFamily: 'var(--font-body)' }}>{text}</text>
         </g>
     );
 };
 
 /** Rótulo de nível clicável: número + nome. */
 const LevelLabel = ({ x, y, n, text, color, anchor = 'start' }: { x: number; y: number; n: number; text: string; color: string; anchor?: 'start' | 'end' }) => {
-    const textX = anchor === 'start' ? x + 14 : x - 14;
+    const textX = anchor === 'start' ? x + 16 : x - 16;
     return (
         <g>
-            <circle cx={x} cy={y - 4.5} r={9} fill="#050510" stroke={color} strokeWidth={1.5} />
-            <text x={x} y={y} textAnchor="middle" fontSize={12} fontWeight={700} fill={color} style={{ fontFamily: 'var(--font-mono)' }}>{n}</text>
-            <text x={textX} y={y} textAnchor={anchor} fontSize={14} fontWeight={600} fill="#F9FAFB" style={{ fontFamily: 'var(--font-display)', ...HALO }}>{text}</text>
+            <circle cx={x} cy={y - 5} r={10.5} fill="#050510" stroke={color} strokeWidth={1.5} />
+            <text x={x} y={y} textAnchor="middle" fontSize={15} fontWeight={700} fill={color} style={{ fontFamily: 'var(--font-mono)' }}>{n}</text>
+            <text x={textX} y={y} textAnchor={anchor} fontSize={15} fontWeight={600} fill="#F9FAFB" style={{ fontFamily: 'var(--font-display)', ...HALO }}>{text}</text>
         </g>
     );
 };
@@ -68,9 +68,9 @@ const LEGEND = [
 const Legend = ({ dim }: { dim: boolean }) => (
     <motion.g initial={false} animate={{ opacity: dim ? 0 : 1 }} transition={{ duration: 0.4 }}>
         {LEGEND.map((l, i) => (
-            <g key={l.label} transform={`translate(318 ${392 + i * 22})`}>
+            <g key={l.label} transform={`translate(318 ${358 + i * 24})`}>
                 <circle r={4.5} fill={l.color} stroke={l.exo ? '#FCD34D' : 'none'} strokeWidth={1.8} />
-                <text x={12} y={4.5} fontSize={13} fill="#E5E7EB" style={{ fontFamily: 'var(--font-body)' }}>{l.label}</text>
+                <text x={12} y={5} fontSize={14.5} fill="#E5E7EB" style={{ fontFamily: 'var(--font-body)' }}>{l.label}</text>
             </g>
         ))}
     </motion.g>
@@ -82,7 +82,7 @@ const Gauge = ({ insulin }: { insulin: boolean }) => {
     const h = 104;
     return (
         <motion.g initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: EASE }}>
-            <text x={410} y={top - 12} textAnchor="middle" fontSize={13} fontWeight={600} fill="#A5F3FC" style={{ fontFamily: 'var(--font-body)' }}>Glicemia</text>
+            <text x={410} y={top - 12} textAnchor="middle" fontSize={15} fontWeight={600} fill="#A5F3FC" style={{ fontFamily: 'var(--font-body)' }}>Glicemia</text>
             <rect x={396} y={top} width={28} height={h} rx={14} fill="rgba(34,211,238,0.06)" stroke="rgba(165,243,252,0.5)" />
             <rect x={398} y={top + h - 30} width={24} height={28} rx={12} fill="rgba(225,29,72,0.22)" />
             <motion.rect x={400} width={20} rx={10}
@@ -90,8 +90,8 @@ const Gauge = ({ insulin }: { insulin: boolean }) => {
                 animate={{ y: top + h - 4 - (h - 8) * level, height: (h - 8) * level, fill: insulin ? '#E11D48' : '#22D3EE' }}
                 transition={{ duration: 1.6, ease: EASE }} />
             <line x1={388} x2={396} y1={top + h - 30} y2={top + h - 30} stroke="#FDA4AF" />
-            <text x={384} y={top + h - 12} textAnchor="end" fontSize={12} fill="#FDA4AF" style={{ fontFamily: 'var(--font-mono)' }}>hipo</text>
-            <text x={410} y={top + h + 22} textAnchor="middle" fontSize={13} fontWeight={700} fill={insulin ? '#FDA4AF' : '#A5F3FC'} style={{ fontFamily: 'var(--font-body)' }}>
+            <text x={384} y={top + h - 12} textAnchor="end" fontSize={15} fill="#FDA4AF" style={{ fontFamily: 'var(--font-mono)' }}>hipo</text>
+            <text x={410} y={top + h + 22} textAnchor="middle" fontSize={15} fontWeight={700} fill={insulin ? '#FDA4AF' : '#A5F3FC'} style={{ fontFamily: 'var(--font-body)' }}>
                 {insulin ? 'hipoglicemia' : '↓ via IGF-1R'}
             </text>
         </motion.g>
@@ -145,8 +145,8 @@ export const AxisDiagram = ({ step, insulin, onSelect }: AxisDiagramProps) => {
             <Muscle />
             <Receptors color="#FECDD3" glowRef={muscle} />
             <path d="M168,412 L192,436" stroke="rgba(251,113,133,0.6)" strokeWidth={1.2} />
-            <text x={196} y={448} fontSize={14} fontWeight={600} fill="#F9FAFB" style={{ fontFamily: 'var(--font-display)', ...HALO }}>Músculo-alvo</text>
-            <text x={196} y={466} fontSize={12.5} fill="#FECDD3" style={{ fontFamily: 'var(--font-mono)', ...HALO }}>receptor IGF-1R</text>
+            <text x={196} y={448} fontSize={15} fontWeight={600} fill="#F9FAFB" style={{ fontFamily: 'var(--font-display)', ...HALO }}>Músculo-alvo</text>
+            <text x={196} y={467} fontSize={15} fill="#FECDD3" style={{ fontFamily: 'var(--font-mono)', ...HALO }}>receptor IGF-1R</text>
 
             {/* hipófise na cabeça (origem do pulso) */}
             <motion.g animate={{ opacity: axisOff ? 0.25 : 1 }} transition={{ duration: 0.6 }}>
@@ -173,7 +173,7 @@ export const AxisDiagram = ({ step, insulin, onSelect }: AxisDiagramProps) => {
                     initial={false} animate={{ opacity: axisOff ? 0.62 : 0 }} transition={{ duration: 0.8 }} />
             </BrainBubble>
             <Hit label="Nível 1: Hipotálamo — GHRP" onActivate={() => onSelect(1)}>
-                <LevelLabel x={364} y={176} n={1} text="Hipotálamo" color={COLORS.hipotalamo} />
+                <LevelLabel x={354} y={180} n={1} text="Hipotálamo" color={COLORS.hipotalamo} />
             </Hit>
             <Hit label="Nível 2: Hipófise — GH recombinante" onActivate={() => onSelect(2)}>
                 <LevelLabel x={326} y={204} n={2} text="Hipófise" color={COLORS.hipofise} anchor="end" />
@@ -221,7 +221,7 @@ export const AxisDiagram = ({ step, insulin, onSelect }: AxisDiagramProps) => {
                 {step === 3 && insulin && (
                     <motion.g key="ins" initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.6, ease: EASE }}>
                         <Syringe x={176} y={398} angle={192} color={COLORS.glucose} scale={0.7} />
-                        <text x={236} y={420} fontSize={13} fontWeight={600} fill="#A5F3FC" style={{ fontFamily: 'var(--font-body)', ...HALO }}>insulina</text>
+                        <text x={236} y={420} fontSize={15} fontWeight={600} fill="#A5F3FC" style={{ fontFamily: 'var(--font-body)', ...HALO }}>insulina</text>
                     </motion.g>
                 )}
             </AnimatePresence>

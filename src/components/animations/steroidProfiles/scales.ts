@@ -7,8 +7,8 @@ export const logFrac = (value: number, min: number, max: number): number =>
 
 /* ---------- Mapa anabólico × androgênico ---------- */
 
-export const MAP_W = 540;
-export const MAP_MARGIN = { left: 58, right: 20, top: 18, bottom: 46 } as const;
+export const MAP_W = 560;
+export const MAP_MARGIN = { left: 66, right: 20, top: 18, bottom: 52 } as const;
 /** Eixo X: potência androgênica. */
 export const ANDRO_DOMAIN = { min: 18, max: 700 } as const;
 /** Eixo Y: potência anabólica. */

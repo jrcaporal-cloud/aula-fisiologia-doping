@@ -30,12 +30,16 @@ interface LabelProps {
 }
 
 /** Texto do desenho: aparece com atraso (acompanha a animação) e some no modo compacto. */
+/** Menor tamanho de texto dos desenhos (o SVG é exibido a ~1,0× do viewBox). */
+export const MIN_FONT = 15;
+
 export const Label = ({ compact, x, y, children, size = 15, fill = '#E5E7EB', anchor = 'start', weight = 500, mono = false, delay = 0 }: LabelProps) => {
     const reduce = useReducedMotion() ?? false;
     if (compact) return null;
     return (
         <motion.text
-            x={x} y={y} textAnchor={anchor} fontSize={size} fontWeight={weight} fill={fill}
+            x={x} y={y} textAnchor={anchor} fontSize={Math.max(size, MIN_FONT)} fontWeight={weight} fill={fill}
+            stroke="#050510" strokeWidth={4} strokeLinejoin="round" paintOrder="stroke"
             className={mono ? 'font-mono' : 'font-body'}
             initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ duration: 0.45, delay: reduce ? 0 : delay }}

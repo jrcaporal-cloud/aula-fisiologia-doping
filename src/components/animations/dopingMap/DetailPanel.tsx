@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import { LANES, SYSTEMS, type Drug } from './data';
+import { LANES, SYSTEMS, verdictLabel, type Drug } from './data';
+import { LaneIcon } from './LaneBadge';
 import { EASE } from './DrugCard';
 import { Marker } from './Marker';
 
@@ -41,7 +42,7 @@ export const DetailPanel = ({ drug, reduced, onClose }: DetailPanelProps) => {
                     type="button"
                     onClick={onClose}
                     aria-label="Fechar"
-                    className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer"
+                    className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 cursor-pointer"
                 >
                     <X size={18} />
                 </button>
@@ -49,12 +50,14 @@ export const DetailPanel = ({ drug, reduced, onClose }: DetailPanelProps) => {
                     <Marker system={drug.system} icon={drug.icon} color={system.color} size={46} />
                     <div className="min-w-0">
                         <div className="font-display font-semibold text-[24px] text-white leading-tight">{drug.name}</div>
-                        <div className="font-mono text-[13px] text-gray-300 mt-0.5">
-                            {drug.magnitude} <span className="text-gray-500 mx-1">·</span> Indetectável? <b style={{ color: lane.color }}>{drug.hidden}</b>
+                        <div className="mt-0.5 flex items-center gap-2 font-mono text-[15px] text-slate-200">
+                            {drug.magnitude} <span className="text-slate-400">·</span>
+                            <LaneIcon lane={drug.lane} color={lane.color} size={18} />
+                            <b style={{ color: lane.color }}>{verdictLabel(drug)}</b>
                         </div>
                     </div>
                 </div>
-                <p className="text-[16px] leading-relaxed text-gray-200">
+                <p className="text-[18px] leading-relaxed text-slate-100">
                     <b className="mr-1" style={{ color: system.color }}>Oculto/Colaterais:</b>
                     {drug.detail}
                 </p>

@@ -39,7 +39,7 @@ export const ZONES: Record<ZoneId, DoseZone> = {
         id: 'green',
         title: 'Máximo anabolismo',
         text: 'A dose ideal (~10 UI) pós-treino satura os receptores celulares, garantindo captação total de nutrientes sem esvaziar a glicose central agudamente.',
-        color: '#10B981',
+        color: '#22D3EE',
     },
     yellow: {
         id: 'yellow',
@@ -114,7 +114,7 @@ export const bloodGlucoseTarget = (dose: number): number => {
 
 /** Faixas qualitativas do medidor de glicose no sangue (de cima para baixo). */
 export const GLUCOSE_BANDS = [
-    { from: 0.45, to: 1, label: 'Glicose central preservada', color: '#10B981' },
+    { from: 0.45, to: 1, label: 'Glicose central preservada', color: '#22D3EE' },
     { from: 0.18, to: 0.45, label: 'Glicemia despencando', color: '#F59E0B' },
     { from: 0, to: 0.18, label: 'Depleção crítica de glicose SNC', color: '#E11D48' },
 ] as const;

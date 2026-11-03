@@ -97,22 +97,22 @@ export const CellBase = () => (
         <NuclearEnvelope />
         <Dna />
 
-        <Label x={10} y={18} color="#94A3B8" size={12}>
+        <Label x={10} y={17} color="#CBD5E1" size={15}>
             MEIO EXTRACELULAR
         </Label>
-        <Label x={10} y={106} color="#FCD34D" size={12}>
+        <Label x={10} y={107} color="#FCD34D" size={15}>
             bicamada lipídica
         </Label>
-        <Label x={10} y={124} color="#94A3B8" size={12}>
+        <Label x={10} y={127} color="#CBD5E1" size={15}>
             CITOSOL
         </Label>
-        <Label x={48} y={276} color="#C7D2FE" size={12}>
+        <Label x={78} y={288} color="#C7D2FE" size={15}>
             NÚCLEO
         </Label>
-        <Label x={156} y={234} anchor="end" color="#C7D2FE" size={12}>
+        <Label x={156} y={234} anchor="end" color="#C7D2FE" size={15}>
             poro nuclear
         </Label>
-        <Label x={DNA_X0 - 4} y={DNA_Y + 26} color="#C4B5FD" size={12}>
+        <Label x={DNA_X0 + 26} y={DNA_Y + 32} color="#C4B5FD" size={15}>
             DNA
         </Label>
     </g>

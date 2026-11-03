@@ -2,16 +2,18 @@ import { N_EXAMS, Y_MAX, Y_MIN } from './model';
 
 /** Geometria do gráfico (unidades do viewBox), compartilhada entre a série temporal e a faixa de Bayes. */
 export const VB_W = 760;
-export const VB_H = 452;
-export const PL = 64;
-export const PLOT_R = 552;
-export const TOP = 30;
-export const BOTTOM = 384;
-export const STRIP_X0 = 590;
-export const STRIP_X1 = 750;
+/** Tamanho dos textos do gráfico (o SVG é exibido a ~0,93× do viewBox → ~16,5 px efetivos na largura de desenho 1280). */
+export const FS = 18;
+export const VB_H = 470;
+export const PL = 76;
+export const PLOT_R = 538;
+export const TOP = 34;
+export const BOTTOM = 372;
+export const STRIP_X0 = 566;
+export const STRIP_X1 = 756;
 
-const FIRST_SLOT = PL + 96;
-const LAST_SLOT = PLOT_R - 40;
+const FIRST_SLOT = PL + 90;
+const LAST_SLOT = PLOT_R - 36;
 export const SLOT_W = (LAST_SLOT - FIRST_SLOT) / (N_EXAMS - 1);
 
 export const slotX = (k: number): number => FIRST_SLOT + k * SLOT_W;

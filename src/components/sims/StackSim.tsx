@@ -35,17 +35,12 @@ export default function StackSim() {
     const accent = stepColor(step);
 
     return (
-        <div className="w-full select-none font-body text-white" style={{ height: 520 }}>
-            <div className="mb-2.5 flex h-[40px] items-center justify-between gap-4">
-                <div className="flex min-w-0 items-center gap-3">
-                    <span className="shrink-0 rounded-md border border-white/15 px-2 py-1 font-mono text-[12px] uppercase tracking-widest text-gray-200">
-                        Passo {step + 1}/{STEPS.length}
-                    </span>
-                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 truncate">
-                        <span className="font-display text-[16px] font-semibold" style={{ color: accent }}>{info.title}</span>
-                        <span className="text-[14px] text-gray-200"> · {info.caption}</span>
-                    </motion.div>
-                </div>
+        <div className="w-full select-none font-body text-white" style={{ height: 512 }}>
+            <div className="mb-2 flex h-[46px] items-center justify-between gap-4">
+                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 flex-1 text-balance leading-tight">
+                    <span className="font-display text-[17px] font-semibold" style={{ color: accent }}>{info.title}</span>
+                    <span className="text-[15px] text-gray-200"> · {info.caption}</span>
+                </motion.div>
                 <div className="flex shrink-0 items-center gap-1 rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] p-1" role="tablist" aria-label="Passos do stack">
                     {STEPS.map((s, i) => {
                         const active = i === step;
@@ -53,7 +48,7 @@ export default function StackSim() {
                         return (
                             <button
                                 key={s.tab} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative cursor-pointer rounded-xl px-3 py-1.5 text-[13.5px] font-semibold transition-colors"
+                                className="relative cursor-pointer rounded-xl px-3 py-1.5 text-[14.5px] font-semibold transition-colors"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}
                             >
                                 {active && (
@@ -70,12 +65,12 @@ export default function StackSim() {
                 </div>
             </div>
 
-            <div className="grid gap-3" style={{ gridTemplateColumns: '440px minmax(0,1fr)', height: 470 }}>
+            <div className="grid gap-3" style={{ gridTemplateColumns: '440px minmax(0,1fr)', height: 458 }}>
                 <div className={CARD}>
                     <GearAssembly step={step} reduced={reduced} onSelect={setStep} />
                     <button
                         type="button" onClick={() => setOrigin(true)}
-                        className="absolute bottom-3 right-3 flex cursor-pointer items-center gap-1.5 rounded-xl border border-white/15 bg-[rgba(8,8,18,0.85)] px-3 py-1.5 text-[13px] font-semibold text-gray-100 transition-colors hover:border-white/40"
+                        className="absolute bottom-3 right-3 flex cursor-pointer items-center gap-1.5 rounded-xl border border-white/15 bg-[rgba(8,8,18,0.85)] px-3 py-1.5 text-[14px] font-semibold text-gray-100 transition-colors hover:border-white/40"
                     >
                         <Layers size={14} aria-hidden /> Por que “stack”?
                     </button>

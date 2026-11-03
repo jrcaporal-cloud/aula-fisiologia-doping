@@ -47,21 +47,21 @@ const Bronchus = ({ open, active }: { open: boolean; active: boolean }) => {
             <motion.circle cx={BR.x} cy={BR.y} fill="rgba(251,207,232,0.10)" stroke="#F9A8D4" strokeWidth={1.4}
                 initial={false} animate={{ r: lumen + 6 }} transition={{ duration: 1.4, ease: 'easeInOut' }} />
             <motion.circle cx={BR.x} cy={BR.y} fill="#03030a" initial={false} animate={{ r: lumen }} transition={{ duration: 1.4, ease: 'easeInOut' }} />
-            <text x={BR.x} y={BR.y + 5} textAnchor="middle" className="font-mono" fontSize={12} fill="#FBCFE8">luz</text>
+            <text x={BR.x} y={BR.y + 6} textAnchor="middle" className="font-mono" fontSize={19} fill="#FCE7F3">luz</text>
             {BR_RECEPTORS.map(a => {
                 const rad = (a * Math.PI) / 180;
-                return <Beta2Glyph key={a} x={BR.x + Math.cos(rad) * 88} y={BR.y + Math.sin(rad) * 88} angle={a - 90} on={active} color={C.green} />;
+                return <Beta2Glyph key={a} x={BR.x + Math.cos(rad) * 88} y={BR.y + Math.sin(rad) * 88} angle={a - 90} on={active} color={C.inhaled} />;
             })}
-            <text x={BR.x} y={20} textAnchor="middle" className="font-body" fontSize={15} fontWeight={700} fill="#F9A8D4">Músculo liso bronquial</text>
-            <motion.text x={BR.x} y={BR.y + 6} dx={0} textAnchor="middle" initial={false} animate={{ opacity: open ? 1 : 0 }} transition={{ delay: 1, duration: 0.4 }}
-                className="font-display" fontSize={14} fontWeight={700} fill="#6EE7B7" dy={118}>broncodilatação</motion.text>
+            <text x={BR.x} y={20} textAnchor="middle" className="font-body" fontSize={19} fontWeight={700} fill="#FBCFE8">Músculo liso bronquial</text>
+            <motion.text x={BR.x} y={BR.y + 118} textAnchor="middle" initial={false} animate={{ opacity: open ? 1 : 0 }} transition={{ delay: 1, duration: 0.4 }}
+                className="font-display" fontSize={19} fontWeight={700} fill="#BFDBFE">broncodilatação</motion.text>
         </g>
     );
 };
 
 const Muscle = ({ active }: { active: boolean }) => (
     <g>
-        <text x={(FIBER_X0 + FIBER_X1) / 2} y={20} textAnchor="middle" className="font-body" fontSize={15} fontWeight={700} fill="#FCA5A5">Músculo esquelético</text>
+        <text x={(FIBER_X0 + FIBER_X1) / 2} y={20} textAnchor="middle" className="font-body" fontSize={19} fontWeight={700} fill="#FECACA">Músculo esquelético</text>
         {FIBERS.map((y, i) => (
             <motion.g key={y} initial={false} animate={{ scaleY: active ? 1.22 : 1 }} transition={{ duration: 1.6, delay: 0.6 + i * 0.1, ease: 'easeInOut' }}
                 style={{ originY: 0.5, transformBox: 'fill-box' }}>
@@ -76,8 +76,11 @@ const Muscle = ({ active }: { active: boolean }) => (
                 initial={false} animate={{ r: active ? 4 : 10 }} transition={{ duration: 2, delay: 0.8, ease: 'easeInOut' }} />
         ))}
         {MUSCLE_RECEPTORS.map(x => <Beta2Glyph key={x} x={x} y={80} on={active} color={C.amber} />)}
-        <motion.text x={(FIBER_X0 + FIBER_X1) / 2} y={268} textAnchor="middle" initial={false} animate={{ opacity: active ? 1 : 0 }} transition={{ delay: 1.4, duration: 0.4 }}
-            className="font-display" fontSize={14} fontWeight={700} fill="#FCD34D">hipertrofia · gordura oxidada (lipólise)</motion.text>
+        <motion.g initial={false} animate={{ opacity: active ? 1 : 0 }} transition={{ delay: 1.4, duration: 0.4 }}
+            className="font-display" fontSize={19} fontWeight={700} fill="#FDE68A" textAnchor="middle">
+            <text x={(FIBER_X0 + FIBER_X1) / 2} y={246}>hipertrofia ·</text>
+            <text x={(FIBER_X0 + FIBER_X1) / 2} y={268}>gordura oxidada (lipólise)</text>
+        </motion.g>
     </g>
 );
 
@@ -89,9 +92,9 @@ export const TissueScene = ({ step }: TissueSceneProps) => {
         <svg viewBox="0 0 700 305" className="w-full h-full block" role="img"
             aria-label="Brônquio e músculo esquelético com receptores beta-2; inalador age no brônquio, dose oral chega aos dois pelo sangue">
             {/* Sangue (aparece com a dose sistêmica) */}
-            <motion.g initial={false} animate={{ opacity: systemic ? 1 : 0.18 }} transition={{ duration: 0.5 }}>
-                <rect x={30} y={VESSEL_Y - 9} width={650} height={18} rx={9} fill="rgba(159,18,57,0.55)" stroke="#FB7185" strokeOpacity={0.5} />
-                <text x={676} y={VESSEL_Y + 4} textAnchor="end" className="font-mono" fontSize={12} fill="#FECDD3">sangue</text>
+            <motion.g initial={false} animate={{ opacity: systemic ? 1 : 0.6 }} transition={{ duration: 0.5 }}>
+                <rect x={30} y={VESSEL_Y - 12} width={650} height={24} rx={12} fill="rgba(159,18,57,0.55)" stroke="#FB7185" strokeOpacity={0.6} />
+                <text x={668} y={VESSEL_Y + 6} textAnchor="end" className="font-mono" fontSize={19} fill="#FFE4E6">sangue</text>
             </motion.g>
 
             <Bronchus open={inhaled || systemic} active={inhaled || systemic} />
@@ -100,17 +103,17 @@ export const TissueScene = ({ step }: TissueSceneProps) => {
             {/* Passo 0: o mesmo receptor nos dois tecidos */}
             <motion.g initial={false} animate={{ opacity: step === 0 ? 1 : 0 }} transition={{ duration: 0.5 }}>
                 <path d={`M ${BR.x + 62} ${BR.y - 62} C 300 60, 380 60, 432 80`} fill="none" stroke={C.cyan} strokeWidth={1.6} strokeDasharray="5 5" />
-                <rect x={286} y={44} width={128} height={28} rx={14} fill="rgba(34,211,238,0.14)" stroke={C.cyan} />
-                <text x={350} y={63} textAnchor="middle" className="font-body" fontSize={14} fontWeight={700} fill="#CFFAFE">mesmo receptor β2</text>
+                <rect x={236} y={40} width={198} height={32} rx={16} fill="rgba(34,211,238,0.16)" stroke={C.cyan} />
+                <text x={335} y={63} textAnchor="middle" className="font-body" fontSize={19} fontWeight={700} fill="#CFFAFE">mesmo receptor β2</text>
             </motion.g>
 
             {/* Passo 1: inalador */}
             <motion.g initial={false} animate={{ opacity: inhaled ? 1 : 0 }} transition={{ duration: 0.4 }}>
                 <g transform="translate(30 20)">
-                    <rect x={0} y={8} width={26} height={38} rx={6} fill="#D1FAE5" stroke="#10B981" strokeWidth={1.4} />
-                    <rect x={20} y={30} width={22} height={14} rx={3} fill="#A7F3D0" stroke="#10B981" strokeWidth={1.4} />
+                    <rect x={0} y={8} width={26} height={38} rx={6} fill="#DBEAFE" stroke={C.inhaled} strokeWidth={1.6} />
+                    <rect x={20} y={30} width={22} height={14} rx={3} fill="#BFDBFE" stroke={C.inhaled} strokeWidth={1.6} />
                 </g>
-                {inhaled && <Particles path={INHALED_PATH} color="#34D399" n={7} duration={2.2} reduced={reduced} />}
+                {inhaled && <Particles path={INHALED_PATH} color={C.inhaled} n={7} duration={2.2} reduced={reduced} />}
             </motion.g>
 
             {/* Passo 2: comprimido → sangue → os dois tecidos */}
@@ -118,7 +121,7 @@ export const TissueScene = ({ step }: TissueSceneProps) => {
                 <g transform="translate(350 40)">
                     <rect x={-20} y={-11} width={40} height={22} rx={11} fill="#FDE68A" stroke="#F59E0B" strokeWidth={1.4} />
                     <line x1={0} x2={0} y1={-11} y2={11} stroke="#F59E0B" strokeWidth={1.2} />
-                    <text x={28} y={5} className="font-mono" fontSize={13} fontWeight={700} fill="#FCD34D">oral &gt;8 mg</text>
+                    <text x={28} y={7} className="font-mono" fontSize={19} fontWeight={700} fill="#FDE68A">oral &gt;8 mg</text>
                 </g>
                 {systemic && (
                     <>

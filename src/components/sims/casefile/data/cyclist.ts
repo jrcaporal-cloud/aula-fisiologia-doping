@@ -27,7 +27,7 @@ export const CYCLIST: CaseData = {
         layout: 'list',
         rows: [
             {
-                id: 'hb', label: 'Hemoglobina', value: '12,1', unit: 'g/dL', numeric: 12.1, flag: 'Baixo', tone: 'red',
+                id: 'hb', label: 'Hemoglobina', value: '12,1', unit: 'g/dL', numeric: 12.1, flag: 'Limítrofe', tone: 'amber',
                 reference: { low: 12, high: 16, lowLabel: '12,0', highLabel: '16,0', unit: 'g/dL', domain: [10, 18] },
             },
             {

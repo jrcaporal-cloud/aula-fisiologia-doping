@@ -6,8 +6,10 @@ import {
     ghNatural, ghrpCurve, igfBound, igfFree, igfNatural, rhghIv, rhghSc, sampleFn, type Pt,
 } from './chartModel';
 
-export const CHART = { w: 620, h: 190, l: 48, r: 16, t: 14, b: 30 } as const;
+export const CHART = { w: 620, h: 176, l: 52, r: 16, t: 14, b: 30 } as const;
 const MONO = 'var(--font-mono)';
+/** Texto do gráfico: ≥ 15 px (viewBox ≈ largura renderizada). */
+const AXIS_FONT = 16;
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 interface Scale { x: (v: number) => number; y: (v: number) => number }
@@ -33,16 +35,16 @@ const Axes = ({ s, ticks, yLabel, yTicks = [] }: { s: Scale; ticks: Tick[]; yLab
                 <g key={t.label} transform={`translate(${s.x(t.v)},${base})`}>
                     <line y2={5} stroke="rgba(255,255,255,0.55)" />
                     <text x={i === ticks.length - 1 ? 4 : 0} y={19} textAnchor={i === ticks.length - 1 && t.label.length > 3 ? 'end' : 'middle'}
-                        fontSize={12} fontFamily={MONO} fill="#D1D5DB">{t.label}</text>
+                        fontSize={AXIS_FONT} fontFamily={MONO} fill="#E5E7EB">{t.label}</text>
                 </g>
             ))}
             {yTicks.map(t => (
                 <g key={t.label}>
                     <line x1={CHART.l} x2={CHART.w - CHART.r} y1={s.y(t.v)} y2={s.y(t.v)} stroke="rgba(255,255,255,0.07)" />
-                    <text x={CHART.l - 6} y={s.y(t.v) + 4} textAnchor="end" fontSize={12} fontFamily={MONO} fill="#D1D5DB">{t.label}</text>
+                    <text x={CHART.l - 6} y={s.y(t.v) + 4} textAnchor="end" fontSize={AXIS_FONT} fontFamily={MONO} fill="#E5E7EB">{t.label}</text>
                 </g>
             ))}
-            <text transform={`translate(13,${(CHART.t + base) / 2}) rotate(-90)`} textAnchor="middle" fontSize={12} fill="#D1D5DB"
+            <text transform={`translate(13,${(CHART.t + base) / 2}) rotate(-90)`} textAnchor="middle" fontSize={AXIS_FONT} fill="#E5E7EB"
                 style={{ fontFamily: 'var(--font-body)' }}>{yLabel}</text>
         </g>
     );
@@ -58,7 +60,7 @@ const Fade = ({ delay = 0, children }: { delay?: number; children: ReactNode }) 
     <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay }}>{children}</motion.g>
 );
 
-const Label = ({ x, y, text, color, anchor = 'start', size = 12.5 }: { x: number; y: number; text: string; color: string; anchor?: 'start' | 'middle' | 'end'; size?: number }) => (
+const Label = ({ x, y, text, color, anchor = 'start', size = AXIS_FONT }: { x: number; y: number; text: string; color: string; anchor?: 'start' | 'middle' | 'end'; size?: number }) => (
     <text x={x} y={y} textAnchor={anchor} fontSize={size} fontWeight={600} fill={color}
         style={{ fontFamily: 'var(--font-body)', paintOrder: 'stroke', stroke: '#080812', strokeWidth: 4, strokeLinejoin: 'round' }}>{text}</text>
 );
@@ -88,7 +90,7 @@ const NaturalPlot = () => {
 
 /* ── Passo 1 ── */
 const GhrpPlot = ({ synergy }: { synergy: boolean }) => {
-    const yMax = synergy ? 12.6 : 1.2;
+    const yMax = synergy ? 12.6 : 1.45;
     const s = makeScale(0, 120, yMax);
     const base = CHART.h - CHART.b;
     const pts = sampleFn(ghrpCurve, 0, 120, 180);
@@ -130,7 +132,7 @@ const GhrpPlot = ({ synergy }: { synergy: boolean }) => {
 
 /* ── Passo 2 ── */
 const RhghPlot = () => {
-    const s = makeScale(0, 11, 1.15);
+    const s = makeScale(0, 11, 1.3);
     const base = CHART.h - CHART.b;
     const sc = sampleFn(rhghSc, 0, 11, 220);
     const iv = sampleFn(rhghIv, INJ_AT, 4, 80);
@@ -149,10 +151,10 @@ const RhghPlot = () => {
             <Fade delay={1.6}>
                 <line x1={s.x(SC_PEAK_X)} x2={s.x(SC_HALF_POINT.x)} y1={s.y(0.5)} y2={s.y(0.5)} stroke="#6EE7B7" strokeDasharray="3 3" />
                 <circle cx={s.x(SC_HALF_POINT.x)} cy={s.y(0.5)} r={3.5} fill="#6EE7B7" />
-                <Label x={(s.x(SC_PEAK_X) + s.x(SC_HALF_POINT.x)) / 2} y={s.y(0.5) - 8} text="t½ SC ~3–4 h" color="#6EE7B7" anchor="middle" />
-                <text x={s.x(INJ_AT) - 8} y={ivLabelY} textAnchor="end" fontSize={12.5} fontWeight={600} fill="#E5E7EB" style={{ fontFamily: 'var(--font-body)' }}>
+                <Label x={(s.x(SC_PEAK_X) + s.x(SC_HALF_POINT.x)) / 2} y={s.y(0.5) + 21} text="t½ SC ~3–4 h" color="#6EE7B7" anchor="middle" />
+                <text x={s.x(INJ_AT) - 8} y={ivLabelY} textAnchor="end" fontSize={AXIS_FONT} fontWeight={600} fill="#F3F4F6" style={{ fontFamily: 'var(--font-body)' }}>
                     <tspan x={s.x(INJ_AT) - 8}>IV (- -)</tspan>
-                    <tspan x={s.x(INJ_AT) - 8} dy={16}>t½ ~15–20 min</tspan>
+                    <tspan x={s.x(INJ_AT) - 8} dy={18}>t½ ~15–20 min</tspan>
                 </text>
                 <Label x={s.x(CONTROL_AT) + 7} y={s.y(0.14)} text="já eliminado" color="#FDA4AF" />
             </Fade>

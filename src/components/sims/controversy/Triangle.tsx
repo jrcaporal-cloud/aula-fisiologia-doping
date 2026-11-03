@@ -4,15 +4,15 @@ import { VERTICES, type VertexId } from './content';
 
 /** O triângulo: três vértices (controvérsias); o passo acende um por vez e, no fim, o conjunto. */
 
-const W = 440;
-const H = 470;
-const R = 42;
+export const W = 382;
+export const H = 338;
+const R = 38;
 const POS: readonly { x: number; y: number }[] = [
-    { x: 220, y: 118 },
-    { x: 104, y: 352 },
-    { x: 336, y: 352 },
+    { x: 176, y: 94 },
+    { x: 76, y: 240 },
+    { x: 276, y: 240 },
 ];
-const CENTER = { x: 220, y: (POS[0].y + POS[1].y + POS[2].y) / 3 };
+const CENTER = { x: 176, y: (POS[0].y + POS[1].y + POS[2].y) / 3 };
 const ICONS: Readonly<Record<VertexId, LucideIcon>> = { trans: Dna, dili: FlaskConical, wada: Drama };
 const TITLE_LINES: Readonly<Record<VertexId, readonly string[]>> = {
     trans: ['Atletas Trans &', 'Testosterona'],
@@ -51,7 +51,7 @@ export const Triangle = ({ active, all, onSelect }: TriangleProps) => {
     const lit = (i: number): boolean => all || active === i;
 
     return (
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-full block" role="img" aria-label="Triângulo com as três controvérsias nos vértices">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto block" role="img" aria-label="Triângulo com as três controvérsias nos vértices">
             <defs>
                 {EDGES.map(([a, b]) => (
                     <linearGradient key={`${a}${b}`} id={`ct-edge-${a}${b}`} gradientUnits="userSpaceOnUse" x1={POS[a].x} y1={POS[a].y} x2={POS[b].x} y2={POS[b].y}>
@@ -86,15 +86,18 @@ export const Triangle = ({ active, all, onSelect }: TriangleProps) => {
             <motion.g key={all ? 'all' : `c-${active ?? 'none'}`} initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.45 }} style={{ transformOrigin: `${CENTER.x}px ${CENTER.y}px` }}>
                 {all ? (
-                    <text x={CENTER.x} y={CENTER.y + 8} textAnchor="middle" fontSize={22} fontWeight={700} fill="#fff" style={{ fontFamily: 'var(--font-display)' }}>▶ O Embate</text>
+                    <text x={CENTER.x} y={CENTER.y + 14} textAnchor="middle" fontSize={18} fontWeight={700} fill="#fff" style={{ fontFamily: 'var(--font-display)' }}>▶ O Embate</text>
                 ) : active !== null ? (
-                    <text textAnchor="middle" fontSize={16} fontWeight={700} fill={VERTICES[active].soft} style={{ fontFamily: 'var(--font-display)' }}>
+                    <text textAnchor="middle" fontSize={17} fontWeight={700} fill={VERTICES[active].soft} style={{ fontFamily: 'var(--font-display)' }}>
                         {splitLabel(VERTICES[active].label).map((line, li) => (
-                            <tspan key={line} x={CENTER.x} y={CENTER.y - 4 + li * 20}>{line}</tspan>
+                            <tspan key={line} x={CENTER.x} y={CENTER.y + 8 + li * 22}>{line}</tspan>
                         ))}
                     </text>
                 ) : (
-                    <text x={CENTER.x} y={CENTER.y + 4} textAnchor="middle" fontSize={13} fill="#D1D5DB">clique em um vértice</text>
+                    <text textAnchor="middle" fontSize={15} fill="#CBD5E1">
+                        <tspan x={CENTER.x} y={CENTER.y + 10}>três vértices</tspan>
+                        <tspan x={CENTER.x} y={CENTER.y + 29}>um embate</tspan>
+                    </text>
                 )}
             </motion.g>
 
@@ -105,7 +108,7 @@ export const Triangle = ({ active, all, onSelect }: TriangleProps) => {
                 const Icon = ICONS[v.id];
                 const top = i === 0;
                 const lines = TITLE_LINES[v.id];
-                const ty = top ? y - R - 38 : y + R + 24;
+                const ty = top ? y - R - 40 : y + R + 24;
                 return (
                     <motion.g key={v.id} onClick={() => onSelect(i)} style={{ cursor: 'pointer' }}
                         initial={reduce ? false : { opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }}
@@ -120,12 +123,12 @@ export const Triangle = ({ active, all, onSelect }: TriangleProps) => {
                         <motion.circle cx={x} cy={y} r={R} strokeWidth={2.5}
                             animate={{ fill: on ? `${v.color}33` : 'rgba(8,8,18,0.95)', stroke: on ? v.color : 'rgba(255,255,255,0.28)' }}
                             transition={{ duration: 0.5 }} />
-                        <foreignObject x={x - 13} y={y - 26} width={26} height={26} style={{ pointerEvents: 'none' }}>
+                        <foreignObject x={x - 13} y={y - 28} width={26} height={26} style={{ pointerEvents: 'none' }}>
                             <Icon size={26} color={on ? '#fff' : '#9CA3AF'} strokeWidth={1.8} />
                         </foreignObject>
-                        <text x={x} y={y + 22} textAnchor="middle" fontSize={16} fontWeight={800} fill={on ? v.soft : '#D1D5DB'} style={{ fontFamily: 'var(--font-display)' }}>{v.num}</text>
+                        <text x={x} y={y + 22} textAnchor="middle" fontSize={17} fontWeight={800} fill={on ? v.soft : '#D1D5DB'} style={{ fontFamily: 'var(--font-display)' }}>{v.num}</text>
                         {lines.map((line, li) => (
-                            <text key={line} x={x} y={ty + li * 19} textAnchor="middle" fontSize={15} fontWeight={600}
+                            <text key={line} x={x} y={ty + li * 20} textAnchor="middle" fontSize={16} fontWeight={600}
                                 fill={on ? '#fff' : '#D1D5DB'} style={{ fontFamily: 'var(--font-display)' }}>{line}</text>
                         ))}
                     </motion.g>
@@ -133,9 +136,9 @@ export const Triangle = ({ active, all, onSelect }: TriangleProps) => {
             })}
 
             {/* Vértice 01 continua nos próximos slides */}
-            <motion.g animate={{ opacity: active === 0 || all ? 1 : 0.7 }} transition={{ duration: 0.4 }}>
-                <rect x={POS[0].x + R + 14} y={POS[0].y - 13} width={118} height={26} rx={13} fill="rgba(168,85,247,0.14)" stroke="rgba(196,181,253,0.6)" />
-                <text x={POS[0].x + R + 73} y={POS[0].y + 4.5} textAnchor="middle" fontSize={12.5} fontWeight={600} fill="#DDD6FE">próximos slides →</text>
+            <motion.g animate={{ opacity: active === 0 || all ? 1 : 0.75 }} transition={{ duration: 0.4 }}>
+                <rect x={POS[0].x + R + 8} y={POS[0].y - 15} width={152} height={30} rx={15} fill="rgba(168,85,247,0.14)" stroke="rgba(196,181,253,0.6)" />
+                <text x={POS[0].x + R + 84} y={POS[0].y + 5.5} textAnchor="middle" fontSize={15} fontWeight={600} fill="#DDD6FE">próximos slides →</text>
             </motion.g>
         </svg>
     );

@@ -33,9 +33,9 @@ export interface LaneBox {
     bottom: number;
 }
 
-export const STRIP_H = 15;
-const HEADER_H = 24;
-const FOOTER_H = 2 * STRIP_H + 14;
+export const STRIP_H = 17;
+const HEADER_H = 25;
+const FOOTER_H = 2 * STRIP_H + 9;
 
 export const laneBox = (top: number, height: number, strips: boolean): LaneBox => {
     const bottom = top + height;
@@ -44,8 +44,8 @@ export const laneBox = (top: number, height: number, strips: boolean): LaneBox =
         top,
         plotTop: top + HEADER_H,
         plotBottom,
-        effY: plotBottom + 5,
-        detY: plotBottom + 5 + STRIP_H + 3,
+        effY: plotBottom + 4,
+        detY: plotBottom + 4 + STRIP_H + 3,
         bottom,
     };
 };

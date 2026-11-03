@@ -12,7 +12,7 @@ import { useTween } from './useTween';
 const W = 740;
 const H = 470;
 /** Margem lateral para o desenho ocupar a largura do cartão (proporção ~1,7). */
-const PAD_X = 26;
+const PAD_X = 8;
 const BASE_Y = 388;
 const HALF_W = 136;
 const DOME_H = 196;
@@ -115,9 +115,9 @@ const distortionArea = (cx: number, d: number): string => {
 
 const PanelHeader = ({ x, kicker, title, sub, color }: { x: number; kicker: string; title: string; sub: string; color: string }) => (
     <g>
-        <text x={x} y={34} textAnchor="middle" className="font-mono" fontSize={12.5} letterSpacing="0.14em" fill={color}>{kicker}</text>
-        <text x={x} y={62} textAnchor="middle" className="font-display" fontSize={22} fontWeight={600} fill="#fff">{title}</text>
-        <text x={x} y={86} textAnchor="middle" className="font-body" fontSize={14.5} fill="#D1D5DB">{sub}</text>
+        <text x={x} y={30} textAnchor="middle" className="font-mono" fontSize={17.5} letterSpacing="0.06em" fill={color}>{kicker}</text>
+        <text x={x} y={62} textAnchor="middle" className="font-display" fontSize={24} fontWeight={600} fill="#fff">{title}</text>
+        <text x={x} y={88} textAnchor="middle" className="font-body" fontSize={18} fill="#E2E8F0">{sub}</text>
     </g>
 );
 
@@ -140,9 +140,9 @@ export const NeedleHaystack = () => {
             <PanelHeader x={RIGHT_CX} kicker="PASSAPORTE BIOLÓGICO" title="O “palheiro” mudou de forma?" sub="comparado à forma habitual do próprio atleta" color={COLORS.cyan} />
 
             {/* divisória */}
-            <line x1={370} x2={370} y1={110} y2={420} stroke="rgba(255,255,255,0.14)" strokeDasharray="4 6" />
+            <line x1={370} x2={370} y1={112} y2={410} stroke="rgba(255,255,255,0.14)" strokeDasharray="4 6" />
             <circle cx={370} cy={262} r={17} fill="#0B0B18" stroke="rgba(255,255,255,0.25)" />
-            <text x={370} y={267} textAnchor="middle" className="font-mono" fontSize={14} fill="#E5E7EB">×</text>
+            <text x={370} y={268} textAnchor="middle" className="font-mono" fontSize={18} fill="#E5E7EB">×</text>
 
             {/* Esquerda: a lupa varre o palheiro atrás da agulha */}
             <Haystack cx={LEFT_CX} d={0} strands={strands} id="l" />
@@ -156,7 +156,7 @@ export const NeedleHaystack = () => {
                 <circle r={27} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth={1} />
                 <line x1={24} y1={24} x2={50} y2={50} stroke="#F3F4F6" strokeWidth={6} strokeLinecap="round" />
             </motion.g>
-            <text x={LEFT_CX} y={420} textAnchor="middle" className="font-body" fontSize={14.5} fill="#E5E7EB">procura a molécula, ponto a ponto</text>
+            <text x={LEFT_CX} y={426} textAnchor="middle" className="font-body" fontSize={18} fill="#F1F5F9">procura a molécula, ponto a ponto</text>
 
             {/* Direita: forma habitual × forma atual */}
             <path d={distortionArea(RIGHT_CX, d)} fill={COLORS.red} fillOpacity={0.28 * d} />
@@ -165,23 +165,23 @@ export const NeedleHaystack = () => {
             <path d={toPath(outlinePoints(RIGHT_CX, d))} fill="none" stroke={COLORS.hay} strokeWidth={2.2} />
             <g opacity={Math.max(0, (d - 0.55) / 0.45)}>
                 <line x1={RIGHT_CX + 0.32 * HALF_W + 8} y1={labelY + 10} x2={RIGHT_CX + 0.32 * HALF_W + 40} y2={labelY + 22} stroke="#FDA4AF" strokeWidth={1.5} />
-                <text x={RIGHT_CX + 0.32 * HALF_W + 44} y={labelY + 24} className="font-body" fontSize={14} fontWeight={600} fill="#FDA4AF">distorção</text>
-                <text x={RIGHT_CX + 0.32 * HALF_W + 44} y={labelY + 41} className="font-body" fontSize={14} fontWeight={600} fill="#FDA4AF">do sistema</text>
+                <text x={RIGHT_CX + 0.32 * HALF_W + 44} y={labelY + 24} className="font-body" fontSize={18} fontWeight={600} fill="#FDA4AF">distorção</text>
+                <text x={RIGHT_CX + 0.32 * HALF_W + 44} y={labelY + 45} className="font-body" fontSize={18} fontWeight={600} fill="#FDA4AF">do sistema</text>
             </g>
-            <text x={RIGHT_CX} y={420} textAnchor="middle" className="font-body" fontSize={14.5} fill="#E5E7EB">analisa a distorção do sistema fisiológico</text>
+            <text x={RIGHT_CX} y={426} textAnchor="middle" className="font-body" fontSize={18} fill="#F1F5F9">analisa a distorção do sistema fisiológico</text>
 
             {/* legenda */}
-            <g transform={`translate(${RIGHT_CX - 172} 448)`} className="font-body" fontSize={13}>
-                <line x1={0} x2={22} y1={-4} y2={-4} stroke="#fff" strokeWidth={2} strokeDasharray="5 4" />
-                <text x={28} y={0} fill="#E5E7EB">forma habitual</text>
-                <line x1={130} x2={152} y1={-4} y2={-4} stroke={COLORS.hay} strokeWidth={2.4} />
-                <text x={158} y={0} fill="#E5E7EB">forma atual</text>
-                <rect x={248} y={-11} width={16} height={12} rx={2} fill={COLORS.red} fillOpacity={0.45} />
-                <text x={270} y={0} fill="#E5E7EB">distorção</text>
+            <g transform={`translate(${W - 8 - 392} 456)`} className="font-body" fontSize={17.5}>
+                <line x1={0} x2={22} y1={-5} y2={-5} stroke="#fff" strokeWidth={2} strokeDasharray="5 4" />
+                <text x={28} y={0} fill="#F1F5F9">forma habitual</text>
+                <line x1={150} x2={172} y1={-5} y2={-5} stroke={COLORS.hay} strokeWidth={2.4} />
+                <text x={178} y={0} fill="#F1F5F9">forma atual</text>
+                <rect x={278} y={-14} width={16} height={13} rx={2} fill={COLORS.red} fillOpacity={0.55} />
+                <text x={300} y={0} fill="#F1F5F9">distorção</text>
             </g>
-            <g transform={`translate(${LEFT_CX - 88} 448)`} className="font-body" fontSize={13}>
+            <g transform={`translate(${LEFT_CX - 130} 456)`} className="font-body" fontSize={17.5}>
                 <line x1={0} y1={0} x2={14} y2={-10} stroke={COLORS.red} strokeWidth={2.4} strokeLinecap="round" />
-                <text x={22} y={0} fill="#E5E7EB">a “agulha” (molécula intrusa)</text>
+                <text x={22} y={0} fill="#F1F5F9">a “agulha” (molécula intrusa)</text>
             </g>
         </svg>
     );

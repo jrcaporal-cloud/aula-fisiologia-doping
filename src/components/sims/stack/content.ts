@@ -76,7 +76,7 @@ export const PIECES: readonly Piece[] = [
                 { t: ' (divisão de novas fibras musculares, não apenas crescimento das existentes) via GHR e síntese hepática/local de IGF-1 em cascata. Um processo que o corpo adulto naturalmente limita severamente.' },
             ],
             [
-                { t: 'Ao mesmo tempo, ativa uma lipólise brutal via inibição total da ' },
+                { t: 'Ao mesmo tempo, ativa uma lipólise brutal via inibição intensa da ' },
                 { t: 'LPL (Lipoproteína Lipase)', i: true },
                 { t: ', secando o tecido adiposo subcutâneo e criando a pele hiperfina "granítica" moderna pré-competição.' },
             ],
@@ -91,7 +91,7 @@ export const PIECES: readonly Piece[] = [
         name: 'Insulina',
         gearLines: ['INSULINA'],
         role: 'Gatilho mestre',
-        cardTitle: 'O Gatilho Mestre Indetectável',
+        cardTitle: 'O Gatilho Mestre Difícil de Detectar',
         badge: 'O risco final',
         summary: 'Satura GLUT4 → células musculares viram "esponjas". Blinda mTORC1 via Ubiquitina-Proteassoma.',
         paragraphs: [
@@ -105,7 +105,7 @@ export const PIECES: readonly Piece[] = [
             ],
         ],
         half: '4–6 min',
-        detect: 'Indetectável',
+        detect: 'Difícil de detectar',
         color: '#E11D48',
         soft: '#FECDD3',
     },

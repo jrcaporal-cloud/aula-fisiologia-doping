@@ -12,7 +12,7 @@ import { prefersReducedMotion, useTween } from './useTween';
 const W = 740;
 const H = 470;
 /** Margem lateral para o desenho ocupar a largura do cartão (proporção ~1,7). */
-const PAD_X = 26;
+const PAD_X = 8;
 const X0 = 60;
 const X1 = 700;
 const ROW_A = 196;
@@ -79,15 +79,23 @@ const BandRow = ({ mu, sd, base, peak, color, fillOpacity }: RowProps) => {
 
 const RowLabel = ({ y, kicker, text, color }: { y: number; kicker: string; text: string; color: string }) => (
     <g>
-        <text x={X0} y={y} className="font-mono" fontSize={13} letterSpacing="0.12em" fill={color}>{kicker}</text>
-        <text x={X0} y={y + 21} className="font-body" fontSize={15} fill="#E5E7EB">{text}</text>
+        <text x={X0} y={y} className="font-mono" fontSize={17.5} letterSpacing="0.06em" fill={color}>{kicker}</text>
+        <text x={X0} y={y + 25} className="font-body" fontSize={18.5} fill="#F1F5F9">{text}</text>
     </g>
 );
 
-const Chip = ({ x, y, text, color, bg }: { x: number; y: number; text: string; color: string; bg: string }) => (
+const Chip = ({ x, y, text, color, bg, kind }: { x: number; y: number; text: string; color: string; bg: string; kind: 'ok' | 'alert' }) => (
     <g transform={`translate(${x} ${y})`}>
-        <rect x={0} y={-17} width={text.length * 7.6 + 22} height={26} rx={7} fill={bg} stroke={color} strokeOpacity={0.8} />
-        <text x={11} y={1} className="font-body" fontSize={14} fontWeight={600} fill="#fff">{text}</text>
+        <rect x={0} y={-21} width={text.length * 9.3 + 52} height={32} rx={8} fill={bg} stroke={color} strokeOpacity={0.8} />
+        {kind === 'ok' ? (
+            <path d="M10 -6 L16 0 L26 -12" fill="none" stroke={color} strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round" />
+        ) : (
+            <g stroke={color} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" fill="none">
+                <path d="M18 -16 L28 2 L8 2 Z" />
+                <path d="M18 -10 L18 -4" />
+            </g>
+        )}
+        <text x={36} y={1} className="font-body" fontSize={18} fontWeight={600} fill="#fff">{text}</text>
     </g>
 );
 
@@ -115,11 +123,11 @@ export const PopVsIndividual = () => {
     return (
         <svg viewBox={`${-PAD_X} 0 ${W + 2 * PAD_X} ${H}`} className="w-full h-full" role="img"
             aria-label="O mesmo valor fica dentro do limite populacional e fora do limite individual do atleta">
-            <RowLabel y={40} kicker="LIMITE POPULACIONAL FIXO" text="uma faixa larga, igual para todos" color="#E5E7EB" />
+            <RowLabel y={34} kicker="LIMITE POPULACIONAL FIXO" text="uma faixa larga, igual para todos" color="#E5E7EB" />
             <BandRow mu={POP_MU} sd={POP_SD} base={ROW_A} peak={66} color="#CBD5E1" fillOpacity={0.07} />
 
-            <RowLabel y={258} kicker="LIMITE INDIVIDUAL · ESTE ATLETA" text="estreita a cada amostra do próprio histórico" color={COLORS.amber} />
-            <text x={X1} y={258} textAnchor="end" className="font-mono" fontSize={13} fill={COLORS.amber}>amostras do atleta: {n}</text>
+            <RowLabel y={254} kicker="LIMITE INDIVIDUAL · ESTE ATLETA" text="estreita a cada amostra do próprio histórico" color={COLORS.amber} />
+            <text x={X1} y={254} textAnchor="end" className="font-mono" fontSize={17.5} fill={COLORS.amber}>amostras do atleta: {n}</text>
             <BandRow mu={mu} sd={sd} base={ROW_B} peak={peakB} color={COLORS.amber} fillOpacity={0.1} />
 
             {/* amostras do atleta */}
@@ -135,17 +143,17 @@ export const PopVsIndividual = () => {
             <AnimatePresence>
                 {showTest && (
                     <motion.g key="test" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-                        <line x1={tx} x2={tx} y1={ROW_A - 110} y2={ROW_B} stroke="#fff" strokeWidth={1.6} strokeDasharray="3 5" />
+                        <line x1={tx} x2={tx} y1={ROW_A - 106} y2={ROW_B} stroke="#fff" strokeWidth={1.6} strokeDasharray="3 5" />
                         <rect x={tx - 8} y={ROW_A - 8} width={16} height={16} transform={`rotate(45 ${tx} ${ROW_A})`} fill="#fff" />
                         <rect x={tx - 8} y={ROW_B - 8} width={16} height={16} transform={`rotate(45 ${tx} ${ROW_B})`} fill={COLORS.red} stroke="#fff" strokeWidth={1.5} />
-                        <text x={tx} y={ROW_A - 118} textAnchor="middle" className="font-mono" fontSize={13} fill="#fff">nova amostra</text>
-                        <Chip x={tx + 16} y={ROW_A - 34} text="normal para a população" color={COLORS.green} bg="#0B2A22" />
-                        <Chip x={tx + 16} y={ROW_B - 34} text="anormal para ESTE atleta" color={COLORS.red} bg="#3A0F1E" />
+                        <text x={tx} y={ROW_A - 114} textAnchor="middle" className="font-mono" fontSize={17.5} fill="#fff">nova amostra</text>
+                        <Chip x={tx + 16} y={ROW_A - 70} text="normal para a população" color={COLORS.ok} bg="#0A2530" kind="ok" />
+                        <Chip x={tx + 16} y={ROW_B - 52} text="anormal para ESTE atleta" color="#FB7185" bg="#3A0F1E" kind="alert" />
                     </motion.g>
                 )}
             </AnimatePresence>
 
-            <text x={X1} y={ROW_B + 32} textAnchor="end" className="font-body" fontSize={13} fill="#D1D5DB">valor do marcador (escala ilustrativa) →</text>
+            <text x={X1} y={ROW_B + 36} textAnchor="end" className="font-body" fontSize={17.5} fill="#E2E8F0">valor do marcador (escala ilustrativa) →</text>
         </svg>
     );
 };
