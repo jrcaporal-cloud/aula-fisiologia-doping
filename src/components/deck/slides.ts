@@ -30,8 +30,15 @@ const buildDeck = (raw: SlideSchema[]): DeckSlide[] => {
 export const DECK: DeckSlide[] = buildDeck(parsedPresentation as unknown as SlideSchema[])
     .filter(item => keepsSlide(TEMPO, item.slide.id));
 
-/** Slides que ganham o visualizador 3D do mecanismo genômico (por id do JSON). */
-export const SLIDES_WITH_3D = new Set<number>([3]);
+/** Modelos 3D disponíveis: via genômica do androgênio e via de membrana de um peptídeo. */
+export type Model3D = 'receptor' | 'peptide';
+
+/** Slides que ganham um visualizador 3D (por id do JSON) e qual modelo cada um abre. */
+export const MODEL_3D_BY_SLIDE: ReadonlyMap<number, Model3D> = new Map<number, Model3D>([
+    [3, 'receptor'],
+    [103, 'peptide'],
+    [104, 'peptide'],
+]);
 
 /**
  * Slides em que o fundo de hemácias fica animado (capa e citações). Nos demais ele

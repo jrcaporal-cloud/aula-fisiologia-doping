@@ -284,6 +284,66 @@
     "number": ""
   },
   {
+    "id": 103,
+    "sectionName": "Ato II · Peptídeos",
+    "number": "",
+    "layout": "prose",
+    "title": "Peptídeos: o Sinal que Bate na Porta",
+    "subtitle": "O que muda quando a molécula não entra na célula",
+    "content": "[[COMP:PeptideBasicsSim]]<h4>Fontes</h4><ul><li>Anvisa, alerta sobre peptídeos injetáveis vendidos pela internet (julho de 2026).</li><li>Sequências publicadas: ipamorelina 5, GHRP-6 6, TB-500 (fragmento LKKTETQ da timosina β4) 7, BPC-157 15, sermorelina 29, semaglutida 31, timosina β4 43, insulina 51 (cadeias A 21 + B 30), GH 191 aminoácidos.</li></ul>",
+    "cards": []
+  },
+  {
+    "id": 107,
+    "sectionName": "Ato II · Peptídeos",
+    "number": "",
+    "layout": "prose",
+    "title": "Proibido ou Permitido?",
+    "subtitle": "Vote antes de virar a carta",
+    "content": "[[COMP:PeptideVoteSim]]<h4>Fontes</h4><ul><li>WADA, Lista Proibida 2026 (S0, S2.2, S2.2.1, S4.4) e Programa de Monitoramento 2026.</li><li>Código Mundial Antidopagem e Padrão Internacional de AUT.</li></ul>",
+    "cards": []
+  },
+  {
+    "id": 104,
+    "sectionName": "Ato II · Peptídeos",
+    "number": "",
+    "layout": "prose",
+    "title": "O Mapa dos Peptídeos",
+    "subtitle": "Cinco famílias, a classe de cada uma na WADA e o que a evidência sustenta",
+    "content": "[[COMP:PeptideMapSim]]<h4>Fontes</h4><ul><li>WADA, Lista Proibida 2026 e Programa de Monitoramento 2026.</li><li>Nass R et al. Ann Intern Med 2008;149:601-11 (ibutamoren em idosos saudáveis).</li><li>FDA, Certain bulk drug substances for use in compounding that may present significant safety risks (atualizada em 22/04/2026).</li><li>Revisão sobre BPC-157 como peptídeo investigacional, Pharmaceutics 2026; Vasireddi N et al., HSS Journal 2025 (revisão sistemática).</li><li>Vecchiato M et al., J Sci Med Sport 2024 (câncer de testículo detectado por controle antidoping); Van der Plaetsen: casos noticiados em 2014–2016.</li><li>Bulas: tesamorelina, macimorelina, mecasermina.</li></ul>",
+    "cards": []
+  },
+  {
+    "id": 105,
+    "sectionName": "Ato II · Peptídeos",
+    "number": "",
+    "layout": "prose",
+    "title": "Promessa × Evidência × Risco",
+    "subtitle": "O que se vende como peptídeo e o que os estudos mostram",
+    "content": "[[COMP:PeptideEvidenceSim]]<h4>Fontes</h4><ul><li>Liu H et al. Ann Intern Med 2008;148:747-58 (GH em jovens saudáveis).</li><li>Meinhardt U et al. Ann Intern Med 2010;152:568-77 (GH em atletas recreativos).</li><li>Nass R et al. Ann Intern Med 2008; Adunsky A et al. 2011 (ibutamoren após fratura de quadril, ensaio interrompido).</li><li>Revisão de BPC-157, Pharmaceutics 2026; FDA (04/2026); Anvisa (07/2026).</li><li>Código Mundial Antidopagem (reanálise de amostras em até 10 anos); WADA, teste de biomarcadores do GH (IGF-1 e P-III-NP).</li></ul>",
+    "cards": []
+  },
+  {
+    "id": 106,
+    "sectionName": "Ato II · Peptídeos",
+    "number": "",
+    "layout": "prose",
+    "title": "O Caso Essendon",
+    "subtitle": "Um programa de injeções, a timosina β4 e 34 jogadores suspensos",
+    "content": "[[COMP:EssendonSim]]<h4>Fontes</h4><ul><li>CAS, decisão de 11/01/2016 (WADA × 34 jogadores do Essendon).</li><li>AFL, sanções ao Essendon de 27/08/2013.</li><li>Código Mundial Antidopagem, art. 3.1 (satisfação confortável).</li></ul>",
+    "cards": []
+  },
+  {
+    "id": 108,
+    "sectionName": "Ato II · Peptídeos",
+    "number": "",
+    "layout": "prose",
+    "title": "O Paciente da Clínica de Longevidade",
+    "subtitle": "Caso de consultório: o secretagogo funcionou, e esse é o problema",
+    "content": "[[COMP:CaseLongevitySim]]<h4>Fontes</h4><ul><li>Caso didático e fictício.</li><li>Efeitos adversos conhecidos do excesso de GH (edema, síndrome do túnel do carpo, piora glicêmica); Nass R et al. Ann Intern Med 2008.</li></ul>",
+    "cards": []
+  },
+  {
     "id": 11,
     "sectionName": "Ato II · Músculo e hormônios",
     "number": "",

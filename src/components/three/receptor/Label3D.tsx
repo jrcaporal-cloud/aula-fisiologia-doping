@@ -17,6 +17,8 @@ export interface LabelSpec {
     /** Deslocamento da caixa em pixels (a linha-guia liga a âncora à caixa). */
     dx: number;
     dy: number;
+    /** Letra maior (modelo da via de membrana: mínimo de 14 px no subtítulo). */
+    big?: boolean;
 }
 
 interface Label3DProps { spec: LabelSpec; timeRef: TimeRef; delay: number }
@@ -64,8 +66,8 @@ export const Label3D = ({ spec, timeRef, delay }: Label3DProps) => {
                             minWidth: len > 0 ? undefined : 0,
                         }}
                     >
-                        <div className="text-[15px] font-semibold text-white leading-tight">{spec.text}</div>
-                        {spec.sub && <div className="text-[13px] text-gray-300 leading-snug mt-0.5">{spec.sub}</div>}
+                        <div className={`${spec.big ? 'text-[17px]' : 'text-[15px]'} font-semibold text-white leading-tight`}>{spec.text}</div>
+                        {spec.sub && <div className={`${spec.big ? 'text-[14px]' : 'text-[13px]'} text-gray-300 leading-snug mt-0.5`}>{spec.sub}</div>}
                     </div>
                 </motion.div>
             </Html>

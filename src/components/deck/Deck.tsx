@@ -10,7 +10,7 @@ import { SlideErrorBoundary } from './SlideErrorBoundary';
 import { preloadAllSims } from '../presentation/slideContent';
 import { DeckChrome } from './DeckChrome';
 import { Overview } from './Overview';
-import { DECK, SLIDES_WITH_3D, type DeckSlide } from './slides';
+import { DECK, MODEL_3D_BY_SLIDE, type DeckSlide, type Model3D } from './slides';
 import { useDeckNavigation } from './useDeckNavigation';
 import { useSlideStepStore } from '../../store/useSlideSteps';
 import { PRESENTER_CHANNEL, openPresenterWindow, type PresenterMessage } from './presenterChannel';
@@ -25,10 +25,11 @@ const renderSlide = ({ slide }: DeckSlide) => {
 
 const IDLE_MS = 2600;
 
-// O modelo 3D (cena + pós-processamento) só é baixado quando alguém o abre.
-const Mechanism3DModal = lazy(() =>
-    import('../three/Mechanism3DModal').then(m => ({ default: m.Mechanism3DModal }))
-);
+// Os modelos 3D (cena + pós-processamento) só são baixados quando alguém os abre (ou na pré-carga).
+const loadReceptor3D = () => import('../three/Mechanism3DModal');
+const loadPeptide3D = () => import('../three/PeptideMechanism3DModal');
+const Mechanism3DModal = lazy(() => loadReceptor3D().then(m => ({ default: m.Mechanism3DModal })));
+const PeptideMechanism3DModal = lazy(() => loadPeptide3D().then(m => ({ default: m.PeptideMechanism3DModal })));
 
 export const Deck = () => {
     const rootRef = useRef<HTMLDivElement>(null);
@@ -36,7 +37,7 @@ export const Deck = () => {
     const modalOpen = useStore(s => s.modalOpen);
     const setModalOpen = useStore(s => s.setModalOpen);
     const [overview, setOverview] = useState(false);
-    const [show3D, setShow3D] = useState(false);
+    const [open3D, setOpen3D] = useState<Model3D | null>(null);
     const [idle, setIdle] = useState(false);
 
     const toggleOverview = useCallback(() => setOverview(o => !o), []);
@@ -51,14 +52,16 @@ export const Deck = () => {
     });
 
     const current = DECK[index];
-    const has3D = SLIDES_WITH_3D.has(current.slide.id);
+    const model3D = MODEL_3D_BY_SLIDE.get(current.slide.id) ?? null;
+    const has3D = model3D !== null;
+    const show3D = open3D !== null;
 
     useEffect(() => setSlide(index), [index, setSlide]);
 
     // Depois que a capa aparece, baixa o resto da aula em segundo plano.
     useEffect(() => {
         const start = window.setTimeout(() => {
-            void preloadAllSims().then(() => import('../three/Mechanism3DModal').catch(() => undefined));
+            void preloadAllSims().then(() => Promise.all([loadReceptor3D(), loadPeptide3D()]).catch(() => undefined));
         }, 2500);
         return () => window.clearTimeout(start);
     }, []);
@@ -100,13 +103,13 @@ export const Deck = () => {
     }, [modalOpen]);
     useEffect(() => setModalOpen(show3D), [show3D, setModalOpen]);
 
-    // Atalho "3" abre o modelo 3D quando o slide tem um.
+    // Atalho "3" abre o modelo 3D do slide, quando ele tem um.
     useEffect(() => {
-        if (!has3D || modalOpen) return;
-        const onKey = (e: KeyboardEvent) => { if (e.key === '3') setShow3D(true); };
+        if (!model3D || modalOpen) return;
+        const onKey = (e: KeyboardEvent) => { if (e.key === '3') setOpen3D(model3D); };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
-    }, [has3D, modalOpen]);
+    }, [model3D, modalOpen]);
 
     // Controles e cursor somem quando o mouse fica parado (projeção limpa).
     useEffect(() => {
@@ -161,7 +164,7 @@ export const Deck = () => {
                 onPrev={prev}
                 onNext={next}
                 onOverview={toggleOverview}
-                on3D={() => setShow3D(true)}
+                on3D={() => setOpen3D(model3D)}
                 onPresenter={() => openPresenterWindow(index)}
             />
 
@@ -177,7 +180,8 @@ export const Deck = () => {
 
             <Suspense fallback={null}>
                 <AnimatePresence>
-                    {show3D && <Mechanism3DModal onClose={() => setShow3D(false)} />}
+                    {open3D === 'receptor' && <Mechanism3DModal key="receptor" onClose={() => setOpen3D(null)} />}
+                    {open3D === 'peptide' && <PeptideMechanism3DModal key="peptide" onClose={() => setOpen3D(null)} />}
                 </AnimatePresence>
             </Suspense>
         </div>

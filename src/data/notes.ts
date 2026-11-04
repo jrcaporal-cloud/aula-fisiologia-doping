@@ -84,7 +84,43 @@ export const NOTES: Record<number, SlideNote> = {
     36: {
         minutos: 4,
         mensagem: 'O IGF-1 age de duas formas: local (no tecido) e sistêmica (pelo sangue). A vantagem no esporte vem da combinação.',
-        transicao: 'Agora, como essas peças se combinam.',
+        transicao: 'GH e IGF-1 são peptídeos. E há uma família inteira deles à venda.',
+    },
+    103: {
+        minutos: 3,
+        mensagem: 'Peptídeo é cadeia curta de aminoácidos, age num receptor da membrana (não no núcleo, como o esteroide), é quase sempre injetável e chega ao paciente com o rótulo "uso em pesquisa".',
+        pergunta: 'Quem aqui já atendeu alguém usando BPC-157 ou "peptídeo de recuperação"?',
+        transicao: 'Antes do mapa, um teste: proibido ou permitido?',
+    },
+    107: {
+        minutos: 3,
+        mensagem: 'Seis cartas, a turma vota com a mão antes de cada virada. A lição: a lista olha efeito e aprovação, não o nome "peptídeo". hCG em mulher e colágeno são permitidos; insulina é proibida, mas com AUT o diabético segue tratando.',
+        pergunta: 'Mão levantada: quem acha que é proibido?',
+        transicao: 'Agora o mapa: onde cada família age e em que classe cai.',
+    },
+    104: {
+        minutos: 5,
+        mensagem: 'Cinco famílias: secretagogos de GH (S2.2), fatores de crescimento (S2.3), BPC-157 (S0), eixo gonadal (S2.2.1, só em homens) e GLP-1 (permitido, em monitoramento). A lista olha o efeito e a aprovação, não o fato de ser peptídeo.',
+        pergunta: 'Antes da pérola: um homem jovem com hCG alto na urina. Qual é a primeira hipótese a investigar?',
+        transicao: 'Proibido ou não, o que essas moléculas entregam de fato?',
+    },
+    105: {
+        minutos: 4,
+        mensagem: 'Quanto mais alto o degrau de evidência, menor a promessa: onde houve ensaio, a massa magra subiu e a força não. O risco começa no frasco (composição, esterilidade, imunogenicidade) antes da molécula. E meia-vida curta não é invisibilidade: a amostra pode ser reanalisada por até 10 anos.',
+        pergunta: 'Que dado você pediria ao paciente que diz usar um peptídeo comprado na internet?',
+        transicao: 'Um caso real mostra o que acontece quando o programa é do clube.',
+    },
+    106: {
+        minutos: 3,
+        mensagem: 'Essendon: programa de injeções do clube em 2012, absolvição na liga em 2015, condenação no CAS em 2016 pela timosina β4. Responsabilidade objetiva, falta de registro e pessoal de apoio.',
+        pergunta: 'Os jogadores confiaram no clube. Isso deveria reduzir a pena?',
+        transicao: 'Do esporte de elite para o consultório de segunda-feira.',
+    },
+    108: {
+        minutos: 5,
+        mensagem: 'Caso fictício: secretagogo + BPC-157 de "clínica de longevidade". IGF-1 acima da faixa, glicemia subindo, edema e túnel do carpo: o secretagogo funcionou. Conduta: perguntar sem julgar, registrar, suspender e repetir exames; se o IGF-1 não normalizar, investigar acromegalia.',
+        pergunta: 'Qual é a sua primeira pergunta para esse paciente?',
+        transicao: 'Agora, como essas peças se combinam no stack.',
     },
     11: {
         minutos: 4,

@@ -42,10 +42,10 @@ describe('notas do apresentador', () => {
         for (const key of Object.keys(NOTES)) expect(IDS).toContain(Number(key));
     });
 
-    it('a aula completa cabe em 2h30 com discussão', () => {
+    it('a aula completa cabe em 3h com discussão', () => {
         const total = IDS.reduce((sum, id) => sum + NOTES[id].minutos, 0);
         expect(total).toBeGreaterThan(120);
-        expect(total).toBeLessThanOrEqual(150);
+        expect(total).toBeLessThanOrEqual(180);
     });
 });
 
@@ -64,9 +64,9 @@ describe('versões por tempo', () => {
         expect(IDS.every(id => keepsSlide('completa', id))).toBe(true);
     });
 
-    it('as versões curtas mantêm abertura, fechamento e os slides clínicos novos', () => {
+    it('as versões curtas mantêm abertura, fechamento, o mapa dos peptídeos e os slides clínicos novos', () => {
         for (const tempo of ['90', '60'] as const) {
-            for (const id of [0, 1, 100, 101, 102, 30]) expect(keepsSlide(tempo, id), `${tempo} min, slide ${id}`).toBe(true);
+            for (const id of [0, 1, 100, 104, 101, 102, 30]) expect(keepsSlide(tempo, id), `${tempo} min, slide ${id}`).toBe(true);
         }
     });
 

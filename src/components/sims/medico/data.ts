@@ -72,7 +72,7 @@ export interface ActionItem {
 export const ACTIONS: ActionItem[] = [
     { title: 'Suspeite pelo padrão', text: 'Testosterona alta com LH e FSH suprimidos. Hemoglobina e hematócrito altos com reticulócitos baixos. IGF-1 elevado.' },
     { title: 'AUT antes, não depois', text: 'Atleta que compete e precisa de medicação: confira a lista e peça a autorização antes do uso.' },
-    { title: 'Suplemento só com certificação', text: 'Oriente produtos com certificação independente e registre a orientação no prontuário.' },
+    { title: 'Suplemento só com certificação', text: 'Oriente produtos com certificação independente e registre no prontuário. Pergunte por injetáveis "de pesquisa": nome, frasco e lote.' },
     { title: 'Saiba onde você se enquadra', text: 'O pessoal de apoio responde pelo Código (arts. 2.8 a 2.10) e pela Resolução CFM 2.333/2023.' },
     { title: 'Acompanhe sem prescrever', text: 'Monitore hematócrito, lipídios, pressão e fígado de quem já usa. Trate a doença, não o desempenho.' },
 ];
