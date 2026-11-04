@@ -28,8 +28,10 @@ const IDLE_MS = 2600;
 // Os modelos 3D (cena + pós-processamento) só são baixados quando alguém os abre (ou na pré-carga).
 const loadReceptor3D = () => import('../three/Mechanism3DModal');
 const loadPeptide3D = () => import('../three/PeptideMechanism3DModal');
+const loadCardio3D = () => import('../three/CardioMechanism3DModal');
 const Mechanism3DModal = lazy(() => loadReceptor3D().then(m => ({ default: m.Mechanism3DModal })));
 const PeptideMechanism3DModal = lazy(() => loadPeptide3D().then(m => ({ default: m.PeptideMechanism3DModal })));
+const CardioMechanism3DModal = lazy(() => loadCardio3D().then(m => ({ default: m.CardioMechanism3DModal })));
 
 export const Deck = () => {
     const rootRef = useRef<HTMLDivElement>(null);
@@ -61,7 +63,7 @@ export const Deck = () => {
     // Depois que a capa aparece, baixa o resto da aula em segundo plano.
     useEffect(() => {
         const start = window.setTimeout(() => {
-            void preloadAllSims().then(() => Promise.all([loadReceptor3D(), loadPeptide3D()]).catch(() => undefined));
+            void preloadAllSims().then(() => Promise.all([loadReceptor3D(), loadPeptide3D(), loadCardio3D()]).catch(() => undefined));
         }, 2500);
         return () => window.clearTimeout(start);
     }, []);
@@ -182,6 +184,7 @@ export const Deck = () => {
                 <AnimatePresence>
                     {open3D === 'receptor' && <Mechanism3DModal key="receptor" onClose={() => setOpen3D(null)} />}
                     {open3D === 'peptide' && <PeptideMechanism3DModal key="peptide" onClose={() => setOpen3D(null)} />}
+                    {open3D === 'cardio' && <CardioMechanism3DModal key="cardio" onClose={() => setOpen3D(null)} />}
                 </AnimatePresence>
             </Suspense>
         </div>

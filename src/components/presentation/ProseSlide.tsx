@@ -4,7 +4,7 @@ import { renderSlideContent } from './slideContent';
 import { SlideHeader } from './SlideHeader';
 
 /** Slides cujo texto longo fica recolhido sob o simulador (que já mostra a mesma ideia). */
-const COLLAPSED_TEXT_SLIDES = new Set<number>([15, 103, 104, 105, 106, 107, 108]);
+const COLLAPSED_TEXT_SLIDES = new Set<number>([15, 103, 104, 105, 106, 107, 108, 109]);
 
 export const ProseSlide = ({ slide }: { slide: SlideSchema }) => {
     return (

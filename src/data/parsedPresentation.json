@@ -416,6 +416,16 @@
     ]
   },
   {
+    "id": 109,
+    "sectionName": "Ato III · Sangue e metabolismo",
+    "number": "",
+    "layout": "prose",
+    "title": "O Coração sob Esteroides",
+    "subtitle": "Hipertrofia, pressão e viscosidade sobre o mesmo coração",
+    "content": "[[COMP:CardioSim]]<h4>Fontes</h4><ul><li>Windfeld-Mathiasen J et al. Cardiovascular disease in anabolic androgenic steroid users. Circulation 2025;151(12):828-834 — coorte de registro dinamarquesa, 1.189 usuários × 59.450 controles, ~11 anos: razões de risco deste slide.</li><li>Baggish AL et al. Cardiovascular toxicity of illicit anabolic-androgenic steroid use. Circulation 2017;135(21):1991-2002 — fração de ejeção 52% × 63%, E′ 9,3 × 11,1 cm/s, volume de placa; em ex-usuários a ejeção normaliza e o E′ não.</li><li>Fernandes MM et al. Echocardiography 2026;43(9):e70611 — meta-análise (40 estudos): índice de massa do VE +18,2 g/m², septo +1,17 mm, espessura relativa de parede +0,05.</li><li>Abdullah R et al. Eur J Prev Cardiol 2024;31(5):599-608 — espessura máxima 13,9 × 10,0 mm; cardiomiopatia biventricular em usuários e ex-usuários.</li><li>Abdullah R et al. JACC Adv 2026;5(2):102499 — o ECG não rastreia esta hipertrofia: melhor critério com sensibilidade de 31%.</li><li>Krieg A et al. Int J Sports Med 2007;28(8):638-643 — a relação E/A transmitral não difere; a alteração aparece no Doppler tecidual.</li><li>Rasmussen JJ et al. J Hypertens 2018;36(2):277-285 — pressão, rigidez aórtica e supressão de peptídeos natriuréticos; distensibilidade −21% também em ex-usuários.</li><li>Dos Santos MR et al. Clinics (São Paulo) 2018;73:e226 — atividade simpática muscular aumentada e barorreflexo reduzido.</li><li>Bachman E et al. J Gerontol A Biol Sci Med Sci 2014;69(6):725-735 — eritropoetina sobe, hepcidina cai; deslocamento do ponto de ajuste.</li><li>Bhasin S et al. J Clin Endocrinol Metab 2018;103(5):1715-1744 (Endocrine Society) e Mulhall JP et al. J Urol 2018;200(2):423-432 (AUA) — hematócrito de 54% como gatilho de intervenção.</li><li>Thompson PD et al. JAMA 1989;261(8):1165-1168 — estanozolol oral derruba o HDL 33% e sobe o LDL 29%; testosterona injetável, −9% e −16%.</li><li>Buhl LF et al. JAMA Netw Open 2025;8(8):e2526636 — placa não calcificada em 23,8% × 10,3%, com escore de cálcio igual.</li><li>Urhausen A et al. Heart 2004;90(5):496-501 e Smit DL et al. Front Reprod Health 2021;3:732318 — os dois lados da reversibilidade.</li></ul>",
+    "cards": []
+  },
+  {
     "id": 18,
     "sectionName": "Ato III · Sangue e metabolismo",
     "number": "",

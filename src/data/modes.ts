@@ -7,9 +7,10 @@ export type Tempo = 'completa' | '90' | '60';
 
 /**
  * 90 min: tira aprofundamentos, o bloco trans fica só no slide dos casos e o dossiê/achados saem.
- * Do módulo de peptídeos, fica só o mapa (104).
+ * Do módulo de peptídeos, fica só o mapa (104). O detalhamento cardiovascular (109) sai porque o
+ * slide do hematócrito (14) continua e já carrega o argumento da viscosidade.
  */
-const SKIP_90 = new Set<number>([2, 75, 35, 36, 13, 191, 22, 32, 34, 7, 17, 20, 9, 25, 103, 105, 106, 107, 108]);
+const SKIP_90 = new Set<number>([2, 75, 35, 36, 13, 191, 22, 32, 34, 7, 17, 20, 9, 25, 103, 105, 106, 107, 108, 109]);
 
 /** 60 min: mantém só a espinha da aula (com um caso clínico), o mapa dos peptídeos e o fechamento; a transfusão sai. */
 const KEEP_60 = new Set<number>([0, 1, 100, 5, 3, 4, 6, 8, 10, 104, 12, 14, 15, 16, 18, 26, 101, 102, 30]);

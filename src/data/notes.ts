@@ -148,6 +148,12 @@ export const NOTES: Record<number, SlideNote> = {
         minutos: 3,
         mensagem: 'Aumentar a massa de hemácias melhora o transporte de oxigênio, mas eleva a viscosidade e os riscos vasculares.',
         pergunta: 'Palpite: a partir de que hematócrito você tomaria uma conduta?',
+        transicao: 'A viscosidade é só um dos colaterais. Veja o que acontece com o coração inteiro.',
+    },
+    109: {
+        minutos: 5,
+        mensagem: 'Quatro mecanismos somados no mesmo paciente: hipertrofia concêntrica, pressão alta que realimenta a hipertrofia, hematócrito e viscosidade altos, e dislipidemia com placa não calcificada. Três armadilhas de exame para deixar claras: o E/A transmitral vem normal (precisa de Doppler tecidual), o escore de cálcio pode vir zero com placa presente, e o ECG só pega cerca de um terço dessas hipertrofias. Detalhe que o desenho não mostra: o espessamento aparece primeiro no septo, antes dos seis meses de uso. Controles: a tecla R (ou o seletor no topo) alterna "em uso × depois de parar" e muda os números e a narração de cada passo; passar o mouse numa linha do painel hemodinâmico acende no desenho a parte que a explica (clique fixa); na convergência, passar o mouse num mecanismo ou desfecho isola as ligações dele. A tecla 3 abre o modelo 3D.',
+        pergunta: 'Atleta de força, 28 anos, PA 150/95 e hematócrito 56%. O que você pede, e o que você pergunta?',
         transicao: 'Entre as fronteiras atuais, comecemos pelos SARMs.',
     },
     18: {

@@ -13,13 +13,14 @@ No ar: https://jrcaporal-cloud.github.io/aula-fisiologia-doping/ (publica sozinh
 | `P` | janela do apresentador (notas prontas, ritmo, cronômetro), sincronizada com a aula |
 | `D` | abre/fecha o texto de apoio recolhido do slide ("detalhamento") |
 | `F` | tela cheia |
-| `3` | modelo 3D: receptor androgênico (slide do receptor) e via de membrana do peptídeo (slides de peptídeos) |
+| `3` | modelo 3D: receptor androgênico (slide do receptor), via de membrana do peptídeo (slides de peptídeos) e dinâmica circulatória (slide do coração) |
+| `R` | slide do coração (e o modelo 3D dele): alterna "em uso" × "depois de parar". No 3D, clicar numa estrutura a fixa com close-up (Esc solta), "Sobrepor o treinado" mostra a cavidade original e "Recentrar" devolve a câmera |
 
 O endereço acompanha o ponto da aula (`#/27/3` = slide 27, terceiro passo): recarregar a página volta ao mesmo lugar.
 
 ### Versões por tempo
 
-A aula completa leva cerca de 2h55 com discussão (Ato II inclui o módulo de peptídeos: o que é um peptídeo, votação "proibido ou permitido?", o mapa das famílias com a pérola do hCG, promessa × evidência × risco × detecção, o caso Essendon e um caso de consultório; as fontes de cada slide abrem com D). Dois parâmetros na URL escondem os slides de aprofundamento (nada é apagado):
+A aula completa leva cerca de 3h com discussão (Ato II inclui o módulo de peptídeos: o que é um peptídeo, votação "proibido ou permitido?", o mapa das famílias com a pérola do hCG, promessa × evidência × risco × detecção, o caso Essendon e um caso de consultório; o Ato III inclui o slide cardiovascular dos esteroides, que soma hipertrofia concêntrica, pressão, viscosidade e placa até os desfechos; as fontes de cada slide abrem com D). Dois parâmetros na URL escondem os slides de aprofundamento (nada é apagado):
 
 - `?tempo=90` — versão de cerca de 90 min
 - `?tempo=60` — versão de cerca de 60 min
