@@ -2,10 +2,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { COLORS, STEPS, SYNERGY, TEXT, type SynergyId } from './content';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 
 /** Painel lateral: o texto do cartão original de cada passo. */
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** O glifo "₂" sai minúsculo na fonte do corpo: troca "O₂" por O com subscrito legível. */
 const Sub = ({ text }: { text: string }): ReactNode => {
@@ -37,7 +37,7 @@ const Cascade = () => (
 
 const DualRow = ({ color, title, lines }: { color: string; title: string; lines: readonly string[] }) => (
     <div className="rounded-xl border px-3 py-2" style={{ borderColor: `${color}66`, background: `${color}12` }}>
-        <div className="font-display text-[17px] font-semibold" style={{ color }}>{title}</div>
+        <div className="text-[17px] font-semibold" style={{ color }}>{title}</div>
         <ul className="mt-1 space-y-0.5">
             {lines.map(l => <li key={l} className="text-[15px] text-gray-100 leading-snug">{l}</li>)}
         </ul>
@@ -70,7 +70,7 @@ const bodyFor = ({ step, boost, onBoost, revealed, focus, onFocus }: SidePanelPr
                     <P>{TEXT.mgf}</P>
                     <P strong>{TEXT.satellite}</P>
                     <button type="button" onClick={onBoost} aria-pressed={boost}
-                        className="text-left rounded-xl border px-3 py-2 cursor-pointer transition-colors"
+                        className="text-left rounded-xl border px-3 py-2 cursor-pointer transition-colors duration-180 ease-(--ease-out)"
                         style={boost
                             ? { borderColor: 'rgba(245,158,11,0.8)', background: 'rgba(245,158,11,0.16)' }
                             : { borderColor: 'rgba(255,255,255,0.18)', background: 'rgba(255,255,255,0.03)' }}>
@@ -96,9 +96,9 @@ const bodyFor = ({ step, boost, onBoost, revealed, focus, onFocus }: SidePanelPr
                         {SYNERGY.map((s, i) => (
                             <motion.button key={s.id} type="button" onMouseEnter={() => onFocus(s.id)} onClick={() => onFocus(focus === s.id ? null : s.id)}
                                 className="text-left rounded-xl border px-3 py-1.5 cursor-pointer"
-                                animate={{ opacity: i < revealed ? 1 : 0.6 }} transition={{ duration: 0.35 }}
+                                animate={{ opacity: i < revealed ? 1 : 0.6 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}
                                 style={{ borderColor: focus === s.id ? s.color : `${s.color}55`, background: focus === s.id ? `${s.color}22` : `${s.color}0d` }}>
-                                <span className="font-display text-[16px] font-semibold" style={{ color: s.color }}>{s.name}</span>
+                                <span className="text-[16px] font-semibold" style={{ color: s.color }}>{s.name}</span>
                                 <span className="text-[15px] text-gray-100 leading-snug"> <Sub text={s.role} /></span>
                             </motion.button>
                         ))}
@@ -127,9 +127,9 @@ export const SidePanel = (props: SidePanelProps) => {
             style={{ borderColor: `${info.color}55`, background: `linear-gradient(165deg, ${info.color}1c, rgba(8,8,18,0.86) 55%)` }}>
             <AnimatePresence initial={false}>
                 <motion.div key={props.step} className="absolute inset-0 p-3.5 flex flex-col gap-2.5"
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.35, delay: 0.12, ease: EASE } }}
-                    exit={{ opacity: 0, transition: { duration: 0.12 } }}>
-                    <span className="font-display text-[20px] font-semibold leading-tight" style={{ color: info.color }}>{info.title}</span>
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { duration: DUR.enter, delay: 0.12, ease: EASE_OUT } }}
+                    exit={{ opacity: 0, transition: { duration: DUR.exit } }}>
+                    <span className="text-[20px] font-semibold leading-tight" style={{ color: info.color }}>{info.title}</span>
                     {bodyFor(props)}
                 </motion.div>
             </AnimatePresence>

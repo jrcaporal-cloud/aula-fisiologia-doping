@@ -1,11 +1,12 @@
 import { Dumbbell } from 'lucide-react';
 import { PowerlifterContrast } from '../extras/PowerlifterContrast';
+import { CASE_COLORS } from '../../../../lib/palette';
 import type { CaseData } from '../types';
 
 /** Slide "O Powerlifter com Exames 'Alterados'" — parsedPresentation.json id 26 (texto verbatim). */
 export const POWERLIFTER: CaseData = {
     caseNumber: 'Caso clínico 01',
-    accent: '#60A5FA',
+    accent: CASE_COLORS.powerlifter,
     icon: Dumbbell,
     stepNames: ['Relato', 'Exames', 'Hipótese', 'Lição'],
     stepCaptions: [
@@ -19,7 +20,7 @@ export const POWERLIFTER: CaseData = {
         paragraphs: [
             [
                 { text: 'Relata uso de ' },
-                { text: '"testosterona terapêutica"', strong: true, mark: { fromStep: 3, label: 'álibi', color: '#F59E0B' } },
+                { text: '"testosterona terapêutica"', strong: true, mark: { fromStep: 3, label: 'álibi', color: CASE_COLORS.powerlifter } },
                 { text: ' prescrita há 6 meses por hipogonadismo.' },
             ],
             [{ text: 'Busca otimização para mundial em 10 semanas. Relata energia excelente e progressão de carga.' }],

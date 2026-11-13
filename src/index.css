@@ -20,6 +20,9 @@
  * Valores fixos (sem vw): o palco já escala o slide inteiro para caber na tela.
  */
 :root {
+  /* Curvas de movimento únicas da aula (espelham src/lib/motion.ts). */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --bg-primary: #0A0A0A;
   --bg-secondary: #111827;
   --card-bg: #1F2937;
@@ -83,7 +86,8 @@ h6 {
 .expand-content {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 500ms ease;
+  /* exceção: abre texto sob o mouse; layout aceito (raro, fora do passador) */
+  transition: grid-template-rows 300ms var(--ease-out);
   overflow: hidden;
   margin-top: 0;
 }
@@ -100,7 +104,7 @@ h6 {
 
 .chevron {
   display: inline-block;
-  transition: transform 0.3s ease;
+  transition: transform 300ms var(--ease-out);
 }
 
 .group:hover .chevron {
@@ -120,33 +124,29 @@ h6 {
 
 /* Global Animations for Presentation Blocks */
 
-.reveal {
-  animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+/* Pior bloco (delay-4) termina em 0,32 + 0,3 s; `both`: o bloco com atraso não pisca visível antes de começar. */
+.reveal { animation: fade-slide-up 0.3s var(--ease-out) both; }
+.reveal-scale { animation: fade-scale-up 0.3s var(--ease-out) both; }
 
-.reveal-scale {
-  animation: fade-scale-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.delay-1 { animation-delay: 0.2s; }
-.delay-2 { animation-delay: 0.4s; }
-.delay-3 { animation-delay: 0.6s; }
-.delay-4 { animation-delay: 0.8s; }
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+.delay-3 { animation-delay: 0.24s; }
+.delay-4 { animation-delay: 0.32s; }
 
 @keyframes fade-slide-up {
-  0% { opacity: 0; transform: translateY(40px); }
+  0% { opacity: 0; transform: translateY(8px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fade-scale-up {
-  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% { opacity: 0; transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
+/* Usado no HTML dos slides ([ERRO_1] etc.): pulsa só a opacidade — sem halo nem escala (texto inline que cresce tremeria a linha). */
 @keyframes pulse-glow {
-  0% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
-  50% { text-shadow: 0 0 25px rgba(220, 38, 38, 1); transform: scale(1.02); }
-  100% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 /* ---------- Deck ---------- */
@@ -163,7 +163,7 @@ h6 {
   border-bottom-width: 2px;
   background: rgba(255, 255, 255, 0.06);
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.875rem; /* 14 px: piso de texto de projeto */
   color: #e5e7eb;
   line-height: 1;
 }
@@ -187,7 +187,6 @@ h6 {
 
 .quote-slide .quote-text .highlight-red {
   color: var(--color-brand-red);
-  text-shadow: 0 0 40px rgba(225, 29, 72, 0.45);
 }
 
 .quote-slide p:not(.quote-text) {
@@ -199,19 +198,46 @@ h6 {
   text-wrap: pretty;
 }
 
+/*
+ * Movimento reduzido: sem deslocamento, escala ou pulsos em loop — mas as trocas continuam visíveis como
+ * esmaecimento curto. Transições de cor/opacidade ficam; animações CSS em loop param no 1º ciclo.
+ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+  .reveal, .reveal-scale { animation-name: fade-only !important; animation-duration: 0.25s !important; }
+  .chevron { transition: none !important; }
 }
+@keyframes fade-only { from { opacity: 0; } to { opacity: 1; } }
 
 /* Rótulos com tamanho fixo minúsculo (9–11px) ficam ilegíveis projetados. */
 .deck-stage .text-\[9px\] { font-size: 11px; }
 .deck-stage .text-\[10px\] { font-size: 11.5px; }
 .deck-stage .text-\[11px\] { font-size: 12.5px; }
 
-/* Elementos de apoio (botão de detalhamento etc.) somem com o mouse parado: projeção limpa. */
-.hide-when-idle { transition: opacity 500ms ease; }
-.deck-root[data-idle='true'] .hide-when-idle { opacity: 0; pointer-events: none; }
+/*
+ * Elementos de apoio (navegação, botões 3D/detalhamento) somem com o mouse parado: projeção limpa.
+ * Exceção: com foco de teclado dentro (Tab), continuam visíveis e clicáveis — o foco nunca fica num botão invisível.
+ */
+.hide-when-idle { transition: opacity 450ms var(--ease-out), transform 450ms var(--ease-out); }
+.deck-root[data-idle='true'] .hide-when-idle:not(:has(:focus-visible)) {
+  opacity: 0;
+  transform: translateY(0.5rem);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .deck-root[data-idle='true'] .hide-when-idle:not(:has(:focus-visible)) { transform: none; }
+}
+
+/*
+ * Anel de foco da aula: visível no projetor, na cor do ato (--act-color, no deck-root), só para teclado.
+ * Na camada base: os `focus-visible:outline-*` de cada componente (camada utilities) continuam valendo por cima.
+ */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--act-color, var(--color-brand-red));
+    outline-offset: 2px;
+  }
+}

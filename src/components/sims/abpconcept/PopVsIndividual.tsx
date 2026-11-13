@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { COLORS } from './content';
 import { prefersReducedMotion, useTween } from './useTween';
 
@@ -24,9 +25,10 @@ const WITHIN_SD = 0.05;
 const BAND_Z = 2.2;
 const SAMPLES = [0.36, 0.42, 0.32, 0.4, 0.35, 0.38] as const;
 const TEST_VALUE = 0.63;
-const SAMPLE_MS = 650;
-const FIRST_MS = 700;
-const TEST_DELAY_MS = 900;
+// Amostras uma a uma, comprimidas: o veredito surge em ~1,15 s após o clique (regra do passador).
+const SAMPLE_MS = 130;
+const FIRST_MS = 100;
+const TEST_DELAY_MS = 150;
 
 const sx = (v: number): number => X0 + v * (X1 - X0);
 
@@ -115,8 +117,8 @@ export const PopVsIndividual = () => {
     }, [n]);
 
     const target = predictive(n);
-    const mu = useTween(target.mu, 650);
-    const sd = useTween(target.sd, 650);
+    const mu = useTween(target.mu, DUR.enter * 1000);
+    const sd = useTween(target.sd, DUR.enter * 1000);
     const peakB = 66 + 38 * Math.min(1, Math.max(0, (POP_SD - sd) / (POP_SD - FINAL_SD)));
     const tx = sx(TEST_VALUE);
 
@@ -133,16 +135,16 @@ export const PopVsIndividual = () => {
             {/* amostras do atleta */}
             <AnimatePresence>
                 {SAMPLES.slice(0, n).map((v, i) => (
-                    <motion.circle key={i} cx={sx(v)} r={7} fill={COLORS.amber} stroke="#050510" strokeWidth={2}
-                        initial={{ cy: ROW_B - 120, opacity: 0 }} animate={{ cy: ROW_B, opacity: 1 }} exit={{ opacity: 0 }}
-                        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }} />
+                    <motion.circle key={i} cx={sx(v)} cy={ROW_B} r={7} fill={COLORS.amber} stroke="#050510" strokeWidth={2}
+                        initial={{ y: -120, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0 }}
+                        transition={{ duration: DUR.enter, ease: EASE_OUT }} />
                 ))}
             </AnimatePresence>
 
             {/* o mesmo valor visto pelas duas réguas */}
             <AnimatePresence>
                 {showTest && (
-                    <motion.g key="test" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+                    <motion.g key="test" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.text, ease: EASE_OUT }}>
                         <line x1={tx} x2={tx} y1={ROW_A - 106} y2={ROW_B} stroke="#fff" strokeWidth={1.6} strokeDasharray="3 5" />
                         <rect x={tx - 8} y={ROW_A - 8} width={16} height={16} transform={`rotate(45 ${tx} ${ROW_A})`} fill="#fff" />
                         <rect x={tx - 8} y={ROW_B - 8} width={16} height={16} transform={`rotate(45 ${tx} ${ROW_B})`} fill={COLORS.red} stroke="#fff" strokeWidth={1.5} />

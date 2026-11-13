@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { LANES, LANE_ORDER, SYSTEMS, SYSTEM_ORDER } from './data';
 import { columnRect, HEADER_HEIGHT, type MapMode } from './geometry';
 import { EASE } from './DrugCard';
+import { DUR } from '../../../lib/motion';
 import { LaneIcon } from './LaneBadge';
 import { SystemShape } from './Marker';
 
@@ -14,7 +15,7 @@ interface ColumnsProps {
 /** As três colunas do mapa: primeiro por sistema fisiológico, depois por faixa de detectabilidade. */
 export const Columns = ({ width, mode, reduced }: ColumnsProps) => {
     const inLane = mode === 'lane';
-    const fade = { duration: reduced ? 0 : 0.5, ease: EASE };
+    const fade = { duration: reduced ? 0 : DUR.enter, ease: EASE };
 
     return (
         <>
@@ -32,7 +33,7 @@ export const Columns = ({ width, mode, reduced }: ColumnsProps) => {
                             borderColor: `${color}${inLane ? '55' : '26'}`,
                             background: `linear-gradient(180deg, ${color}${inLane ? '1c' : '10'} 0%, rgba(8,8,18,0.35) 38%, rgba(8,8,18,0.2) 100%)`,
                         }}
-                        transition={{ duration: reduced ? 0 : 0.8, ease: EASE, delay: inLane ? 0.2 : 0 }}
+                        transition={{ duration: reduced ? 0 : DUR.morph, ease: EASE, delay: inLane && !reduced ? 0.1 : 0 }}
                     />
                 );
             })}
@@ -46,8 +47,8 @@ export const Columns = ({ width, mode, reduced }: ColumnsProps) => {
                         style={{ top: HEADER_HEIGHT - 2, transformOrigin: 'left center' }}
                         initial={{ opacity: 0, scaleX: 0 }}
                         animate={{ opacity: 1, scaleX: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: reduced ? 0 : 0.9, ease: EASE, delay: reduced ? 0 : 0.15 }}
+                        exit={{ opacity: 0, transition: { duration: DUR.exit } }}
+                        transition={{ duration: reduced ? 0 : DUR.draw, ease: EASE, delay: reduced ? 0 : 0.15 }}
                     >
                         <div
                             className="h-[3px] rounded-full mx-4"
@@ -76,7 +77,7 @@ export const Columns = ({ width, mode, reduced }: ColumnsProps) => {
                             aria-hidden={!inLane}
                         >
                             <LaneIcon lane={lane.id} color={lane.color} size={24} />
-                            <span className="font-display font-semibold text-[21px] leading-none text-white whitespace-nowrap">{lane.label}</span>
+                            <span className="font-body font-semibold text-[21px] leading-none text-white whitespace-nowrap">{lane.label}</span>
                         </motion.div>
                         <motion.div
                             className="absolute left-5 right-5 top-[18px] flex items-center gap-2.5"
@@ -88,7 +89,7 @@ export const Columns = ({ width, mode, reduced }: ColumnsProps) => {
                             <span className="relative w-[22px] h-[22px] flex-shrink-0">
                                 <SystemShape system={system.id} color={system.color} size={22} filled={0.35} />
                             </span>
-                            <span className="font-display font-semibold text-[21px] leading-none" style={{ color: system.color }}>{system.label}</span>
+                            <span className="font-body font-semibold text-[21px] leading-none" style={{ color: system.color }}>{system.label}</span>
                         </motion.div>
                     </div>
                 );

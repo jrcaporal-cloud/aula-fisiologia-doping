@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 /**
  * Esqueleto da testosterona (anéis A, B, C hexagonais + D pentagonal), em traço,
@@ -79,7 +80,7 @@ export const SteroidMark = ({ className = '' }: { className?: string }) => {
             className={className}
             aria-hidden
             animate={still ? undefined : { rotate: [-2, 2, -2] }}
-            transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 24, repeat: Infinity, ease: EASE_IN_OUT }}
         >
             <defs>
                 <filter id="steroid-glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -99,7 +100,8 @@ export const SteroidMark = ({ className = '' }: { className?: string }) => {
                         d={d}
                         initial={still ? false : { pathLength: 0, opacity: 0 }}
                         animate={{ pathLength: 1, opacity: 1 }}
-                        transition={{ pathLength: { delay: 0.3 + i * 0.22, duration: 1.1, ease: 'easeInOut' }, opacity: { delay: 0.3 + i * 0.22, duration: 0.2 } }}
+                        // Capa (exceção 2 da regra T): a marca d'água desenha ligação por ligação, sem pressa.
+                        transition={{ pathLength: { delay: 0.3 + i * 0.22, duration: DUR.draw, ease: EASE_IN_OUT }, opacity: { delay: 0.3 + i * 0.22, duration: DUR.exit } }}
                     />
                 ))}
             </g>
@@ -107,7 +109,7 @@ export const SteroidMark = ({ className = '' }: { className?: string }) => {
                 fill="#FB7185" fontSize={LABEL_FONT} fontFamily="var(--font-body, sans-serif)" fontWeight="600"
                 initial={still ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 2.8, duration: 0.8 }}
+                transition={{ delay: 2.8, duration: DUR.morph, ease: EASE_OUT }}
             >
                 <text x={KETONE[0] - 14} y={KETONE[1] + 22} textAnchor="end">O</text>
                 <text x={OH[0] + 10} y={OH[1] - 4}>OH</text>

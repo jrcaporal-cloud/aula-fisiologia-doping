@@ -6,6 +6,7 @@ import { MEMBRANE_CUT_Z, memX, rng, smooth } from './layout';
 import { SPHERE_LO, STICK_GEO, stickMatrix } from './geometry';
 import type { TimeRef } from './types';
 import { useHover } from './useHover';
+import { LIPID_HEAD, LIPID_TAIL } from './shaders';
 
 /*
  * Bicamada fosfolipídica (recorte): cabeças polares + duas caudas apolares por lipídio, nas duas lâminas.
@@ -40,6 +41,8 @@ const sc = new THREE.Vector3();
 const a = new THREE.Vector3();
 const b = new THREE.Vector3();
 const hp = new THREE.Vector3();
+const LIGS = [new THREE.Vector3(), new THREE.Vector3()];
+const LIG_IN = [0, 0];
 
 const writeLipid = (heads: THREE.InstancedMesh, tails: THREE.InstancedMesh, i: number, l: Lipid, dy: number, dz: number) => {
     const y = l.y + dy;
@@ -66,6 +69,8 @@ export const Membrane = ({ timeRef }: { timeRef: TimeRef }) => {
         Math.hypot(l.y - 1.9, l.z - 2.75) < 2.4 || Math.hypot(l.y + 2.4, l.z + 2.2) < 2.4), [lipids]);
     const pose = useMemo(() => makePose(), []);
     const lastT = useRef(-1);
+    /** Algum ligante estava dentro da bicamada no quadro anterior (fora dela os lipídios ficam em repouso). */
+    const wasIn = useRef(true);
     const hover = useHover('Membrana plasmática', 'Bicamada fosfolipídica: cabeças polares voltadas para a água e caudas apolares no meio. O esteroide, lipofílico, atravessa por difusão simples.');
 
     useLayoutEffect(() => {
@@ -91,22 +96,30 @@ export const Membrane = ({ timeRef }: { timeRef: TimeRef }) => {
         const h = heads.current;
         const t = tails.current;
         if (!h || !t) return;
-        const ligs = [0, 1].map(i => ligandPose(i, T, clock.elapsedTime, pose).p.clone());
-        near.forEach(({ l, i }) => {
+        for (let k = 0; k < 2; k++) {
+            const p = LIGS[k].copy(ligandPose(k, T, clock.elapsedTime, pose).p);
+            const inside = 1 - Math.min(Math.abs(p.x - memX(p.y, p.z)) / 2.2, 1);
+            LIG_IN[k] = inside > 0 ? smooth(inside) : 0;
+        }
+        const isIn = LIG_IN[0] > 0 || LIG_IN[1] > 0;
+        if (!isIn && !wasIn.current) return;
+        wasIn.current = isIn;
+        for (let n = 0; n < near.length; n++) {
+            const { l, i } = near[n];
             let dy = 0;
             let dz = 0;
-            ligs.forEach(p => {
-                const inside = 1 - Math.min(Math.abs(p.x - memX(p.y, p.z)) / 2.2, 1);
-                if (inside <= 0) return;
+            for (let k = 0; k < 2; k++) {
+                if (LIG_IN[k] <= 0) continue;
+                const p = LIGS[k];
                 const vy = l.y - p.y;
                 const vz = l.z - p.z;
                 const d = Math.hypot(vy, vz) || 1;
-                const push = Math.max(1.25 - d, 0) * 0.55 * smooth(inside);
+                const push = Math.max(1.25 - d, 0) * 0.55 * LIG_IN[k];
                 dy += (vy / d) * push;
                 dz += (vz / d) * push;
-            });
+            }
             writeLipid(h, t, i, l, dy, dz);
-        });
+        }
         h.instanceMatrix.needsUpdate = true;
         t.instanceMatrix.needsUpdate = true;
     });
@@ -114,10 +127,10 @@ export const Membrane = ({ timeRef }: { timeRef: TimeRef }) => {
     return (
         <group>
             <instancedMesh ref={heads} args={[SPHERE_LO, undefined, lipids.length]} frustumCulled={false}>
-                <meshStandardMaterial roughness={0.5} metalness={0.05} />
+                <meshStandardMaterial roughness={0.5} metalness={0.05} {...LIPID_HEAD} />
             </instancedMesh>
             <instancedMesh ref={tails} args={[STICK_GEO, undefined, lipids.length * 2]} frustumCulled={false}>
-                <meshStandardMaterial color="#c9a227" roughness={0.75} emissive="#3a2a05" emissiveIntensity={0.4} />
+                <meshStandardMaterial color="#c9a227" roughness={0.75} emissive="#3a2a05" emissiveIntensity={0.4} {...LIPID_TAIL} />
             </instancedMesh>
             <mesh {...hover} position={[memX(0, 0) - 0.6, 0, (MEMBRANE_CUT_Z + Z0) / 2]} scale={[1.6, YR * 1.6, MEMBRANE_CUT_Z - Z0]}>
                 <boxGeometry />

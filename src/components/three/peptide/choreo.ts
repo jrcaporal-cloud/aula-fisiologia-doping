@@ -18,6 +18,13 @@ const IDENT = new THREE.Quaternion();
 const tumble = new THREE.Euler();
 const HELIX_BOTTOM = 2.1;
 
+/** Constante por lado, calculada uma vez (as funções de layout criam um vetor novo a cada chamada). */
+const bySide = (f: (s: Side) => THREE.Vector3): Record<Side, THREE.Vector3> =>
+    ({ [-1]: f(-1), [1]: f(1) }) as Record<Side, THREE.Vector3>;
+const REC_BASE = bySide(receptorBase);
+const T_REST = bySide(trimerRest);
+const T_COUPLED = bySide(trimerCoupled);
+
 // ------------------------------------------------------------------ receptor
 
 /** Afundamento do receptor ativo na internalização (etapa 7). */
@@ -25,7 +32,7 @@ export const receptorDrop = (s: Side, active: Side, T: number): number =>
     s === active ? -ENDO_DEPTH * pp(T, PW.endo) : 0;
 
 export const receptorPos = (s: Side, active: Side, T: number, out: THREE.Vector3): THREE.Vector3 =>
-    out.copy(receptorBase(s)).setY(receptorDrop(s, active, T));
+    out.copy(REC_BASE[s]).setY(receptorDrop(s, active, T));
 
 /** Inclinação da hélice 6 (rad): ela se afasta do feixe quando o receptor é ativado. */
 export const helix6Angle = (s: Side, active: Side, T: number): number =>
@@ -33,19 +40,23 @@ export const helix6Angle = (s: Side, active: Side, T: number): number =>
 
 // ------------------------------------------------------------------ peptídeo
 
-const impact = (s: Side) => V(s * 0.75, MEM_HALF + 0.5, 0.6);
-const recoil = (s: Side) => V(s * 1.0, MEM_HALF + 1.35, 0.65);
-const start = (s: Side) => V(s * 6.5, 4.0, 0.8);
+const IMPACT = bySide(s => V(s * 0.75, MEM_HALF + 0.5, 0.6));
+const RECOIL = bySide(s => V(s * 1.0, MEM_HALF + 1.35, 0.65));
+const START = bySide(s => V(s * 6.5, 4.0, 0.8));
 
 export interface PeptideState { compact: number; pulse: number }
+const pepScratch: PeptideState = { compact: 0, pulse: 0 };
 
-/** Centro do peptídeo; `q` recebe a orientação. Devolve quanto ele está "dobrado" no bolsão. */
-export const peptidePose = (s: Side, T: number, clock: number, p: THREE.Vector3, q: THREE.Quaternion): PeptideState => {
+/**
+ * Centro do peptídeo; `q` recebe a orientação. Devolve quanto ele está "dobrado" no bolsão.
+ * Sem `out`, devolve um objeto de rascunho reaproveitado (ler na hora, não guardar).
+ */
+export const peptidePose = (s: Side, T: number, clock: number, p: THREE.Vector3, q: THREE.Quaternion, out: PeptideState = pepScratch): PeptideState => {
     const a = pp(T, PW.arrive);
     const b = pp(T, PW.bounce);
     const d = pp(T, PW.dock);
-    p.copy(start(s)).lerp(impact(s), a);
-    if (b > 0) p.lerp(recoil(s), b);
+    p.copy(START[s]).lerp(IMPACT[s], a);
+    if (b > 0) p.lerp(RECOIL[s], b);
     if (d > 0) {
         // sobe um pouco, desliza até o receptor e desce no bolsão
         const above = tv.set(s * RECEPTOR_X, 3.4, 0.5);
@@ -63,22 +74,23 @@ export const peptidePose = (s: Side, T: number, clock: number, p: THREE.Vector3,
     tumble.set(0.4 + clock * 0.21 + T * 1.7, clock * 0.17 + T * 2.3, 0.2 + clock * 0.13);
     q.setFromEuler(tumble).slerp(IDENT, d);
     // pulso de "barrado" quando bate na membrana
-    const pulse = phase(T, 0.6, 0.72) * (1 - phase(T, 1.05, 1.35));
-    return { compact: d, pulse };
+    out.compact = d;
+    out.pulse = phase(T, 0.6, 0.72) * (1 - phase(T, 1.05, 1.35));
+    return out;
 };
 
 // ------------------------------------------------------------------ proteína G
 
 /** Quadro do heterotrímero principal (as subunidades ficam abaixo dele). */
 export const trimerFrame = (s: Side, active: Side, T: number, out: THREE.Vector3): THREE.Vector3 => {
-    out.copy(trimerRest(s));
+    out.copy(T_REST[s]);
     if (s !== active) return out;
     const c = pp(T, PW.couple) * (1 - pp(T, PW.alphaBack));
-    return out.lerp(trimerCoupled(s), c);
+    return out.lerp(T_COUPLED[s], c);
 };
 
-const DOCK_OFF = (s: Side) => V(-s * 1.4, -0.15, 0.1);
-const alphaDock = (s: Side, e: number, out: THREE.Vector3) => out.copy(enzymes(s)[e]).add(DOCK_OFF(s));
+const DOCK_OFF = bySide(s => V(-s * 1.4, -0.15, 0.1));
+const alphaDock = (s: Side, e: number, out: THREE.Vector3) => out.copy(enzymes(s)[e]).add(DOCK_OFF[s]);
 
 const slidePath = (s: Side) => new THREE.CatmullRomCurve3([
     trimerCoupled(s).add(ALPHA_LOCAL),
@@ -94,7 +106,7 @@ export const alphaPos = (s: Side, active: Side, T: number, out: THREE.Vector3): 
     const back = pp(T, PW.alphaBack);
     if (sl <= 0) return trimerFrame(s, active, T, out).add(ALPHA_LOCAL);
     SLIDE[s].getPointAt(sl, out);
-    if (back > 0) out.lerp(tv2.copy(trimerRest(s)).add(ALPHA_LOCAL), back);
+    if (back > 0) out.lerp(tv2.copy(T_REST[s]).add(ALPHA_LOCAL), back);
     return out;
 };
 
@@ -115,15 +127,25 @@ export const extraAlphaPos = (s: Side, active: Side, i: number, T: number, out: 
 };
 
 export interface NucleotideState { offset: number; scale: number; gtp: number }
+const nucScratch: NucleotideState = { offset: 0, scale: 1, gtp: 0 };
+const setNuc = (o: NucleotideState, offset: number, scale: number, gtp: number) => {
+    o.offset = offset;
+    o.scale = scale;
+    o.gtp = gtp;
+    return o;
+};
 
-/** Nucleotídeo no bolso da α principal: GDP sai, GTP entra; na etapa 7 o GTP é hidrolisado (volta a GDP). */
-export const nucleotide = (s: Side, active: Side, T: number): NucleotideState => {
-    if (s !== active) return { offset: 0, scale: 1, gtp: 0 };
+/**
+ * Nucleotídeo no bolso da α principal: GDP sai, GTP entra; na etapa 7 o GTP é hidrolisado (volta a GDP).
+ * Sem `o`, escreve num objeto de rascunho reaproveitado (ler na hora, não guardar).
+ */
+export const nucleotide = (s: Side, active: Side, T: number, o: NucleotideState = nucScratch): NucleotideState => {
+    if (s !== active) return setNuc(o, 0, 1, 0);
     const out = pp(T, PW.gdpOut);
     const inn = pp(T, PW.gtpIn);
     const hydro = pp(T, PW.hydro);
-    if (out < 1) return { offset: out * 1.9, scale: 1 - out, gtp: 0 };
-    return { offset: (1 - inn) * 1.9, scale: inn, gtp: inn * (1 - hydro) };
+    if (out < 1) return setNuc(o, out * 1.9, 1 - out, 0);
+    return setNuc(o, (1 - inn) * 1.9, inn, inn * (1 - hydro));
 };
 
 /** GTP das α extras (aceso depois da onda de ativação). */
@@ -139,19 +161,18 @@ export const enzymeActivity = (s: Side, active: Side, e: number, T: number): num
 
 // ------------------------------------------------------------------ amplificação e β-arrestina
 
-/** Onda de ativação que sai do receptor e alcança as proteínas G extras (0…1 de raio; opacidade). */
-export const waveState = (s: Side, active: Side, T: number): { r: number; o: number } => {
-    if (s !== active) return { r: 0, o: 0 };
-    const k = pp(T, PW.wave);
-    return { r: k, o: Math.sin(Math.PI * k) };
-};
+/** Raio da onda de ativação que sai do receptor e alcança as proteínas G extras (0…1). */
+export const waveRadius = (s: Side, active: Side, T: number): number => (s === active ? pp(T, PW.wave) : 0);
+/** Opacidade da onda (0 fora da etapa 5 e no lado em repouso). */
+export const waveOpacity = (s: Side, active: Side, T: number): number => Math.sin(Math.PI * waveRadius(s, active, T));
 
-const ARRESTIN_FROM = (s: Side) => V(s * (RECEPTOR_X - 1.6), -7.6, 2.2);
-export const arrestinPos = (s: Side, T: number, out: THREE.Vector3): { scale: number } => {
+const ARRESTIN_FROM = bySide(s => V(s * (RECEPTOR_X - 1.6), -7.6, 2.2));
+/** Posição da β-arrestina em `out`; devolve a escala (0 = ainda não apareceu). */
+export const arrestinPos = (s: Side, T: number, out: THREE.Vector3): number => {
     const k = pp(T, PW.arrestin);
-    out.copy(ARRESTIN_FROM(s)).lerp(tv.set(s * RECEPTOR_X, -HELIX_BOTTOM - 0.85, 0.15), k);
+    out.copy(ARRESTIN_FROM[s]).lerp(tv.set(s * RECEPTOR_X, -HELIX_BOTTOM - 0.85, 0.15), k);
     out.y += receptorDrop(s, s, T);
-    return { scale: smooth(clamp01(k * 3)) };
+    return smooth(clamp01(k * 3));
 };
 
 /** Vesícula de internalização (cresce em volta do receptor que afunda). */

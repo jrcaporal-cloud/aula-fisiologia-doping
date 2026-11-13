@@ -1,4 +1,5 @@
 import { motion, type Transition } from 'framer-motion';
+import { DUR, stagger } from '../../../lib/motion';
 import { GENOMIC_COLOR } from './content';
 import { ARE_X, DNA_Y, EAA_COLOR, EASE, Label, MRNA_COLOR, Pill, PORE, Receptor, SRC_COLOR, Steroid } from './shapes';
 
@@ -42,19 +43,20 @@ interface GenomicLayerProps {
 }
 
 export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: GenomicLayerProps) => {
-    const t = (duration = 0.9, delay = 0): Transition => (reduced ? { duration: 0 } : { duration, delay, ease: EASE });
+    // Cada fase da via é um passo da sequência (useSequence): só a curva e a duração DENTRO da fase são tokens.
+    const t = (duration: number = DUR.draw, delay = 0): Transition => (reduced ? { duration: 0 } : { duration, delay, ease: EASE });
     const on = (p: number) => phase >= p;
 
     return (
         <motion.g
             initial={false}
             animate={{ opacity: dim ? 0.6 : 1 }}
-            transition={t(0.5)}
+            transition={t(DUR.morph)}
             onClick={onSelect}
             style={{ cursor: 'pointer' }}
         >
             {/* Rota tênue (passo 0) */}
-            <motion.g initial={false} animate={{ opacity: showRoute ? 1 : 0 }} transition={t(0.5)}>
+            <motion.g initial={false} animate={{ opacity: showRoute ? 1 : 0 }} transition={t(DUR.morph)}>
                 <motion.path
                     d={ROUTE_PATH}
                     fill="none"
@@ -83,14 +85,14 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                 strokeWidth={1.4}
                 initial={false}
                 animate={{ fillOpacity: on(3) ? 0.28 : 0.06, strokeOpacity: on(3) ? 1 : 0.4 }}
-                transition={t(0.6, on(3) ? 0.7 : 0)}
+                transition={t(DUR.bar, on(3) ? 0.3 : 0)}
             />
             <Label x={(ARE_X[0] + ARE_X[1]) / 2} y={DNA_Y + 28} anchor="middle" color="#BFDBFE" weight={700}>
                 ARE
             </Label>
 
             {/* Proteínas contráteis (resultado estrutural) */}
-            <motion.g initial={false} animate={{ opacity: on(5) ? 1 : 0 }} transition={t(0.5)}>
+            <motion.g initial={false} animate={{ opacity: on(5) ? 1 : 0 }} transition={t(DUR.morph)}>
                 {Z_LINES.map(x => (
                     <motion.path
                         key={x}
@@ -100,7 +102,7 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                         strokeLinecap="round"
                         initial={false}
                         animate={{ pathLength: on(6) ? 1 : 0 }}
-                        transition={t(0.5)}
+                        transition={t(DUR.morph)}
                     />
                 ))}
                 {ACTIN_ROWS.map((y, i) => (
@@ -112,7 +114,7 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                             strokeLinecap="round"
                             initial={false}
                             animate={{ pathLength: on(6) ? 1 : 0 }}
-                            transition={t(0.7, on(6) ? 0.2 + i * 0.08 : 0)}
+                            transition={t(DUR.bar, on(6) ? stagger(i, 0.2) : 0)}
                         />
                         <motion.path
                             d={`M ${SARC_X1},${y} L ${SARC_MID + 12},${y}`}
@@ -121,7 +123,7 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                             strokeLinecap="round"
                             initial={false}
                             animate={{ pathLength: on(6) ? 1 : 0 }}
-                            transition={t(0.7, on(6) ? 0.2 + i * 0.08 : 0)}
+                            transition={t(DUR.bar, on(6) ? stagger(i, 0.2) : 0)}
                         />
                     </g>
                 ))}
@@ -130,7 +132,7 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                         key={y}
                         initial={false}
                         animate={{ opacity: on(6) ? 1 : 0, scaleX: on(6) ? 1 : 0.2 }}
-                        transition={t(0.6, on(6) ? 0.45 + i * 0.1 : 0)}
+                        transition={t(DUR.bar, on(6) ? stagger(i, 0.45, 0.1) : 0)}
                     >
                         <rect x={SARC_MID - 58} y={y - 3.5} width={116} height={7} rx={3.5} fill={GENOMIC_COLOR} />
                         {Array.from({ length: 7 }, (_, k) => SARC_MID - 52 + k * 17.5).map(x => (
@@ -155,9 +157,9 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                 strokeLinecap="round"
                 initial={false}
                 animate={{ pathLength: on(5) ? 1 : 0, opacity: on(5) ? 1 : 0 }}
-                transition={t(1.1)}
+                transition={t(DUR.draw)}
             />
-            <motion.g initial={false} animate={{ opacity: on(5) ? 1 : 0 }} transition={t(0.4, on(5) ? 0.5 : 0)}>
+            <motion.g initial={false} animate={{ opacity: on(5) ? 1 : 0 }} transition={t(DUR.enter, on(5) ? 0.5 : 0)}>
                 <Label x={292} y={204} anchor="middle" color={MRNA_COLOR} weight={700}>
                     mRNA
                 </Label>
@@ -172,14 +174,14 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                         : phase === 0
                           ? { x: u.rest.x, y: [OUTSIDE_Y, 74, u.rest.y + EAA_IN_CUP], scale: [1, 1, 0.85] }
                           : { x: pos.x, y: pos.y + EAA_IN_CUP, scale: 0.85 };
-                const moveT = phase === 3 ? t(1.1, 0.05) : t(0.9);
+                const moveT = phase === 3 ? t(DUR.draw, 0.05) : t(DUR.draw);
                 return (
                     <g key={i}>
                         <motion.g initial={false} animate={{ x: pos.x, y: pos.y }} transition={moveT}>
                             <motion.g
                                 initial={false}
                                 animate={on(1) ? { x: -60, y: 38, opacity: 0 } : { x: -36, y: 14, opacity: 1 }}
-                                transition={t(0.9)}
+                                transition={t(DUR.draw)}
                             >
                                 <ellipse rx={30} ry={12.5} fill="#334155" stroke="#94A3B8" strokeWidth={1.2} />
                                 <text y={5.2} textAnchor="middle" fontSize={15} fill="#F1F5F9" className="font-mono" fontWeight={600}>
@@ -189,7 +191,7 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                             <motion.g
                                 initial={false}
                                 animate={on(1) ? { x: 60, y: 38, opacity: 0 } : { x: 36, y: 14, opacity: 1 }}
-                                transition={t(0.9, 0.08)}
+                                transition={t(DUR.draw, 0.08)}
                             >
                                 <ellipse rx={30} ry={12.5} fill="#334155" stroke="#94A3B8" strokeWidth={1.2} />
                                 <text y={5.2} textAnchor="middle" fontSize={15} fill="#F1F5F9" className="font-mono" fontWeight={600}>
@@ -197,13 +199,13 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
                                 </text>
                             </motion.g>
                             <Receptor color={GENOMIC_COLOR} />
-                            <motion.g initial={false} animate={{ opacity: on(2) ? 0 : 1 }} transition={t(on(2) ? 0.12 : 0.4)}>
+                            <motion.g initial={false} animate={{ opacity: on(2) ? 0 : 1 }} transition={t(on(2) ? DUR.exit : DUR.enter)}>
                                 <Label x={0} y={34} anchor="middle" color="#BFDBFE" weight={700}>
                                     AR
                                 </Label>
                             </motion.g>
                         </motion.g>
-                        <motion.g initial={false} animate={eaaTarget} transition={phase === 0 ? t(1.0) : moveT}>
+                        <motion.g initial={false} animate={eaaTarget} transition={phase === 0 ? t(DUR.draw) : moveT}>
                             <Steroid />
                         </motion.g>
                     </g>
@@ -211,14 +213,14 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
             })}
 
             {/* Nome da molécula enquanto está do lado de fora */}
-            <motion.g initial={false} animate={{ opacity: phase < 0 ? 1 : 0 }} transition={t(0.4)}>
+            <motion.g initial={false} animate={{ opacity: phase < 0 ? 1 : 0 }} transition={t(DUR.enter)}>
                 <Label x={UNITS[0].rest.x + 18} y={OUTSIDE_Y + 5} color={EAA_COLOR} weight={800}>
                     EAA
                 </Label>
             </motion.g>
 
             {/* Dimerização e coativador */}
-            <motion.g initial={false} animate={{ opacity: phase === 2 ? 1 : 0 }} transition={t(0.3, phase === 2 ? 0.3 : 0)}>
+            <motion.g initial={false} animate={{ opacity: phase === 2 ? 1 : 0 }} transition={t(DUR.enter, phase === 2 ? 0.3 : 0)}>
                 <Label x={220} y={205} color="#BFDBFE" weight={700}>
                     dimerização
                 </Label>
@@ -226,7 +228,7 @@ export const GenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: Genom
             <motion.g
                 initial={false}
                 animate={on(4) ? { x: 0, opacity: 1 } : { x: 50, opacity: 0 }}
-                transition={t(0.8)}
+                transition={t(DUR.draw)}
             >
                 <Pill x={252} y={296} w={64} color={SRC_COLOR}>
                     SRC-1

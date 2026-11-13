@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { Compounds } from './sarms/Compounds';
 import { STEPS } from './sarms/content';
@@ -26,15 +27,13 @@ const SarmsSim = () => {
         <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: ROOT_H }}>
             <StepHeader steps={STEPS} step={step} onSelect={setStep} id="sarms" />
             <div className="relative" style={{ height: BODY_H }}>
-                <AnimatePresence mode="wait">
-                    <motion.div key={key} className="absolute inset-0"
-                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.35, ease: 'easeOut' }}>
-                        {key === 'opening' && <Opening />}
-                        {key === 'ledger' && <Ledger step={step} />}
-                        {key === 'compounds' && <Compounds />}
-                    </motion.div>
-                </AnimatePresence>
+                <motion.div key={key} className="absolute inset-0"
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: DUR.enter, ease: EASE_OUT }}>
+                    {key === 'opening' && <Opening />}
+                    {key === 'ledger' && <Ledger step={step} />}
+                    {key === 'compounds' && <Compounds />}
+                </motion.div>
             </div>
         </div>
     );

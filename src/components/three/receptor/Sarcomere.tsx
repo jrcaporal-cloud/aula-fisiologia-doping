@@ -1,61 +1,19 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { SARC_CENTER, SARC_HALF, V, W, phase, ph } from './layout';
+import { SARC_CENTER, SARC_HALF, W, phase, ph } from './layout';
 import { SPHERE_LO, STICK_GEO, stickMatrix } from './geometry';
 import type { TimeRef } from './types';
 import { useHover } from './useHover';
+import { ACT_BEADS, ACT_STEP, HEAD_ROWS, LAT, MYO_HALF, R0_ACT, R1_ACT, type Fil } from './sarcLattice';
+import { MYOSIN_ROD, Z_DISC } from './shaders';
+import { commitInstances } from './instancing';
 
 /*
  * Sarcômero (eixo x): linhas Z nas pontas, filamentos finos de actina (dupla hélice de contas) presos às
  * linhas Z e filamentos grossos de miosina (com cabeças) no centro, em retículo hexagonal.
  * Na hipertrofia, novos filamentos são acrescentados na periferia → miofibrila mais espessa.
  */
-
-const D = 1.15;
-const A1 = V(0, D, 0);
-const A2 = V(0, D * 0.5, D * 0.866);
-const R0_MYO = 1.2 * D;
-const R1_MYO = 2.05 * D;
-const R0_ACT = 1.25 * D;
-const R1_ACT = 2.4 * D;
-const MYO_HALF = 3.5;
-const ACT_LEN = 4.3;
-const ACT_STEP = 0.2;
-const ACT_BEADS = Math.round(ACT_LEN / ACT_STEP);
-const HEAD_ROWS = 9;
-
-interface Fil { p: THREE.Vector3; isNew: boolean; delay: number; phase: number }
-
-const lattice = () => {
-    const myo: Fil[] = [];
-    const act: Fil[] = [];
-    const seen = new Set<string>();
-    for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) {
-        const p = A1.clone().multiplyScalar(i).addScaledVector(A2, j);
-        const r = p.length();
-        const ang = Math.atan2(p.z, p.y);
-        const delay = ((ang + Math.PI) / (Math.PI * 2)) * 0.22;
-        if (r <= R1_MYO) myo.push({ p, isNew: r > R0_MYO, delay, phase: i * 1.3 + j * 0.7 });
-        for (const k of [1, 2]) {
-            const c = p.clone().addScaledVector(A1.clone().add(A2), k / 3);
-            const key = `${c.y.toFixed(2)},${c.z.toFixed(2)}`;
-            const rc = c.length();
-            if (rc <= R1_ACT && !seen.has(key)) {
-                seen.add(key);
-                act.push({ p: c, isNew: rc > R0_ACT, delay: ((Math.atan2(c.z, c.y) + Math.PI) / (Math.PI * 2)) * 0.22, phase: i + j * 2 + k });
-            }
-        }
-    }
-    return { myo, act };
-};
-
-const LAT = lattice();
-
-/** Pontos (mundo) onde chegam as proteínas recém-sintetizadas (filamentos novos da periferia). */
-export const DELIVERY_TARGETS: THREE.Vector3[] = LAT.myo.filter(f => f.isNew)
-    .filter((_, k) => k % 2 === 0).slice(0, 6)
-    .map((f, k) => V(k % 2 === 0 ? -2 : 2, f.p.y, f.p.z).add(SARC_CENTER));
 
 const COL = {
     myo: new THREE.Color('#e2e8f0'),
@@ -66,11 +24,13 @@ const COL = {
 
 const tmpM = new THREE.Matrix4();
 const q0 = new THREE.Quaternion();
-const sc = new THREE.Vector3();
 const a = new THREE.Vector3();
 const b = new THREE.Vector3();
 const c = new THREE.Color();
 
+const HEAD_S = new THREE.Vector3(0.16, 0.1, 0.1);
+const ACT_S = new THREE.Vector3(0.105, 0.105, 0.105);
+const inGrowRange = (x: number) => x > W.grow[0] - 0.05 && x < W.grow[1] + 0.05;
 const growth = (T: number, f: Fil) => (f.isNew ? phase(T, W.grow[0] + f.delay, W.grow[0] + f.delay + 0.42) : 1);
 
 export const Sarcomere = ({ timeRef }: { timeRef: TimeRef }) => {
@@ -93,57 +53,71 @@ export const Sarcomere = ({ timeRef }: { timeRef: TimeRef }) => {
         if (Math.abs(T - lastT.current) < 1e-5) return;
         const was = lastT.current;
         lastT.current = T;
-        const inRange = (x: number) => x > W.grow[0] - 0.05 && x < W.grow[1] + 0.05;
-        if (was >= 0 && !inRange(T) && !inRange(was) && (T < W.grow[0]) === (was < W.grow[0])) return;
+        if (was >= 0 && !inGrowRange(T) && !inGrowRange(was) && (T < W.grow[0]) === (was < W.grow[0])) return;
         const r = rods.current;
         const h = heads.current;
         const ac = actin.current;
         if (!r || !h || !ac) return;
+        // só as instâncias visíveis, em sequência: count corta o resto (não desenha nem sobe para a GPU)
+        let ri = 0;
         let hi = 0;
-        LAT.myo.forEach((f, idx) => {
+        for (let idx = 0; idx < LAT.myo.length; idx++) {
+            const f = LAT.myo[idx];
             const g = growth(T, f);
+            if (g <= 0.001) continue;
             const fresh = f.isNew ? 1 - 0.9 * g : 0;
             a.set(-MYO_HALF * g, f.p.y, f.p.z).add(SARC_CENTER);
             b.set(MYO_HALF * g, f.p.y, f.p.z).add(SARC_CENTER);
-            r.setMatrixAt(idx, g > 0.001 ? stickMatrix(a, b, 0.13, tmpM) : tmpM.makeScale(0, 0, 0));
-            r.setColorAt(idx, c.copy(COL.myo).lerp(COL.fresh, Math.max(fresh, 0)));
-            for (const side of [-1, 1]) for (let k = 0; k < HEAD_ROWS; k++) for (let e = 0; e < 2; e++) {
-                const x = side * (0.55 + k * 0.36);
-                const vis = Math.abs(x) < MYO_HALF * g;
-                const ang = k * 2.09 + e * Math.PI + f.phase;
-                a.set(x, f.p.y + Math.cos(ang) * 0.27, f.p.z + Math.sin(ang) * 0.27).add(SARC_CENTER);
-                sc.set(0.16, 0.1, 0.1).multiplyScalar(vis ? 1 : 0);
-                h.setMatrixAt(hi, tmpM.compose(a, q0, sc));
-                h.setColorAt(hi++, c.copy(COL.head).lerp(COL.fresh, Math.max(fresh, 0)));
+            r.setMatrixAt(ri, stickMatrix(a, b, 0.13, tmpM));
+            r.setColorAt(ri++, c.copy(COL.myo).lerp(COL.fresh, fresh));
+            const reach = MYO_HALF * g;
+            for (let si = 0; si < 2; si++) {
+                const side = si === 0 ? -1 : 1;
+                for (let k = 0; k < HEAD_ROWS; k++) {
+                    const ax = 0.55 + k * 0.36;
+                    if (ax >= reach) break;
+                    for (let e = 0; e < 2; e++) {
+                        const ang = k * 2.09 + e * Math.PI + f.phase;
+                        a.set(side * ax, f.p.y + Math.cos(ang) * 0.27, f.p.z + Math.sin(ang) * 0.27).add(SARC_CENTER);
+                        h.setMatrixAt(hi, tmpM.compose(a, q0, HEAD_S));
+                        h.setColorAt(hi++, c.copy(COL.head).lerp(COL.fresh, fresh));
+                    }
+                }
             }
-        });
+        }
         let ai = 0;
-        LAT.act.forEach(f => {
+        for (let idx = 0; idx < LAT.act.length; idx++) {
+            const f = LAT.act[idx];
             const g = growth(T, f);
             const fresh = f.isNew ? 1 - 0.9 * g : 0;
-            for (const side of [-1, 1]) for (let s = 0; s < 2; s++) for (let k = 0; k < ACT_BEADS; k++) {
-                const dist = k * ACT_STEP;
-                const vis = k < g * ACT_BEADS;
-                const x = side * (SARC_HALF - 0.1 - dist);
-                const ang = dist * (Math.PI * 2 / 1.5) + s * Math.PI + f.phase;
-                a.set(x, f.p.y + Math.cos(ang) * 0.085, f.p.z + Math.sin(ang) * 0.085).add(SARC_CENTER);
-                const rr = vis ? 0.105 : 0;
-                ac.setMatrixAt(ai, tmpM.compose(a, q0, sc.set(rr, rr, rr)));
-                ac.setColorAt(ai++, c.copy(COL.act).lerp(COL.fresh, fresh).multiplyScalar(s === 0 ? 1 : 0.82));
+            const shown = g * ACT_BEADS;
+            for (let si = 0; si < 2; si++) {
+                const side = si === 0 ? -1 : 1;
+                for (let s = 0; s < 2; s++) {
+                    c.copy(COL.act).lerp(COL.fresh, fresh).multiplyScalar(s === 0 ? 1 : 0.82);
+                    for (let k = 0; k < ACT_BEADS && k < shown; k++) {
+                        const dist = k * ACT_STEP;
+                        const x = side * (SARC_HALF - 0.1 - dist);
+                        const ang = dist * (Math.PI * 2 / 1.5) + s * Math.PI + f.phase;
+                        a.set(x, f.p.y + Math.cos(ang) * 0.085, f.p.z + Math.sin(ang) * 0.085).add(SARC_CENTER);
+                        ac.setMatrixAt(ai, tmpM.compose(a, q0, ACT_S));
+                        ac.setColorAt(ai++, c);
+                    }
+                }
             }
-        });
-        [r, h, ac].forEach(m => {
-            m.instanceMatrix.needsUpdate = true;
-            if (m.instanceColor) m.instanceColor.needsUpdate = true;
-        });
+        }
+        commitInstances(r, ri);
+        commitInstances(h, hi);
+        commitInstances(ac, ai);
         const zr = (R0_ACT + 0.55) + (R1_ACT - R0_ACT) * ph(T, W.grow);
-        [zA.current, zB.current].forEach(z => { if (z) z.scale.set(zr, 1, zr); });
+        zA.current?.scale.set(zr, 1, zr);
+        zB.current?.scale.set(zr, 1, zr);
     });
 
     return (
         <group>
             <instancedMesh ref={rods} args={[STICK_GEO, undefined, LAT.myo.length]} frustumCulled={false} {...hoverMyo}>
-                <meshStandardMaterial roughness={0.45} />
+                <meshStandardMaterial roughness={0.45} {...MYOSIN_ROD} />
             </instancedMesh>
             <instancedMesh ref={heads} args={[SPHERE_LO, undefined, counts.heads]} frustumCulled={false}>
                 <meshStandardMaterial roughness={0.5} />
@@ -154,7 +128,7 @@ export const Sarcomere = ({ timeRef }: { timeRef: TimeRef }) => {
             {[-1, 1].map(side => (
                 <mesh key={side} ref={side < 0 ? zA : zB} position={[SARC_CENTER.x + side * SARC_HALF, SARC_CENTER.y, SARC_CENTER.z]} rotation={[0, 0, Math.PI / 2]}>
                     <cylinderGeometry args={[1, 1, 0.14, 48]} />
-                    <meshStandardMaterial color="#94a3b8" emissive="#475569" emissiveIntensity={0.4} transparent opacity={0.55} roughness={0.5} depthWrite={false} />
+                    <meshStandardMaterial color="#94a3b8" emissive="#475569" emissiveIntensity={0.4} transparent opacity={0.55} roughness={0.5} depthWrite={false} {...Z_DISC} />
                 </mesh>
             ))}
             {/* contorno do diâmetro inicial (referência para ver o espessamento) */}

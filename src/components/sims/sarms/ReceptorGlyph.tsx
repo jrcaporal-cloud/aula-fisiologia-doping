@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { COLORS } from './content';
 
 /**
@@ -51,7 +52,7 @@ export const SarmMolecule = ({ x, y }: { x: number; y: number }) => (
 export const ReceptorGlyph = ({ mode, active }: ReceptorGlyphProps) => {
     const reduced = useReducedMotion() ?? false;
     const agonist = mode === 'agonist';
-    const t = (delay: number, duration = 0.7) => ({ delay: reduced ? 0 : delay, duration: reduced ? 0 : duration, ease: 'easeOut' as const });
+    const t = (delay: number, duration: number = DUR.bar) => ({ delay: reduced ? 0 : delay, duration: reduced ? 0 : duration, ease: EASE_OUT });
     // Hélice 12: fecha sobre o bolsão (agonista) ou fica aberta noutra conformação (antagonista).
     const h12Angle = !active ? -48 : agonist ? 8 : -62;
 
@@ -85,25 +86,25 @@ export const ReceptorGlyph = ({ mode, active }: ReceptorGlyphProps) => {
 
             {/* Hélice 12 (pivô na borda superior direita do LBD) */}
             <g transform="translate(172 64)">
-                <motion.g initial={false} animate={{ rotate: h12Angle }} transition={t(0.7, 0.8)} style={{ originX: 0, originY: 0.5 }}>
+                <motion.g initial={false} animate={{ rotate: h12Angle }} transition={t(0.3, DUR.morph)} style={{ originX: 0, originY: 0.5 }}>
                     <rect x={0} y={-7} width={50} height={14} rx={7} fill={agonist ? COLORS.cyan : '#94A3B8'} fillOpacity={0.85} stroke="#E0F2FE" strokeWidth={1} />
                 </motion.g>
             </g>
             <text x={active && !agonist ? 214 : 226} y={active && !agonist ? 34 : 104} className="font-mono" fontSize={19} fontWeight={700} fill="#BAE6FD">H12</text>
 
             {/* Ligante */}
-            <motion.g initial={false} animate={{ y: active ? 0 : -86, opacity: active ? 1 : 0 }} transition={t(0.1, 0.7)}>
+            <motion.g initial={false} animate={{ y: active ? 0 : -86, opacity: active ? 1 : 0 }} transition={t(0.1, DUR.bar)}>
                 <SarmMolecule x={118} y={92} />
             </motion.g>
 
             {/* Coativador */}
             {agonist ? (
-                <motion.g initial={false} animate={{ x: active ? 0 : 60, opacity: active ? 1 : 0 }} transition={t(1.4, 0.6)}>
+                <motion.g initial={false} animate={{ x: active ? 0 : 60, opacity: active ? 1 : 0 }} transition={t(0.5, DUR.enter)}>
                     <path d="M 196 50 q 18 -26 44 -10 q 22 14 4 34 q -18 16 -40 2 q -14 -10 -8 -26 Z" fill="rgba(16,185,129,0.85)" stroke="#A7F3D0" strokeWidth={1.2} />
                     <text x={222} y={59} textAnchor="middle" className="font-mono" fontSize={19} fontWeight={700} fill="#ECFDF5">coat.</text>
                 </motion.g>
             ) : (
-                <motion.g initial={false} animate={{ opacity: active ? 1 : 0, x: active ? 0 : -20 }} transition={t(1.4, 0.6)}>
+                <motion.g initial={false} animate={{ opacity: active ? 1 : 0, x: active ? 0 : -20 }} transition={t(0.5, DUR.enter)}>
                     <path d="M 226 66 q 18 -26 44 -10 q 22 14 4 34 q -18 16 -40 2 q -14 -10 -8 -26 Z" fill="none" stroke="#6EE7B7" strokeWidth={1.4} strokeDasharray="4 4" />
                     <text x={250} y={76} textAnchor="middle" className="font-mono" fontSize={19} fontWeight={700} fill="#A7F3D0">coat.</text>
                     <path d="M 210 92 l 14 14 M 224 92 l -14 14" stroke={COLORS.red} strokeWidth={3} strokeLinecap="round" />
@@ -112,12 +113,12 @@ export const ReceptorGlyph = ({ mode, active }: ReceptorGlyphProps) => {
 
             {/* Saída transcricional */}
             {agonist ? (
-                <motion.path d={`M 166 ${DNA_Y - 2} C 210 ${DNA_Y - 30}, 250 ${DNA_Y - 30}, 292 ${DNA_Y - 14}`} fill="none" stroke={COLORS.green} strokeWidth={3}
+                <motion.path d={`M 166 ${DNA_Y - 2} C 210 ${DNA_Y - 30}, 250 ${DNA_Y - 30}, 292 ${DNA_Y - 14}`} fill="none" stroke={COLORS.coact} strokeWidth={3}
                     strokeDasharray="8 7" initial={false}
                     animate={active ? { opacity: 1, strokeDashoffset: reduced ? 0 : [0, -60] } : { opacity: 0 }}
-                    transition={active && !reduced ? { opacity: { delay: 2, duration: 0.4 }, strokeDashoffset: { duration: 1.6, repeat: Infinity, ease: 'linear' } } : { duration: 0.3 }} />
+                    transition={active && !reduced ? { opacity: { delay: 0.7, duration: DUR.enter, ease: EASE_OUT }, strokeDashoffset: { duration: 1.6, repeat: Infinity, ease: 'linear' } } : { duration: DUR.enter }} />
             ) : (
-                <motion.g initial={false} animate={{ opacity: active ? 1 : 0 }} transition={t(2, 0.4)}>
+                <motion.g initial={false} animate={{ opacity: active ? 1 : 0 }} transition={t(0.7, DUR.enter)}>
                     <path d={`M 166 ${DNA_Y - 2} C 190 ${DNA_Y - 22}, 210 ${DNA_Y - 24}, 228 ${DNA_Y - 20}`} fill="none" stroke="#94A3B8" strokeWidth={3} strokeDasharray="8 7" />
                     <line x1={236} x2={236} y1={DNA_Y - 34} y2={DNA_Y - 6} stroke={COLORS.red} strokeWidth={4} strokeLinecap="round" />
                 </motion.g>

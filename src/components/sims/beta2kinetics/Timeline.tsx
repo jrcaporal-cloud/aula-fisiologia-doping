@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 import { C, PK } from './content';
 import { CardarineLane } from './CardarineLane';
 import {
@@ -32,8 +33,8 @@ const LaneFrame = ({ box, color, active, name, sub, tag, dim }: LaneFrameProps) 
         <motion.rect x={2} y={box.top} width={VB.w - 4} height={box.bottom - box.top} rx={12}
             initial={false}
             animate={{ fill: active ? `${color}12` : 'rgba(255,255,255,0.025)', stroke: active ? `${color}aa` : 'rgba(255,255,255,0.10)' }}
-            transition={{ duration: 0.4 }} strokeWidth={1.2} />
-        <text x={14} y={box.top + 24} className="font-display" fontSize={18} fontWeight={700} fill={color}>{name}</text>
+            transition={{ duration: DUR.morph, ease: EASE_OUT }} strokeWidth={1.2} />
+        <text x={14} y={box.top + 24} className="font-body" fontSize={18} fontWeight={700} fill={color}>{name}</text>
         <text x={14} y={box.top + 46} className="font-body" fontSize={17} fill="#F3F4F6">{sub}</text>
         <text x={14} y={box.top + 70} className="font-mono" fontSize={17} fontWeight={700} fill="#F9FAFB">{tag}</text>
         {/* eixo de % */}
@@ -61,7 +62,7 @@ const HalfMark = ({ box, h0, h1, color, ink, label, show, delay }: HalfMarkProps
     const x0 = xFromHours(h0);
     const x1 = xFromHours(h1);
     return (
-        <motion.g initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.4, delay: show ? delay : 0 }}>
+        <motion.g initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: DUR.enter, delay: show ? delay : 0, ease: EASE_OUT }}>
             <line x1={x0} x2={x0} y1={y} y2={box.y0} stroke={ink} strokeDasharray="3 4" />
             {x1 > x0 + 1 && <line x1={x1} x2={x1} y1={y} y2={box.y0} stroke={ink} strokeDasharray="3 4" />}
             {x1 > x0 + 1 && <rect x={x0} y={box.y0 - 5} width={x1 - x0} height={5} fill={color} opacity={0.7} />}
@@ -94,11 +95,11 @@ const Cursor = ({ u, step }: CursorProps) => {
             <rect x={x - 42} y={AXIS_Y + 3} width={84} height={23} rx={6} fill="#F9FAFB" />
             <text x={x} y={AXIS_Y + 20} textAnchor="middle" className="font-mono" fontSize={17} fontWeight={700} fill="#050510">{formatHours(h)}</text>
             <circle cx={x} cy={yFromPct(BOXES[0], clen)} r={5} fill={C.clen} stroke="#fff" strokeWidth={1.5} />
-            <text x={x + dx} y={yFromPct(BOXES[0], clen) - 8} textAnchor={anchor} className="font-mono" fontSize={17} fontWeight={700} fill="#FFE4E6">{formatPct(clen)}</text>
+            <text x={x + dx} y={yFromPct(BOXES[0], clen) - 8} textAnchor={anchor} className="font-mono" fontSize={17} fontWeight={700} fill="#F3E8FF">{formatPct(clen)}</text>
             {step >= 1 && (
                 <g>
                     <circle cx={x} cy={yFromPct(BOXES[1], (sMin + sMax) / 2)} r={5} fill={C.salb} stroke="#fff" strokeWidth={1.5} />
-                    <text x={x + dx} y={yFromPct(BOXES[1], (sMin + sMax) / 2) - 8} textAnchor={anchor} className="font-mono" fontSize={17} fontWeight={700} fill="#CFFAFE">{sLabel}</text>
+                    <text x={x + dx} y={yFromPct(BOXES[1], (sMin + sMax) / 2) - 8} textAnchor={anchor} className="font-mono" fontSize={17} fontWeight={700} fill="#E0F2FE">{sLabel}</text>
                 </g>
             )}
         </g>
@@ -112,7 +113,7 @@ interface TimelineProps {
 
 export const Timeline = ({ step, cursorU }: TimelineProps) => {
     const reduced = useReducedMotion() ?? false;
-    const draw = (delay: number) => ({ duration: reduced ? 0 : 1.3, delay: reduced ? 0 : delay, ease: 'easeOut' as const });
+    const draw = (delay: number) => ({ duration: reduced ? 0 : DUR.draw, delay: reduced ? 0 : delay, ease: EASE_IN_OUT });
     const showSalb = step >= 1;
     const tachyX0 = xFromHours(PK.tachyMinDays * 24);
     const tachyX1 = xFromHours(PK.tachyMaxDays * 24);
@@ -141,28 +142,28 @@ export const Timeline = ({ step, cursorU }: TimelineProps) => {
 
             {/* Faixa 1: Clembuterol */}
             <LaneFrame box={cb} color={C.clen} active={step === 0} name="Clembuterol" sub="agonista β2" tag={`t½ ~${PK.clenHalfLifeH} h`} />
-            <motion.g initial={false} animate={{ opacity: step === 0 ? 1 : 0.85 }}>
+            <motion.g initial={false} animate={{ opacity: step === 0 ? 1 : 0.85 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                 <rect x={tachyX0} y={cb.y0 - 14} width={tachyX1 - tachyX0} height={14} fill="url(#b2k-hatch)" stroke={C.clen} strokeOpacity={0.8} rx={3} />
                 <g textAnchor="end" className="font-body">
-                    <text x={PLOT.r - 4} y={cb.y100 + 8} fontSize={18} fontWeight={700} fill="#FFE4E6">taquifilaxia</text>
+                    <text x={PLOT.r - 4} y={cb.y100 + 8} fontSize={18} fontWeight={700} fill="#F3E8FF">taquifilaxia</text>
                     <text x={PLOT.r - 4} y={cb.y100 + 27} fontSize={17} fill="#F9FAFB">{PK.tachyMinDays}-{PK.tachyMaxDays} dias de uso</text>
                     <text x={PLOT.r - 4} y={cb.y100 + 46} fontSize={17} fill="#F9FAFB">down-regulation β2</text>
                 </g>
             </motion.g>
             <motion.path key={`clen-${reduced}`} d={CLEN_PATH} fill="none" stroke={C.clen} strokeWidth={3} strokeLinecap="round"
-                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={draw(0.2)} />
-            <HalfMark box={cb} h0={PK.clenHalfLifeH} h1={PK.clenHalfLifeH} color={C.clen} ink="#FECDD3" label={`t½ ~${PK.clenHalfLifeH} h`} show delay={reduced ? 0 : 1.1} />
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={draw(0.15)} />
+            <HalfMark box={cb} h0={PK.clenHalfLifeH} h1={PK.clenHalfLifeH} color={C.clen} ink="#E9D5FF" label={`t½ ~${PK.clenHalfLifeH} h`} show delay={reduced ? 0 : 0.6} />
 
             {/* Faixa 2: Salbutamol */}
             <LaneFrame box={sb} color={C.salb} active={step === 1 || step === 2} name="Salbutamol" sub="Albuterol · β2" tag={`t½ ~${PK.salbHalfLifeMinH} a ${PK.salbHalfLifeMaxH} h`} dim={!showSalb} />
             {showSalb ? (
                 <g>
-                    <motion.path d={SALB_BAND} fill={C.salb} initial={{ opacity: 0 }} animate={{ opacity: 0.22 }} transition={{ duration: 0.6, delay: reduced ? 0 : 0.9 }} />
+                    <motion.path d={SALB_BAND} fill={C.salb} initial={{ opacity: 0 }} animate={{ opacity: 0.22 }} transition={{ duration: DUR.enter, delay: reduced ? 0 : 0.6, ease: EASE_OUT }} />
                     <motion.path d={SALB_MAX} fill="none" stroke={C.salb} strokeWidth={2.6} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={draw(0.1)} />
                     <motion.path d={SALB_MIN} fill="none" stroke={C.salb} strokeWidth={2.6} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={draw(0.1)} />
-                    <HalfMark box={sb} h0={PK.salbHalfLifeMinH} h1={PK.salbHalfLifeMaxH} color={C.salb} ink="#A7F3D0" label={`t½ ~${PK.salbHalfLifeMinH} a ${PK.salbHalfLifeMaxH} h`} show delay={reduced ? 0 : 1.1} />
-                    <motion.g initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: reduced ? 0 : 1.5 }}>
-                        <text x={PLOT.r - 8} y={sb.y100 + 15} textAnchor="end" className="font-body" fontSize={18} fontWeight={700} fill="#A7F3D0">eliminado rapidamente</text>
+                    <HalfMark box={sb} h0={PK.salbHalfLifeMinH} h1={PK.salbHalfLifeMaxH} color={C.salb} ink="#BAE6FD" label={`t½ ~${PK.salbHalfLifeMinH} a ${PK.salbHalfLifeMaxH} h`} show delay={reduced ? 0 : 0.6} />
+                    <motion.g initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: DUR.enter, delay: reduced ? 0 : 0.75, ease: EASE_OUT }}>
+                        <text x={PLOT.r - 8} y={sb.y100 + 15} textAnchor="end" className="font-body" fontSize={18} fontWeight={700} fill="#BAE6FD">eliminado rapidamente</text>
                         <text x={PLOT.r - 8} y={sb.y100 + 35} textAnchor="end" className="font-body" fontSize={17} fill="#F9FAFB">escapando da janela de detecção</text>
                     </motion.g>
                 </g>

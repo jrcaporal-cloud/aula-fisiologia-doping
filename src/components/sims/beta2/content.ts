@@ -4,15 +4,24 @@
  * GW1516 ter sido abandonado na Fase II vem do slide "Pilares" (slidesData.ts, "O caso GW501516").
  */
 
+import { SUBSTANCE } from '../../../lib/palette';
+
+/**
+ * Cores: receptor β2, clembuterol e GW1516 (PPARδ) na cor fixa de beta-2 da aula (a mesma do s29);
+ * via inalatória no azul de "permitido". Âmbar = via oral sistêmica; rosa = músculo/hipertrofia.
+ */
 export const C = {
+    /** Receptor β2 e a via PKA/cAMP. */
+    beta2: SUBSTANCE.beta2,
+    /** Clembuterol (beta-2). */
+    clen: SUBSTANCE.beta2,
     red: '#E11D48',
     rose: '#FB7185',
     blue: '#60A5FA',
-    green: '#10B981',
-    /** Via inalatória: azul (e não verde) para não competir com âmbar/vermelho em daltonismo. */
-    inhaled: '#60A5FA',
+    /** Via inalatória (permitida até o limiar): azul de "permitido", nunca verde (daltonismo). */
+    inhaled: SUBSTANCE.allowed,
     amber: '#F59E0B',
-    purple: '#A855F7',
+    purple: SUBSTANCE.beta2,
     cyan: '#22D3EE',
 } as const;
 
@@ -24,10 +33,10 @@ export interface StepInfo {
 }
 
 export const STEPS: readonly StepInfo[] = [
-    { label: 'Receptor', title: 'Dois tecidos, um receptor', caption: 'β2 no brônquio e no músculo esquelético', color: C.cyan },
-    { label: 'Inalatório', title: 'Dose inalatória: medicamento para asma', caption: 'limiar WADA 1.600 µg/24 h', color: C.inhaled },
+    { label: 'Receptor', title: 'Dois tecidos, um receptor', caption: 'β2 no brônquio e no músculo esquelético', color: C.beta2 },
+    { label: 'Inalatório', title: 'Inalado: remédio para asma', caption: 'limiar WADA 1.600 µg/24 h', color: C.inhaled },
     { label: 'Sistêmico', title: 'Dose sistêmica: a zona cinzenta', caption: 'via oral >8 mg', color: C.amber },
-    { label: 'Clembuterol', title: 'Clembuterol: meia-vida longa, taquifilaxia', caption: 'down-regulation em 14-21 dias', color: C.rose },
+    { label: 'Clembuterol', title: 'Clembuterol: meia-vida longa', caption: 'taquifilaxia em 14-21 dias', color: C.clen },
     { label: 'GW1516', title: 'Cardarine (GW1516): não é beta-2', caption: 'agonista PPARδ → PGC-1α', color: C.purple },
 ];
 
@@ -47,7 +56,7 @@ export const TEXTS: readonly StepText[] = [
     {
         kicker: 'Receptores β2 adrenérgicos',
         title: 'Brônquio E músculo esquelético',
-        color: C.cyan,
+        color: C.beta2,
         paras: [
             { text: 'Receptores beta-2 adrenérgicos existem no músculo liso bronquial E no músculo esquelético.' },
             { text: 'O que decide o efeito é a via e a dose.' },
@@ -75,7 +84,7 @@ export const TEXTS: readonly StepText[] = [
     {
         kicker: 'Clembuterol',
         title: 'Alta afinidade β2 sistêmica',
-        color: C.rose,
+        color: C.clen,
         paras: [
             { lead: 'Meia-vida:', text: '~35 h.' },
             { lead: 'Down-regulation', text: 'de receptores ocorre em 14-21 dias (taquifilaxia).' },

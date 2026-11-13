@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { ACTIONS } from './medico/data';
 
@@ -16,17 +17,17 @@ export default function ConsultorioSim() {
                         key={a.title}
                         initial={false}
                         animate={{ opacity: shown ? 1 : 0, x: shown ? 0 : -24 }}
-                        transition={{ duration: 0.4 }}
+                        transition={{ duration: DUR.enter, ease: EASE_OUT }}
                         className={`flex items-center gap-6 rounded-2xl border px-6 py-4 ${
                             active ? 'border-brand-red bg-brand-crimson/25' : 'border-white/15 bg-white/[0.04]'
                         }`}
                     >
-                        <span className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-display text-2xl font-semibold ${active ? 'bg-brand-red text-white' : 'bg-white/10 text-gray-100'}`}>
+                        <span className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-2xl font-semibold ${active ? 'bg-brand-red text-white' : 'bg-white/10 text-gray-100'}`}>
                             {i + 1}
                         </span>
                         <div>
-                            <p className="font-display text-[1.6rem] leading-tight font-semibold text-white">{a.title}</p>
-                            <p className="text-[1.15rem] leading-snug text-gray-200 mt-1">{a.text}</p>
+                            <p className="text-[1.6rem] leading-tight font-semibold text-white">{a.title}</p>
+                            <p className="text-[1.15rem] leading-snug mt-1" style={{ color: '#D1D5DB' }}>{a.text}</p>
                         </div>
                     </motion.li>
                 );

@@ -1,5 +1,6 @@
 import { useState, type KeyboardEvent } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 import { SvgText } from '../peptide/ui';
 import type { CardioPhase } from '../../../data/cardioSteps';
 import { br } from './format';
@@ -146,7 +147,7 @@ export const Convergence = ({ phase }: ConvergenceProps) => {
                                 opacity: selection === null ? 0.42 + link.weight * 0.1 : active ? 0.95 : 0.08,
                                 strokeWidth: link.weight + (focused ? 1.5 : 0),
                             }}
-                            transition={{ pathLength: { duration: 0.7, delay: 0.5 + i * 0.09 }, opacity: { duration: 0.25 }, strokeWidth: { duration: 0.25 } }} />
+                            transition={{ pathLength: { duration: DUR.draw, delay: stagger(i, 0.1, 0.02), ease: EASE_IN_OUT }, opacity: { duration: DUR.text, ease: EASE_OUT }, strokeWidth: { duration: DUR.text, ease: EASE_OUT } }} />
                         {!reduce && [0, 1].map(k => (
                             <circle key={k} r={focused ? 4.5 : 3.2} fill="#FECDD3" opacity={selection === null ? 0.55 : active ? 1 : 0}>
                                 <animateMotion path={d} dur={`${3.4 + (i % 3) * 0.5}s`} repeatCount="indefinite"
@@ -164,12 +165,12 @@ export const Convergence = ({ phase }: ConvergenceProps) => {
                 const style = REVERSAL_STYLE[d.reversal];
                 return (
                     <motion.g key={d.id} {...handlers('driver', d.id)}
-                        initial={{ opacity: 0 }} animate={{ opacity: lit ? 1 : 0.3 }} transition={{ duration: 0.3, delay: selection === null ? i * 0.1 : 0 }}>
+                        initial={{ opacity: 0 }} animate={{ opacity: lit ? 1 : 0.45 }} transition={{ duration: DUR.enter, delay: selection === null ? stagger(i, 0, 0.08) : 0, ease: EASE_OUT }}>
                         <rect x={LEFT_X} y={y} width={BOX_W} height={BOX_H} rx={12} fill={picked ? '#2a1019' : '#12121c'}
                             stroke="#E11D48" strokeWidth={picked ? 2.6 : 1.6} />
                         <SvgText x={LEFT_X + 15} y={y + 23} size={18} color="#FFFFFF" text={d.label} />
-                        <motion.g key={phase} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                            <SvgText x={LEFT_X + 15} y={y + 44} size={16} color={afterStopping ? style.color : '#B6BCC8'}
+                        <motion.g key={phase} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.text, ease: EASE_OUT }}>
+                            <SvgText x={LEFT_X + 15} y={y + 44} size={16} color={afterStopping ? style.color : '#D1D5DB'}
                                 text={afterStopping ? d.reversalText : d.detail} />
                             {afterStopping && (
                                 <g>
@@ -190,15 +191,15 @@ export const Convergence = ({ phase }: ConvergenceProps) => {
                 const picked = selection?.side === 'outcome' && selection.id === o.id;
                 return (
                     <motion.g key={o.id} {...handlers('outcome', o.id)}
-                        initial={{ opacity: 0 }} animate={{ opacity: lit ? 1 : 0.3 }} transition={{ duration: 0.3, delay: selection === null ? 0.25 + i * 0.1 : 0 }}>
+                        initial={{ opacity: 0 }} animate={{ opacity: lit ? 1 : 0.45 }} transition={{ duration: DUR.enter, delay: selection === null ? stagger(i, 0.1, 0.08) : 0, ease: EASE_OUT }}>
                         <rect x={RIGHT_X} y={y} width={BOX_W} height={BOX_H} rx={12} fill={picked ? '#2a2110' : '#12121c'}
                             stroke="#F59E0B" strokeWidth={picked ? 2.6 : 1.6} />
                         <SvgText x={RIGHT_X + 15} y={y + 24} size={18} color="#FFFFFF" text={o.label} />
                         <SvgText x={RIGHT_X + BOX_W - 14} y={y + 25} anchor="end" size={20} color="#FCD34D" weight={700} text={`HR ${br(o.hr)}`} />
                         <rect x={RIGHT_X + 15} y={y + 36} width={BAR_W} height={6} rx={3} fill="rgba(255,255,255,0.1)" />
-                        <motion.rect x={RIGHT_X + 15} y={y + 36} height={6} rx={3} fill="#F59E0B"
-                            initial={{ width: 0 }} animate={{ width: hrWidth(o.hr) }}
-                            transition={{ duration: 0.8, delay: 0.7 + i * 0.1, ease: 'easeOut' }} />
+                        <motion.rect x={RIGHT_X + 15} y={y + 36} width={hrWidth(o.hr)} height={6} rx={3} fill="#F59E0B"
+                            style={{ originX: 0 }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                            transition={{ duration: DUR.bar, delay: stagger(i, 0.3, 0.06), ease: EASE_OUT }} />
                     </motion.g>
                 );
             })}

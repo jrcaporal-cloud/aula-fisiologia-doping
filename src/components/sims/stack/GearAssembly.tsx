@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 import { buildGears, contactPoint, gearPath, type GearSpec } from './gearGeometry';
 import { PIECES, type Piece } from './content';
 import { useGearSpin } from './useGearSpin';
@@ -11,7 +12,6 @@ export const GEAR_VIEW = { w: 450, h: 470 } as const;
 
 const GEARS = buildGears({ teeth: [16, 12, 8], c1: [158, 316], a12: (-58 * Math.PI) / 180, a23: (14 * Math.PI) / 180 });
 const PATHS = GEARS.map(g => gearPath(g.teeth, g.r));
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Furos de alívio: deixam o giro visível sem girar os rótulos. */
 const holes = (g: GearSpec, count: number) =>
@@ -22,9 +22,9 @@ const holes = (g: GearSpec, count: number) =>
 
 /** Posição do rótulo do papel de cada peça (fora da engrenagem quando ela é pequena). */
 const ROLE_POS: readonly { x: number; y: number; anchor: 'middle' | 'end' }[] = [
-    { x: GEARS[0].cx, y: GEARS[0].cy + GEARS[0].r + 34, anchor: 'middle' },
-    { x: GEARS[1].cx, y: GEARS[1].cy - GEARS[1].r - 22, anchor: 'middle' },
-    { x: GEAR_VIEW.w - 14, y: GEARS[2].cy + GEARS[2].r + 40, anchor: 'end' },
+    { x: GEARS[0].cx, y: GEARS[0].cy + GEARS[0].r + 42, anchor: 'middle' },
+    { x: GEARS[1].cx, y: GEARS[1].cy - GEARS[1].r - 24, anchor: 'middle' },
+    { x: GEAR_VIEW.w - 14, y: GEARS[2].cy + GEARS[2].r + 58, anchor: 'end' },
 ];
 
 interface GearProps {
@@ -59,7 +59,7 @@ const Gear = ({ index, piece, engaged, focus, ghost, alarm, reduced, setRef, onS
                 x: engaged || reduced ? 0 : 46,
                 y: engaged || reduced ? 0 : -34,
             }}
-            transition={{ duration: 0.9, ease: EASE }}
+            transition={{ duration: DUR.draw, ease: EASE_OUT }}
         >
             {engaged ? (
                 <>
@@ -67,20 +67,19 @@ const Gear = ({ index, piece, engaged, focus, ghost, alarm, reduced, setRef, onS
                         <motion.circle
                             cx={g.cx} cy={g.cy} r={g.r + 15} fill="none" stroke={c} strokeWidth={3}
                             animate={reduced ? { opacity: 0.7 } : { opacity: [0.15, 0.9, 0.15], strokeWidth: [2, 5, 2] }}
-                            transition={reduced ? { duration: 0.3 } : { duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+                            transition={reduced ? { duration: DUR.enter } : { duration: 1.4, repeat: Infinity, ease: EASE_IN_OUT }}
                         />
                     )}
                     <g ref={setRef}>
                         <motion.path
                             d={PATHS[index]}
                             animate={{ fillOpacity: ghost ? 0 : 1, strokeOpacity: ghost ? 0.55 : 1 }}
-                            transition={{ duration: 0.6 }}
+                            transition={{ duration: DUR.bar, ease: EASE_OUT }}
                             fill={fill}
                             stroke={c}
                             strokeWidth={2.4}
                             strokeDasharray={ghost ? '7 7' : undefined}
                             strokeLinejoin="round"
-                            style={{ filter: focus && !ghost ? `drop-shadow(0 0 14px ${c}88)` : undefined }}
                         />
                         {!ghost && index < 2 && holes(g, index === 0 ? 8 : 6)}
                         {!ghost && <circle r={g.r * 0.6} fill="none" stroke={c} strokeOpacity={0.35} strokeWidth={1.5} />}
@@ -89,7 +88,7 @@ const Gear = ({ index, piece, engaged, focus, ghost, alarm, reduced, setRef, onS
                         <text
                             key={line}
                             x={g.cx + (ghost ? 8 : 0)} y={nameY0 + k * lineGap} textAnchor="middle"
-                            fontFamily={DISPLAY} fontWeight={700} fontSize={nameSize}
+                            fontFamily={nameSize >= 30 ? DISPLAY : BODY} fontWeight={700} fontSize={nameSize}
                             fill={ghost ? piece.soft : '#fff'}
                             style={{ pointerEvents: 'none', ...(ghost ? { paintOrder: 'stroke', stroke: '#050510', strokeWidth: 4, strokeLinejoin: 'round' as const } : {}) }}
                         >
@@ -99,7 +98,8 @@ const Gear = ({ index, piece, engaged, focus, ghost, alarm, reduced, setRef, onS
                     <text
                         x={role.x} y={role.y} textAnchor={role.anchor}
                         fontFamily={MONO} fontSize={16} fontWeight={600} letterSpacing="0.04em"
-                        fill={piece.soft} style={{ pointerEvents: 'none', textTransform: 'uppercase' }}
+                        fill={piece.soft}
+                        style={{ pointerEvents: 'none', textTransform: 'uppercase', paintOrder: 'stroke', stroke: '#050510', strokeWidth: 5, strokeLinejoin: 'round' }}
                     >
                         {piece.role}
                     </text>
@@ -107,7 +107,7 @@ const Gear = ({ index, piece, engaged, focus, ghost, alarm, reduced, setRef, onS
                         <motion.text
                             key={line}
                             x={role.x} y={role.y + 22 * (k + 1)} textAnchor={role.anchor} fontFamily={MONO} fontSize={16} fontWeight={700}
-                            fill="#FDA4AF" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+                            fill="#A5F3FC" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: DUR.enter, ease: EASE_OUT }}
                             style={{ pointerEvents: 'none' }}
                         >
                             {line}
@@ -176,7 +176,7 @@ export const GearAssembly = ({ step, reduced, onSelect }: GearAssemblyProps) => 
                     style={{ originX: `${pulseAt[0]}px`, originY: `${pulseAt[1]}px` }}
                     initial={{ scale: 1, opacity: 0 }}
                     animate={{ scale: [1, 8], opacity: [0, 1, 0] }}
-                    transition={{ delay: 0.75, duration: 0.8, ease: 'easeOut' }}
+                    transition={{ delay: 0.4, duration: DUR.bar, ease: EASE_OUT }}
                 />
             )}
         </svg>

@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 import { CountText } from './CountText';
-import { LANES, SYSTEMS, verdictLabel, type Drug } from './data';
+import { LANES, verdictLabel, type Drug } from './data';
 import { LaneIcon } from './LaneBadge';
 import type { MapMode, Rect } from './geometry';
 import { Marker } from './Marker';
 
-export const EASE = [0.16, 1, 0.3, 1] as const;
+export { EASE_OUT as EASE } from '../../../lib/motion';
 
 interface DrugCardProps {
     drug: Drug;
@@ -27,11 +28,10 @@ const Field = ({ tag, value, large }: { tag: string; value: string; large: boole
 
 /** Um fármaco como marcador do mapa: o "o quê" (efeito), o "como" (via) e o selo de magnitude. */
 export const DrugCard = ({ drug, rect, mode, index, showMagnitude, reduced, dimmed, onSelect }: DrugCardProps) => {
-    const system = SYSTEMS[drug.system];
     const lane = LANES[drug.lane];
-    const color = system.color;
+    const color = drug.color;
     const inLane = mode === 'lane';
-    const moveDelay = reduced ? 0 : (inLane ? 0.08 * index : 0.05 * (5 - index));
+    const moveDelay = reduced ? 0 : (inLane ? stagger(index, 0, 0.06) : stagger(5 - index, 0, 0.05));
 
     return (
         <motion.button
@@ -39,30 +39,32 @@ export const DrugCard = ({ drug, rect, mode, index, showMagnitude, reduced, dimm
             onClick={onSelect}
             aria-label={`${drug.name}: ver colaterais`}
             className="absolute left-0 top-0 text-left rounded-2xl cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/60"
-            initial={{ opacity: 0, x: rect.x, y: rect.y + 24, width: rect.w, height: rect.h }}
-            animate={{ opacity: dimmed ? 0.6 : 1, x: rect.x, y: rect.y, width: rect.w, height: rect.h }}
+            // Tamanho no style (salta junto com o miolo); só x/y viajam — nada de animar largura/altura.
+            style={{ width: rect.w, height: rect.h }}
+            initial={{ opacity: 0, x: rect.x, y: rect.y + 24 }}
+            animate={{ opacity: dimmed ? 0.6 : 1, x: rect.x, y: rect.y }}
             transition={{
-                duration: reduced ? 0 : 0.95,
-                ease: EASE,
+                duration: reduced ? 0 : DUR.bar,
+                ease: EASE_IN_OUT,
                 delay: moveDelay,
-                opacity: { duration: reduced ? 0 : 0.5, delay: reduced ? 0 : 0.1 + index * 0.08 },
+                opacity: { duration: reduced ? 0 : DUR.enter, ease: EASE_OUT, delay: reduced ? 0 : stagger(index, 0.1) },
             }}
             whileHover={reduced ? undefined : { scale: 1.015 }}
         >
             <div
-                className="absolute inset-0 rounded-2xl border backdrop-blur-md"
+                className="absolute inset-0 rounded-2xl border"
                 style={{
                     borderColor: `${color}59`,
                     background: `linear-gradient(140deg, ${color}26 0%, rgba(8,8,18,0.9) 52%)`,
-                    boxShadow: showMagnitude ? `0 0 0 1px ${color}22, 0 10px 34px -12px ${color}88` : '0 10px 30px -18px rgba(0,0,0,0.9)',
-                    transition: 'box-shadow 0.6s ease',
+                    boxShadow: showMagnitude ? `0 0 0 1px ${color}55, 0 10px 30px -18px rgba(0,0,0,0.9)` : '0 10px 30px -18px rgba(0,0,0,0.9)',
+                    transition: 'box-shadow 600ms var(--ease-out)',
                 }}
             />
 
             <div className={`relative h-full flex flex-col ${inLane ? 'px-3.5 pt-4 pb-2.5 gap-1.5' : 'px-4 pt-4 pb-4 justify-between'}`}>
                 <div className="flex items-center gap-3 min-w-0">
                     <Marker system={drug.system} icon={drug.icon} color={color} size={inLane ? 34 : 42} />
-                    <span className={`font-display font-semibold text-white leading-tight ${inLane ? 'text-[17px]' : 'text-[21px]'}`}>
+                    <span className={`font-body font-semibold text-white leading-tight ${inLane ? 'text-[17px]' : 'text-[21px]'}`}>
                         {drug.name}
                     </span>
                     <AnimatePresence>
@@ -75,8 +77,8 @@ export const DrugCard = ({ drug, rect, mode, index, showMagnitude, reduced, dimm
                                 style={{ background: `${lane.color}1f`, border: `1px solid ${lane.color}77` }}
                                 initial={{ opacity: 0, scale: 0.6 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.6 }}
-                                transition={{ duration: reduced ? 0 : 0.4, delay: reduced ? 0 : 0.9 + 0.08 * index }}
+                                exit={{ opacity: 0, scale: 0.6, transition: { duration: DUR.exit } }}
+                                transition={{ duration: reduced ? 0 : DUR.enter, ease: EASE_OUT, delay: reduced ? 0 : stagger(index, 0.6, 0.06) }}
                             >
                                 <LaneIcon lane={drug.lane} color={lane.color} size={22} />
                                 {drug.hidden.endsWith('*') && <b className="pr-1 text-[18px] leading-none text-white">*</b>}
@@ -95,14 +97,14 @@ export const DrugCard = ({ drug, rect, mode, index, showMagnitude, reduced, dimm
                     <motion.span
                         key="mag"
                         className="absolute -top-[14px] right-3 flex items-center gap-1.5 rounded-full px-3 py-[3px] font-mono text-[15px] font-semibold text-white whitespace-nowrap"
-                        style={{ background: '#0b0b18', border: `1.5px solid ${color}`, boxShadow: `0 0 18px -4px ${color}` }}
+                        style={{ background: '#0b0b18', border: `1.5px solid ${color}` }}
                         initial={{ opacity: 0, scale: 0.4, y: 6 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.6 }}
-                        transition={{ duration: reduced ? 0 : 0.45, ease: EASE, delay: reduced ? 0 : 0.12 * index }}
+                        exit={{ opacity: 0, scale: 0.6, transition: { duration: DUR.exit } }}
+                        transition={{ duration: reduced ? 0 : DUR.enter, ease: EASE_OUT, delay: reduced ? 0 : stagger(index) }}
                     >
                         <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
-                        <CountText text={drug.magnitude} active={showMagnitude} delay={0.12 * index + 0.15} reduced={reduced} />
+                        <CountText text={drug.magnitude} active={showMagnitude} delay={stagger(index, 0.1)} reduced={reduced} />
                     </motion.span>
                 )}
             </AnimatePresence>

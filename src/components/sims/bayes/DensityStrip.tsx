@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { PRIOR, Y_MAX, density, type Predictive } from './model';
 import { BOTTOM, FS, STRIP_X0, STRIP_X1, TOP, yOf } from './layout';
 
@@ -65,7 +66,7 @@ export const DensityStrip = ({ visible, showPosterior, posterior, likelihood, li
 
                 {/* Exame novo: entra como verossimilhança */}
                 {likelihood && (
-                    <motion.g key={likelihoodKey} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+                    <motion.g key={likelihoodKey} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: DUR.bar, ease: EASE_OUT }}>
                         <path d={bell(likelihood)} fill="none" stroke={flagged ? '#E11D48' : '#F59E0B'} strokeWidth={2} />
                         <circle cx={BASE_X} cy={yOf(Math.exp(likelihood.m))} r={4.5} fill={flagged ? '#E11D48' : '#F59E0B'} stroke="#050510" strokeWidth={1.5} />
                     </motion.g>
@@ -74,7 +75,7 @@ export const DensityStrip = ({ visible, showPosterior, posterior, likelihood, li
         )}
 
         {/* Legenda */}
-        <g style={{ fontFamily: 'var(--font-body)', opacity: visible ? 1 : 0.6, transition: 'opacity 0.6s ease' }} fontSize={FS - 1}>
+        <g style={{ fontFamily: 'var(--font-body)', opacity: visible ? 1 : 0.6, transition: 'opacity 300ms var(--ease-out)' }} fontSize={FS - 1}>
             <line x1={STRIP_X0 + 4} x2={STRIP_X0 + 22} y1={BOTTOM + 17} y2={BOTTOM + 17} stroke="#CBD5E1" strokeWidth={2} strokeDasharray="5 3" />
             <text x={STRIP_X0 + 28} y={BOTTOM + 23} fill="#E5E7EB">priori (população)</text>
             <line x1={STRIP_X0 + 4} x2={STRIP_X0 + 22} y1={BOTTOM + 42} y2={BOTTOM + 42} stroke="#F59E0B" strokeWidth={2} />

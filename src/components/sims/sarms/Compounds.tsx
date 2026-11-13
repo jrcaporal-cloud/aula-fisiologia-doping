@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Activity, Droplets, FlaskConical } from 'lucide-react';
+import { DUR, EASE_OUT, stagger } from '../../../lib/motion';
 import { ALERT, COLORS, COMPOUNDS, TAG_LABEL, type Compound, type SideEffectTag } from './content';
 
 /** Passo 3: as três fichas comparáveis (Ação, Aparência Clínica, Colateral Subestimado — texto do slide). */
@@ -32,9 +33,9 @@ const Card = ({ c, index }: { c: Compound; index: number }) => {
     return (
         <motion.div className="rounded-2xl border px-4 py-3 flex flex-col gap-2 min-h-0"
             style={{ background: 'rgba(8,8,18,0.72)', borderColor: `${c.color}55`, borderLeft: `3px solid ${c.color}` }}
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 * index, duration: 0.45, ease: 'easeOut' }}>
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: stagger(index, 0, 0.12), duration: DUR.morph, ease: EASE_OUT }}>
             <div className="flex items-baseline justify-between gap-2">
-                <span className="font-display font-bold leading-none" style={{ color: c.color, fontSize: 28 }}>
+                <span className="font-bold leading-none" style={{ color: c.color, fontSize: 28 }}>
                     <span className="font-mono text-[15px] text-gray-200" style={{ marginRight: 8 }}>{c.n}.</span>{c.name}
                 </span>
                 <span className="font-mono text-[14px] px-2 py-0.5 rounded-md border border-white/20 text-gray-100">{c.code}</span>
@@ -42,7 +43,7 @@ const Card = ({ c, index }: { c: Compound; index: number }) => {
             <Field label="Ação">
                 <div className="flex items-center gap-3">
                     <ActionMeter level={c.level} color={c.color} />
-                    <span className="font-display text-[18px] font-semibold text-white">{c.action}</span>
+                    <span className="text-[18px] font-semibold text-white">{c.action}</span>
                 </div>
                 <p className="text-[16px] leading-snug text-gray-100 mt-1 min-h-[44px]">{c.actionNote}</p>
             </Field>
@@ -67,9 +68,9 @@ export const Compounds = () => (
         </div>
         <motion.div className="shrink-0 flex items-center justify-center gap-3 rounded-xl border px-4 py-1.5"
             style={{ borderColor: 'rgba(225,29,72,0.45)', background: 'rgba(225,29,72,0.08)' }}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 0.4 }}>
-            <span className="font-display text-[22px] font-bold" style={{ color: COLORS.rose }}>{ALERT.range}</span>
-            <span className="font-display text-[16px] text-white">{ALERT.text}</span>
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: DUR.enter, ease: EASE_OUT }}>
+            <span className="text-[22px] font-bold" style={{ color: COLORS.rose }}>{ALERT.range}</span>
+            <span className="text-[16px] text-white">{ALERT.text}</span>
         </motion.div>
     </div>
 );

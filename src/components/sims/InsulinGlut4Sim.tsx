@@ -5,6 +5,8 @@ import { InsulinScene } from './insulin/Scene';
 import { DoseControl, Meters, StepCard } from './insulin/Panels';
 import { DOSE_COMA, HYPO_THRESHOLD, STEP_COUNT, STEP_DOSE } from './insulin/model';
 import type { Telemetry } from './insulin/engine';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../lib/motion';
+import { SUBSTANCE } from '../../lib/palette';
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
 const subscribeReduced = (cb: () => void) => {
@@ -19,7 +21,7 @@ const INITIAL_TELEMETRY: Telemetry = { glucose: 1, glycogen: 0.18, bound: 0, ope
 /** Ícones da legenda, no mesmo código de cor da cena. */
 const LEGEND = [
     { label: 'Glicose', color: '#34d399', shape: 'hex' },
-    { label: 'Insulina', color: '#FBBF24', shape: 'gem' },
+    { label: 'Insulina', color: SUBSTANCE.insulin, shape: 'gem' },
     { label: 'GLUT4', color: '#60A5FA', shape: 'ring' },
     { label: 'Glicogênio', color: '#6ee7b7', shape: 'dots' },
 ] as const;
@@ -91,13 +93,13 @@ export default function InsulinGlut4Sim() {
                 <div className="relative min-w-0 flex-1 overflow-hidden rounded-2xl border border-white/10 bg-[#050510]">
                     <InsulinScene step={step} dose={dose} reduced={reduced} telemetry={telemetry} onTelemetry={onTelemetry} />
 
-                    <div className="pointer-events-none absolute left-3 top-2.5 rounded-md bg-[rgba(5,5,16,0.6)] px-2 py-0.5 font-mono text-[14px] uppercase tracking-[0.1em] text-rose-200">
+                    <div className="pointer-events-none absolute left-3 top-2.5 rounded-md bg-[rgba(5,5,16,0.82)] px-2 py-0.5 font-mono text-[14px] uppercase tracking-[0.1em] text-rose-200">
                         Sangue · interstício
                     </div>
-                    <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-[rgba(5,5,16,0.6)] px-2 py-0.5 font-mono text-[14px] uppercase tracking-[0.1em] text-sky-200">
+                    <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-[rgba(5,5,16,0.82)] px-2 py-0.5 font-mono text-[14px] uppercase tracking-[0.1em] text-sky-200">
                         Citoplasma · fibra muscular
                     </div>
-                    <div className="pointer-events-none absolute bottom-3 right-3 flex gap-3 rounded-lg border border-white/10 bg-[rgba(5,5,16,0.78)] px-3 py-1.5">
+                    <div className="pointer-events-none absolute bottom-3 right-3 flex gap-3 rounded-lg border border-white/10 bg-[rgba(5,5,16,0.9)] px-3 py-1.5">
                         {LEGEND.map(l => (
                             <span key={l.label} className="flex items-center gap-1.5 font-body text-[14.5px] text-gray-100">
                                 <LegendIcon shape={l.shape} color={l.color} />
@@ -112,11 +114,11 @@ export default function InsulinGlut4Sim() {
                                 key="alert"
                                 initial={{ opacity: 0, y: -12 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -12 }}
-                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                                className="pointer-events-none absolute left-4 top-12 rounded-xl border border-brand-red bg-[rgba(40,4,14,0.9)] px-4 py-2 text-center shadow-[0_0_30px_rgba(225,29,72,0.45)]"
+                                exit={{ opacity: 0, y: -12, transition: { duration: DUR.exit } }}
+                                transition={{ duration: DUR.enter, ease: EASE_OUT }}
+                                className="pointer-events-none absolute left-4 top-12 rounded-xl border border-brand-red bg-[rgba(40,4,14,0.94)] px-4 py-2 text-center"
                             >
-                                <div className="font-display text-[20px] font-bold uppercase tracking-wide text-rose-100">⚠ Hipoglicemia</div>
+                                <div className="text-[20px] font-bold uppercase tracking-wide text-rose-100">⚠ Hipoglicemia</div>
                                 <div className="font-body text-[15px] text-rose-100">O cérebro desliga por falta de glicose</div>
                             </motion.div>
                         )}
@@ -140,8 +142,8 @@ export default function InsulinGlut4Sim() {
                         style={{ boxShadow: 'inset 0 0 90px rgba(225,29,72,0.55), 0 0 40px rgba(225,29,72,0.35)' }}
                         initial={{ opacity: 0 }}
                         animate={reduced ? { opacity: 0.8 } : { opacity: [0.3, 1, 0.3] }}
-                        exit={{ opacity: 0 }}
-                        transition={reduced ? { duration: 0.3 } : { duration: 1.3, repeat: Infinity, ease: 'easeInOut' }}
+                        exit={{ opacity: 0, transition: { duration: DUR.exit } }}
+                        transition={reduced ? { duration: DUR.enter } : { duration: 1.3, repeat: Infinity, ease: EASE_IN_OUT }}
                     />
                 )}
             </AnimatePresence>

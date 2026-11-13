@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 import { TONE_STYLES, type FamilyTone } from './map';
 import { SvgText } from './ui';
 
@@ -37,7 +38,9 @@ const CHIPS: readonly Chip[] = [
 
 const byId = (id: string): OrganNode => NODES.find(n => n.id === id) ?? NODES[0];
 
-export const AxisDiagram = () => (
+export const AxisDiagram = () => {
+    const reduce = useReducedMotion();
+    return (
     <svg viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} className="w-full h-full" role="img" aria-label="Onde cada família de peptídeos age">
         <defs>
             <marker id="axis-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -55,11 +58,13 @@ export const AxisDiagram = () => (
             return (
                 <g key={l.label}>
                     <motion.line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(226,232,240,0.55)" strokeWidth={2} markerEnd="url(#axis-arrow)"
-                        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.3 + i * 0.25 }} />
-                    <motion.circle r={4.5} fill="#F8FAFC" cx={x1} cy={y1}
-                        initial={{ cx: x1, cy: y1, opacity: 0 }}
-                        animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 1, 0] }}
-                        transition={{ duration: 1.8, repeat: Infinity, delay: 1.2 + i * 0.5, ease: 'easeInOut' }} />
+                        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: DUR.bar, delay: stagger(i, 0.15, 0.1), ease: EASE_OUT }} />
+                    {!reduce && (
+                        <motion.circle r={4.5} fill="#F8FAFC" cx={x1} cy={y1}
+                            initial={{ cx: x1, cy: y1, opacity: 0 }}
+                            animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 1, 0] }}
+                            transition={{ duration: 1.8, repeat: Infinity, delay: 1.2 + i * 0.5, ease: EASE_IN_OUT }} />
+                    )}
                     <SvgText x={(x1 + x2) / 2 + (vertical ? 14 : 0)} y={(y1 + y2) / 2 - (vertical ? 0 : 10)} text={l.label}
                         anchor={vertical ? 'start' : 'middle'} size={16} color="#F1F5F9" weight={700} />
                 </g>
@@ -70,11 +75,11 @@ export const AxisDiagram = () => (
             return (
                 <motion.line key={`link-${c.text}`} x1={n.x + c.dx} y1={n.y + c.dy} x2={n.x} y2={n.y}
                     stroke={TONE_STYLES[c.tone].border} strokeWidth={1.5} strokeDasharray="4 5"
-                    initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} transition={{ duration: 0.4, delay: 1.0 + i * 0.18 }} />
+                    initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} transition={{ duration: DUR.enter, delay: stagger(i, 0.45, 0.08), ease: EASE_OUT }} />
             );
         })}
         {NODES.map((n, i) => (
-            <motion.g key={n.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35, delay: i * 0.08 }}
+            <motion.g key={n.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: DUR.enter, delay: stagger(i), ease: EASE_OUT }}
                 style={{ transformOrigin: `${n.x}px ${n.y}px` }}>
                 <rect x={n.x - NODE.w / 2} y={n.y - NODE.h / 2} width={NODE.w} height={NODE.h} rx={14}
                     fill="#16161f" stroke="rgba(255,255,255,0.28)" />
@@ -88,11 +93,12 @@ export const AxisDiagram = () => (
             const cx = n.x + c.dx;
             const cy = n.y + c.dy;
             return (
-                <motion.g key={c.text} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 1.0 + i * 0.18 }}>
+                <motion.g key={c.text} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, delay: stagger(i, 0.45, 0.08), ease: EASE_OUT }}>
                     <rect x={cx - w / 2} y={cy - 16} width={w} height={32} rx={16} fill={tone.bg} stroke={tone.border} strokeWidth={1.5} />
                     <SvgText x={cx} y={cy + 5.5} text={c.text} anchor="middle" size={15.5} color={tone.text} weight={700} />
                 </motion.g>
             );
         })}
     </svg>
-);
+    );
+};

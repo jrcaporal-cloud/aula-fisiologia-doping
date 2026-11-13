@@ -1,11 +1,12 @@
 import { Bike } from 'lucide-react';
 import { EpoChain } from '../extras/EpoChain';
+import { CASE_COLORS } from '../../../../lib/palette';
 import type { CaseData } from '../types';
 
 /** Slide "A Ciclista com Anemia 'Paradoxal'" — parsedPresentation.json id 27 (valores e referências da tabela). */
 export const CYCLIST: CaseData = {
     caseNumber: 'Caso clínico 02',
-    accent: '#FB7185',
+    accent: CASE_COLORS.cyclist,
     icon: Bike,
     stepNames: ['Relato', 'Exames', 'Hipótese', 'Lição'],
     stepCaptions: [

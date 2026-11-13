@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { COLORS } from './content';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 /**
  * Zoom da fibra muscular sob tensão: o dano mecânico libera MGF localmente, que ativa uma célula satélite;
@@ -43,7 +44,7 @@ export const LocalFiber = ({ active, boost }: LocalFiberProps) => {
     }, [active, period, reduce]);
 
     const shown = reduce ? 3 : count;
-    const cycle = { duration: period / 1000, repeat: Infinity, ease: 'easeInOut' as const };
+    const cycle = { duration: period / 1000, repeat: Infinity, ease: EASE_IN_OUT };
 
     return (
         <g>
@@ -59,7 +60,7 @@ export const LocalFiber = ({ active, boost }: LocalFiberProps) => {
                 </radialGradient>
             </defs>
             <motion.g animate={active && !reduce ? { scaleX: [1, 1.025, 1] } : { scaleX: 1 }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }} style={{ transformOrigin: `${(FIBER.x0 + FIBER.x1) / 2}px ${MID_Y}px` }}>
+                transition={{ duration: 2.4, repeat: Infinity, ease: EASE_IN_OUT }} style={{ transformOrigin: `${(FIBER.x0 + FIBER.x1) / 2}px ${MID_Y}px` }}>
                 <rect x={FIBER.x0} y={FIBER.y0} width={FIBER.x1 - FIBER.x0} height={FIBER.y1 - FIBER.y0} rx={22} fill="url(#igfd-fiber)" stroke="rgba(251,113,133,0.55)" strokeWidth={1.5} />
                 {Array.from({ length: 34 }, (_, i) => FIBER.x0 + 16 + i * 8.4).map(x => (
                     <line key={x} x1={x} x2={x} y1={FIBER.y0 + 5} y2={FIBER.y1 - 5} stroke="rgba(254,205,211,0.10)" strokeWidth={2} />
@@ -80,7 +81,7 @@ export const LocalFiber = ({ active, boost }: LocalFiberProps) => {
                     <motion.circle key={i} r={3.4} fill={COLORS.mgf}
                         initial={{ cx: DAMAGE_X, cy: MID_Y, opacity: 0 }}
                         animate={{ cx: [DAMAGE_X, DAMAGE_X + Math.cos(a) * 42], cy: [MID_Y, MID_Y + Math.sin(a) * 34], opacity: [0, 1, 0] }}
-                        transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.31, ease: 'easeOut' }} />
+                        transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.31, ease: EASE_OUT }} />
                 );
             })}
 
@@ -101,7 +102,7 @@ export const LocalFiber = ({ active, boost }: LocalFiberProps) => {
             )}
             {NEW_NUCLEI.slice(0, shown).map(([x, y]) => (
                 <motion.ellipse key={`${x}-${y}`} cx={x} cy={y} rx={8} ry={4} fill="#ECFDF5" stroke={COLORS.mgf} strokeWidth={1.6}
-                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4 }}
+                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}
                     style={{ transformOrigin: `${x}px ${y}px` }} />
             ))}
         </g>

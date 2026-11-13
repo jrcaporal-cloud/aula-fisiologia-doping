@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 import { cardioVitalsAt, type CardioPhase } from '../../../data/cardioSteps';
-import { CARDIO_SOURCE, CC } from './colors';
+import { CARDIO_SOURCE } from './colors';
 import { CARDIO_PHASES } from './phases';
-import type { StructureId } from './structures';
 
 /* Peças do painel lateral do modelo circulatório (todo texto com 14 px ou mais). */
 
 const ORDER: CardioPhase[] = ['uso', 'apos'];
+const TRAINED = '#7DD3FC';
 
 interface PhaseSwitchProps { phase: CardioPhase; onChange: (p: CardioPhase) => void }
 
@@ -33,9 +33,10 @@ export const PhaseSwitch = ({ phase, onChange }: PhaseSwitchProps) => (
                 );
             })}
         </div>
+        {/* Em 4:3 (< 1180 px) o painel estreita: a dica da tecla R sai para o seletor caber (a tecla continua valendo). */}
         <kbd
             title="A tecla R alterna entre Em uso e Depois de parar"
-            className="shrink-0 w-8 h-8 flex items-center justify-center rounded-md border border-white/20 bg-white/10 text-[14px] font-mono text-gray-100"
+            className="shrink-0 w-8 h-8 hidden min-[1180px]:flex items-center justify-center rounded-md border border-white/20 bg-white/10 text-[14px] font-mono text-gray-100"
         >
             R
         </kbd>
@@ -78,92 +79,25 @@ export const PhaseCard = ({ phase, step }: PhaseCardProps) => {
     );
 };
 
-/** `pin`: estrutura que o clique no item fixa (pode depender da etapa); sem `pin`, o item só informa. */
-interface LegendItem { color: string; label: string; steps: number[]; pin?: StructureId | ((step: number) => StructureId) }
-
-const LEGEND: LegendItem[] = [
-    { color: CC.myo, label: 'Miocárdio do VE', steps: [0, 1, 2, 3, 4, 7], pin: 'miocardio' },
-    { color: CC.blood, label: 'Cavidade do VE', steps: [0, 1, 2, 3], pin: 'cavidade' },
-    { color: CC.fibrose, label: 'Fibrose', steps: [2, 3, 7] },
-    { color: CC.valve, label: 'Valvas mitral e aórtica', steps: [0, 1, 3, 4], pin: step => (step === 4 ? 'aortica' : 'mitral') },
-    { color: CC.atrium, label: 'Átrio esquerdo', steps: [1, 3, 7], pin: 'atrioE' },
-    { color: CC.artery, label: 'Aorta e artéria', steps: [0, 4, 5, 6, 7], pin: step => (step <= 4 ? 'aorta' : 'arteria') },
-    { color: CC.endo, label: 'Endotélio', steps: [6], pin: 'endotelio' },
-    { color: CC.plaque, label: 'Placa (núcleo lipídico)', steps: [6, 7], pin: 'placa' },
-    { color: CC.cell, label: 'Hemácia', steps: [0, 5, 6, 7], pin: 'hemacia' },
-    { color: CC.arteriole, label: 'Arteríola', steps: [0, 4, 5], pin: 'arteriola' },
-    { color: CC.vein, label: 'Retorno venoso e átrio direito', steps: [0, 5, 7], pin: 'veia' },
-    { color: CC.pulm, label: 'Circulação pulmonar (esquemática)', steps: [0], pin: 'pulmonar' },
-];
-
-const TRAINED_ITEM = { color: CARDIO_PHASES.apos.color, label: 'Coração treinado (contorno)' };
-
-interface LegendProps {
-    step: number;
-    overlay: boolean;
-    pinnedId: StructureId | null;
-    onPin: (id: StructureId) => void;
-}
-
-/** Legenda por etapa. Cada item com estrutura vira botão: é o caminho por teclado (e o seguro, para a hemácia que corre) até o close-up. */
-export const Legend = ({ step, overlay, pinnedId, onPin }: LegendProps) => (
-    <div className="mt-4 pt-3.5 border-t border-white/10">
-        <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-            {LEGEND.filter(item => item.steps.includes(step)).map(item => {
-                const target = typeof item.pin === 'function' ? item.pin(step) : item.pin;
-                const dot = <span className="w-3 h-3 rounded-full shrink-0" style={{ background: item.color }} />;
-                if (!target) {
-                    return <div key={item.label} className="flex items-center gap-2 min-h-7 text-[14px] text-gray-300">{dot}{item.label}</div>;
-                }
-                const on = pinnedId === target;
-                return (
-                    <button
-                        key={item.label}
-                        type="button"
-                        onClick={() => onPin(target)}
-                        aria-pressed={on}
-                        aria-label={`Fixar e aproximar: ${item.label}`}
-                        className={`flex items-center gap-2 min-h-7 -mx-1.5 px-1.5 rounded-md text-left text-[14px] transition-colors ${on ? 'text-white bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/[0.07]'}`}
-                    >
-                        {dot}{item.label}
-                    </button>
-                );
-            })}
-            {overlay && (
-                <div className="flex items-center gap-2 min-h-7 text-[14px] text-cyan-100">
-                    <span className="w-3 h-3 rounded-full shrink-0 border-2" style={{ borderColor: TRAINED_ITEM.color }} />
-                    {TRAINED_ITEM.label}
-                </div>
-            )}
-        </div>
-    </div>
+/** "Contorno do treinado": tracejado do VE treinado por cima do corte (como no slide 2D). */
+export const ContourToggle = ({ on, onChange }: { on: boolean; onChange: (on: boolean) => void }) => (
+    <button
+        type="button"
+        role="switch"
+        aria-checked={on}
+        onClick={() => onChange(!on)}
+        className="w-full mt-4 flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] text-left active:scale-[0.99] transition-[background-color,transform] duration-150"
+    >
+        <svg width="34" height="18" aria-hidden className="shrink-0">
+            <line x1="2" y1="9" x2="32" y2="9" stroke={TRAINED} strokeWidth="2.4" strokeDasharray="6 4" />
+        </svg>
+        <span className="flex-1 min-w-0">
+            <span className="block text-[14px] font-semibold text-gray-100">Contorno do treinado</span>
+            <span className="block text-[14px] text-gray-400 leading-snug">parede e cavidade do ponto de partida</span>
+        </span>
+        <span className={`shrink-0 w-11 h-6 rounded-full p-0.5 transition-colors duration-200 ${on ? 'bg-sky-400/80' : 'bg-white/15'}`}>
+            <span className={`block w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${on ? 'translate-x-5' : ''}`} />
+        </span>
+    </button>
 );
 
-interface OverlayToggleProps { on: boolean; onChange: (on: boolean) => void }
-
-/** Interruptor do fantasma do coração treinado (desligado por padrão). */
-export const OverlayToggle = ({ on, onChange }: OverlayToggleProps) => {
-    const cyan = CARDIO_PHASES.apos.color;
-    return (
-        <div className="mt-5 flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/[0.03]">
-            <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold text-gray-200 uppercase tracking-wider">Sobrepor o treinado</p>
-                <p className="text-[14px] text-gray-400 leading-snug mt-0.5">Contorno da cavidade e da parede do coração da etapa 1, sobre o estado atual.</p>
-            </div>
-            <button
-                type="button"
-                role="switch"
-                aria-checked={on}
-                aria-label="Sobrepor o coração treinado"
-                onClick={() => onChange(!on)}
-                className="relative shrink-0 w-12 h-7 rounded-full border transition-colors duration-300"
-                style={on ? { background: `${cyan}40`, borderColor: `${cyan}cc` } : { background: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.2)' }}
-            >
-                <span
-                    className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-transform duration-300"
-                    style={{ background: on ? cyan : '#9CA3AF', transform: on ? 'translateX(20px)' : 'translateX(0)' }}
-                />
-            </button>
-        </div>
-    );
-};

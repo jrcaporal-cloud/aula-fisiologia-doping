@@ -3,13 +3,20 @@
  * Uma frase vem do slide 12 (ghaxis/content.ts, seção "Farmacocinética" da Hipófise):
  * "O hGH endógeno e exógeno são molecularmente idênticos".
  */
+import { SUBSTANCE } from '../../../lib/palette';
 
+
+/**
+ * GH e IGF-1 são a mesma substância da aula (eixo GH-IGF-1): verde `SUBSTANCE.gh` para o GH e
+ * tom claro para o IGF-1 (o azul anterior era a cor dos EAA). O âmbar não é a molécula: é a
+ * parcela injetada — convenção que o próprio texto do slide nomeia ("exógeno (âmbar)").
+ */
 export const COLORS = {
-    endo: '#34D399',
+    endo: SUBSTANCE.gh,
     exo: '#F59E0B',
     total: '#F3F4F6',
-    igf: '#60A5FA',
-    control: '#E11D48',
+    igf: '#6EE7B7',
+    control: SUBSTANCE.risk,
     iso: '#A855F7',
     iso20: '#22D3EE',
     warn: '#FBBF24',

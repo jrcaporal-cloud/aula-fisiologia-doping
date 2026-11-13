@@ -106,7 +106,7 @@ export const SynergyScene = ({ revealed, focus }: SynergySceneProps) => {
             {SYNERGY.map((s, i) => {
                 const a = ANCHORS[s.id];
                 return (
-                    <g key={s.id} style={{ opacity: isOn(i) ? lit(s.id) : 0, transition: 'opacity 0.4s ease' }}>
+                    <g key={s.id} style={{ opacity: isOn(i) ? lit(s.id) : 0, transition: 'opacity 300ms var(--ease-out)' }}>
                         <line x1={a.tag.x + (a.tag.anchor === 'start' ? 70 : -86)} y1={a.tag.y - 5} x2={a.target.x} y2={a.target.y}
                             stroke={s.color} strokeWidth={1.6} strokeDasharray="5 4" />
                         <rect x={a.tag.anchor === 'start' ? a.tag.x - 10 : a.tag.x - 92} y={a.tag.y - 22} width={s.id === 'ghigf' || s.id === 'insulin' ? 102 : 80} height={30} rx={9}

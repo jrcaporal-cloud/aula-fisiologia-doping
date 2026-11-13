@@ -6,6 +6,8 @@ import { CONTROL_T, INJ_T, T_MAX, clockLabel, type Route } from './ghkinetics/mo
 import { SidePanel } from './ghkinetics/SidePanel';
 import { AcromegalyStage } from './ghkinetics/Acromegaly';
 import { TimelineChart } from './ghkinetics/TimelineChart';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../lib/motion';
+import { IllustrativeTag } from '../deck/IllustrativeTag';
 
 /**
  * Slide "A Farmacocinética do GH Exógeno — por que o hGH é quase impossível de detectar".
@@ -27,9 +29,9 @@ const GhKineticsSim = () => {
         <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 488 }}>
             <div className="flex items-center justify-between gap-4 h-[42px] mb-1.5">
                 <div className="flex items-center gap-3 min-w-0">
-                    <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-                        className="font-display text-[18px] font-semibold truncate" style={{ color: info.color }}>
-                        {info.title}
+                    <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}
+                        className="text-[20px] font-semibold truncate" style={{ color: '#F3F4F6' }}>
+                        <span style={{ color: info.color }}>●</span> {info.title}
                     </motion.span>
                 </div>
                 <div className="flex items-center gap-1 rounded-2xl border border-white/10 p-1 shrink-0" style={CARD_BG} role="tablist" aria-label="Passos">
@@ -37,12 +39,12 @@ const GhKineticsSim = () => {
                         const active = i === step;
                         return (
                             <button key={s.label} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative px-2.5 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-2.5 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors duration-180 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="ghk-step" className="absolute inset-0 rounded-xl"
                                         style={{ background: `${s.color}22`, border: `1px solid ${s.color}99` }}
-                                        transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                        transition={SPRING_TAB} />
                                 )}
                                 <span className="relative flex items-center gap-1.5">
                                     <span className="font-mono text-[14px]" style={{ color: s.color }}>{i + 1}</span>
@@ -57,23 +59,21 @@ const GhKineticsSim = () => {
             <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 360px', height: 440 }}>
                 <div className="rounded-2xl border border-white/10 px-3.5 pt-2 pb-1.5 flex flex-col min-h-0" style={CARD_BG}>
                     <div className="flex items-center justify-between gap-3 min-h-[30px]">
-                        <motion.span key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
+                        <motion.span key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.text, ease: EASE_OUT }}
                             className="text-[15px] leading-tight text-gray-100">{info.caption}</motion.span>
                         <div className="flex items-center gap-2 shrink-0">
                             {(step === 1 || step === 2) && (
                                 <div className="flex items-center gap-0.5 rounded-lg border border-white/15 p-0.5" role="radiogroup" aria-label="Via de aplicação">
                                     {ROUTES.map(r => (
                                         <button key={r.id} type="button" role="radio" aria-checked={route === r.id} onClick={() => setRoute(r.id)}
-                                            className="px-2.5 py-0.5 rounded-md text-[14px] font-semibold cursor-pointer transition-colors"
+                                            className="px-2.5 py-0.5 rounded-md text-[14px] font-semibold cursor-pointer transition-colors duration-180 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]"
                                             style={route === r.id ? { background: 'rgba(245,158,11,0.22)', color: '#FDE68A' } : { color: '#D1D5DB' }}>
                                             {r.label}
                                         </button>
                                     ))}
                                 </div>
                             )}
-                            <span className="text-[14px] font-mono uppercase tracking-wide px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
-                                modelo ilustrativo
-                            </span>
+                            <IllustrativeTag className="font-mono uppercase tracking-wide">modelo ilustrativo</IllustrativeTag>
                         </div>
                     </div>
                     <div className="relative flex-1 min-h-0">
@@ -84,7 +84,7 @@ const GhKineticsSim = () => {
                             <span className="shrink-0 font-semibold" style={{ color: COLORS.iso20 }}>Hora da coleta</span>
                             <input type="range" min={INJ_T + 0.5} max={T_MAX - 0.5} step={0.25} value={collectT}
                                 onChange={e => setCollectT(Number(e.target.value))}
-                                className="flex-1 cursor-pointer" style={{ accentColor: COLORS.iso20 }} aria-label="Hora da coleta" />
+                                className="flex-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]" style={{ accentColor: COLORS.iso20 }} aria-label="Hora da coleta" />
                             <span className="shrink-0 w-[60px] text-right font-mono">{clockLabel(collectT)}</span>
                         </label>
                     )}

@@ -4,6 +4,7 @@ import {
     MARKERS, MIN_BASELINE, N_SAMPLES, OFF_SUSPECT, fmt, markerValue,
     type Analysis, type MarkerId, type MarkerSpec, type Protocol,
 } from './model';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { useTween } from './useTween';
 
 const VB_W = 800;
@@ -92,7 +93,7 @@ export const PassportChart = ({
         const ivs = [analysis.slots[0].intervals[m.id], ...analysis.slots.map(s => s.intervals[m.id]), analysis.current[m.id]];
         return [...ivs.map(iv => yOf(m, iv.lo)), ...ivs.map(iv => yOf(m, iv.hi))];
     }), [analysis]);
-    const band = useTween(target);
+    const band = useTween(target, 450);
 
     const newest = visibleCount - 1;
     const firstFlag = verdictOn ? analysis.firstFlag : null;
@@ -130,7 +131,7 @@ export const PassportChart = ({
                 const x0 = slotX(ph.from) - SLOT_W / 2 + 3;
                 const x1 = slotX(ph.to) + SLOT_W / 2 - 3;
                 return (
-                    <motion.g key={`${protocol.id}-${ph.label}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+                    <motion.g key={`${protocol.id}-${ph.label}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.bar, ease: EASE_OUT }}>
                         <rect x={x0} y={COL_TOP} width={x1 - x0} height={COL_BOTTOM - COL_TOP} rx={8} fill={ph.color} fillOpacity={0.07} stroke={ph.color} strokeOpacity={0.3} strokeDasharray="3 4" />
                         <text x={(x0 + x1) / 2} y={PANELS.hb.top - 12} textAnchor="middle" fontSize={FS} fontWeight={700} fill={ph.color}>{ph.label}</text>
                     </motion.g>
@@ -140,13 +141,13 @@ export const PassportChart = ({
             {/* Coluna vermelha da coleta com ATF */}
             {verdictOn && analysis.slots.map((s, k) => s.flagged && (
                 <motion.rect key={`atf-col-${protocol.id}-${k}`} x={slotX(k) - 17} y={COL_TOP} width={34} height={COL_BOTTOM - COL_TOP} rx={17}
-                    fill={RED} initial={{ opacity: 0 }} animate={{ opacity: 0.13 }} transition={{ duration: 0.5 }} />
+                    fill={RED} initial={{ opacity: 0 }} animate={{ opacity: 0.13 }} transition={{ duration: DUR.morph, ease: EASE_OUT }} />
             ))}
 
             {/* Varredura da coleta que acabou de chegar */}
             {newest >= 0 && !reduce && (
                 <motion.rect key={`scan-${protocol.id}-${newest}`} x={slotX(newest) - 22} y={COL_TOP} width={44} height={COL_BOTTOM - COL_TOP} rx={22}
-                    fill="#ffffff" initial={{ opacity: 0.16 }} animate={{ opacity: 0 }} transition={{ duration: 1.1, ease: 'easeOut' }} />
+                    fill="#ffffff" initial={{ opacity: 0.16 }} animate={{ opacity: 0 }} transition={{ duration: DUR.morph, ease: EASE_OUT }} />
             )}
 
             {MARKERS.map((m, mi) => {
@@ -161,9 +162,9 @@ export const PassportChart = ({
                 return (
                     <g key={m.id}>
                         {/* Título do painel */}
-                        <text x={PL} y={top - 12} fontSize={FS} fontWeight={700} fill="#F3F4F6" style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.02em' }}>
+                        <text x={PL} y={top - 12} fontSize={FS} fontWeight={700} fill="#F3F4F6" style={{ fontFamily: 'var(--font-body)', letterSpacing: '0.02em' }}>
                             {m.name}
-                            <tspan dx={8} fontSize={FS} fontWeight={500} fill="rgba(229,231,235,0.85)" style={MONO}>{m.unit}</tspan>
+                            <tspan dx={8} fontSize={FS} fontWeight={500} fill="#D1D5DB" style={MONO}>{m.unit}</tspan>
                         </text>
 
                         {/* Grade e eixo */}
@@ -171,45 +172,49 @@ export const PassportChart = ({
                         {m.ticks.map(t => (
                             <g key={t}>
                                 <line x1={PL} x2={PLOT_R} y1={yOf(m, t)} y2={yOf(m, t)} stroke="rgba(255,255,255,0.06)" />
-                                <text x={PL - 8} y={yOf(m, t) + 5} textAnchor="end" fontSize={FS} fill="rgba(229,231,235,0.85)" style={MONO}>
+                                <text x={PL - 8} y={yOf(m, t) + 5} textAnchor="end" fontSize={FS} fill="#D1D5DB" style={MONO}>
                                     {fmt(t, m.id === 'ret' ? 1 : 0)}
                                 </text>
                             </g>
                         ))}
 
                         {/* Corredor individual (bayesiano) */}
-                        <g clipPath={`url(#pp-clip-${m.id})`} style={{ opacity: dimTunnel ? 0.6 : 1, transition: 'opacity 0.6s ease' }}>
+                        <g clipPath={`url(#pp-clip-${m.id})`} style={{ opacity: dimTunnel ? 0.6 : 1, transition: 'opacity 600ms var(--ease-out)' }}>
                             <path d={bandPath(lo, hi)} fill={`url(#pp-band-${m.id})`} />
                             <path d={edgePath(hi)} fill="none" stroke={m.color} strokeOpacity={0.75} strokeWidth={1.6} />
                             <path d={edgePath(lo)} fill="none" stroke={m.color} strokeOpacity={0.75} strokeWidth={1.6} />
                         </g>
                         {m.id === 'hb' && (
                             <text x={PL + 240} y={top - 12} fontSize={FS} fontWeight={700} fill={m.color}
-                                style={{ opacity: dimTunnel ? 0.75 : 1, transition: 'opacity 0.6s ease' }}>
+                                style={{ opacity: dimTunnel ? 0.75 : 1, transition: 'opacity 600ms var(--ease-out)' }}>
                                 {bandLabel}
                             </text>
                         )}
                         {/* Limites populacionais fixos */}
-                        <g style={{ opacity: dimTunnel ? 1 : 0.85, transition: 'opacity 0.6s ease' }}>
+                        <g style={{ opacity: dimTunnel ? 1 : 0.85, transition: 'opacity 600ms var(--ease-out)' }}>
                             {[m.popLow, m.popHigh].map(v => v !== undefined && (
                                 <line key={v} x1={PL} x2={PLOT_R} y1={yOf(m, v)} y2={yOf(m, v)} stroke={POP} strokeWidth={dimTunnel ? 2.2 : 1.5} strokeDasharray="7 5" />
                             ))}
                         </g>
                         {m.id === 'hb' && (
-                            <text x={PL + 8} y={yOf(m, 16) - 8} fontSize={FS} fontWeight={600} fill="rgba(255,255,255,0.9)">
+                            <text x={PL + 8} y={yOf(m, 16) - 8} fontSize={FS} fontWeight={600} fill="#F3F4F6"
+                                style={{ paintOrder: 'stroke', stroke: '#050510', strokeWidth: 4, strokeLinejoin: 'round' }}>
                                 limite populacional fixo · 12,0–16,0 g/dL
                             </text>
                         )}
                         {/* Limites de ret/OFF ficam na linha do título (fora da área plotada) */}
                         {m.id === 'ret' && (
-                            <text x={PLOT_R} y={top - 12} textAnchor="end" fontSize={FS} fill="rgba(255,255,255,0.92)">limite fixo · 0,5–1,5%</text>
+                            <text x={PLOT_R} y={top - 12} textAnchor="end" fontSize={FS} fill="#F3F4F6">limite fixo · 0,5–1,5%</text>
                         )}
                         {m.id === 'off' && (
                             <>
                                 <line x1={PL} x2={PLOT_R} y1={yOf(m, OFF_SUSPECT)} y2={yOf(m, OFF_SUSPECT)} stroke="#F59E0B" strokeOpacity={0.7} strokeWidth={1.3} strokeDasharray="2 4" />
-                                <text x={PLOT_R} y={top - 12} textAnchor="end" fontSize={FS} fill="rgba(255,255,255,0.92)">
+                                <text x={PLOT_R} y={top - 12} textAnchor="end" fontSize={FS} fill="#F3F4F6">
                                     limite fixo · 130 (&gt; 99,9%)
-                                    <tspan dx={18} fill="#FBBF24" fontWeight={700}>&gt; 85 suspeito</tspan>
+                                </text>
+                                <text x={PL + 10} y={yOf(m, OFF_SUSPECT) - 8} fontSize={FS} fontWeight={700} fill="#FBBF24"
+                                    style={{ paintOrder: 'stroke', stroke: '#050510', strokeWidth: 4, strokeLinejoin: 'round' }}>
+                                    &gt; 85 suspeito
                                 </text>
                             </>
                         )}
@@ -218,7 +223,7 @@ export const PassportChart = ({
                         {pts.slice(1).map((p, i) => (
                             <motion.line key={`seg-${m.id}-${p.k}-${p.v}-${pts[i].v}`} x1={pts[i].x} y1={pts[i].y} x2={p.x} y2={p.y}
                                 stroke={m.color} strokeOpacity={0.55} strokeWidth={2}
-                                initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.45, ease: 'easeOut' }} />
+                                initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: DUR.morph, ease: EASE_OUT }} />
                         ))}
 
                         {/* Pontos (coletas) */}
@@ -231,14 +236,14 @@ export const PassportChart = ({
                                     {out && !reduce && (
                                         <motion.circle cx={p.x} cy={p.y} fill="none" stroke={RED} strokeWidth={2}
                                             initial={{ r: 7, opacity: 0.8 }} animate={{ r: 20, opacity: 0 }}
-                                            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }} />
+                                            transition={{ duration: 1.6, repeat: Infinity, ease: EASE_OUT }} />
                                     )}
-                                    <motion.circle cx={p.x} r={isHover ? 8 : out ? 7 : 5.5}
+                                    <motion.circle cx={p.x} cy={p.y} r={isHover ? 8 : out ? 7 : 5.5}
                                         fill={out ? RED : m.color} stroke="#050510" strokeWidth={2}
                                         filter={out ? 'url(#pp-glow)' : undefined}
-                                        initial={reduce ? false : { cy: p.y - 46, opacity: 0 }}
-                                        animate={{ cy: p.y, opacity: 1 }}
-                                        transition={{ type: 'spring', stiffness: 260, damping: 18 }} />
+                                        initial={reduce ? false : { y: -46, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ duration: DUR.enter, ease: EASE_OUT }} />
                                     <circle cx={p.x} cy={p.y} r={14} fill="transparent" />
                                 </g>
                             );
@@ -256,14 +261,14 @@ export const PassportChart = ({
                 const popY = yOf(hb, 16);
                 const bw = 300;
                 const bh = 28;
-                const bx = px - 28 - bw;
-                const by = popY + 9;
+                const bx = px - 60 - bw;
+                const by = PANELS.hb.top + PANELS.hb.h - 6;
                 return (
                     <motion.g key={`callout-${protocol.id}-${firstFlag}`} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}>
-                        <line x1={bx + bw} y1={by + bh / 2} x2={px - 9} y2={py} stroke={RED} strokeWidth={1.6} />
-                        <rect x={bx} y={by} width={bw} height={bh} rx={8} fill="#1a0610" stroke={RED} strokeWidth={1.5} />
-                        <text x={bx + 10} y={by + 20} fontSize={FS} fontWeight={800} fill="#FDA4AF" style={{ fontFamily: 'var(--font-display)' }}>⚠ ATF · fora do túnel (&gt; 99,9%)</text>
+                        transition={{ duration: DUR.morph, delay: 0.25, ease: EASE_OUT }}>
+                        <line x1={bx + bw} y1={by + bh / 2} x2={px - 9} y2={py + 9} stroke={RED} strokeWidth={1.4} />
+                        <rect x={bx} y={by} width={bw} height={bh} rx={8} fill="#140512" stroke={RED} strokeWidth={1.5} />
+                        <text x={bx + 10} y={by + 20} fontSize={FS} fontWeight={800} fill="#FDA4AF" style={{ fontFamily: 'var(--font-body)' }}>⚠ ATF · fora do túnel (&gt; 99,9%)</text>
                         <text x={PLOT_R - 6} y={popY - 8} textAnchor="end" fontSize={FS} fontWeight={700} fill="#E5E7EB">
                             {fmt(s.hb, 1)} &lt; 16,0 → limite fixo não detecta
                         </text>
@@ -277,12 +282,12 @@ export const PassportChart = ({
                 const vis = k < visibleCount;
                 return (
                     <text key={k} x={slotX(k)} y={VB_H - 5} textAnchor="middle" fontSize={FS} fontWeight={flagged ? 800 : 600}
-                        fill={flagged ? '#FB7185' : vis ? '#E5E7EB' : 'rgba(229,231,235,0.6)'} style={MONO}>
+                        fill={flagged ? '#FB7185' : vis ? '#E5E7EB' : '#9CA3AF'} style={MONO}>
                         Ex.{k + 1}
                     </text>
                 );
             })}
-            <text x={2} y={VB_H - 5} fontSize={FS} fill="rgba(229,231,235,0.85)">coletas →</text>
+            <text x={2} y={VB_H - 5} fontSize={FS} fill="#D1D5DB">coletas →</text>
         </svg>
     );
 };

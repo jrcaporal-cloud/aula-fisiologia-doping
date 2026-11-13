@@ -3,21 +3,28 @@
  * Exceções citadas: a sigla EAA = "Esteroides Androgênicos Anabolizantes" vem do slide "A Base do Doping Moderno".
  * No cartão original há a palavra "hiporidade" (erro de digitação); aqui o trecho fica só "síntese proteica muscular".
  */
+import { SUBSTANCE } from '../../../lib/palette';
 
+/**
+ * Cada substância na cor que ela tem na aula inteira (`src/lib/palette.ts`):
+ * EAA azul, GH/IGF-1 verde (o sistêmico no tom claro, o MGF local num verde-azulado vizinho),
+ * insulina ciano, EPO rosa. Vermelho só para risco (o colateral); o fígado, órgão, fica no
+ * vermelho-tecido mais claro — o mesmo do eixo GH (s13).
+ */
 export const COLORS = {
-    igf: '#60A5FA',
-    mgf: '#34D399',
-    liver: '#E11D48',
+    igf: '#6EE7B7',
+    mgf: '#2DD4BF',
+    liver: '#F87171',
     liverSoft: '#9F1239',
     fat: '#F59E0B',
     satellite: '#A7F3D0',
     nucleus: '#C4B5FD',
-    eaa: '#F59E0B',
-    ghigf: '#60A5FA',
-    insulin: '#22D3EE',
-    epo: '#FB7185',
-    glucose: '#22D3EE',
-    warn: '#F87171',
+    eaa: SUBSTANCE.eaa,
+    ghigf: SUBSTANCE.gh,
+    insulin: SUBSTANCE.insulin,
+    epo: SUBSTANCE.blood,
+    glucose: SUBSTANCE.insulin,
+    warn: SUBSTANCE.risk,
 } as const;
 
 export interface StepInfo {

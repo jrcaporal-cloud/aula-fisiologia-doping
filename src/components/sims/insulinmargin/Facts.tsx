@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Ban, EyeOff, TrendingUp, type LucideIcon } from 'lucide-react';
 import { FACTS, type FactIcon } from './content';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 
 const ICONS: Record<FactIcon, LucideIcon> = { anabolic: TrendingUp, hidden: EyeOff, antidote: Ban };
 
@@ -19,19 +20,19 @@ export const Facts = ({ step }: { readonly step: number }) => (
                         borderColor: lit ? `${f.color}aa` : 'rgba(255,255,255,0.10)',
                         backgroundColor: lit ? `${f.color}1c` : 'rgba(8,8,18,0.72)',
                     }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: DUR.morph, ease: EASE_OUT }}
                 >
                     <motion.span
                         className="flex h-10 w-10 flex-none items-center justify-center rounded-xl border"
                         initial={false}
                         animate={{ borderColor: lit ? f.color : 'rgba(255,255,255,0.18)', color: lit ? f.color : '#CBD5E1', scale: lit ? 1 : 0.92 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: DUR.morph, ease: EASE_OUT }}
                     >
                         <Icon size={21} strokeWidth={2.2} aria-hidden />
                     </motion.span>
-                    <p className="font-body text-[16px] leading-snug transition-colors duration-500" style={{ color: lit ? '#F3F4F6' : '#CBD5E1' }}>
+                    <p className="font-body text-[16px] leading-snug transition-colors duration-450 ease-(--ease-out)" style={{ color: lit ? '#F3F4F6' : '#CBD5E1' }}>
                         {f.pre}
-                        <strong className="font-semibold transition-colors duration-500" style={{ color: lit ? '#fff' : '#D1D5DB' }}>{f.hi}</strong>
+                        <strong className="font-semibold transition-colors duration-450 ease-(--ease-out)" style={{ color: lit ? '#fff' : '#D1D5DB' }}>{f.hi}</strong>
                         {f.post}
                     </p>
                 </motion.div>

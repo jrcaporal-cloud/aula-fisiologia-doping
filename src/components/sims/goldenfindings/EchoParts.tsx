@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
 import { VIEW_H, VIEW_W } from './echoKit';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 
 /** Peças comuns aos desenhos-eco: moldura SVG e rótulo que some no modo compacto. */
 
@@ -42,7 +43,7 @@ export const Label = ({ compact, x, y, children, size = 15, fill = '#E5E7EB', an
             stroke="#050510" strokeWidth={4} strokeLinejoin="round" paintOrder="stroke"
             className={mono ? 'font-mono' : 'font-body'}
             initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ duration: 0.45, delay: reduce ? 0 : delay }}
+            transition={{ duration: DUR.enter, delay: reduce ? 0 : delay, ease: EASE_OUT }}
         >
             {children}
         </motion.text>

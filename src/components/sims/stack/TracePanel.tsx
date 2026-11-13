@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT, stagger } from '../../../lib/motion';
 import { PIECES } from './content';
 
 const BODY = 'var(--font-body), sans-serif';
 const MONO = 'var(--font-mono), monospace';
-const DISPLAY = 'var(--font-display), sans-serif';
 
 const W = 636;
 const H = 346;
@@ -49,7 +49,7 @@ export const TracePanel = ({ reduced }: { readonly reduced: boolean }) => (
     <div className="flex h-full flex-col px-6 pb-2 pt-4">
         <div>
             <div className="font-mono text-[14px] uppercase tracking-[0.14em] text-gray-300">Perfil de rastro</div>
-            <div className="mt-0.5 font-display text-[24px] font-semibold leading-tight text-white">Quanto tempo cada peça deixa rastro</div>
+            <div className="mt-0.5 text-[24px] font-semibold leading-tight text-white">Quanto tempo cada peça deixa rastro</div>
             <div className="mt-1.5 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-[14px] text-gray-200">
                 <span className="flex items-center gap-2">
                     <span className="inline-block h-3 w-7 rounded-sm" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.25))' }} /> janela de detecção
@@ -87,10 +87,10 @@ export const TracePanel = ({ reduced }: { readonly reduced: boolean }) => (
                 const hx0 = tx(lane.half[0]);
                 const hx1 = tx(lane.half[1]);
                 const hm = (hx0 + hx1) / 2;
-                const delay = reduced ? 0 : 0.2 + i * 0.35;
+                const delay = reduced ? 0 : stagger(i, 0.1, 0.15);
                 return (
                     <g key={p.id}>
-                        <text x={2} y={y - 2} fontFamily={DISPLAY} fontSize={20} fontWeight={700} fill={p.color}>{p.name}</text>
+                        <text x={2} y={y - 2} fontFamily={BODY} fontSize={20} fontWeight={700} fill={p.color}>{p.name}</text>
                         <text x={2} y={y + 19} fontFamily={BODY} fontSize={16.5} fill={p.soft}>{p.role}</text>
 
                         <rect x={X0} y={y - BAR_H / 2} width={X1 - X0} height={BAR_H} rx={BAR_H / 2} fill="rgba(255,255,255,0.04)" />
@@ -100,7 +100,7 @@ export const TracePanel = ({ reduced }: { readonly reduced: boolean }) => (
                             style={{ originX: 0 }}
                             initial={reduced ? false : { scaleX: 0 }}
                             animate={{ scaleX: 1 }}
-                            transition={{ delay, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ delay, duration: DUR.bar, ease: EASE_OUT }}
                         />
                         {/* Meia-vida: faixa + losango */}
                         <rect x={hx0 - 1} y={y - BAR_H / 2 - 6} width={Math.max(hx1 - hx0, 2) + 2} height={BAR_H + 12} rx={3} fill="#fff" opacity={0.22} />
@@ -110,16 +110,16 @@ export const TracePanel = ({ reduced }: { readonly reduced: boolean }) => (
                         {lane.detectLabel && (
                             <motion.text
                                 x={Math.min(end, X1)} y={y + 33} textAnchor="end" fontFamily={MONO} fontSize={16.5} fontWeight={600} fill={p.soft}
-                                initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + 0.7 }}
+                                initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + 0.45, duration: DUR.enter, ease: EASE_OUT }}
                             >
                                 {lane.detectLabel}
                             </motion.text>
                         )}
                         {i === 2 && (
-                            <motion.g initial={reduced ? false : { opacity: 0, scale: 1.25 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: delay + 0.8, duration: 0.5 }} style={{ originX: '512px', originY: `${y}px` }}>
-                                <rect x={398} y={y - 22} width={228} height={44} rx={8} fill="rgba(225,29,72,0.14)" stroke="#E11D48" strokeWidth={2.5} />
-                                <text x={512} y={y + 7} textAnchor="middle" fontFamily={DISPLAY} fontSize={21} fontWeight={700} letterSpacing="0.08em" fill="#FECDD3">INDETECTÁVEL</text>
-                                <text x={tx(lane.detect[1]) + 8} y={y + 40} textAnchor="start" fontFamily={BODY} fontSize={16.5} fill="#FDA4AF">em horas após a injeção</text>
+                            <motion.g initial={reduced ? false : { opacity: 0, scale: 1.25 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: delay + 0.45, duration: DUR.enter, ease: EASE_OUT }} style={{ originX: '512px', originY: `${y}px` }}>
+                                <rect x={398} y={y - 22} width={228} height={44} rx={8} fill="rgba(34,211,238,0.14)" stroke={PIECES[2].color} strokeWidth={2.5} />
+                                <text x={512} y={y + 7} textAnchor="middle" fontFamily={BODY} fontSize={21} fontWeight={700} letterSpacing="0.08em" fill="#A5F3FC">INDETECTÁVEL</text>
+                                <text x={tx(lane.detect[1]) + 8} y={y + 40} textAnchor="start" fontFamily={BODY} fontSize={16.5} fill="#A5F3FC">em horas após a injeção</text>
                             </motion.g>
                         )}
                     </g>

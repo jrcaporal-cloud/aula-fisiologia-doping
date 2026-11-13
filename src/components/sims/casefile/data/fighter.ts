@@ -1,11 +1,12 @@
 import { Swords } from 'lucide-react';
 import { FighterScene } from '../extras/FighterScene';
+import { CASE_COLORS } from '../../../../lib/palette';
 import type { CaseData } from '../types';
 
 /** Slide "O Lutador e o 'Suplemento Contaminado'" — parsedPresentation.json id 28 (texto verbatim). */
 export const FIGHTER: CaseData = {
     caseNumber: 'Caso clínico 03',
-    accent: '#FBBF24',
+    accent: CASE_COLORS.fighter,
     icon: Swords,
     stepNames: ['O evento', 'A evidência', 'Hipótese', 'Conduta'],
     stepCaptions: [

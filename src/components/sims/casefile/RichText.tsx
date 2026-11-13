@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import type { Paragraph } from './types';
 
 interface RichTextProps {
@@ -24,11 +25,11 @@ export const RichText = ({ parts, step, revealed, className }: RichTextProps) =>
                 <span key={i} className="relative">
                     <motion.span className="rounded-[3px] px-0.5 -mx-0.5"
                         animate={{ backgroundColor: marked ? `${p.mark.color}33` : 'rgba(0,0,0,0)', boxShadow: marked ? `inset 0 -2px 0 ${p.mark.color}` : 'inset 0 0px 0 rgba(0,0,0,0)' }}
-                        transition={{ duration: 0.5 }}>
+                        transition={{ duration: DUR.morph, ease: EASE_OUT }}>
                         {body}
                     </motion.span>
                     {marked && (
-                        <motion.span initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.25 }}
+                        <motion.span initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, delay: 0.25, ease: EASE_OUT }}
                             className="ml-1.5 inline-block align-middle font-mono text-[14px] font-bold uppercase tracking-wide px-1.5 py-[1px] rounded"
                             style={{ color: '#0b0b14', background: p.mark.color }}>
                             {p.mark.label}

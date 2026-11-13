@@ -63,6 +63,6 @@ export const STEP_LABELS = ['Palpite da turma', 'O que o antidoping detecta', 'O
 export const REVEAL_STEP: Record<PanelId, number> = { wada: 1, real: 2 };
 
 /** Intervalo entre atletas na onda vermelha (ms). */
-export const WAVE_MS = 24;
+export const WAVE_MS = 15;
 /** A onda dura ~1 s; o que depende dela (contorno, hachura, abismo, número) acompanha. */
 export const WAVE_TOTAL_S = ((REAL.pct - WADA.pct) * WAVE_MS) / 1000;

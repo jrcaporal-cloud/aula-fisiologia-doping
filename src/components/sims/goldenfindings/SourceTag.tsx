@@ -19,7 +19,7 @@ export const SourceTag = ({ finding, full }: SourceTagProps) => {
                 type="button"
                 onClick={e => { e.stopPropagation(); goToSlide(main.number); }}
                 title={`Ir ao slide ${main.number}`}
-                className="inline-flex max-w-full cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-left font-mono text-[15px] font-semibold leading-snug transition-colors hover:bg-white/10"
+                className="inline-flex max-w-full cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-left font-mono text-[15px] font-semibold leading-snug transition-colors duration-180 ease-(--ease-out) hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]"
                 style={{ borderColor: `${finding.color}88`, color: '#F3F4F6', background: `${finding.color}14` }}
             >
                 <span>{full ? seenPhrase(refs) : slidesPhrase(refs)}</span>

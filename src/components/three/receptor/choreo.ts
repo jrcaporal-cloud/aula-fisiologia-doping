@@ -119,12 +119,16 @@ export const rnapPose = (T: number, out: THREE.Vector3) => {
     const leave = ph(T, W.rnapOut);
     out.x += (1 - arrive) * 3.5 + leave * 3.0;
     out.y += (1 - arrive) * 6 + leave * 6.5;
-    return { scale: Math.min(arrive, 1 - leave) };
+    /** escala da polimerase (0 = fora de cena) */
+    return Math.min(arrive, 1 - leave);
 };
 
-export const bubbleState = (T: number) => {
-    const z = lerp(RNAP_START_Z, RNAP_END_Z, smooth(sg(T, W.transcribe)));
-    return { z, open: ph(T, W.bubble) * (1 - ph(T, W.rnapOut)) };
+export interface Bubble { z: number; open: number }
+/** Bolha de transcrição: z (relativo ao DNA) e abertura; escreve em `out` (sem alocar por quadro). */
+export const bubbleState = (T: number, out: Bubble): Bubble => {
+    out.z = lerp(RNAP_START_Z, RNAP_END_Z, smooth(sg(T, W.transcribe)));
+    out.open = ph(T, W.bubble) * (1 - ph(T, W.rnapOut));
+    return out;
 };
 
 export const MRNA_N = 40;
@@ -216,6 +220,9 @@ export const mrnaBeads = (T: number, out: THREE.Vector3[]) => {
 const finalBeads = Array.from({ length: MRNA_N }, () => new THREE.Vector3());
 mrnaBeads(6.9, finalBeads);
 
+const riboM = new THREE.Matrix4();
+const riboY = new THREE.Vector3();
+
 /** Ribossomo: percorre o mRNA da ponta 5' (nucleotídeo 0) em direção à 3'. */
 export const riboPose = (T: number, out: Pose) => {
     const k = lerp(2.5, 27, ph(T, W.translate));
@@ -225,11 +232,10 @@ export const riboPose = (T: number, out: Pose) => {
     out.p.copy(a).lerp(b, k - i0);
     tv.subVectors(finalBeads[Math.min(i0 + 3, MRNA_N - 1)], finalBeads[Math.max(i0 - 3, 0)]).normalize();
     // eixo x local = direção de leitura (5'→3'), y local ≈ para cima
-    const m = new THREE.Matrix4();
     const zAxis = tv2.crossVectors(tv, Y).normalize();
-    const yAxis = new THREE.Vector3().crossVectors(zAxis, tv).normalize();
-    m.makeBasis(tv, yAxis, zAxis);
-    out.q.setFromRotationMatrix(m);
+    const yAxis = riboY.crossVectors(zAxis, tv).normalize();
+    riboM.makeBasis(tv, yAxis, zAxis);
+    out.q.setFromRotationMatrix(riboM);
     return out;
 };
 

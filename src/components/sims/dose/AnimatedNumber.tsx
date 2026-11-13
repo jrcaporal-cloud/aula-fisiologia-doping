@@ -1,6 +1,7 @@
 import { animate, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { fmt } from './model';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 
 interface AnimatedNumberProps {
     value: number;
@@ -12,7 +13,7 @@ interface AnimatedNumberProps {
 }
 
 /** Conta de 0 (ou do valor anterior) até `value`, em pt-BR. */
-export const AnimatedNumber = ({ value, digits = 1, duration = 1.1, delay = 0, prefix = '', suffix = '' }: AnimatedNumberProps) => {
+export const AnimatedNumber = ({ value, digits = 1, duration = DUR.draw, delay = 0, prefix = '', suffix = '' }: AnimatedNumberProps) => {
     const reduce = useReducedMotion();
     const [shown, setShown] = useState(reduce ? value : 0);
     const fromRef = useRef(reduce ? value : 0);
@@ -26,7 +27,7 @@ export const AnimatedNumber = ({ value, digits = 1, duration = 1.1, delay = 0, p
         const controls = animate(fromRef.current, value, {
             duration,
             delay,
-            ease: [0.22, 1, 0.36, 1],
+            ease: EASE_OUT,
             onUpdate: v => {
                 fromRef.current = v;
                 setShown(v);

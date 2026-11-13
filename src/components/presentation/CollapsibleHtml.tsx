@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDetailsToggle } from '../../lib/detailsEvent';
 import { useDetailsStore } from '../../lib/detailsStore';
+import { DUR, EASE_OUT } from '../../lib/motion';
 
 /** Texto que vem depois de um simulador, recolhido; abre pela tecla D ou pelo botão do rodapé. */
 export const CollapsibleHtml = ({ html }: { html: string }) => {
@@ -24,8 +25,8 @@ export const CollapsibleHtml = ({ html }: { html: string }) => {
                     <motion.div
                         key="text"
                         initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, transition: { duration: 0.15 } }}
+                        animate={{ opacity: 1, y: 0, transition: { duration: DUR.enter, ease: EASE_OUT } }}
+                        exit={{ opacity: 0, transition: { duration: DUR.exit, ease: EASE_OUT } }}
                         className="w-full prose prose-invert max-w-none mt-4"
                         dangerouslySetInnerHTML={{ __html: html }}
                     />

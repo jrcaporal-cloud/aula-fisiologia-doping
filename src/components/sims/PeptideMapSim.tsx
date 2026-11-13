@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { DUR, EASE_OUT, stagger } from '../../lib/motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { ALREADY_SEEN, FAMILIES, TONE_STYLES, type PeptideFamily } from './peptide/map';
 import { AxisDiagram } from './peptide/AxisDiagram';
@@ -22,14 +23,14 @@ const FamilyTile = ({ family, active, dimmed, onClick }: { family: PeptideFamily
     const Icon = family.icon;
     return (
         <button type="button" onClick={onClick} aria-pressed={active}
-            className="text-left rounded-2xl border p-3.5 flex flex-col gap-1.5 cursor-pointer transition-all duration-300"
+            className="text-left rounded-2xl border p-3.5 flex flex-col gap-1.5 cursor-pointer transition-[border-color,background-color,opacity,box-shadow] duration-300 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
             style={{
                 borderColor: active ? tone.border : 'rgba(255,255,255,0.12)',
                 background: active ? tone.bg : 'rgba(8,8,18,0.72)',
-                opacity: dimmed ? 0.62 : 1,
+                opacity: dimmed ? 0.8 : 1,
                 boxShadow: active ? `0 0 0 1px ${tone.border}` : 'none',
             }}>
-            <span className="flex items-center gap-2 font-display text-[1.12rem] font-semibold leading-tight" style={{ color: tone.text }}>
+            <span className="flex items-center gap-2 text-[1.12rem] font-semibold leading-tight" style={{ color: tone.text }}>
                 <Icon size={19} aria-hidden /> {family.name}
             </span>
             <span className={`self-start mt-auto px-2 py-0.5 rounded-md border text-[14px] font-semibold ${tone.badge}`}>{family.tag}</span>
@@ -39,7 +40,7 @@ const FamilyTile = ({ family, active, dimmed, onClick }: { family: PeptideFamily
 
 const Overview = () => (
     <div className="h-full flex flex-col gap-2">
-        <p className="font-display text-[1.6rem] leading-tight text-white">
+        <p className="text-[1.6rem] font-semibold leading-tight text-white">
             A lista não pergunta se é peptídeo. Pergunta <span className="text-rose-300">o que ele faz</span> e <span className="text-rose-300">se foi aprovado</span>.
         </p>
         <div className="flex-1 min-h-0">
@@ -61,9 +62,9 @@ const FamilyDetail = ({ family }: { family: PeptideFamily }) => {
     return (
         <div className="h-full flex flex-col gap-3">
             <div className="flex items-baseline gap-3">
-                <h3 className="font-display text-[1.6rem] font-semibold leading-tight" style={{ color: tone.text }}>{family.name}</h3>
+                <h3 className="text-[1.6rem] font-semibold leading-tight" style={{ color: tone.text }}>{family.name}</h3>
                 <motion.span className={`px-2.5 py-0.5 rounded-md border text-[15px] font-semibold ${tone.badge}`}
-                    initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 14, delay: 0.15 }}>
+                    initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: DUR.enter, delay: 0.15, ease: EASE_OUT }}>
                     {family.wada}
                 </motion.span>
             </div>
@@ -71,7 +72,7 @@ const FamilyDetail = ({ family }: { family: PeptideFamily }) => {
                 {FIELDS.map((f, i) => (
                     <motion.div key={f.key} className="rounded-xl border bg-white/[0.04] p-4 flex flex-col gap-1.5"
                         style={{ borderColor: i === 2 ? tone.border : 'rgba(255,255,255,0.1)' }}
-                        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 + i * 0.12 }}>
+                        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, delay: stagger(i, 0.1, 0.12), ease: EASE_OUT }}>
                         <span className="text-[14px] font-semibold uppercase tracking-wider" style={{ color: tone.text }}>{f.label}</span>
                         <p className="text-[1.02rem] leading-snug text-gray-100">{family[f.key]}</p>
                     </motion.div>
@@ -105,14 +106,12 @@ const PeptideMapSim = () => {
                 ))}
             </div>
             <div className="relative flex-1 min-h-0 rounded-2xl border border-white/10 p-5" style={PANEL_BG}>
-                <AnimatePresence mode="wait">
-                    <motion.div key={step} className="h-full"
-                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>
-                        {view.kind === 'overview' && <Overview />}
-                        {view.kind === 'family' && <FamilyDetail family={view.family} />}
-                        {view.kind === 'pearl' && <HcgPearl />}
-                    </motion.div>
-                </AnimatePresence>
+                <motion.div key={step} className="h-full"
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
+                    {view.kind === 'overview' && <Overview />}
+                    {view.kind === 'family' && <FamilyDetail family={view.family} />}
+                    {view.kind === 'pearl' && <HcgPearl />}
+                </motion.div>
             </div>
         </div>
     );

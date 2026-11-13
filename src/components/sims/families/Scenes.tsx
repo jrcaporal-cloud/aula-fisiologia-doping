@@ -4,6 +4,7 @@ import { H5_END, RING_CENTERS, C19_END, VIEWBOX, place, toScene, type Pt } from 
 import { Caption, CurvedArrow, Halo } from './SceneParts';
 import { BODY, arrowHead } from './svgUtil';
 import { Steroid } from './Steroid';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 const W = 440;
 const H = 340;
@@ -37,23 +38,23 @@ const TestosteroneScene = ({ still }: SceneProps) => {
     const ringT = toScene(RING_CENTERS.A, F1.t.x, F1.t.y, F1.t.k);
     return (
         <svg {...svgProps} aria-label="Testosterona sofre aromatização em estradiol e redução 5-alfa em DHT">
-            <Halo c={ringT} r={30} color={ACCENT} at={0.8} still={still} pulse />
+            <Halo c={ringT} r={30} color={ACCENT} at={0.3} still={still} pulse />
             <g transform={place(F1.t.x, F1.t.y, F1.t.k)}>
-                <Steroid color={color} accent={ACCENT} font={ATOM_FONT_SMALL} delay={0.05} still={still} />
+                <Steroid color={color} accent={ACCENT} font={ATOM_FONT_SMALL} delay={0} still={still} />
             </g>
-            <Caption x={F1.t.x} y={172} text="Testosterona" at={0.5} still={still} />
+            <Caption x={F1.t.x} y={172} text="Testosterona" at={0.3} still={still} />
 
-            <CurvedArrow from={[156, 160]} ctrl={[106, 164]} to={[98, 198]} color={ACCENT} label="aromatização" labelAt={[56, 172]} at={1.1} still={still} />
+            <CurvedArrow from={[156, 160]} ctrl={[106, 164]} to={[98, 198]} color={ACCENT} label="aromatização" labelAt={[56, 172]} at={0.1} still={still} />
             <g transform={place(F1.e2.x, F1.e2.y, F1.e2.k)}>
-                <Steroid color={color} ringA="aromatic" c19="off" accent={ACCENT} font={ATOM_FONT_SMALL} delay={1.55} still={still} />
+                <Steroid color={color} ringA="aromatic" c19="off" accent={ACCENT} font={ATOM_FONT_SMALL} delay={0.2} still={still} />
             </g>
-            <Caption x={F1.e2.x} y={H - 1} text="Estradiol (E2)" at={2.2} still={still} />
+            <Caption x={F1.e2.x} y={H - 1} text="Estradiol (E2)" at={0.55} still={still} />
 
-            <CurvedArrow from={[284, 160]} ctrl={[334, 164]} to={[342, 198]} color={ACCENT} label="5α-redutase" labelAt={[392, 172]} at={2.0} still={still} />
+            <CurvedArrow from={[284, 160]} ctrl={[334, 164]} to={[342, 198]} color={ACCENT} label="5α-redutase" labelAt={[392, 172]} at={0.25} still={still} />
             <g transform={place(F1.dht.x, F1.dht.y, F1.dht.k)}>
-                <Steroid color={color} ringA="saturated" accent={ACCENT} font={ATOM_FONT_SMALL} delay={2.45} still={still} />
+                <Steroid color={color} ringA="saturated" accent={ACCENT} font={ATOM_FONT_SMALL} delay={0.35} still={still} />
             </g>
-            <Caption x={F1.dht.x} y={H - 1} text="DHT" at={3.0} still={still} />
+            <Caption x={F1.dht.x} y={H - 1} text="DHT" at={0.7} still={still} />
         </svg>
     );
 };
@@ -74,23 +75,23 @@ const DhtScene = ({ still }: SceneProps) => {
     const hit: Pt = [tipRest[0] + BOUNCE + 8, tipRest[1]];
     return (
         <svg {...svgProps} aria-label="DHT: a aromatização é bloqueada">
-            <Halo c={ringA} r={40} color={ACCENT} at={0.9} still={still} />
+            <Halo c={ringA} r={40} color={ACCENT} at={0.45} still={still} />
             <g transform={place(F2.x, F2.y, F2.k)}>
-                <Steroid color={color} ringA="saturated" accent={ACCENT} font={ATOM_FONT_LARGE} delay={0.05} still={still} />
+                <Steroid color={color} ringA="saturated" accent={ACCENT} font={ATOM_FONT_LARGE} delay={0} still={still} />
             </g>
             <motion.text x={4} y={40} fill={color} fontFamily="var(--font-display), sans-serif" fontSize={30} fontWeight={600}
-                initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.45 }}>DHT</motion.text>
-            <Caption x={4} y={70} text="Moléculas quimicamente" color="#E9D5FF" at={0.6} still={still} anchor="start" />
-            <Caption x={4} y={92} text="rígidas" color="#E9D5FF" at={0.6} still={still} anchor="start" />
-            <Caption x={hLabel[0] + 20} y={hLabel[1] + 6} text="já reduzida" color={ACCENT} at={1.0} still={still} anchor="start" />
+                initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1, duration: DUR.enter, ease: EASE_OUT }}>DHT</motion.text>
+            <Caption x={4} y={70} text="Moléculas quimicamente" color="#E9D5FF" at={0.2} still={still} anchor="start" />
+            <Caption x={4} y={92} text="rígidas" color="#E9D5FF" at={0.2} still={still} anchor="start" />
+            <Caption x={hLabel[0] + 20} y={hLabel[1] + 6} text="já reduzida" color={ACCENT} at={0.5} still={still} anchor="start" />
 
             {/* A aromatização tenta chegar ao anel A e volta. */}
             <motion.g
                 initial={still ? false : { opacity: 0, x: -16 }}
                 animate={still ? { opacity: 1, x: 0 } : { opacity: 1, x: [0, 0, BOUNCE, 0] }}
                 transition={still ? { duration: 0 } : {
-                    opacity: { delay: 0.9, duration: 0.3 },
-                    x: { delay: 1.0, duration: 1.2, times: [0, 0.1, 0.45, 1], ease: 'easeInOut', repeat: Infinity, repeatDelay: 1.6 },
+                    opacity: { delay: 0.3, duration: DUR.enter, ease: EASE_OUT },
+                    x: { delay: 0.4, duration: 1.2, times: [0, 0.1, 0.45, 1], ease: EASE_IN_OUT, repeat: Infinity, repeatDelay: 1.6 },
                 }}
             >
                 <rect x={PILL.x} y={PILL.y} width={PILL.w} height={PILL.h} rx={PILL.h / 2} fill="rgba(245,158,11,0.12)" stroke={ACCENT} strokeWidth={2} />
@@ -100,14 +101,14 @@ const DhtScene = ({ still }: SceneProps) => {
             </motion.g>
             <motion.g
                 initial={still ? false : { opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.5, duration: 0.3, type: 'spring', stiffness: 400, damping: 18 }}
+                transition={{ delay: 0.9, duration: DUR.enter, ease: EASE_OUT }}
                 style={{ transformOrigin: `${hit[0]}px ${hit[1]}px` }}
             >
                 <circle cx={hit[0]} cy={hit[1]} r={12} fill="rgba(5,5,16,0.9)" stroke="#E11D48" strokeWidth={2} />
                 <path d={`M${hit[0] - 5} ${hit[1] - 5} L${hit[0] + 5} ${hit[1] + 5} M${hit[0] + 5} ${hit[1] - 5} L${hit[0] - 5} ${hit[1] + 5}`} stroke="#FDA4AF" strokeWidth={2.6} strokeLinecap="round" />
             </motion.g>
-            <Caption x={4} y={286} text="nunca viram" color={ROSE} at={1.9} still={still} anchor="start" />
-            <Caption x={4} y={308} text="estrogênio" color={ROSE} at={1.9} still={still} anchor="start" />
+            <Caption x={4} y={286} text="nunca viram" color={ROSE} at={0.9} still={still} anchor="start" />
+            <Caption x={4} y={308} text="estrogênio" color={ROSE} at={0.9} still={still} anchor="start" />
         </svg>
     );
 };
@@ -135,14 +136,14 @@ const Link = ({ from, to, color, width, at, still, period }: LinkProps) => (
         <motion.path
             d={`M${from.join(' ')} L${to.join(' ')}`} stroke={color} strokeWidth={width} strokeLinecap="round" fill="none"
             initial={still ? false : { pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.85 }}
-            transition={{ pathLength: { delay: at, duration: 0.6, ease: 'easeOut' }, opacity: { delay: at, duration: 0.1 } }}
+            transition={{ pathLength: { delay: at, duration: DUR.bar, ease: EASE_IN_OUT }, opacity: { delay: at, duration: DUR.exit } }}
         />
         {!still && (
             <motion.circle
                 r={width * 0.6 + 2} fill="#fff"
                 initial={{ opacity: 0, cx: from[0], cy: from[1] }}
                 animate={{ opacity: [0, 1, 1, 0], cx: [from[0], to[0]], cy: [from[1], to[1]] }}
-                transition={{ delay: at + 0.8, duration: period, ease: 'easeIn', repeat: Infinity, repeatDelay: 0.6 }}
+                transition={{ delay: at + 0.6, duration: period, ease: 'easeIn', repeat: Infinity, repeatDelay: 0.6 }}
             />
         )}
     </g>
@@ -155,26 +156,26 @@ const NorScene = ({ still }: SceneProps) => {
     const pgIn: Pt = [BOXES.pg.x + BOXES.pg.w / 2, BOXES.pg.y];
     return (
         <svg {...svgProps} aria-label="19-nortestosterona: sem o carbono 19; liga-se ao Receptor Androgênico, com atividade Progestínica">
-            <Halo c={c19} r={24} color={ACCENT} at={1.0} still={still} pulse />
+            <Halo c={c19} r={24} color={ACCENT} at={0.3} still={still} pulse />
             <g transform={place(F3.x, F3.y, F3.k)}>
-                <Steroid color={color} c19="ghost" ghostDelay={1.1} accent={ACCENT} font={ATOM_FONT_LARGE} labelFont={ATOM_FONT_LARGE} delay={0.05} still={still} />
+                <Steroid color={color} c19="ghost" ghostDelay={0.45} accent={ACCENT} font={ATOM_FONT_LARGE} labelFont={ATOM_FONT_LARGE} delay={0} still={still} />
             </g>
             <motion.path
                 d={`M${70} ${34} L${c19[0] - 52} ${c19[1] - 26}`} stroke={ACCENT} strokeWidth={1.6} strokeDasharray="2 4" fill="none"
-                initial={still ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.8, duration: 0.5 }}
+                initial={still ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.5, duration: DUR.enter, ease: EASE_IN_OUT }}
             />
-            <Caption x={2} y={24} text="Sem o carbono na posição 19" color={ACCENT} at={1.7} still={still} anchor="start" />
+            <Caption x={2} y={24} text="Sem o carbono na posição 19" color={ACCENT} at={0.45} still={still} anchor="start" />
 
-            <Link from={[192, 212]} to={arIn} color={color} width={8} at={2.3} still={still} period={0.8} />
-            <Link from={[222, 212]} to={pgIn} color={ROSE} width={3.5} at={2.7} still={still} period={1.2} />
-            <Caption x={118} y={246} text="massivamente" color="#6EE7B7" at={2.6} still={still} anchor="end" />
-            <Caption x={306} y={246} text="periférica" color="#FDA4AF" at={3.0} still={still} anchor="start" />
+            <Link from={[192, 212]} to={arIn} color={color} width={8} at={0.5} still={still} period={0.8} />
+            <Link from={[222, 212]} to={pgIn} color={ROSE} width={3.5} at={0.6} still={still} period={1.2} />
+            <Caption x={118} y={246} text="massivamente" color="#6EE7B7" at={0.7} still={still} anchor="end" />
+            <Caption x={306} y={246} text="periférica" color="#FDA4AF" at={0.85} still={still} anchor="start" />
 
             {([
-                { box: BOXES.ar, text: ['Receptor', 'Androgênico'], stroke: color, fill: 'rgba(16,185,129,0.14)', ink: '#ECFDF5', at: 2.6 },
-                { box: BOXES.pg, text: ['atividade', 'Progestínica'], stroke: ROSE, fill: 'rgba(251,113,133,0.12)', ink: '#FFE4E6', at: 3.0 },
+                { box: BOXES.ar, text: ['Receptor', 'Androgênico'], stroke: color, fill: 'rgba(16,185,129,0.14)', ink: '#ECFDF5', at: 0.7 },
+                { box: BOXES.pg, text: ['atividade', 'Progestínica'], stroke: ROSE, fill: 'rgba(251,113,133,0.12)', ink: '#FFE4E6', at: 0.85 },
             ] as const).map(({ box, text, stroke, fill, ink, at }) => (
-                <motion.g key={text[0]} initial={still ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: at, duration: 0.45 }}>
+                <motion.g key={text[0]} initial={still ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: at, duration: DUR.enter, ease: EASE_OUT }}>
                     <rect x={box.x} y={box.y} width={box.w} height={box.h} rx={16} fill={fill} stroke={stroke} strokeWidth={2} />
                     <text textAnchor="middle" fill={ink} fontFamily={BODY} fontSize={FONT} fontWeight={700}>
                         {text.map((line, i) => (
@@ -201,7 +202,7 @@ export const CompactMolecule = ({ id, still, font }: { id: FamilyId; still: bool
         <svg viewBox={VIEWBOX} preserveAspectRatio="xMidYMid meet" className="w-full h-full block overflow-visible" aria-hidden>
             {id === 'testo' && <Steroid color={color} accent={ACCENT} font={font} stroke={5} still={still} />}
             {id === 'dht' && <Steroid color={color} ringA="saturated" accent={ACCENT} font={font} stroke={5} still={still} />}
-            {id === 'nor' && <Steroid color={color} c19="ghost" ghostDelay={0.7} accent={ACCENT} font={font} labelFont={font} stroke={5} still={still} />}
+            {id === 'nor' && <Steroid color={color} c19="ghost" ghostDelay={0.45} accent={ACCENT} font={font} labelFont={font} stroke={5} still={still} />}
         </svg>
     );
 };

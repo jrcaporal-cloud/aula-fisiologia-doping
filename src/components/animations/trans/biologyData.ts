@@ -1,4 +1,5 @@
 /** Conteúdo do slide "O Dimorfismo Sexual como Variável Atlética" — verbatim do componente original. */
+import { SUBSTANCE } from '../../../lib/palette';
 
 export interface TGroup {
     readonly label: string;
@@ -50,7 +51,8 @@ export const NUMBERED: readonly { r: ReversibilityItem; n: number }[] =
 
 export const numberOf = (r: ReversibilityItem): number => NUMBERED.find(x => x.r === r)?.n ?? 0;
 
-export const C_REVERTS = '#10B981';
+/** "Reverte" nunca em verde (daltonismo): azul de permitido/dentro da faixa, como no resto da aula. */
+export const C_REVERTS = SUBSTANCE.allowed;
 export const C_PERSISTS = '#F59E0B';
 
 export const BIO_STEPS = [

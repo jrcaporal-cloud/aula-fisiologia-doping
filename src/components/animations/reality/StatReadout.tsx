@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChartColumn, ChevronRight, Microscope } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { DUR, EASE_OUT } from '../../../lib/motion';
+import { MUTED_TEXT } from '../../../lib/palette';
 import { COLORS, type PanelData } from './data';
 import { useCountUp } from './useCountUp';
 
@@ -29,14 +31,14 @@ export const StatReadout = ({ panel, shown, open, reduced, countDelay, countDura
             <div className="flex items-center gap-4">
                 <span className="block min-w-[7.6rem] font-display text-[3.5rem] font-bold leading-none tabular-nums">
                     {shown
-                        ? <motion.span style={{ color: panel.color, textShadow: `0 0 26px ${panel.glow}` }}>{label}</motion.span>
-                        : <span className="text-white/55">?</span>}
+                        ? <motion.span style={{ color: panel.color }}>{label}</motion.span>
+                        : <span style={{ color: MUTED_TEXT }}>?</span>}
                 </span>
-                <p className={`font-display text-[1.3rem] font-semibold leading-tight transition-colors duration-500 ${shown ? 'text-white' : 'text-white/60'}`}>
+                <p className={`font-body text-[1.3rem] font-semibold leading-tight transition-colors duration-450 ease-(--ease-out) ${shown ? 'text-white' : 'text-[#9CA3AF]'}`}>
                     {panel.title}
                 </p>
             </div>
-            <p className="mt-1.5 flex items-center gap-1.5 text-[15px] font-semibold uppercase tracking-[0.08em] transition-colors duration-500"
+            <p className="mt-1.5 flex items-center gap-1.5 text-[15px] font-semibold uppercase tracking-[0.08em] transition-colors duration-450 ease-(--ease-out)"
                 style={{ color: shown ? panel.color : '#CBD5E1' }}>
                 <Icon size={16} strokeWidth={2.2} aria-hidden />
                 {panel.subtitle}
@@ -46,8 +48,8 @@ export const StatReadout = ({ panel, shown, open, reduced, countDelay, countDura
                 <div className="mt-1.5 min-h-[1.75rem]">
                     <AnimatePresence>
                         {shown && (
-                            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                transition={{ delay: reduced ? 0 : countDelay + countDuration * 0.75, duration: 0.5 }}>
+                            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: reduced ? 0 : DUR.exit } }}
+                                transition={{ delay: reduced ? 0 : countDelay + countDuration * 0.75, duration: DUR.enter, ease: EASE_OUT }}>
                                 {footnote}
                             </motion.div>
                         )}
@@ -56,14 +58,14 @@ export const StatReadout = ({ panel, shown, open, reduced, countDelay, countDura
             )}
 
             <button type="button" onClick={onToggle} disabled={!shown} aria-expanded={open}
-                className={`mt-3 flex w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-[16px] font-semibold transition-all duration-300
-                    ${shown ? 'cursor-pointer hover:bg-white/[0.06]' : 'cursor-default opacity-60'}`}
+                className={`mt-3 flex w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-[16px] font-semibold transition-[color,background-color,border-color] duration-300 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]
+                    ${shown ? 'cursor-pointer hover:bg-white/[0.06]' : 'cursor-default'}`}
                 style={{
-                    color: open ? '#fff' : COLORS.amberSoft,
+                    color: open ? '#fff' : shown ? COLORS.amberSoft : MUTED_TEXT,
                     borderColor: open ? panel.color : 'rgba(255,255,255,0.10)',
                     background: open ? `${panel.glow.replace('0.35', '0.14')}` : 'rgba(255,255,255,0.02)',
                 }}>
-                <motion.span animate={{ rotate: open ? 90 : 0 }} className="flex">
+                <motion.span animate={{ rotate: open ? 90 : 0 }} transition={{ duration: DUR.text, ease: EASE_OUT }} className="flex">
                     <ChevronRight size={16} strokeWidth={2.4} aria-hidden />
                 </motion.span>
                 {panel.question}

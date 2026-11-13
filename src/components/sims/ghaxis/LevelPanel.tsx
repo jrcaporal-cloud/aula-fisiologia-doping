@@ -1,24 +1,24 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { AlertTriangle, ArrowRight, Microscope, Pill, TrendingUp, Zap, type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { LEVELS, NATURAL_LINKS, type Level, type SectionIcon } from './content';
+import { DUR, EASE_OUT, SPRING_TAB, stagger } from '../../../lib/motion';
 
 const ICONS: Record<SectionIcon, LucideIcon> = { pill: Pill, scope: Microscope, warn: AlertTriangle, trend: TrendingUp, zap: Zap };
-const EASE = [0.16, 1, 0.3, 1] as const;
 const CARD = 'rounded-2xl border border-white/10';
 const CARD_BG = { background: 'rgba(8,8,18,0.72)' };
 
 const NaturalOverview = () => (
     <motion.div key="natural" className={`${CARD} px-3.5 py-3 h-full flex flex-col`} style={CARD_BG}
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: EASE }}>
+        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
         <div className="flex items-baseline justify-between gap-3">
-            <span className="font-display text-[18px] font-semibold text-white">Eixo natural</span>
+            <span className="text-[18px] font-semibold text-white">Eixo natural</span>
             <span className="text-[14px] font-mono uppercase tracking-wider text-gray-300">sem intervenção</span>
         </div>
         <div className="mt-2.5 flex flex-col gap-2">
             {NATURAL_LINKS.map((link, i) => (
                 <motion.div key={link.from} className="flex gap-3 items-start"
-                    initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.25, duration: 0.4 }}>
+                    initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: stagger(i, 0.1), duration: DUR.enter, ease: EASE_OUT }}>
                     <div className="shrink-0 w-[184px] flex items-center gap-1.5 text-[15px] font-semibold" style={{ color: link.color }}>
                         {link.from} <ArrowRight size={14} /> {link.to}
                     </div>
@@ -38,13 +38,13 @@ const LevelDetail = ({ level }: { level: Level }) => {
     return (
         <motion.div key={level.id} className="rounded-2xl border p-3.5 h-full flex flex-col"
             style={{ borderColor: `${level.color}55`, background: `linear-gradient(160deg, ${level.soft}, rgba(8,8,18,0.86) 65%)` }}
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: EASE }}>
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
             <div className="flex items-center gap-3">
                 <span className="w-8 h-8 shrink-0 rounded-full grid place-items-center font-mono text-[14px] font-bold border"
                     style={{ color: level.color, borderColor: level.color, background: `${level.color}1f` }}>{level.n}</span>
                 <div className="min-w-0">
                     <div className="flex items-baseline gap-2 flex-wrap">
-                        <span className="font-display text-[20px] font-semibold leading-tight" style={{ color: level.color }}>{level.title}</span>
+                        <span className="text-[20px] font-semibold leading-tight" style={{ color: level.color }}>{level.title}</span>
                         <span className="text-[15px] font-semibold text-white">{level.subtitle}</span>
                     </div>
                     <p className="text-[15px] text-gray-100 leading-snug">{level.summary}</p>
@@ -56,12 +56,12 @@ const LevelDetail = ({ level }: { level: Level }) => {
                     const active = i === tab;
                     return (
                         <button key={sec.label} type="button" role="tab" aria-selected={active} onClick={() => setTab(i)}
-                            className="relative flex items-center gap-1.5 whitespace-nowrap px-2.5 py-1.5 rounded-lg text-[14px] font-semibold cursor-pointer transition-colors"
+                            className="relative flex items-center gap-1.5 whitespace-nowrap px-2.5 py-1.5 rounded-lg text-[14px] font-semibold cursor-pointer transition-colors duration-180 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]"
                             style={{ color: active ? '#fff' : '#D1D5DB' }}>
                             {active && (
                                 <motion.span layoutId="gh-tab" className="absolute inset-0 rounded-lg"
                                     style={{ background: `${level.color}24`, border: `1px solid ${level.color}99` }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 34 }} />
+                                    transition={SPRING_TAB} />
                             )}
                             <Icon size={16} className="relative" style={{ color: sec.icon === 'warn' ? '#FDA4AF' : level.color }} />
                             <span className="relative">{sec.label}</span>
@@ -69,18 +69,14 @@ const LevelDetail = ({ level }: { level: Level }) => {
                     );
                 })}
             </div>
-            <AnimatePresence mode="wait">
-                <motion.p key={tab} role="tabpanel" className="mt-2 text-[16px] leading-[1.42] text-gray-100"
-                    initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.22 }}>
-                    {section.content}
-                </motion.p>
-            </AnimatePresence>
+            <motion.p key={tab} role="tabpanel" className="mt-2 text-[16px] leading-[1.42] text-gray-100"
+                initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.text, ease: EASE_OUT }}>
+                {section.content}
+            </motion.p>
         </motion.div>
     );
 };
 
 export const LevelPanel = ({ step }: { step: number }) => (
-    <AnimatePresence mode="wait">
-        {step === 0 ? <NaturalOverview key="n" /> : <LevelDetail key={LEVELS[step - 1].id} level={LEVELS[step - 1]} />}
-    </AnimatePresence>
+    step === 0 ? <NaturalOverview key="n" /> : <LevelDetail key={LEVELS[step - 1].id} level={LEVELS[step - 1]} />
 );

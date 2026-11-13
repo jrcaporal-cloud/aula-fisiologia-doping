@@ -4,12 +4,19 @@ import {
 import { intervals, laneBox, linY, logY, mergeIntervals, sampleLog, sampleStrat, type Sample } from './geometry';
 import type { LaneSpec } from './LaneView';
 import { VB } from './scales';
+import { DUR } from '../../../lib/motion';
+import { SUBSTANCE } from '../../../lib/palette';
 
+/**
+ * As duas vias são a mesma família (EAA): o azul da testosterona/derivados da aula, em duas
+ * intensidades — cheio no éster longo, claro na forma aquosa de ação curta. O ganho estrutural
+ * não é substância nem ressalva (não pode ser âmbar de cautela): fica neutro, como a marca da prova.
+ */
 export const COLORS = {
-    short: '#22D3EE', // ação curta (suspensão aquosa)
-    long: '#A855F7', // éster longo (decanoato / enantato / cipionato)
-    gain: '#F59E0B',
-    prova: '#60A5FA',
+    short: '#93C5FD', // ação curta (suspensão aquosa) — EAA, forma rápida
+    long: SUBSTANCE.eaa, // éster longo (decanoato / enantato / cipionato)
+    gain: '#E5E7EB',
+    prova: '#E2E8F0',
 } as const;
 
 const LANES_H = VB.lanesBottom - VB.lanesTop;
@@ -53,7 +60,7 @@ export const buildLogLanes = (mix: number): LaneSpec[] => {
         effect: { intervals: intervals(s.susp, v => v >= THRESH.suspEffect), label: 'ação: horas · meia-vida ~10 h' },
         detect: { intervals: intervals(s.susp, v => v >= THRESH.suspDetect), label: 'excreção urinária: 1–3 dias' },
         thresholdLabels: true,
-        reveal: { duration: 1.4, delay: 0.15 },
+        reveal: { duration: DUR.draw, delay: 0.1 },
     };
     if (mix < 0.02) return [susp];
     const b2 = laneBox(VB.lanesTop + h1 + GAP, half, true);
@@ -70,7 +77,7 @@ export const buildLogLanes = (mix: number): LaneSpec[] => {
         detectThr: THRESH.nandDetect,
         effect: { intervals: intervals(s.nand, v => v >= THRESH.nandEffect), label: 'efeito clínico: 4–6 semanas' },
         detect: { intervals: intervals(s.metab, v => v >= THRESH.nandDetect), label: 'rastreio do metabólito 19-Nor: até 18 meses' },
-        reveal: { duration: 1.9, delay: 0.25 },
+        reveal: { duration: DUR.draw, delay: 0.15 },
     };
     return [susp, nand];
 };
@@ -100,7 +107,7 @@ export const buildStratLanes = (): LaneSpec[] => {
             detectThr: STRAT_THRESH.longDetect,
             effect: { intervals: mergeIntervals(intervals(s.long, v => v >= STRAT_THRESH.longEffect)), label: 'efeito anabólico' },
             detect: { intervals: mergeIntervals(intervals(s.long, v => v >= STRAT_THRESH.longDetect)), label: '~3 meses após a última dose' },
-            reveal: { duration: 1.6, delay: 0.2 },
+            reveal: { duration: DUR.draw, delay: 0.1 },
         },
         {
             box: bShort,
@@ -113,7 +120,7 @@ export const buildStratLanes = (): LaneSpec[] => {
             detectThr: STRAT_THRESH.suspDetect,
             effect: { intervals: mergeIntervals(intervals(s.suspD, v => v >= STRAT_THRESH.suspEffect), 0.02), label: 'saturação' },
             detect: { intervals: mergeIntervals(intervals(s.suspD, v => v >= STRAT_THRESH.suspDetect)), label: 'horas a dias' },
-            reveal: { duration: 1.6, delay: 0.45 },
+            reveal: { duration: DUR.draw, delay: 0.2 },
         },
         {
             box: bGain,
@@ -123,7 +130,7 @@ export const buildStratLanes = (): LaneSpec[] => {
             y: linY(bGain, GAIN_MAX * 1.12),
             main: s.gain,
             area: true,
-            reveal: { duration: 1.6, delay: 0.7 },
+            reveal: { duration: DUR.draw, delay: 0.3 },
         },
     ];
 };

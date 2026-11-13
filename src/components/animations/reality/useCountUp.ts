@@ -1,5 +1,6 @@
 import { animate, useMotionValue, useTransform, type MotionValue } from 'framer-motion';
 import { useEffect } from 'react';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 
 interface CountUpOptions {
     duration: number;
@@ -19,9 +20,9 @@ export const useCountUp = (target: number, active: boolean, { duration, delay = 
             return undefined;
         }
         const controls = animate(value, to, {
-            duration: active ? duration : 0.25,
+            duration: active ? duration : DUR.text,
             delay: active ? delay : 0,
-            ease: [0.16, 1, 0.3, 1],
+            ease: EASE_OUT,
         });
         return () => controls.stop();
     }, [active, target, duration, delay, reduced, value]);

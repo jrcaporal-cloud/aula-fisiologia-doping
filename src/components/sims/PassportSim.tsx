@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { Play, RotateCcw } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../lib/motion';
+import { IllustrativeTag } from '../deck/IllustrativeTag';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { MANIP_START, PROTOCOLS, analyze, type ProtocolId } from './passport/model';
 import { PassportChart } from './passport/PassportChart';
@@ -15,8 +17,9 @@ const STEPS = [
 
 /** Quantas coletas aparecem em cada passo (passo 1 = sem histórico: só o limite populacional). */
 const STEP_TARGETS = [0, 6, 8, 9] as const;
-const ARRIVAL_MS = 220;
-const FIRST_ARRIVAL_MS = 120;
+/** Cadência das coletas: passo 1 (6 coletas) termina em ~1,06 s com o tween de 450 ms do corredor. */
+const ARRIVAL_MS = 110;
+const FIRST_ARRIVAL_MS = 60;
 const CARD_BG = { background: 'rgba(8,8,18,0.72)' };
 
 const PassportSim = () => {
@@ -60,12 +63,12 @@ const PassportSim = () => {
                         const active = p.id === protocolId;
                         return (
                             <button key={p.id} type="button" role="radio" aria-checked={active} onClick={() => choose(p.id)}
-                                className="relative px-3.5 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-3.5 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="pp-proto" className="absolute inset-0 rounded-xl"
-                                        style={{ background: `${p.color}26`, border: `1px solid ${p.color}99`, boxShadow: `0 0 18px ${p.color}33` }}
-                                        transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                        style={{ background: `${p.color}26`, border: `1px solid ${p.color}99` }}
+                                        transition={SPRING_TAB} />
                                 )}
                                 <span className="relative flex items-center gap-2">
                                     <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
@@ -76,16 +79,14 @@ const PassportSim = () => {
                     })}
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-mono uppercase tracking-wider px-2.5 py-1.5 rounded-lg text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
-                        modelo ilustrativo
-                    </span>
+                    <IllustrativeTag>modelo ilustrativo</IllustrativeTag>
                     <button type="button" onClick={play} aria-label="Reproduzir"
-                        className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-[14px] font-semibold cursor-pointer border transition-colors hover:brightness-125"
+                        className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-[14px] font-semibold cursor-pointer border transition-colors hover:brightness-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                         style={{ background: 'rgba(225,29,72,0.18)', borderColor: 'rgba(225,29,72,0.6)', color: '#FFE4E6' }}>
                         <Play size={14} fill="currentColor" /> Reproduzir
                     </button>
                     <button type="button" onClick={reset} aria-label="Reiniciar"
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[14px] font-semibold cursor-pointer border border-white/15 text-gray-200 hover:bg-white/5 transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[14px] font-semibold cursor-pointer border border-white/15 text-gray-200 hover:bg-white/5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                         style={CARD_BG}>
                         <RotateCcw size={14} /> Reiniciar
                     </button>
@@ -95,16 +96,19 @@ const PassportSim = () => {
             <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 296px' }}>
                 {/* Gráfico */}
                 <div className="rounded-2xl border border-white/10 px-4 pt-2.5 pb-2" style={CARD_BG}>
-                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-                        className="min-h-[26px] leading-snug">
-                        <span className="font-display text-[17px] font-semibold" style={{ color: step === 3 ? '#FDA4AF' : '#fff' }}>{STEPS[step].title}</span>
-                        <span className="text-[15px] text-gray-200"> · {STEPS[step].caption}</span>
+                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}
+                        className="flex min-h-[26px] items-baseline gap-2 leading-snug">
+                        <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: step === 3 ? '#E11D48' : protocol.color }} aria-hidden />
+                        <span>
+                            <span className="text-[20px] font-semibold" style={{ color: '#F3F4F6' }}>{STEPS[step].title}</span>
+                            <span className="text-[15px] text-gray-200"> · {STEPS[step].caption}</span>
+                        </span>
                     </motion.div>
                     <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-1 mb-1 text-[14px] text-gray-200">
                         <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-blue-400" /> coleta</span>
                         <span className="flex items-center gap-2"><span className="w-6 h-3 rounded-sm border border-blue-400/80" style={{ background: 'rgba(96,165,250,0.25)' }} /> corredor individual (99,9%)</span>
                         <span className="flex items-center gap-2"><span className="w-6 border-t-2 border-dashed border-white/70" /> limite populacional fixo</span>
-                        <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{ background: '#E11D48', boxShadow: '0 0 8px #E11D48' }} /> ATF</span>
+                        <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{ background: '#E11D48' }} /> ATF</span>
                     </div>
                     <PassportChart protocol={protocol} analysis={analysis} visibleCount={visible} verdictOn={verdictOn}
                         dimTunnel={dimTunnel} showPhases={showPhases} hovered={hovered} onHover={setHovered} />

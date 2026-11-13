@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 import { TE_LIMIT, TE_RESULT, type Genotype } from './content';
 import { CUP, GAUGE, GLUC_BOND, GLUC_PATH, MUSCLE, STEROID_OFFSET, STEROID_PATH, gaugeY } from './geometry';
 
@@ -10,7 +11,6 @@ export const DETECTED_COLOR = '#22D3EE';
 export const MISSED_COLOR = '#F59E0B';
 /** Borda direita (alinhada) das leituras sob o medidor: não corta no limite do viewBox. */
 const READ_X = 752;
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 export const Glyph = ({ x, y, s, conj }: { x: number; y: number; s: number; conj: boolean }) => (
     <g transform={`translate(${x} ${y}) scale(${s})`} style={{ color: conj ? '#67E8F9' : '#93C5FD' }}>
@@ -54,17 +54,17 @@ export const Muscle = ({ saturated }: { saturated: boolean }) => {
             <line x1={x + 60} x2={x + 74} y1={y} y2={y} stroke="#e5e7eb" strokeOpacity={0.6} strokeWidth={3} strokeLinecap="round" />
             <AnimatePresence>
                 {saturated && MUSCLE_SLOTS.map(([dx, dy], i) => (
-                    <motion.g key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 0.6 + i * 0.18, duration: 0.4 }}>
+                    <motion.g key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ delay: stagger(i, 0.1, 0.04), duration: DUR.enter, ease: EASE_OUT }}>
                         <Glyph x={x + dx} y={y + dy} s={0.6} conj={false} />
                     </motion.g>
                 ))}
             </AnimatePresence>
             <text x={x} y={y + 50} textAnchor="middle" className="font-body" fontSize={16} fontWeight={700} fill="#FECACA">Músculo</text>
-            <rect x={x - 50} y={y + 58} width={100} height={7} rx={3.5} fill="rgba(255,255,255,0.1)" />
-            <motion.rect x={x - 50} y={y + 58} height={7} rx={3.5} fill="#60A5FA"
-                initial={false} animate={{ width: saturated ? 100 : 0 }} transition={{ duration: 2.2, delay: 0.5, ease: 'easeOut' }} />
-            <motion.text x={x} y={y + 82} textAnchor="middle" className="font-body" fontSize={15} fontWeight={600} fill="#93C5FD"
-                initial={false} animate={{ opacity: saturated ? 1 : 0 }} transition={{ delay: 1.6 }}>
+            <rect x={x - 50} y={y + 54} width={100} height={7} rx={3.5} fill="rgba(255,255,255,0.1)" />
+            <motion.rect x={x - 50} y={y + 54} width={100} height={7} rx={3.5} fill="#60A5FA" style={{ originX: 0 }}
+                initial={false} animate={{ scaleX: saturated ? 1 : 0 }} transition={{ duration: DUR.bar, delay: saturated ? 0.1 : 0, ease: EASE_OUT }} />
+            <motion.text x={x} y={y + 78} textAnchor="middle" className="font-body" fontSize={15} fontWeight={600} fill="#93C5FD"
+                initial={false} animate={{ opacity: saturated ? 1 : 0 }} transition={{ delay: saturated ? 0.6 : 0, duration: DUR.text, ease: EASE_OUT }}>
                 supersaturado
             </motion.text>
         </g>
@@ -84,11 +84,11 @@ export const Cup = ({ urine, positive }: { urine: boolean; positive: boolean }) 
             <path d={body} fill="rgba(255,255,255,0.06)" stroke="#E5E7EB" strokeOpacity={0.7} strokeWidth={1.4} />
             <g clipPath="url(#ug-cup-clip)">
                 <motion.rect x={x - 30} y={0} width={60} height={80} fill="url(#ug-urine)"
-                    initial={false} animate={{ y: urine ? y - 4 : y + 46 }} transition={{ duration: 1.4, ease: 'easeOut' }} />
+                    initial={false} animate={{ y: urine ? y - 4 : y + 46 }} transition={{ duration: DUR.draw, ease: EASE_OUT }} />
             </g>
             <AnimatePresence>
                 {positive && CUP_SLOTS.map(([dx, dy], i) => (
-                    <motion.g key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 1 + i * 0.2 }}>
+                    <motion.g key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ delay: stagger(i, 0.3, 0.06), duration: DUR.enter, ease: EASE_OUT }}>
                         <Glyph x={x + dx} y={y + dy - 12} s={0.5} conj />
                     </motion.g>
                 ))}
@@ -107,6 +107,7 @@ interface GaugeProps {
 }
 
 export const TeGauge = ({ on, genotype, reading, ghost }: GaugeProps) => {
+    const reduce = useReducedMotion();
     const { x, w, top, bottom } = GAUGE;
     const cx = x + w / 2;
     const result = TE_RESULT[genotype];
@@ -126,17 +127,18 @@ export const TeGauge = ({ on, genotype, reading, ghost }: GaugeProps) => {
             ))}
             {ghost && (
                 <motion.rect x={x + 2} width={w - 4} rx={(w - 4) / 2} fill="none" stroke="#E5E7EB" strokeOpacity={0.7} strokeDasharray="4 3"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} y={gaugeY(other.value)} height={bottom - 2 - gaugeY(other.value)} />
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} y={gaugeY(other.value)} height={bottom - 2 - gaugeY(other.value)} />
             )}
-            <motion.rect x={x + 3} width={w - 6} rx={(w - 6) / 2} fill={over ? DETECTED_COLOR : MISSED_COLOR}
-                initial={false}
-                animate={{ y: gaugeY(value), height: Math.max(0, bottom - 3 - gaugeY(value)) }}
-                transition={{ duration: 1.6, delay: reading ? 0.9 : 0, ease: EASE }}
-                style={{ filter: `drop-shadow(0 0 6px ${over ? DETECTED_COLOR : MISSED_COLOR})` }} />
+            <g>
+                <motion.rect x={x + 3} y={top} width={w - 6} height={bottom - 3 - top} rx={(w - 6) / 2} fill={over ? DETECTED_COLOR : MISSED_COLOR}
+                    initial={false}
+                    animate={{ clipPath: `inset(${gaugeY(value) - top}px 0px 0px 0px round ${(w - 6) / 2}px)` }}
+                    transition={{ duration: DUR.bar, delay: reading ? 0.3 : 0, ease: EASE_OUT }} />
+            </g>
             {reading && over && (
                 <motion.path d={`M${cx - 6} ${gaugeY(value) - 8} L ${cx} ${gaugeY(value) - 15} L ${cx + 6} ${gaugeY(value) - 8}`}
                     fill="none" stroke={DETECTED_COLOR} strokeWidth={2.4} strokeLinecap="round"
-                    initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.4, 1] }} transition={{ delay: 2.4, duration: 1.4, repeat: Infinity, repeatType: 'reverse' }} />
+                    initial={{ opacity: 0 }} animate={reduce ? { opacity: 1 } : { opacity: [0, 1, 0.4, 1] }} transition={reduce ? { delay: 0.9, duration: DUR.enter } : { delay: 0.9, duration: 1.4, repeat: Infinity, repeatType: 'reverse', ease: EASE_IN_OUT }} />
             )}
             <line x1={x - 10} x2={x + w + 4} y1={limitY} y2={limitY} stroke={RED} strokeWidth={2} strokeDasharray="5 3" />
             <text x={x - 14} y={limitY + 18} textAnchor="end" className="font-mono" fontSize={16} fontWeight={700} fill="#FDA4AF"
@@ -144,15 +146,13 @@ export const TeGauge = ({ on, genotype, reading, ghost }: GaugeProps) => {
             {on && !reading && (
                 <text x={READ_X} y={bottom + 24} textAnchor="end" className="font-body" fontSize={16} fill="#E5E7EB">aguardando leitura</text>
             )}
-            <AnimatePresence mode="wait">
-                {reading && (
-                    <motion.text key={genotype} x={READ_X} y={bottom + 24} textAnchor="end" className="font-mono" fontSize={16} fontWeight={700}
-                        fill={over ? '#67E8F9' : '#FCD34D'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                        transition={{ delay: 2.2, duration: 0.4 }}>
-                        {result.label}
-                    </motion.text>
-                )}
-            </AnimatePresence>
+            {reading && (
+                <motion.text key={genotype} x={READ_X} y={bottom + 24} textAnchor="end" className="font-mono" fontSize={16} fontWeight={700}
+                    fill={over ? '#67E8F9' : '#FCD34D'} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                    transition={{ delay: 0.8, duration: DUR.text, ease: EASE_OUT }}>
+                    {result.label}
+                </motion.text>
+            )}
         </g>
     );
 };
@@ -174,7 +174,7 @@ const StampIcon = ({ detected, color }: { detected: boolean; color: string }) =>
 );
 
 /** Selo do laudo: fica na área livre entre o músculo e o medidor, sem cobrir ureteres, bexiga nem a coluna T/E. */
-const STAMP_BOX = { x: 516, y: 264, w: 170, h: 66 } as const;
+const STAMP_BOX = { x: 518, y: 260, w: 158, h: 62 } as const;
 
 export const Stamp = ({ genotype }: { genotype: Genotype }) => {
     const detected = genotype === 'normal';
@@ -182,15 +182,15 @@ export const Stamp = ({ genotype }: { genotype: Genotype }) => {
     const lines = detected ? ['T/E 15:1 ou mais'] : ['exame limpo', 'T/E 0,5:1'];
     const { x, y, w, h } = STAMP_BOX;
     return (
-        <motion.g key={genotype} initial={{ opacity: 0, scale: 1.3 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, transition: { duration: 0.2 } }}
-            transition={{ delay: 2.3, duration: 0.45, ease: EASE }} style={{ transformOrigin: `${x + w / 2}px ${y + h / 2}px` }}>
+        <motion.g key={genotype} initial={{ opacity: 0, scale: 1.3 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.85, duration: DUR.enter, ease: EASE_OUT }} style={{ transformOrigin: `${x + w / 2}px ${y + h / 2}px` }}>
             <rect x={x} y={y} width={w} height={h} rx={8} fill="#050510" stroke={color} strokeWidth={2.2} />
-            <g transform={`translate(${x + 20} ${y + 21})`}><StampIcon detected={detected} color={color} /></g>
-            <text x={x + 34} y={y + 27} className="font-display" fontSize={detected ? 16 : 14.5} fontWeight={700} fill={color} letterSpacing={detected ? 0.3 : 0}>
+            <g transform={`translate(${x + 18} ${y + 18})`}><StampIcon detected={detected} color={color} /></g>
+            <text x={x + 31} y={y + 24} className="font-body" fontSize={detected ? 17 : 14.6} fontWeight={700} fill={color} letterSpacing={detected ? 0.3 : 0}>
                 {detected ? 'DETECTADO' : 'FALSO NEGATIVO'}
             </text>
             {lines.map((t, k) => (
-                <text key={t} x={x + 12} y={y + 47 + k * 16} className="font-body" fontSize={15} fill="#F9FAFB">{t}</text>
+                <text key={t} x={x + 12} y={y + 41 + k * 15.5} className="font-body" fontSize={15} fill="#F9FAFB">{t}</text>
             ))}
         </motion.g>
     );

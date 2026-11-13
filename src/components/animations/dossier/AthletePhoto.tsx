@@ -16,7 +16,7 @@ export const AthletePhoto = ({ src, name, className = '', initialsSize }: Athlet
     const [failed, setFailed] = useState(false);
     if (failed) {
         return (
-            <div className={`flex items-center justify-center bg-slate-800 font-display font-bold text-slate-200 ${className}`} style={{ fontSize: initialsSize }} aria-label={name}>
+            <div className={`flex items-center justify-center bg-slate-800 ${initialsSize !== undefined && initialsSize >= 30 ? 'font-display' : 'font-body'} font-bold text-slate-200 ${className}`} style={{ fontSize: initialsSize }} aria-label={name}>
                 {initials(name)}
             </div>
         );

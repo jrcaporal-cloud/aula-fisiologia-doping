@@ -1,5 +1,6 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { AlertTriangle, Check, ShieldCheck } from 'lucide-react';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 import {
     MARKERS, MIN_BASELINE, fmt, markerValue,
     type Analysis, type Protocol, type Sample, type SlotAnalysis,
@@ -20,7 +21,7 @@ const RED = '#E11D48';
 const Pill = ({ ok, okText, badText }: { ok: boolean; okText: string; badText: string }) => (
     <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[14px] font-semibold"
         style={ok
-            ? { background: 'rgba(16,185,129,0.14)', color: '#6EE7B7', border: '1px solid rgba(16,185,129,0.35)' }
+            ? { background: 'rgba(56,189,248,0.14)', color: '#BAE6FD', border: '1px solid rgba(56,189,248,0.4)' }
             : { background: 'rgba(225,29,72,0.16)', color: '#FDA4AF', border: '1px solid rgba(225,29,72,0.5)' }}>
         {ok ? <Check size={14} strokeWidth={3} /> : <AlertTriangle size={14} strokeWidth={2.5} />}
         {ok ? okText : badText}
@@ -37,7 +38,7 @@ const Readout = ({ sample, k, slot, verdictOn }: { sample: Sample | null; k: num
                     <div className="text-[14px] font-mono uppercase tracking-wider" style={{ color: m.color }}>
                         {m.id === 'hb' ? 'Hb' : m.id === 'ret' ? '%Ret' : 'OFF'}
                     </div>
-                    <motion.div key={`${k}-${m.id}-${sample ? markerValue(sample, m.id) : 'x'}`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                    <motion.div key={`${k}-${m.id}-${sample ? markerValue(sample, m.id) : 'x'}`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.text, ease: EASE_OUT }}
                         className="font-mono text-[22px] leading-tight font-bold" style={{ color: out ? '#FDA4AF' : '#F9FAFB' }}>
                         {sample ? fmt(markerValue(sample, m.id), m.decimals) : '—'}
                     </motion.div>
@@ -48,6 +49,7 @@ const Readout = ({ sample, k, slot, verdictOn }: { sample: Sample | null; k: num
 );
 
 const Verdicts = ({ slot, step, verdictOn }: { slot: SlotAnalysis | null; step: number; verdictOn: boolean }) => {
+    const reduce = useReducedMotion();
     const fixedOut = slot !== null && (slot.fixedOut.hb || slot.fixedOut.ret || slot.fixedOut.off);
     const tunnelLine = (() => {
         if (slot === null) return <span className="text-[14px] text-gray-300">—</span>;
@@ -56,7 +58,8 @@ const Verdicts = ({ slot, step, verdictOn }: { slot: SlotAnalysis | null; step: 
         }
         if (!verdictOn && step === 2) {
             return (
-                <motion.span className="text-[14px] font-semibold text-gray-200" animate={{ opacity: [0.45, 1, 0.45] }} transition={{ duration: 1.6, repeat: Infinity }}>
+                <motion.span className="text-[14px] font-semibold text-gray-200" animate={reduce ? { opacity: 1 } : { opacity: [0.45, 1, 0.45] }}
+                    transition={reduce ? { duration: 0 } : { duration: 1.6, repeat: Infinity, ease: EASE_IN_OUT }}>
                     em análise…
                 </motion.span>
             );
@@ -116,7 +119,7 @@ export const SidePanel = ({ protocol, analysis, visibleCount, focus, step, verdi
         <div className="flex flex-col gap-3">
             <div className="rounded-2xl border border-white/10 p-3" style={{ background: 'rgba(8,8,18,0.72)' }}>
                 <div className="flex items-baseline justify-between mb-2">
-                    <span className="font-display text-[16px] font-semibold text-white">
+                    <span className="text-[16px] font-semibold text-white">
                         {hasSample ? `Coleta Ex.${focus + 1}` : 'Sem coletas'}
                     </span>
                     <span className="text-[14px] font-mono text-gray-200">base: {analysis.currentN} {analysis.currentN === 1 ? 'exame' : 'exames'}</span>
@@ -127,18 +130,18 @@ export const SidePanel = ({ protocol, analysis, visibleCount, focus, step, verdi
 
             {flag !== null ? (
                 <motion.div key={`atf-${protocol.id}`} className="rounded-2xl border p-3"
-                    style={{ borderColor: 'rgba(225,29,72,0.6)', background: 'linear-gradient(160deg, rgba(225,29,72,0.20), rgba(8,8,18,0.85) 70%)', boxShadow: '0 0 40px rgba(225,29,72,0.18)' }}
+                    style={{ borderColor: 'rgba(225,29,72,0.6)', background: 'linear-gradient(160deg, rgba(225,29,72,0.20), rgba(8,8,18,0.85) 70%)' }}
                     initial={{ opacity: 0, y: 14, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
+                    transition={{ duration: DUR.morph, ease: EASE_OUT }}>
                     <div className="flex items-center justify-between gap-2" style={{ color: '#FDA4AF' }}>
                         <span className="flex items-center gap-2">
                             <AlertTriangle size={20} strokeWidth={2.5} />
-                            <span className="font-display text-[16px] font-bold">Achado Atípico (ATF)</span>
+                            <span className="text-[16px] font-bold">Achado Atípico (ATF)</span>
                         </span>
                         <span className="font-mono text-[14px] font-bold">Ex.{flag + 1}</span>
                     </div>
                     <div className="mt-1 flex items-center gap-2.5">
-                        <span className="font-mono text-[32px] font-bold leading-none" style={{ color: RED, textShadow: '0 0 18px rgba(225,29,72,0.55)' }}>&gt;99,9%</span>
+                        <span className="font-mono text-[32px] font-bold leading-none" style={{ color: RED }}>&gt;99,9%</span>
                         <span className="text-[14px] text-rose-100 leading-tight">de improbabilidade de desvio natural</span>
                     </div>
                     <div className="mt-1.5"><Comparison sample={protocol.samples[flag]} slot={analysis.slots[flag]} /></div>
@@ -148,11 +151,11 @@ export const SidePanel = ({ protocol, analysis, visibleCount, focus, step, verdi
                 </motion.div>
             ) : finished ? (
                 <motion.div key="clean-final" className="rounded-2xl border p-3"
-                    style={{ borderColor: 'rgba(16,185,129,0.45)', background: 'linear-gradient(160deg, rgba(16,185,129,0.14), rgba(8,8,18,0.85) 70%)' }}
-                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                    <div className="flex items-center gap-2 text-emerald-300">
+                    style={{ borderColor: 'rgba(56,189,248,0.45)', background: 'linear-gradient(160deg, rgba(56,189,248,0.14), rgba(8,8,18,0.85) 70%)' }}
+                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>
+                    <div className="flex items-center gap-2" style={{ color: '#7DD3FC' }}>
                         <ShieldCheck size={20} />
-                        <span className="font-display text-[16px] font-bold">Sem achado atípico</span>
+                        <span className="text-[16px] font-bold">Sem achado atípico</span>
                     </div>
                     <p className="text-[15px] text-gray-100 leading-snug mt-2">
                         Todas as coletas ficaram dentro do túnel individual. O atleta é seu próprio controle.
@@ -161,10 +164,10 @@ export const SidePanel = ({ protocol, analysis, visibleCount, focus, step, verdi
                 </motion.div>
             ) : (
                 <motion.div key={`desc-${protocol.id}`} className="rounded-2xl border border-white/10 p-3" style={{ background: 'rgba(8,8,18,0.72)' }}
-                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                     <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full" style={{ background: protocol.color, boxShadow: `0 0 10px ${protocol.color}` }} />
-                        <span className="font-display text-[16px] font-semibold text-white">{protocol.label}</span>
+                        <span className="w-2.5 h-2.5 rounded-full" style={{ background: protocol.color }} />
+                        <span className="text-[16px] font-semibold text-white">{protocol.label}</span>
                     </div>
                     <p className="text-[15px] text-gray-100 leading-snug mt-2">{protocol.description}</p>
                     {protocol.id === 'transfusao' && (

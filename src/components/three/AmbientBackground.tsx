@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useStore } from '../../store/useStore';
@@ -16,7 +16,7 @@ const makeErythrocyteGeometry = () => {
         const r = (i / 24) * R;
         const t = r / R;
         // Perfil clássico de Evans–Fung, simplificado.
-        const h = 0.5 * Math.sqrt(Math.max(1 - t * t, 0)) * (0.2 + 2.0 * t * t - 1.1 * t ** 4);
+        const h = 0.5 * Math.sqrt(Math.max(1 - t * t, 0)) * (0.2 + 2.0 * t * t - 1.1 * t * t * t * t);
         points.push(new THREE.Vector2(r, Math.max(h, 0.04)));
     }
     for (let i = 24; i >= 0; i--) points.push(new THREE.Vector2(points[i].x, -points[i].y));
@@ -41,6 +41,27 @@ interface Cell {
     scale: number;
 }
 
+/*
+ * Passo do laço de quadros fora do componente (o compilador do React não deixa mutar ali o que veio
+ * de um hook) e em `for` simples: nenhuma closure nova por quadro.
+ */
+const advanceCells = (cells: Cell[], dt: number, dummy: THREE.Object3D, mesh: THREE.InstancedMesh) => {
+    for (let i = 0; i < cells.length; i++) {
+        const c = cells[i];
+        c.pos.x += c.speed * dt;
+        c.pos.y += Math.sin(c.pos.x * 0.15 + i) * 0.12 * dt;
+        if (c.pos.x > FIELD.x) c.pos.x = -FIELD.x;
+        c.rot.x += c.spin.x * dt;
+        c.rot.y += c.spin.y * dt;
+        c.rot.z += c.spin.z * dt;
+        dummy.position.copy(c.pos);
+        dummy.rotation.copy(c.rot);
+        dummy.scale.setScalar(c.scale);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+    }
+};
+
 const BloodStream = () => {
     const meshRef = useRef<THREE.InstancedMesh>(null);
     const geometry = useMemo(() => makeErythrocyteGeometry(), []);
@@ -60,19 +81,7 @@ const BloodStream = () => {
         const mesh = meshRef.current;
         if (!mesh) return;
         const dt = Math.min(delta, 0.05);
-        cells.forEach((c, i) => {
-            c.pos.x += c.speed * dt;
-            c.pos.y += Math.sin(c.pos.x * 0.15 + i) * 0.12 * dt;
-            if (c.pos.x > FIELD.x) c.pos.x = -FIELD.x;
-            c.rot.x += c.spin.x * dt;
-            c.rot.y += c.spin.y * dt;
-            c.rot.z += c.spin.z * dt;
-            dummy.position.copy(c.pos);
-            dummy.rotation.copy(c.rot);
-            dummy.scale.setScalar(c.scale);
-            dummy.updateMatrix();
-            mesh.setMatrixAt(i, dummy.matrix);
-        });
+        advanceCells(cells, dt, dummy, mesh);
         mesh.instanceMatrix.needsUpdate = true;
     });
 
@@ -110,10 +119,11 @@ const Plasma = () => {
 /** Parallax suave com o mouse + leve aproximação ao avançar na aula. */
 const CameraDrift = () => {
     const slide = useStore(s => s.currentSlide);
-    const target = useRef(new THREE.Vector3());
+    // criado uma vez (inicializador preguiçoso); o useFrame só reescreve o vetor
+    const [target] = useState(() => new THREE.Vector3());
     useFrame(({ camera, pointer }, delta) => {
-        target.current.set(pointer.x * 1.6, pointer.y * 1.0, 16 - Math.min(slide, 40) * 0.08);
-        camera.position.lerp(target.current, Math.min(delta * 1.5, 1));
+        target.set(pointer.x * 1.6, pointer.y * 1.0, 16 - Math.min(slide, 40) * 0.08);
+        camera.position.lerp(target, Math.min(delta * 1.5, 1));
         camera.lookAt(0, 0, -10);
     });
     return null;
@@ -127,18 +137,21 @@ export const AmbientBackground = () => {
     const slide = useStore(s => s.currentSlide);
     const modalOpen = useStore(s => s.modalOpen);
     const isHero = slide === 0;
+    // Capa e citações: fundo presente. Slides com simulador/gráfico: bem apagado, para as hemácias não
+    // aparecerem através das faixas e curvas densas (s30, s34, s35).
+    const opacity = isHero ? 0.95 : ANIMATED_BACKGROUND_SLIDES.has(slide) ? 0.4 : 0.18;
 
     return (
         <div
             aria-hidden
             className="absolute inset-0 z-0 transition-opacity duration-1000"
-            style={{ opacity: isHero ? 0.95 : 0.4 }}
+            style={{ opacity }}
         >
             <Canvas
-                dpr={[1, 1.5]}
+                dpr={1}
                 frameloop={modalOpen ? 'never' : ANIMATED_BACKGROUND_SLIDES.has(slide) ? 'always' : 'demand'}
                 camera={{ position: [0, 0, 16], fov: 50 }}
-                gl={{ antialias: true, powerPreference: 'low-power' }}
+                gl={{ antialias: false, powerPreference: 'low-power' }}
             >
                 <color attach="background" args={['#050510']} />
                 <fog attach="fog" args={['#050510', 14, 46]} />

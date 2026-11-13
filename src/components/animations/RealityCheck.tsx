@@ -2,6 +2,7 @@ import { useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { create } from 'zustand';
 import { useSlideSteps } from '../../store/useSlideSteps';
+import { DUR } from '../../lib/motion';
 import { DataDrawer } from './reality/DataDrawer';
 import { StadiumGrid } from './reality/StadiumGrid';
 import { StatReadout } from './reality/StatReadout';
@@ -78,10 +79,10 @@ export const RealityCheck = () => {
 
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-4">
                     <StatReadout panel={WADA} shown={isShown('wada')} open={activePanel?.id === 'wada'} reduced={reduced}
-                        countDelay={0.25} countDuration={1.1} onToggle={() => toggle('wada')} />
+                        countDelay={0.15} countDuration={DUR.draw} onToggle={() => toggle('wada')} />
                     <div className="h-px bg-white/10" />
                     <StatReadout panel={REAL} shown={isShown('real')} open={activePanel?.id === 'real'} reduced={reduced}
-                        countDelay={0.05} countDuration={WAVE_TOTAL_S + 0.5} onToggle={() => toggle('real')}
+                        countDelay={0.05} countDuration={WAVE_TOTAL_S + 0.25} onToggle={() => toggle('real')}
                         footnote={
                             <p className="text-[18px] text-amber-200">
                                 A turma chutou <strong className="font-bold" style={{ color: COLORS.amberSoft }}>{shownGuess}%</strong>

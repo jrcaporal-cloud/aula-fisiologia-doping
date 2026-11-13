@@ -3,6 +3,7 @@ import { TE_LIMIT, TE_RESULT, type Genotype } from '../ugt2b17/content';
 import { LIVER_PATH, STEROID_OFFSET, STEROID_PATH } from '../ugt2b17/geometry';
 import { EASE, strokeK, type EchoProps } from './echoKit';
 import { EchoSvg, Label } from './EchoParts';
+import { DUR } from '../../../lib/motion';
 
 /**
  * Eco do slide "O Polimorfismo UGT2B17": o mesmo doping em dois genótipos. Gene normal → rins →
@@ -68,7 +69,7 @@ export const UgtEcho = ({ compact }: EchoProps) => {
                 const res = TE_RESULT[row.id];
                 const y = row.y;
                 const enzyme = { x: LIVER_X + (192 - LIVER_C.x) * LIVER_SCALE, y: y + (206 - LIVER_C.y) * LIVER_SCALE };
-                const base = ri * 0.5;
+                const base = ri * 0.15;
                 return (
                     <g key={row.id}>
                         <Label compact={compact} x={20} y={y - 62} size={15} weight={700} fill={row.color} delay={base}>{row.title}</Label>
@@ -81,7 +82,7 @@ export const UgtEcho = ({ compact }: EchoProps) => {
                         ) : (
                             <circle cx={enzyme.x} cy={enzyme.y} r={9 * Math.min(k, 1.6)} fill="#10B981" stroke="#A7F3D0" strokeWidth={1.2 * k} />
                         )}
-                        <Label compact={compact} x={LIVER_X} y={y + 46} anchor="middle" size={13} mono fill={del ? '#FDA4AF' : '#6EE7B7'} delay={base + 0.2}>
+                        <Label compact={compact} x={LIVER_X} y={y + 46} anchor="middle" size={13} mono fill={del ? '#FDA4AF' : '#6EE7B7'} delay={base + 0.1}>
                             {del ? 'sem UGT2B17' : 'UGT2B17'}
                         </Label>
 
@@ -93,7 +94,7 @@ export const UgtEcho = ({ compact }: EchoProps) => {
                                 <Label compact={compact} x={232} y={y - 32} anchor="middle" size={13} mono fill="#FECDD3">rins</Label>
                             </g>
                         )}
-                        {del && <Label compact={compact} x={306} y={y + 71} size={14} weight={600} fill="#FDE68A" delay={base + 0.6}>fezes</Label>}
+                        {del && <Label compact={compact} x={306} y={y + 71} size={14} weight={600} fill="#FDE68A" delay={base + 0.3}>fezes</Label>}
                         {[0, 0.9, 1.8].map(t => <Molecule key={t} route={row.route} delay={base + t} k={k} reduce={reduce} />)}
 
                         {/* frasco de urina */}
@@ -102,19 +103,20 @@ export const UgtEcho = ({ compact }: EchoProps) => {
                             <path d="M2 11 L52 11 L49 70 Q48 76 42 76 L12 76 Q6 76 5 70 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.5)" strokeWidth={1.2 * k} />
                             <motion.path d="M4 40 L50 40 L49 70 Q48 76 42 76 L12 76 Q6 76 5 70 Z" fill="#F59E0B"
                                 initial={reduce ? false : { fillOpacity: 0.15 }} animate={{ fillOpacity: del ? 0.25 : 0.75 }}
-                                transition={{ duration: d(1.2), delay: d(base + 1.6) }} />
+                                transition={{ duration: d(DUR.bar), delay: d(base + 0.3), ease: EASE }} />
                         </g>
                         <Label compact={compact} x={373} y={y + 92} anchor="middle" size={13} mono fill="#FDE68A">urina</Label>
 
                         {/* medidor T/E */}
                         <rect x={GAUGE.x} y={y + 8} width={GAUGE.w} height={16} rx={8} fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.3)" />
-                        <motion.rect x={GAUGE.x} y={y + 8} height={16} rx={8} fill={del ? '#FB7185' : '#22D3EE'}
-                            initial={reduce ? false : { width: 0 }} animate={{ width: Math.max(gx(res.value) - GAUGE.x, 8) }}
-                            transition={{ duration: d(1.1), delay: d(base + 1.9), ease: EASE }} />
+                        <motion.rect x={GAUGE.x} y={y + 8} width={Math.max(gx(res.value) - GAUGE.x, 8)} height={16} rx={8} fill={del ? '#FB7185' : '#22D3EE'}
+                            style={{ originX: 0 }}
+                            initial={reduce ? false : { scaleX: 0 }} animate={{ scaleX: 1 }}
+                            transition={{ duration: d(DUR.bar), delay: d(base + 0.45), ease: EASE }} />
                         <line x1={gx(TE_LIMIT)} x2={gx(TE_LIMIT)} y1={y + 2} y2={y + 30} stroke="#fff" strokeWidth={2 * k} />
                         {ri === 0 && <Label compact={compact} x={gx(TE_LIMIT)} y={y - 5} anchor="middle" size={15} mono fill="#E5E7EB">limite {TE_LIMIT}:1</Label>}
-                        <Label compact={compact} x={GAUGE.x} y={y - 29} size={19} weight={800} fill={row.color} delay={base + 2.4}>T/E {res.label}</Label>
-                        <Label compact={compact} x={GAUGE.x} y={y + 50} size={15} weight={600} fill={del ? '#FDA4AF' : '#A5F3FC'} delay={base + 2.6}>{res.verdict}</Label>
+                        <Label compact={compact} x={GAUGE.x} y={y - 29} size={19} weight={800} fill={row.color} delay={base + 0.6}>T/E {res.label}</Label>
+                        <Label compact={compact} x={GAUGE.x} y={y + 50} size={15} weight={600} fill={del ? '#FDA4AF' : '#A5F3FC'} delay={base + 0.75}>{res.verdict}</Label>
                     </g>
                 );
             })}

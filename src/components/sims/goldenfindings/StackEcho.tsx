@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { buildGears, gearPath } from '../stack/gearGeometry';
 import { useGearSpin } from '../stack/useGearSpin';
 import { EASE, strokeK, type EchoProps } from './echoKit';
+import { DUR, EASE_IN_OUT, stagger } from '../../../lib/motion';
+import { SUBSTANCE } from '../../../lib/palette';
 import { EchoSvg, Label } from './EchoParts';
 
 /**
@@ -22,15 +24,15 @@ interface GearText {
 }
 
 const TEXT: readonly GearText[] = [
-    { name: 'Testosterona', nameSize: 17, color: '#60A5FA', role: ['Músculo Bruto'], roleAt: { x: GEARS[0].cx, y: GEARS[0].cy + GEARS[0].r + 36, anchor: 'middle' } },
-    { name: 'GH', nameSize: 28, color: '#10B981', role: ['Agente Abridor de Vias'], roleAt: { x: GEARS[1].cx, y: GEARS[1].cy - GEARS[1].r - 24, anchor: 'middle' } },
-    { name: 'Insulina', nameSize: 15, color: '#E11D48', role: ['Condutor e Bloqueador', 'Máximo da Quebra'], roleAt: { x: 592, y: 62, anchor: 'end' } },
+    { name: 'Testosterona', nameSize: 17, color: SUBSTANCE.eaa, role: ['Músculo Bruto'], roleAt: { x: GEARS[0].cx, y: GEARS[0].cy + GEARS[0].r + 36, anchor: 'middle' } },
+    { name: 'GH', nameSize: 28, color: SUBSTANCE.gh, role: ['Agente Abridor de Vias'], roleAt: { x: GEARS[1].cx, y: GEARS[1].cy - GEARS[1].r - 24, anchor: 'middle' } },
+    { name: 'Insulina', nameSize: 15, color: SUBSTANCE.insulin, role: ['Condutor e Bloqueador', 'Máximo da Quebra'], roleAt: { x: 592, y: 62, anchor: 'end' } },
 ];
 
 const MTOR = { x: 520, y: 312, r: 40 } as const;
 const G3 = GEARS[2];
 const FLOW = `M${G3.cx + 34} ${G3.cy + 44} C ${G3.cx + 60} ${G3.cy + 90}, ${MTOR.x - 50} ${MTOR.y - 70}, ${MTOR.x - 24} ${MTOR.y - 32}`;
-const SPIN_DELAY_MS = 1300;
+const SPIN_DELAY_MS = 900;
 
 export const StackEcho = ({ compact }: EchoProps) => {
     const reduce = useReducedMotion() ?? false;
@@ -65,7 +67,7 @@ export const StackEcho = ({ compact }: EchoProps) => {
                     <motion.g
                         key={t.name}
                         initial={reduce ? false : { opacity: 0, x: 40, y: -30 }} animate={{ opacity: 1, x: 0, y: 0 }}
-                        transition={{ duration: d(0.8), delay: d(i * 0.35), ease: EASE }}
+                        transition={{ duration: d(DUR.bar), delay: d(stagger(i, 0, 0.15)), ease: EASE }}
                     >
                         <g ref={el => { refs.current[i] = el; }}>
                             <path d={PATHS[i]} fill={`url(#gf-gear-${i})`} stroke={t.color} strokeWidth={2.4 * k} strokeLinejoin="round" />
@@ -80,7 +82,7 @@ export const StackEcho = ({ compact }: EchoProps) => {
                         )}
                         {t.role.map((line, j) => (
                             <Label key={line} compact={compact} x={t.roleAt.x} y={t.roleAt.y + j * 20} anchor={t.roleAt.anchor}
-                                size={15} weight={600} fill={t.color === '#E11D48' ? '#FDA4AF' : t.color === '#10B981' ? '#A7F3D0' : '#BFDBFE'} delay={0.5 + i * 0.35}>
+                                size={15} weight={600} fill={t.color === SUBSTANCE.insulin ? '#A5F3FC' : t.color === SUBSTANCE.gh ? '#A7F3D0' : '#BFDBFE'} delay={stagger(i, 0.45, 0.15)}>
                                 {line}
                             </Label>
                         ))}
@@ -92,7 +94,7 @@ export const StackEcho = ({ compact }: EchoProps) => {
             <motion.path
                 d={FLOW} fill="none" stroke="#FCD34D" strokeOpacity={0.6} strokeWidth={2.5 * k} strokeDasharray={compact ? undefined : '6 6'}
                 initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }}
-                transition={{ duration: d(0.6), delay: d(1.3) }}
+                transition={{ duration: d(DUR.bar), delay: d(0.45), ease: EASE_IN_OUT }}
             />
             {!reduce && spinning && [0, 1, 2].map(j => (
                 <motion.circle key={j} r={4.5 * k} fill="#FCD34D"
@@ -103,16 +105,16 @@ export const StackEcho = ({ compact }: EchoProps) => {
             ))}
             <motion.g
                 initial={reduce ? false : { opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: d(0.5), delay: d(1.7), ease: EASE }}
+                transition={{ duration: d(DUR.enter), delay: d(0.6), ease: EASE }}
                 style={{ transformOrigin: `${MTOR.x}px ${MTOR.y}px` }}
             >
                 <motion.circle cx={MTOR.x} cy={MTOR.y} r={MTOR.r + 10} fill="none" stroke="#FCD34D" strokeWidth={2 * k}
                     animate={reduce ? { opacity: 0.5 } : { opacity: [0.15, 0.7, 0.15] }}
-                    transition={reduce ? { duration: 0 } : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }} />
+                    transition={reduce ? { duration: 0 } : { duration: 1.6, repeat: Infinity, ease: EASE_IN_OUT }} />
                 <circle cx={MTOR.x} cy={MTOR.y} r={MTOR.r} fill="url(#gf-mtor)" stroke="#FDE68A" strokeWidth={1.5 * k} />
-                {!compact && <text x={MTOR.x} y={MTOR.y + 7} textAnchor="middle" className="font-display" fontSize={20} fontWeight={700} fill="#1C1917">mTOR</text>}
+                {!compact && <text x={MTOR.x} y={MTOR.y + 7} textAnchor="middle" className="font-body" fontSize={20} fontWeight={700} fill="#1C1917">mTOR</text>}
             </motion.g>
-            <Label compact={compact} x={MTOR.x} y={MTOR.y + MTOR.r + 30} anchor="middle" size={15} weight={600} fill="#FDE68A" delay={1.9}>
+            <Label compact={compact} x={MTOR.x} y={MTOR.y + MTOR.r + 30} anchor="middle" size={15} weight={600} fill="#FDE68A" delay={0.75}>
                 via mTOR
             </Label>
         </EchoSvg>

@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 
 /**
  * Fechamento ("Conhecimento não é cumplicidade — é proteção"): a molécula de testosterona,
@@ -31,10 +32,11 @@ const RINGS = [
 
 export const ShieldKnowledge = () => {
     const still = useReducedMotion();
-    const draw = (delay: number, duration = 1.2) => ({
+    // Coreografia inteira em ≤ 1,2 s: escudo 0,1 + 0,9; anéis até 0,54 + 0,6; preenchimento 0,6 + 0,45; brilho 0,75 + 0,45.
+    const draw = (delay: number, duration: number = DUR.draw) => ({
         initial: still ? false : { pathLength: 0, opacity: 0 },
         animate: { pathLength: 1, opacity: 1 },
-        transition: { pathLength: { delay, duration, ease: 'easeInOut' as const }, opacity: { delay, duration: 0.2 } },
+        transition: { pathLength: { delay, duration, ease: EASE_IN_OUT }, opacity: { delay, duration: DUR.exit } },
     });
     return (
         <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} aria-hidden className="overflow-visible">
@@ -53,13 +55,13 @@ export const ShieldKnowledge = () => {
             <motion.path
                 d={SHIELD} fill="url(#sk-fill)"
                 initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: 1.3, duration: 0.8 }}
+                transition={{ delay: 0.6, duration: DUR.morph, ease: EASE_OUT }}
             />
-            <motion.path d={SHIELD} fill="none" stroke="#E11D48" strokeWidth="3" strokeLinejoin="round" filter="url(#sk-glow)" {...draw(0.2, 1.4)} />
+            <motion.path d={SHIELD} fill="none" stroke="#E11D48" strokeWidth="3" strokeLinejoin="round" filter="url(#sk-glow)" {...draw(0.1, DUR.draw)} />
 
             <g fill="none" stroke="#FB7185" strokeWidth="2.4" strokeLinejoin="round">
                 {RINGS.map((pts, i) => (
-                    <motion.polygon key={i} points={pts} {...draw(1.1 + i * 0.25, 0.7)} />
+                    <motion.polygon key={i} points={pts} {...draw(stagger(i, 0.3, 0.08), DUR.bar)} />
                 ))}
             </g>
 
@@ -70,7 +72,7 @@ export const ShieldKnowledge = () => {
                         y="0" width="36" height={H} fill="#fff" opacity="0.12"
                         transform="skewX(-18)"
                         initial={{ x: -60 }} animate={{ x: W + 60 }}
-                        transition={{ delay: 2.6, duration: 1.1, ease: 'easeInOut' }}
+                        transition={{ delay: 0.75, duration: DUR.morph, ease: EASE_IN_OUT }}
                     />
                 </g>
             )}

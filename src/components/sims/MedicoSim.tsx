@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { MEDICO_STEPS, type InfoBlock } from './medico/data';
 
@@ -26,8 +27,8 @@ export default function MedicoSim() {
                             key={s.tab}
                             role="tab"
                             aria-selected={active}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[16px] transition-colors ${
-                                active ? 'bg-brand-crimson/50 border-brand-red text-white' : i < step ? 'border-white/25 text-gray-200' : 'border-white/15 text-gray-300'
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[16px] font-semibold transition-colors ${
+                                active ? 'bg-brand-crimson/50 border-brand-red text-white' : i < step ? 'border-white/25 text-gray-100' : 'border-white/15 text-gray-300'
                             }`}
                         >
                             <Icon size={18} aria-hidden /> {s.tab}
@@ -36,29 +37,26 @@ export default function MedicoSim() {
                 })}
             </div>
 
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={step}
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.35 }}
-                    className="rounded-3xl border border-white/10 bg-black/45 backdrop-blur-xl p-8 min-h-[452px] flex flex-col"
-                >
-                    <h3 className="font-display text-[1.9rem] leading-tight font-semibold text-white mb-6">{current.title}</h3>
-                    <div className={`grid ${columns} gap-4`}>
-                        {current.blocks.map(b => (
-                            <div key={b.label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 flex flex-col gap-3">
-                                <span className={`self-start px-3 py-1 rounded-full border text-[15px] font-semibold uppercase tracking-wider ${b.tone ? TONES[b.tone] : NEUTRAL}`}>
-                                    {b.label}
-                                </span>
-                                <p className="text-[1.2rem] leading-snug text-gray-100">{b.text}</p>
-                            </div>
-                        ))}
-                    </div>
-                    <p className="mt-auto pt-5 text-[1.05rem] leading-snug text-gray-300">{current.foot}</p>
-                </motion.div>
-            </AnimatePresence>
+            <motion.div
+                key={step}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: DUR.enter, ease: EASE_OUT }}
+                className="rounded-3xl border border-white/10 bg-black/45 backdrop-blur-xl p-8 min-h-[452px] flex flex-col"
+            >
+                <h3 className="font-display text-[1.9rem] leading-tight font-semibold text-white mb-6">{current.title}</h3>
+                <div className={`grid ${columns} gap-4`}>
+                    {current.blocks.map(b => (
+                        <div key={b.label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 flex flex-col gap-3">
+                            <span className={`self-start px-3 py-1 rounded-full border text-[15px] font-semibold uppercase tracking-wider ${b.tone ? TONES[b.tone] : NEUTRAL}`}>
+                                {b.label}
+                            </span>
+                            <p className="text-[1.2rem] leading-snug text-gray-100">{b.text}</p>
+                        </div>
+                    ))}
+                </div>
+                <p className="mt-auto pt-5 text-[1.05rem] leading-snug" style={{ color: '#D1D5DB' }}>{current.foot}</p>
+            </motion.div>
         </div>
     );
 }

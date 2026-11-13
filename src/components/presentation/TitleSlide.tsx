@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Chromatogram } from './title/Chromatogram';
 import { SteroidMark } from './title/SteroidMark';
+import { DUR, EASE_OUT } from '../../lib/motion';
 
 // We'll define the interface inline to avoid issues
 interface SlideCard {
@@ -28,36 +29,35 @@ export const TitleSlide = ({ slide }: { slide: SlideSchema }) => {
                 <div className="absolute w-[760px] h-[760px] rounded-full bg-[radial-gradient(circle,rgba(225,29,72,0.10),transparent_65%)]" />
                 <SteroidMark className="w-[780px] max-w-none opacity-[0.24] translate-x-10 -translate-y-[120px]" />
             </div>
+            {/* Capa: exceção 2 da regra T (não é disparada pelo passador durante a aula). */}
             <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-brand-red font-display tracking-[0.3em] text-base uppercase mb-6 drop-shadow-[0_0_10px_rgba(225,29,72,0.8)]"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: DUR.morph, ease: EASE_OUT }}
+                className="text-brand-red font-display tracking-[0.3em] text-base uppercase mb-6"
             >
                 Apresentação Técnica
             </motion.p>
+            {/* Branco sólido: o degradê apagava "no Esporte" (achado de integridade da crítica). */}
             <motion.h1
-                initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
-                whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="text-8xl font-display leading-[1.02] font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400 mb-7 max-w-5xl drop-shadow-2xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: DUR.morph, ease: EASE_OUT }}
+                className="text-8xl font-display leading-[1.02] font-bold tracking-tight text-white mb-7 max-w-5xl"
             >
                 {slide.title}
             </motion.h1>
+            {/* Traço de largura fixa que se abre do centro (scaleX): sem animar largura. */}
             <motion.div
-                initial={{ opacity: 0, width: 0 }}
-                whileInView={{ opacity: 1, width: '6rem' }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ delay: 0.5, duration: 1 }}
-                className="h-[2px] bg-gradient-to-r from-transparent via-brand-crimson to-transparent mb-7"
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                transition={{ delay: 0.3, duration: DUR.bar, ease: EASE_OUT }}
+                className="h-[2px] w-24 origin-center bg-gradient-to-r from-transparent via-brand-crimson to-transparent mb-7"
             />
             <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ delay: 0.7, duration: 0.8 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: DUR.morph, ease: EASE_OUT }}
                 className="text-[1.75rem] leading-snug text-gray-300 font-light max-w-3xl drop-shadow-md"
             >
                 {slide.subtitle.replace(/\s+/g, ' ')}
@@ -67,9 +67,9 @@ export const TitleSlide = ({ slide }: { slide: SlideSchema }) => {
             </div>
             <motion.div
                 initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: false }}
-                transition={{ delay: 1.5, duration: 1 }}
+                animate={{ opacity: 1 }}
+                // Dica do passador: o atraso longo é proposital (exceção da capa).
+                transition={{ delay: 1.5, duration: DUR.bar, ease: EASE_OUT }}
                 className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-3 text-gray-400"
             >
                 <kbd className="deck-kbd">→</kbd>

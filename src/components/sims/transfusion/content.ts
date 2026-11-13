@@ -3,6 +3,8 @@
  * src/components/animations/BloodDopingAnimation.tsx (fases, contexto técnico e quadro de defesa).
  */
 
+import { SUBSTANCE } from '../../../lib/palette';
+
 export interface PhaseText {
     readonly label: string;
     readonly sub: string;
@@ -68,7 +70,7 @@ export interface StepInfo {
 export const STEPS: readonly StepInfo[] = [
     { tab: 'Altitude', title: 'Fase 1 — Altitude', caption: 'Hct sobe de 42–45% para 50–55%; coleta no pico.', color: '#60A5FA' },
     { tab: 'Armazenamento', title: 'Fase 2 — Armazenamento', caption: '–80 °C com DMSO por meses; o perfil segue “normal”.', color: '#F59E0B' },
-    { tab: 'Reinfusão', title: 'Fase 3 — Reinfusão', caption: '12–24h antes da prova: Hct de ~43% para 49–51%.', color: '#E11D48' },
+    { tab: 'Reinfusão', title: 'Fase 3 — Reinfusão', caption: '12–24h antes da prova: Hct de ~43% para 49–51%.', color: SUBSTANCE.blood },
     { tab: 'Defesa ABP', title: 'Defesa: o Passaporte Biológico', caption: 'Hb alta seguida de queda abrupta de reticulócitos.', color: '#38BDF8' },
     { tab: 'Calcanhar', title: 'O Calcanhar de Aquiles', caption: 'Sem 3 amostras basais e coleta oportuna, não há alerta.', color: '#F59E0B' },
 ];
@@ -76,12 +78,14 @@ export const STEPS: readonly StepInfo[] = [
 export const STEP_COUNT = STEPS.length;
 
 export const C = {
-    red: '#E11D48',
+    red: SUBSTANCE.risk,
+    /** Sangue (Hct, bolsa, reinfusão): a mesma cor do sangue na aula toda. */
+    blood: SUBSTANCE.blood,
     crimson: '#9F1239',
-    blue: '#60A5FA',
+    blue: SUBSTANCE.eaa,
     amber: '#F59E0B',
     /** "Normal / dentro do perfil": azul-céu (não verde), para não depender de distinguir verde de vermelho. */
-    normal: '#38BDF8',
-    cyan: '#22D3EE',
+    normal: SUBSTANCE.allowed,
+    cyan: SUBSTANCE.insulin,
     ice: '#BAE6FD',
 } as const;

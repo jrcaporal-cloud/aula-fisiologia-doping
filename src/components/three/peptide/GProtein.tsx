@@ -5,7 +5,7 @@ import { ellipsoidCloud } from '../receptor/geometry';
 import { Cloud, Glow } from '../receptor/primitives';
 import { useHover } from '../receptor/useHover';
 import type { TimeRef } from '../receptor/types';
-import { alphaPos, extraAlphaPos, extraGtp, nucleotide, trimerFrame, waveState } from './choreo';
+import { alphaPos, extraAlphaPos, extraGtp, nucleotide, trimerFrame, waveOpacity, waveRadius } from './choreo';
 import { ALPHA_LOCAL, RECEPTOR_X, betaLocal, extraTrimers, gammaLocal, ligandOf, type Side } from './layout';
 import { PC, PEPTIDE_LIGANDS } from './ligands';
 
@@ -121,7 +121,9 @@ const Wave = ({ s, active, timeRef }: TrimerProps) => {
     const ref = useRef<THREE.Mesh>(null);
     const mat = useRef<THREE.MeshBasicMaterial>(null);
     useFrame(() => {
-        const { r, o } = waveState(s, active, timeRef.current.t);
+        const T = timeRef.current.t;
+        const r = waveRadius(s, active, T);
+        const o = waveOpacity(s, active, T);
         if (ref.current) {
             ref.current.scale.setScalar(0.6 + r * 4.4);
             ref.current.visible = o > 0.01;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { PILLARS } from './pillars/data';
 import { PillarCard, type PillarMode } from './pillars/PillarCard';
 
@@ -19,7 +20,7 @@ const Pediment = ({ activeColor }: { activeColor: string | null }) => (
                     <stop offset="100%" stopColor="rgba(255,255,255,0.015)" />
                 </linearGradient>
             </defs>
-            <motion.g initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
+            <motion.g initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                 <polygon points="10,44 500,4 990,44" fill="url(#pediment-fill)" />
                 <polyline
                     points="10,44 500,4 990,44"
@@ -32,11 +33,12 @@ const Pediment = ({ activeColor }: { activeColor: string | null }) => (
             </motion.g>
             <rect x="0" y="46" width="1000" height="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" vectorEffect="non-scaling-stroke" />
         </svg>
+        {/* Sem halo: o frontão já troca de cor com o eixo ativo. */}
         <motion.div
-            className="absolute inset-x-0 top-[20px] text-center font-display font-bold tracking-[0.3em] text-[18px] text-white"
+            className="absolute inset-x-0 top-[20px] text-center font-body font-bold tracking-[0.3em] text-[18px] text-white"
             initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0, textShadow: activeColor ? `0 0 18px ${activeColor}` : '0 0 18px rgba(255,255,255,0.25)' }}
-            transition={{ delay: 0.6, duration: 0.6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: DUR.enter, ease: EASE_OUT }}
         >
             PERFORMANCE TOTAL
         </motion.div>

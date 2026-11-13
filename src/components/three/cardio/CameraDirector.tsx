@@ -6,7 +6,8 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { smooth, smoother } from '../receptor/layout';
 import type { TimeRef } from '../receptor/types';
 import type { CameraPath } from '../peptide/camera';
-import { flightPath, poseOfPin, stepPose } from './cameraFlight';
+import { LAB_POSE, flightPath, poseOfPin, stepPose } from './cameraFlight';
+import type { CardioMode } from './lab/labStore';
 import type { Pin } from './selection';
 
 /*
@@ -43,6 +44,8 @@ const makeRig = (): Rig => ({
     down: false,
 });
 
+const rigOf = (ref: { current: Rig | null }): Rig => (ref.current ??= makeRig());
+
 export interface CameraDirectorProps {
     step: number;
     reduced: boolean;
@@ -50,27 +53,32 @@ export interface CameraDirectorProps {
     pin: Pin | null;
     /** Muda a cada clique em "Recentrar": devolve a câmera à pose da etapa. */
     recenterKey: number;
+    /** No laboratório a câmera fica na pose do laboratório (a etapa não manda). */
+    mode: CardioMode;
     onSettled: (step: number) => void;
     timeRef: TimeRef;
     path: CameraPath;
 }
 
-export const CameraDirector = ({ step, reduced, pin, recenterKey, onSettled, timeRef, path }: CameraDirectorProps) => {
+export const CameraDirector = ({ step, reduced, pin, recenterKey, mode, onSettled, timeRef, path }: CameraDirectorProps) => {
     const camera = useThree(s => s.camera);
     const gl = useThree(s => s.gl);
     const controls = useThree(s => s.controls) as OrbitControlsImpl | null;
-    const rig = useRef<Rig>(makeRig());
+    // criado na primeira leitura (um inicializador em useRef rodaria — e alocaria — a cada render)
+    const rig = useRef<Rig | null>(null);
     const stepRef = useRef(step);
-    const prev = useRef({ pin, key: recenterKey });
+    const prev = useRef({ pin, key: recenterKey, mode });
+    const modeRef = useRef(mode);
     const tp = useMemo(() => new THREE.Vector3(), []);
     const tt = useMemo(() => new THREE.Vector3(), []);
 
     useEffect(() => { stepRef.current = step; }, [step]);
+    useEffect(() => { modeRef.current = mode; }, [mode]);
 
     // Toque do usuário: assume o comando, e a varredura só volta depois de ficar parado.
     useEffect(() => {
         const el = gl.domElement;
-        const r = rig.current;
+        const r = rigOf(rig);
         const touch = () => { r.idleAt = performance.now(); r.sweepT = 0; };
         const onDown = () => {
             r.down = true;
@@ -95,8 +103,14 @@ export const CameraDirector = ({ step, reduced, pin, recenterKey, onSettled, tim
     // deslocamento que se desfaz, para sair de onde o usuário a deixou sem pulo.
     useEffect(() => {
         if (!controls) return;
-        const r = rig.current;
+        const r = rigOf(rig);
         const time = timeRef.current;
+        if (modeRef.current === 'lab') {
+            // no laboratório a etapa só avança o relógio da aula; a câmera fica onde está
+            time.t = step;
+            onSettled(step);
+            return;
+        }
         const tw = r.tween;
         const from = time.t;
         const d = step - from;
@@ -124,17 +138,17 @@ export const CameraDirector = ({ step, reduced, pin, recenterKey, onSettled, tim
     useEffect(() => {
         if (!controls) return;
         const last = prev.current;
-        if (last.pin === pin && last.key === recenterKey) return;
-        prev.current = { pin, key: recenterKey };
-        const r = rig.current;
+        if (last.pin === pin && last.key === recenterKey && last.mode === mode) return;
+        prev.current = { pin, key: recenterKey, mode };
+        const r = rigOf(rig);
         // soltar por troca de etapa: a transição de etapa já leva a câmera à pose nova
-        if (!pin && r.tween.active) return;
+        if (!pin && r.tween.active && last.mode === mode) return;
         const from = {
             pos: [camera.position.x, camera.position.y, camera.position.z] as const,
             tgt: [controls.target.x, controls.target.y, controls.target.z] as const,
         };
         const f = r.flight;
-        f.path = flightPath(from, pin ? poseOfPin(pin) : stepPose(stepRef.current));
+        f.path = flightPath(from, pin ? poseOfPin(pin) : mode === 'lab' ? LAB_POSE : stepPose(stepRef.current));
         f.u = 0;
         f.active = true;
         r.tween.active = false;
@@ -146,11 +160,12 @@ export const CameraDirector = ({ step, reduced, pin, recenterKey, onSettled, tim
             onComplete: () => { f.active = false; r.idleAt = performance.now(); },
         });
         return () => { f.anim?.kill(); f.active = false; };
-    }, [pin, recenterKey, controls, camera, reduced]);
+    }, [pin, recenterKey, mode, controls, camera, reduced]);
 
     useFrame((_, delta) => {
-        if (!controls) return;
+        // o rig nasce no primeiro efeito (antes de qualquer quadro útil): nada é criado aqui
         const r = rig.current;
+        if (!controls || !r) return;
         const now = performance.now();
         const f = r.flight;
         if (f.active && f.path) {

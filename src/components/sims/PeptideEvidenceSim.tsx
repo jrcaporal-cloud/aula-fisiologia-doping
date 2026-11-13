@@ -1,6 +1,8 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { DUR, EASE_OUT, stagger } from '../../lib/motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { DETECTION_FACTS, EVIDENCE_ROWS, EVIDENCE_STEPS, LEVELS, MOLECULE_RISKS, VIAL_RISKS, type RiskCard } from './peptide/evidence';
+import { MUTED_TEXT } from '../../lib/palette';
 import { PANEL_BG, StepTabs } from './peptide/ui';
 
 /**
@@ -21,8 +23,8 @@ const Ladder = () => (
             {EVIDENCE_ROWS.map((row, r) => (
                 <div key={row.name} className="grid items-center" style={{ gridTemplateColumns: `${NAME_COL}px minmax(0,1fr)` }}>
                     <div className="pr-3">
-                        <p className="font-display text-[1.2rem] font-semibold text-white leading-tight">{row.name}</p>
-                        <p className="text-[15px] text-gray-300 leading-tight">{row.promise}</p>
+                        <p className="text-[1.2rem] font-semibold text-white leading-tight">{row.name}</p>
+                        <p className="text-[15px] leading-tight" style={{ color: MUTED_TEXT }}>{row.promise}</p>
                     </div>
                     <div className="flex flex-col gap-1.5">
                         <div className="relative h-[18px] rounded-full bg-white/[0.05]">
@@ -30,12 +32,12 @@ const Ladder = () => (
                                 <span key={l} className="absolute top-0 bottom-0 w-px bg-white/10" style={{ left: `${((i + 1) / LEVELS.length) * 100}%` }} />
                             ))}
                             <motion.div className="absolute left-0 top-0 bottom-0 rounded-full"
-                                style={{ background: `linear-gradient(90deg, rgba(56,189,248,0.25), ${BAR_COLOR})` }}
-                                initial={{ width: 0 }} animate={{ width: `${((row.level + 0.5) / LEVELS.length) * 100}%` }}
-                                transition={{ duration: 0.8, delay: 0.2 + r * 0.25, ease: 'easeOut' }} />
+                                style={{ width: `${((row.level + 0.5) / LEVELS.length) * 100}%`, background: `linear-gradient(90deg, rgba(56,189,248,0.25), ${BAR_COLOR})` }}
+                                initial={{ clipPath: 'inset(0 100% 0 0 round 9px)' }} animate={{ clipPath: 'inset(0 0% 0 0 round 9px)' }}
+                                transition={{ duration: DUR.bar, delay: stagger(r, 0.1, 0.08), ease: EASE_OUT }} />
                         </div>
                         <motion.p className="text-[15px] leading-snug text-gray-100" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                            transition={{ duration: 0.4, delay: 0.7 + r * 0.25 }}>
+                            transition={{ duration: DUR.enter, delay: stagger(r, 0.4, 0.08), ease: EASE_OUT }}>
                             {row.finding}
                         </motion.p>
                     </div>
@@ -51,8 +53,8 @@ const RiskGrid = ({ cards, tone = 'rose' }: { cards: readonly RiskCard[]; tone?:
             const Icon = c.icon;
             return (
                 <motion.div key={c.title} className="rounded-xl border border-white/10 bg-white/[0.04] p-5 flex flex-col gap-3"
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: i * 0.12 }}>
-                    <span className={`flex items-center gap-2 font-display text-[1.35rem] font-semibold ${tone === 'sky' ? 'text-sky-200' : 'text-rose-200'}`}>
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, delay: stagger(i, 0, 0.12), ease: EASE_OUT }}>
+                    <span className={`flex items-center gap-2 text-[1.35rem] font-semibold ${tone === 'sky' ? 'text-sky-200' : 'text-rose-200'}`}>
                         <Icon size={22} aria-hidden /> {c.title}
                     </span>
                     <p className={`${cards.length === 4 ? 'text-[1.15rem]' : 'text-[1.3rem]'} leading-snug text-gray-100`}>{c.text}</p>
@@ -71,14 +73,12 @@ const PeptideEvidenceSim = () => {
             <StepTabs labels={EVIDENCE_STEPS.map(s => s.tab)} step={step} onSelect={setStep} layoutId="pep-evidence-tab" />
             <div className="flex-1 min-h-0 rounded-2xl border border-white/10 p-5 flex flex-col gap-3" style={PANEL_BG}>
                 <div className="flex-1 min-h-0">
-                    <AnimatePresence mode="wait">
-                        <motion.div key={step} className="h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
-                            {step === 0 && <Ladder />}
-                            {step === 1 && <RiskGrid cards={VIAL_RISKS} />}
-                            {step === 2 && <RiskGrid cards={MOLECULE_RISKS} />}
-                            {step === 3 && <RiskGrid cards={DETECTION_FACTS} tone="sky" />}
-                        </motion.div>
-                    </AnimatePresence>
+                    <motion.div key={step} className="h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.text, ease: EASE_OUT }}>
+                        {step === 0 && <Ladder />}
+                        {step === 1 && <RiskGrid cards={VIAL_RISKS} />}
+                        {step === 2 && <RiskGrid cards={MOLECULE_RISKS} />}
+                        {step === 3 && <RiskGrid cards={DETECTION_FACTS} tone="sky" />}
+                    </motion.div>
                 </div>
                 <p className="pt-3 border-t border-white/10 text-[1.08rem] leading-snug text-white font-medium">{info.foot}</p>
             </div>

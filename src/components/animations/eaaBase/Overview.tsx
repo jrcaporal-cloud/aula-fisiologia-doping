@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { Molecule } from './Molecule';
 import { C17, fitMolecule } from './steroidGeometry';
 import { EASE, LAYERS, type Layer } from './content';
+import { DUR, stagger } from '../../../lib/motion';
 
 const CENTER_W = 330;
 const CENTER_H = 460;
@@ -59,16 +60,16 @@ const Tile = ({ layer, onPick, delay }: TileProps) => {
             onClick={() => onPick(layer.id)}
             initial={still ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay, duration: 0.6, ease: EASE }}
+            transition={{ delay, duration: DUR.enter, ease: EASE }}
             whileHover={{ y: -2 }}
-            className="group text-left rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] p-4 cursor-pointer hover:border-white/25 transition-colors flex flex-col gap-2 h-full"
+            className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)] group text-left rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] p-4 cursor-pointer hover:border-white/25 transition-colors flex flex-col gap-2 h-full"
             style={{ boxShadow: `inset 0 2px 0 ${layer.color}55` }}
         >
             <div className="flex items-center justify-between">
                 <Glyph layer={layer} />
                 <span className="font-mono text-[15px] tracking-widest" style={{ color: layer.ink }}>0{layer.id + 1}</span>
             </div>
-            <div className="font-display font-semibold text-[18px] leading-tight text-white">{layer.title}</div>
+            <div className="font-body font-semibold text-[18px] leading-tight text-white">{layer.title}</div>
             <p className="m-0 text-[15px] leading-snug text-slate-200">{layer.summary}</p>
             <span className="mt-auto flex items-center gap-1.5 text-[15px] font-medium opacity-90 group-hover:opacity-100 transition-opacity" style={{ color: layer.ink }}>
                 Abrir camada <ArrowRight size={16} />
@@ -81,10 +82,10 @@ const Tile = ({ layer, onPick, delay }: TileProps) => {
 export const Overview = ({ onPick }: { onPick: (id: number) => void }) => {
     return (
         <div className="grid h-full gap-3" style={{ gridTemplateColumns: `1fr ${CENTER_W}px 1fr`, gridTemplateRows: '1fr 1fr' }}>
-            <div className="row-start-1 col-start-1"><Tile layer={LAYERS[0]} onPick={onPick} delay={0.5} /></div>
-            <div className="row-start-2 col-start-1"><Tile layer={LAYERS[2]} onPick={onPick} delay={0.8} /></div>
-            <div className="row-start-1 col-start-3"><Tile layer={LAYERS[1]} onPick={onPick} delay={0.65} /></div>
-            <div className="row-start-2 col-start-3"><Tile layer={LAYERS[3]} onPick={onPick} delay={0.95} /></div>
+            <div className="row-start-1 col-start-1"><Tile layer={LAYERS[0]} onPick={onPick} delay={stagger(0, 0.3)} /></div>
+            <div className="row-start-2 col-start-1"><Tile layer={LAYERS[2]} onPick={onPick} delay={stagger(2, 0.3)} /></div>
+            <div className="row-start-1 col-start-3"><Tile layer={LAYERS[1]} onPick={onPick} delay={stagger(1, 0.3)} /></div>
+            <div className="row-start-2 col-start-3"><Tile layer={LAYERS[3]} onPick={onPick} delay={stagger(3, 0.3)} /></div>
             <div className="row-span-2 col-start-2 row-start-1 relative">
                 <svg viewBox={`0 0 ${CENTER_W} ${CENTER_H}`} className="w-full h-full" role="img" aria-label="Testosterona: a molécula-base dos EAA">
                     <circle cx={CENTER_W / 2} cy={206} r={150} fill="url(#eaa-ov-halo)" />
@@ -96,7 +97,7 @@ export const Overview = ({ onPick }: { onPick: (id: number) => void }) => {
                     </defs>
                     <Molecule frame={FRAME} stroke={2.6} idPrefix="eaa-ov" />
                     <circle cx={c17x} cy={c17y} r={6} fill={LAYERS[0].color} opacity={0.9} />
-                    <text x={CENTER_W / 2} y={366} textAnchor="middle" fill="#F3F4F6" fontSize={18} fontWeight={600} className="font-display">Testosterona</text>
+                    <text x={CENTER_W / 2} y={366} textAnchor="middle" fill="#F3F4F6" fontSize={18} fontWeight={600} className="font-body">Testosterona</text>
                     <text x={CENTER_W / 2} y={390} textAnchor="middle" fill="#CBD5E1" fontSize={15} className="font-body">a base dos derivados sintéticos</text>
                 </svg>
             </div>

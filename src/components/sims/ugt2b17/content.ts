@@ -85,7 +85,7 @@ export const NORMAL_TEXT: StepText = {
 export const DEL_TEXT: StepText = {
     title: 'Deleção UGT2B17',
     subtitle: 'Falso Negativo',
-    color: '#FDA4AF',
+    color: '#FCD34D',
     pill: '66% dos coreanos (del/del)',
     paragraphs: [
         [
@@ -112,7 +112,8 @@ export const TE_RESULT: Record<Genotype, { value: number; label: string; verdict
     del: { value: 0.5, label: '0,5:1', verdict: 'Falso negativo' },
 };
 
+/** Cores do desfecho (as mesmas do medidor e do carimbo): ciano = o teste acusa, âmbar = falso negativo. */
 export const GENOTYPES: readonly { id: Genotype; label: string; short: string; color: string }[] = [
     { id: 'normal', label: 'Gene normal', short: 'Gene normal', color: '#22D3EE' },
-    { id: 'del', label: 'Deleção UGT2B17 (del/del)', short: 'Deleção (del/del)', color: '#E11D48' },
+    { id: 'del', label: 'Deleção UGT2B17 (del/del)', short: 'Deleção (del/del)', color: '#F59E0B' },
 ];

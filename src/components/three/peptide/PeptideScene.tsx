@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { PEPTIDE_STEPS, type PeptideLigand } from '../../../data/peptideSteps';
+import { useStore } from '../../../store/useStore';
 import { smoother } from '../receptor/layout';
 import { Label3D } from '../receptor/Label3D';
 import type { TimeState } from '../receptor/types';
@@ -20,8 +21,15 @@ import { Messengers } from './Messengers';
 import { BloodTag } from './Overlays';
 import { PepMembrane } from './PepMembrane';
 import { Peptides } from './Peptide';
+import { BACKDROP_FRAGMENT, BACKDROP_VERTEX, backdropUniforms, tickSignal } from './shaders';
+import type { Side } from './layout';
 
 interface TweenState { active: boolean; u: number; offP: THREE.Vector3; offT: THREE.Vector3 }
+/**
+ * Desvio da câmera em relação à spline durante a transição. Um só no módulo (só há uma cena aberta por
+ * vez): nada é recriado a cada render e o efeito o zera ao desmontar.
+ */
+const TWEEN: { current: TweenState } = { current: { active: false, u: 1, offP: new THREE.Vector3(), offT: new THREE.Vector3() } };
 
 /** Câmera: segue a spline das poses-chave, parametrizada pelo mesmo tempo T da coreografia. */
 const CameraRig = ({ timeRef, tween, path }: { timeRef: { current: TimeState }; tween: { current: TweenState }; path: CameraPath }) => {
@@ -43,20 +51,56 @@ const CameraRig = ({ timeRef, tween, path }: { timeRef: { current: TimeState }; 
     return null;
 };
 
-/** Fundo: degradê escuro com um leve tom carmim (identidade da aula). */
+/** Fundo: degradê escuro com um leve tom carmim (identidade da aula); o citosol acende com o Ca²⁺. */
+const BACKDROP_GEO = new THREE.SphereGeometry(1, 32, 16);
 const Backdrop = () => {
     const mat = useMemo(() => new THREE.ShaderMaterial({
         side: THREE.BackSide,
         depthWrite: false,
-        vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-        fragmentShader: `varying vec3 vP; void main(){
-            float h = vP.y * 0.5 + 0.5;
-            vec3 c = mix(vec3(0.012,0.008,0.02), vec3(0.05,0.03,0.09), smoothstep(0.25, 0.95, h));
-            c += vec3(0.09,0.01,0.03) * pow(max(vP.y, 0.0), 2.0) * 0.5;
-            gl_FragColor = vec4(c, 1.0);
-        }`,
+        uniforms: backdropUniforms(),
+        vertexShader: BACKDROP_VERTEX,
+        fragmentShader: BACKDROP_FRAGMENT,
     }), []);
-    return <mesh material={mat} scale={160}><sphereGeometry args={[1, 32, 16]} /></mesh>;
+    useEffect(() => () => mat.dispose(), [mat]);
+    return <mesh geometry={BACKDROP_GEO} material={mat} scale={160} />;
+};
+
+/** Passa o sinal da coreografia (ligação, proteína G, Ca²⁺, fusão) para as uniformes, uma vez por quadro. */
+const SignalClock = ({ timeRef, active }: { timeRef: { current: TimeState }; active: Side }) => {
+    useFrame(({ clock }) => tickSignal(timeRef.current.t, clock.elapsedTime, active));
+    return null;
+};
+
+/**
+ * Cursor escrito direto no canvas (sem estado do React): "ajuda" sobre uma estrutura, "pegar" no vazio e
+ * "agarrando" com o botão apertado.
+ */
+const CursorSync = () => {
+    const get = useThree(s => s.get);
+    useEffect(() => {
+        const el = get().gl.domElement;
+        let down = false;
+        const apply = () => {
+            el.style.cursor = down ? 'grabbing' : useStore.getState().hoveredObject ? 'help' : 'grab';
+        };
+        // o hover também escreve o cursor (depois de mudar o store): a escrita daqui vem por último
+        const applyLater = () => queueMicrotask(apply);
+        const onDown = (e: PointerEvent) => { if (e.button === 0) { down = true; apply(); } };
+        const onUp = () => { if (down) { down = false; apply(); } };
+        apply();
+        const unsub = useStore.subscribe(applyLater);
+        el.addEventListener('pointerdown', onDown);
+        window.addEventListener('pointerup', onUp);
+        window.addEventListener('pointercancel', onUp);
+        return () => {
+            unsub();
+            el.removeEventListener('pointerdown', onDown);
+            window.removeEventListener('pointerup', onUp);
+            window.removeEventListener('pointercancel', onUp);
+            el.style.cursor = '';
+        };
+    }, [get]);
+    return null;
 };
 
 export interface PeptideSceneProps {
@@ -70,7 +114,6 @@ export interface PeptideSceneProps {
 }
 
 export const PeptideScene = ({ step, settled, ligand, reduced, onSettled, timeRef }: PeptideSceneProps) => {
-    const tween = useRef<TweenState>({ active: false, u: 1, offP: new THREE.Vector3(), offT: new THREE.Vector3() });
     const camera = useThree(s => s.camera);
     const controls = useThree(s => s.controls) as OrbitControlsImpl | null;
     const active = sideOf(ligand);
@@ -79,7 +122,7 @@ export const PeptideScene = ({ step, settled, ligand, reduced, onSettled, timeRe
     useEffect(() => {
         if (!controls) return;
         const time = timeRef.current;
-        const tw = tween.current;
+        const tw = TWEEN.current;
         const from = time.t;
         const d = step - from;
         tw.offP.copy(camera.position).sub(path.pos(from, new THREE.Vector3()));
@@ -97,7 +140,10 @@ export const PeptideScene = ({ step, settled, ligand, reduced, onSettled, timeRe
             onUpdate: () => { tw.u = anim.progress(); },
             onComplete: () => { tw.active = false; onSettled(step); },
         });
-        return () => { anim.kill(); };
+        return () => {
+            anim.kill();
+            tw.active = false;
+        };
     }, [step, controls, camera, path, reduced, onSettled, timeRef]);
 
     const labels = useMemo(() => (settled === step ? peptideLabelsForStep(step, active) : []), [settled, step, active]);
@@ -112,8 +158,10 @@ export const PeptideScene = ({ step, settled, ligand, reduced, onSettled, timeRe
             <directionalLight position={[-10, 4, -16]} intensity={1.1} color="#fb7185" />
             <directionalLight position={[2, -14, 10]} intensity={0.55} color="#a5b4fc" />
 
+            <SignalClock timeRef={timeRef} active={active} />
+            <CursorSync />
             <OrbitControls makeDefault enablePan={false} enableDamping dampingFactor={0.08} minDistance={3} maxDistance={70} />
-            <CameraRig timeRef={timeRef} tween={tween} path={path} />
+            <CameraRig timeRef={timeRef} tween={TWEEN} path={path} />
 
             <PepMembrane timeRef={timeRef} active={active} />
             <Gpcrs active={active} timeRef={timeRef} />
@@ -126,7 +174,7 @@ export const PeptideScene = ({ step, settled, ligand, reduced, onSettled, timeRe
 
             {labels.map((l, i) => <Label3D key={`${step}-${ligand}-${l.id}`} spec={l} timeRef={timeRef} delay={0.08 + i * 0.12} />)}
 
-            <EffectComposer multisampling={4}>
+            <EffectComposer multisampling={2}>
                 <Bloom mipmapBlur luminanceThreshold={0.82} luminanceSmoothing={0.2} intensity={0.55} radius={0.55} />
                 <Vignette offset={0.28} darkness={0.65} />
             </EffectComposer>

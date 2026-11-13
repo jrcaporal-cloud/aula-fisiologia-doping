@@ -16,6 +16,9 @@ export const stepPose = (step: number): Pose => ({
     tgt: CARDIO_STEPS[step].cameraTarget,
 });
 
+/** Pose do laboratório: o circuito inteiro, com o coração em destaque à esquerda. */
+export const LAB_POSE: Pose = { pos: [-2.4, 2.2, 36], tgt: [-3.0, 0.3, 0] };
+
 /** Distância e altura do close-up da hemácia clicada (a hemácia anda; o alvo é o ponto do clique). */
 const CELL_BACK = 6.8;
 const CELL_UP = 0.9;

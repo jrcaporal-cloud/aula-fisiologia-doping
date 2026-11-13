@@ -3,9 +3,9 @@ import { ChevronsRight, ZoomIn, ZoomOut } from 'lucide-react';
 import { useState } from 'react';
 import { T_GROUPS, WA_LIMIT, fmt } from './biologyData';
 import { CARD, CARD_BG } from './StepHeader';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 
 const COLS = '330px minmax(0,1fr) 132px';
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 const SCALES = {
     full: { max: 30, ticks: [0, 5, 10, 15, 20, 25, 30] },
@@ -34,7 +34,7 @@ export const TestosteroneChart = () => {
                         <span className="flex items-center gap-2"><span className="w-3.5 h-3.5 rounded-full bg-gray-100 border-2 border-black/50" />média</span>
                     </div>
                     <button type="button" onClick={() => setZoomed(z => !z)}
-                        className="flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[15px] font-semibold cursor-pointer transition-colors"
+                        className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)] flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[15px] font-semibold cursor-pointer transition-colors"
                         style={{ borderColor: zoomed ? '#E879F999' : 'rgba(255,255,255,0.15)', color: zoomed ? '#F5D0FE' : '#E5E7EB', background: zoomed ? 'rgba(232,121,249,0.12)' : 'transparent' }}>
                         {zoomed ? <ZoomOut size={16} /> : <ZoomIn size={16} />}
                         {zoomed ? 'Escala 0–30' : 'Ampliar 0–4'}
@@ -46,13 +46,14 @@ export const TestosteroneChart = () => {
                 {/* grade + limiar do WA */}
                 <div className="absolute inset-0 grid pointer-events-none" style={{ gridTemplateColumns: COLS }}>
                     <div />
-                    <div className="relative">
+                    <div className="relative [container-type:inline-size]">
                         {ticks.map(t => (
                             <motion.div key={`${max}-${t}`} className="absolute top-0 bottom-6 w-px bg-white/[0.07]"
-                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ left: `${pct(t, max)}%` }} />
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} style={{ left: `${pct(t, max)}%` }} />
                         ))}
-                        <motion.div className="absolute top-0 bottom-6 border-l-2 border-dashed" style={{ borderColor: '#E879F9AA' }}
-                            animate={{ left: `${waX}%` }} transition={{ duration: 0.8, ease: EASE }}>
+                        {/* Limiar do WA: anda por transform (x em cqw do contêiner), não por left. */}
+                        <motion.div className="absolute left-0 top-0 bottom-6 border-l-2 border-dashed" style={{ borderColor: '#E879F9AA' }}
+                            initial={false} animate={{ x: `${waX}cqw` }} transition={{ duration: DUR.morph, ease: EASE_IN_OUT }}>
                             <span className="absolute -top-1 left-1.5 whitespace-nowrap font-mono text-[15px] font-semibold" style={{ color: '#F0ABFC' }}>
                                 {fmt(WA_LIMIT)} nmol/L
                             </span>
@@ -69,31 +70,36 @@ export const TestosteroneChart = () => {
                         const dim = active !== null && active !== i;
                         return (
                             <button key={g.label} type="button" onClick={() => setActive(active === i ? null : i)}
-                                className="grid items-center text-left cursor-pointer transition-opacity duration-300"
+                                className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)] grid items-center text-left cursor-pointer transition-opacity duration-300 ease-(--ease-out)"
                                 style={{ gridTemplateColumns: COLS, opacity: dim ? 0.6 : 1 }}>
                                 <div className="pr-3">
                                     <div className="text-[16px] font-semibold leading-tight" style={{ color: active === i ? g.color : '#F3F4F6' }}>{g.label}</div>
                                     {g.note && <div className="text-[15px] text-gray-300 leading-tight mt-0.5">{g.note}</div>}
                                 </div>
-                                <div className="relative h-[30px]">
+                                <div className="relative h-[30px] [container-type:inline-size]">
                                     <div className="absolute inset-x-0 top-[9px] h-3 rounded-full bg-white/[0.06]" />
                                     {!offScale && (
                                         <>
-                                            <motion.div className="absolute top-[9px] h-3 rounded-full"
+                                            {/* Faixa: largura cheia recortada por clip-path (as duas bordas mudam no zoom). */}
+                                            <motion.div className="absolute inset-x-0 top-[9px] h-3"
                                                 style={{ background: g.color, opacity: 0.55 }}
-                                                initial={{ left: `${left}%`, width: 0 }}
-                                                animate={{ left: `${left}%`, width: `${width}%` }}
-                                                transition={{ duration: 0.9, delay: 0.15 + i * 0.12, ease: EASE }} />
-                                            <motion.div className="absolute top-[6px] w-[18px] h-[18px] -ml-[9px] rounded-full border-2"
-                                                style={{ background: g.color, borderColor: 'rgba(0,0,0,0.55)', boxShadow: `0 0 14px ${g.color}88` }}
-                                                initial={{ left: `${pct(g.mean, max)}%`, scale: 0 }}
-                                                animate={{ left: `${pct(g.mean, max)}%`, scale: 1 }}
-                                                transition={{ duration: 0.6, delay: 0.5 + i * 0.12, ease: EASE }} />
+                                                initial={{ clipPath: `inset(0 ${100 - left}% 0 ${left}% round 999px)` }}
+                                                animate={{ clipPath: `inset(0 ${100 - left - width}% 0 ${left}% round 999px)` }}
+                                                transition={{ duration: DUR.bar, delay: stagger(i, 0.1, 0.08), ease: EASE_OUT }} />
+                                            {/* Média: invólucro de largura zero anda em cqw (sem atraso no zoom); a bolinha só entra em scale. */}
+                                            <motion.div className="absolute left-0 top-[6px] w-0"
+                                                initial={false} animate={{ x: `${pct(g.mean, max)}cqw` }}
+                                                transition={{ duration: DUR.morph, ease: EASE_IN_OUT }}>
+                                                <motion.div className="w-[18px] h-[18px] -ml-[9px] rounded-full border-2"
+                                                    style={{ background: g.color, borderColor: 'rgba(0,0,0,0.55)' }}
+                                                    initial={{ scale: 0 }} animate={{ scale: 1 }}
+                                                    transition={{ duration: DUR.enter, delay: stagger(i, 0.4, 0.08), ease: EASE_OUT }} />
+                                            </motion.div>
                                         </>
                                     )}
                                     {offScale && (
                                         <motion.div className="absolute right-1 top-[3px] flex items-center gap-1 font-mono text-[15px]" style={{ color: g.color }}
-                                            initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}>
+                                            initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                                             <ChevronsRight size={20} />
                                         </motion.div>
                                     )}

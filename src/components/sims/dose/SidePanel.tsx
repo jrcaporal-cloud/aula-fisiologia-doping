@@ -2,8 +2,9 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { AlertTriangle } from 'lucide-react';
 import { AnimatedNumber } from './AnimatedNumber';
 import { MAX_SLOPE, SEGMENT_YIELDS, STAGES, fmt, gainAt, segmentIndexAt, slopeAt, stageAtDose, type Stage } from './model';
+import { DUR, EASE_OUT } from '../../../lib/motion';
+import { CAUTION, MUTED_TEXT } from '../../../lib/palette';
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 const CARD = 'rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)]';
 
 interface SidePanelProps {
@@ -20,8 +21,8 @@ export const SidePanel = ({ step, dose }: SidePanelProps) => {
                     key={step >= 4 ? 'curve' : `stage-${step}`}
                     initial={reduce ? false : { opacity: 0, x: 18 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={reduce ? undefined : { opacity: 0, x: -12, transition: { duration: 0.2 } }}
-                    transition={{ duration: 0.35, ease: EASE }}
+                    exit={reduce ? undefined : { opacity: 0, x: -12, transition: { duration: DUR.exit } }}
+                    transition={{ duration: DUR.enter, ease: EASE_OUT }}
                     className="absolute inset-0 flex flex-col gap-3"
                 >
                     {step >= 4 ? <CurveReadout dose={dose} /> : <StageReadout stage={STAGES[step]} step={step} />}
@@ -35,7 +36,7 @@ export const SidePanel = ({ step, dose }: SidePanelProps) => {
 
 const StageReadout = ({ stage, step }: { stage: Stage; step: number }) => (
     <>
-        <div className={`${CARD} p-5`} style={{ boxShadow: `inset 0 0 0 1px ${stage.color}33, 0 0 40px -18px ${stage.color}` }}>
+        <div className={`${CARD} p-5`} style={{ boxShadow: `inset 0 0 0 1px ${stage.color}33` }}>
             <div className="flex items-center justify-between">
                 <span className="rounded-full px-3 py-1 font-mono text-[14px] font-semibold uppercase tracking-[0.12em]"
                     style={{ color: stage.color, background: `${stage.color}1f` }}>
@@ -60,11 +61,10 @@ const StageReadout = ({ stage, step }: { stage: Stage; step: number }) => (
             <div className="mb-2 font-mono text-[14px] uppercase tracking-[0.12em] text-zinc-300">Pontos da aula</div>
             <ul className="flex flex-col gap-1.5">
                 {STAGES.map((s, i) => (
-                    <li key={s.id} className="flex items-center gap-2.5 font-body text-[15px] transition-opacity duration-500"
-                        style={{ opacity: i <= step ? 1 : 0.6 }}>
-                        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: s.color }} />
-                        <span className="min-w-0 flex-1 whitespace-nowrap text-zinc-100">{s.name}</span>
-                        <span className="w-[60px] shrink-0 whitespace-nowrap font-mono text-[14px] text-zinc-300">{s.doseText}</span>
+                    <li key={s.id} className="flex items-center gap-2.5 font-body text-[15px] transition-colors duration-450 ease-(--ease-out)">
+                        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: s.color, opacity: i <= step ? 1 : 0.55 }} />
+                        <span className="min-w-0 flex-1 whitespace-nowrap" style={{ color: i <= step ? '#F4F4F5' : MUTED_TEXT }}>{s.name}</span>
+                        <span className="w-[60px] shrink-0 whitespace-nowrap font-mono text-[14px]" style={{ color: i <= step ? '#D4D4D8' : MUTED_TEXT }}>{s.doseText}</span>
                         <span className="w-[74px] shrink-0 whitespace-nowrap text-right font-mono text-[15px] font-semibold" style={{ color: s.color }}>
                             {i <= step ? s.gainText : '—'}
                         </span>
@@ -92,7 +92,7 @@ const CurveReadout = ({ dose }: { dose: number }) => {
                 </div>
                 <div className="mt-1 flex items-baseline justify-between">
                     <span className="font-display text-[34px] font-semibold leading-none text-white">{Math.round(dose)} mg</span>
-                    <span className="font-display text-[26px] font-semibold leading-none text-zinc-200">+{fmt(gainAt(dose))} kg</span>
+                    <span className="text-[26px] font-semibold leading-none text-zinc-200">+{fmt(gainAt(dose))} kg</span>
                 </div>
 
                 {stage.risk && (
@@ -107,11 +107,11 @@ const CurveReadout = ({ dose }: { dose: number }) => {
                     {fmt(perHundred, 2)}
                 </div>
                 <div className="relative mt-3 h-3 overflow-hidden rounded-full bg-white/10">
-                    <div className="absolute inset-y-0 left-0 rounded-full"
-                        style={{ width: `${(perHundred / (MAX_SLOPE * 100)) * 100}%`, background: stage.color, transition: 'background 0.4s' }} />
+                    <div className="absolute inset-0 rounded-full"
+                        style={{ clipPath: `inset(0 ${100 - (perHundred / (MAX_SLOPE * 100)) * 100}% 0 0 round 9999px)`, background: stage.color, transition: 'background-color 450ms var(--ease-out)' }} />
                 </div>
                 <div className="mt-2 font-body text-[14px] text-zinc-300">
-                    Inclinação da tangente · <span className="text-amber-400">modelo ilustrativo</span>
+                    Inclinação da tangente · <span style={{ color: CAUTION.text }}>modelo ilustrativo</span>
                 </div>
             </div>
 
@@ -122,14 +122,14 @@ const CurveReadout = ({ dose }: { dose: number }) => {
                     {SEGMENT_YIELDS.map((seg, i) => {
                         const on = i === activeSeg;
                         return (
-                            <li key={seg.to.id} className="transition-opacity duration-300" style={{ opacity: on ? 1 : 0.7 }}>
+                            <li key={seg.to.id}>
                                 <div className="flex items-baseline justify-between font-mono text-[14px]">
-                                    <span className="text-zinc-200">{seg.from.dose} → {seg.to.dose} mg</span>
+                                    <span style={{ color: on ? '#E4E4E7' : MUTED_TEXT }}>{seg.from.dose} → {seg.to.dose} mg</span>
                                     <span className="text-[16px] font-bold" style={{ color: seg.to.color }}>{fmt(seg.perHundred, 2)} kg</span>
                                 </div>
                                 <div className="mt-1 h-2 rounded-full bg-white/10">
-                                    <div className="h-full rounded-full"
-                                        style={{ width: `${(seg.perHundred / maxYield) * 100}%`, background: seg.to.color, boxShadow: on ? `0 0 12px ${seg.to.color}` : 'none' }} />
+                                    <div className="h-full rounded-full transition-opacity duration-300 ease-(--ease-out)"
+                                        style={{ width: `${(seg.perHundred / maxYield) * 100}%`, background: seg.to.color, opacity: on ? 1 : 0.7 }} />
                                 </div>
                             </li>
                         );

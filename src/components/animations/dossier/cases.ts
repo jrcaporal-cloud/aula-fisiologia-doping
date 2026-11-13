@@ -3,6 +3,8 @@
  * componente original `AthleteDossier.tsx` — só a grafia "Eestanozolol" foi corrigida para
  * "Estanozolol" (como no HTML original da aula em slidesData.ts). Nada foi acrescentado.
  * `marks` = anos do campo `year`, só para posicionar o caso na linha do tempo.
+ * `substanceColor` = cor do atleta: uma por caso (todas distintas) e a mesma no retrato, no
+ * marcador do eixo e na ficha.
  */
 
 export interface DossierCase {
@@ -81,7 +83,7 @@ export const CASES_IN_LESSON_ORDER: readonly DossierCase[] = [
         sport: 'MMA (UFC)',
         year: '2016 / 2017',
         substance: 'Clomifeno, Letrozol (2016) | Turinabol (2017)',
-        substanceColor: '#f59e0b',
+        substanceColor: '#22d3ee',
         image: import.meta.env.BASE_URL + 'athletes/jon_jones.jpg',
         headline: 'Caiu duas vezes no auge (UFC 200 e 214). Inibidores de aromatase para retomar eixo HPG. Em 2017, Turinabol em picogramas pulsáteis forçou alteração das métricas da USADA.',
         expandedContent: {
@@ -132,7 +134,7 @@ export const CASES_IN_LESSON_ORDER: readonly DossierCase[] = [
         sport: 'Futebol',
         year: '2023',
         substance: 'Testosterona / DHEA',
-        substanceColor: '#e11d48',
+        substanceColor: '#f472b6',
         image: import.meta.env.BASE_URL + 'athletes/paul_pogba.jpg',
         headline: 'Testou positivo após jogo da Serie A. Banido por 4 anos, conseguiu recurso comprovando suplemento contaminado da Flórida (DHEA), reduzido para 18 meses.',
         expandedContent: {
@@ -149,7 +151,7 @@ export const CASES_IN_LESSON_ORDER: readonly DossierCase[] = [
         sport: 'MMA (UFC)',
         year: '2019',
         substance: 'rhEPO (Eritropoietina Recombinante)',
-        substanceColor: '#f87171',
+        substanceColor: '#c4b5fd',
         image: import.meta.env.BASE_URL + 'athletes/tj_dillashaw.png',
         headline: 'Campeão que desceu de categoria com corte de 15kg. Assumiu injetar EPO para sobreviver à anemia severa do corte. Abriu mão do cinturão, banido por 2 anos.',
         expandedContent: {

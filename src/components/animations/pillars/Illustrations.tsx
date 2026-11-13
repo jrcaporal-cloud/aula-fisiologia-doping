@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 /**
  * Ilustrações animadas dos três eixos (SVG puro, leve e nítido em qualquer escala).
@@ -46,7 +47,7 @@ export const HeartIllustration = ({ active, color }: IllustrationProps) => {
             <motion.g
                 style={{ transformOrigin: '120px 84px' }}
                 animate={still ? undefined : { scale: [1, 1.07, 0.98, 1] }}
-                transition={{ duration: active ? 0.75 : 1.05, repeat: Infinity, ease: 'easeInOut', times: [0, 0.18, 0.4, 1] }}
+                transition={{ duration: active ? 0.75 : 1.05, repeat: Infinity, ease: EASE_IN_OUT, times: [0, 0.18, 0.4, 1] }}
             >
                 <path d={HEART_PATH} fill="url(#heart-fill)" />
                 <path d="M120 60 C 118 82, 122 102, 120 124" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
@@ -59,11 +60,11 @@ export const HeartIllustration = ({ active, color }: IllustrationProps) => {
                 {Array.from({ length: cells }, (_, i) => (
                     <motion.ellipse
                         key={`${cells}-${i}`}
-                        cy={152 + RBC_LANES[i % 3]}
+                        cx={0} cy={152 + RBC_LANES[i % 3]}
                         rx="7.5" ry="4"
                         fill="#e11d48" stroke="#fda4af" strokeWidth="0.8"
-                        initial={{ cx: -12 }}
-                        animate={still ? { cx: 20 + i * 15 } : { cx: [-12, 252] }}
+                        initial={{ x: -12 }}
+                        animate={still ? { x: 20 + i * 15 } : { x: [-12, 252] }}
                         transition={{ duration: travel, repeat: Infinity, ease: 'linear', delay: (i / cells) * travel }}
                     />
                 ))}
@@ -72,10 +73,10 @@ export const HeartIllustration = ({ active, color }: IllustrationProps) => {
             {/* O₂ saindo para os tecidos */}
             {[0, 1, 2, 3].map(i => (
                 <motion.circle
-                    key={i} r="2.4" fill="#67e8f9" cx={40 + i * 52}
-                    initial={{ cy: 138, opacity: 0 }}
-                    animate={still ? { opacity: 0.8 } : { cy: [138, 118], opacity: [0, 0.9, 0] }}
-                    transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.45, ease: 'easeOut' }}
+                    key={i} r="2.4" fill="#67e8f9" cx={40 + i * 52} cy={138}
+                    initial={{ y: 0, opacity: 0 }}
+                    animate={still ? { opacity: 0.8 } : { y: [0, -20], opacity: [0, 0.9, 0] }}
+                    transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.45, ease: EASE_OUT }}
                 />
             ))}
         </svg>
@@ -103,7 +104,7 @@ export const MitoIllustration = ({ active, color, labelSize = 16 }: Illustration
                 style={{ transformOrigin: '120px 86px' }}
                 initial={false}
                 animate={active ? { x: 0, y: 46, scale: 0.62, opacity: 1 } : { x: 0, y: 0, scale: 0.9, opacity: 0 }}
-                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: active ? 0.5 : 0 }}
+                transition={{ duration: DUR.bar, ease: EASE_OUT, delay: active ? 0.3 : 0 }}
             >
                 <Mitochondrion color={color} />
             </motion.g>
@@ -111,12 +112,12 @@ export const MitoIllustration = ({ active, color, labelSize = 16 }: Illustration
                 style={{ transformOrigin: '120px 86px' }}
                 initial={false}
                 animate={active ? { y: -22, scale: 0.86 } : { y: 0, scale: 1 }}
-                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: DUR.bar, ease: EASE_IN_OUT }}
             >
                 <motion.g
                     style={{ transformOrigin: '120px 86px' }}
                     animate={still ? undefined : { scaleX: [1, 1.025, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                    transition={{ duration: 3, repeat: Infinity, ease: EASE_IN_OUT }}
                 >
                     <Mitochondrion color={color} />
                 </motion.g>
@@ -128,7 +129,7 @@ export const MitoIllustration = ({ active, color, labelSize = 16 }: Illustration
                     <motion.g
                         initial={{ y: 60, opacity: 0 }}
                         animate={still ? { opacity: 0.85, y: 30 } : { y: [60, 14], opacity: [0, 1, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: i * 0.33, ease: 'easeOut' }}
+                        transition={{ duration: 2, repeat: Infinity, delay: i * 0.33, ease: EASE_OUT }}
                     >
                         <circle r="5" fill="#fbbf24" />
                     </motion.g>
@@ -136,7 +137,7 @@ export const MitoIllustration = ({ active, color, labelSize = 16 }: Illustration
             ))}
 
             {/* Legenda das bolhas: texto fixo e legível (as bolhas animadas não carregam texto) */}
-            <text x="228" y={labelSize + 4} textAnchor="end" fontSize={labelSize} fontWeight="700" fill="#fbbf24">
+            <text x="238" y={labelSize - 1} textAnchor="end" fontSize={labelSize} fontWeight="700" fill="#fbbf24">
                 ATP
             </text>
         </svg>
@@ -152,7 +153,7 @@ export const FiberIllustration = ({ active, color }: IllustrationProps) => {
     const still = useReducedMotion();
     const contract = still ? undefined : { x: [0, 12, 0] };
     const contractMirror = still ? undefined : { x: [0, -12, 0] };
-    const timing = { duration: 1.6, repeat: Infinity, ease: 'easeInOut' as const };
+    const timing = { duration: 1.6, repeat: Infinity, ease: EASE_IN_OUT };
     return (
         <svg viewBox={VIEW} className="w-full h-full" aria-hidden>
             {/* Fibra (célula) com mionúcleos na periferia */}
@@ -161,17 +162,18 @@ export const FiberIllustration = ({ active, color }: IllustrationProps) => {
                 <ellipse key={cx} cx={cx} cy="52" rx="13" ry="5" fill="#a78bfa" stroke="#ddd6fe" strokeWidth="0.8" />
             ))}
             {/* Mionúcleo novo: a célula satélite se funde à fibra */}
+            {/* Desce em y (transform), com cx/cy fixos no destino: sem repintar atributo a cada quadro. */}
             <motion.circle
-                r="6" fill="#c4b5fd" stroke="#ede9fe" strokeWidth="1"
-                initial={{ cx: 120, cy: 16, opacity: 0 }}
-                animate={active ? { cx: 120, cy: 52, opacity: [0, 1, 1] } : { cx: 120, cy: 16, opacity: 0 }}
-                transition={{ duration: 1.4, ease: 'easeInOut', delay: active ? 0.6 : 0 }}
+                cx={120} cy={52} r="6" fill="#c4b5fd" stroke="#ede9fe" strokeWidth="1"
+                initial={{ y: -36, opacity: 0 }}
+                animate={active ? { y: 0, opacity: [0, 1, 1] } : { y: -36, opacity: 0 }}
+                transition={{ duration: DUR.bar, ease: EASE_IN_OUT, delay: active ? 0.2 : 0 }}
             />
             <motion.ellipse
-                cx="120" cy="52" ry="5" fill="#a78bfa" stroke="#ddd6fe" strokeWidth="0.8"
-                initial={{ rx: 0, opacity: 0 }}
-                animate={{ rx: active ? 13 : 0, opacity: active ? 1 : 0 }}
-                transition={{ duration: 0.6, delay: active ? 1.9 : 0 }}
+                cx="120" cy="52" rx="13" ry="5" fill="#a78bfa" stroke="#ddd6fe" strokeWidth="0.8"
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: active ? 1 : 0, opacity: active ? 1 : 0 }}
+                transition={{ duration: DUR.enter, ease: EASE_OUT, delay: active ? 0.8 : 0 }}
             />
 
             {/* Sarcômero: linhas Z puxando a actina sobre a miosina */}

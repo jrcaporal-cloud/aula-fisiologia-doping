@@ -1,5 +1,6 @@
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { useEffect } from 'react';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 
 interface CountTextProps {
     text: string;
@@ -27,7 +28,7 @@ export const CountText = ({ text, active, delay = 0, reduced }: CountTextProps) 
             return undefined;
         }
         progress.set(0);
-        const controls = animate(progress, 1, { duration: 1.1, delay, ease: [0.16, 1, 0.3, 1] });
+        const controls = animate(progress, 1, { duration: DUR.bar, delay, ease: EASE_OUT });
         return () => controls.stop();
     }, [active, delay, reduced, progress]);
 

@@ -2,6 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { ATOM_R, CPK, MOL_SCALE, type MoleculeData } from './molecules';
 import { SPHERE_GEO, SPHERE_LO, STICK_GEO, getGlowTexture, stickMatrix, type Sphere } from './geometry';
+import { CLOUD_GRAIN } from './shaders';
 
 const UP = new THREE.Vector3(0, 1, 0);
 const tmpM = new THREE.Matrix4();
@@ -117,6 +118,7 @@ export const Cloud = ({ spheres, color, color2, roughness = 0.6, emissive = '#00
                 emissiveIntensity={emissiveIntensity}
                 transparent={opacity < 1}
                 opacity={opacity}
+                {...CLOUD_GRAIN}
             />
         </instancedMesh>
     );

@@ -4,10 +4,10 @@ import type { ReactNode } from 'react';
 import { COLORS, STEPS, TEXT } from './content';
 import { INJ_T, ISO_WINDOW_H, clockLabel } from './model';
 import { AbpStrip, HepaticChain, Isoforms } from './Widgets';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 
 /** Painel lateral: o texto do cartão original de cada passo + a peça visual que o acompanha. */
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** `size` maior onde o painel tem folga (passos 0, 2 e 5). */
 const P = ({ children, strong = false, size = 15 }: { children: ReactNode; strong?: boolean; size?: number }) => (
@@ -127,11 +127,11 @@ export const SidePanel = ({ step, collectT }: { step: number; collectT: number }
             style={{ borderColor: `${info.color}55`, background: `linear-gradient(165deg, ${info.color}1c, rgba(8,8,18,0.86) 55%)` }}>
             <AnimatePresence initial={false}>
                 <motion.div key={step} className="absolute inset-0 p-3.5 flex flex-col gap-2"
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.35, delay: 0.12, ease: EASE } }}
-                    exit={{ opacity: 0, transition: { duration: 0.12 } }}>
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { duration: DUR.enter, delay: 0.12, ease: EASE_OUT } }}
+                    exit={{ opacity: 0, transition: { duration: DUR.exit } }}>
                     <div className="flex items-center gap-2">
                         {step === 5 && <AlertTriangle size={18} style={{ color: info.color }} />}
-                        <span className="font-display text-[20px] font-semibold leading-tight" style={{ color: info.color }}>{info.title}</span>
+                        <span className="text-[20px] font-semibold leading-tight" style={{ color: info.color }}>{info.title}</span>
                     </div>
                     {bodyFor(step, collectT)}
                 </motion.div>

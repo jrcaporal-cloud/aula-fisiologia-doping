@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type { ReactNode, Ref } from 'react';
 import { BUBBLE } from './flow';
+import { EASE_IN_OUT } from '../../../lib/motion';
 
 /** Desenhos estáticos do eixo: silhueta, lupa do encéfalo, fígado, músculo e seringa. */
 
@@ -180,18 +181,20 @@ export const Syringe = ({ x, y, angle, color, scale = 1 }: SyringeProps) => {
             <line x1={-16} y1={0} x2={0} y2={0} stroke="#E5E7EB" strokeWidth={1.6} strokeLinecap="round" />
             <rect x={-20} y={-3} width={5} height={6} rx={1} fill="#9CA3AF" />
             <rect x={-62} y={-8} width={42} height={16} rx={3} fill="rgba(226,232,240,0.10)" stroke="#E5E7EB" strokeWidth={1.4} />
+            {/* Borda direita fixa em −21: o líquido encolhe por scaleX a partir dela. */}
             <motion.rect
-                y={-6} height={12} rx={2} fill={color} fillOpacity={0.85}
-                initial={{ x: -48, width: 27 }}
-                animate={still ? { x: -48, width: 27 } : { x: [-58, -40, -58], width: [37, 19, 37] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                x={-58} y={-6} width={37} height={12} rx={2} fill={color} fillOpacity={0.85}
+                style={{ originX: 1 }}
+                initial={{ scaleX: 27 / 37 }}
+                animate={still ? { scaleX: 27 / 37 } : { scaleX: [1, 19 / 37, 1] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: EASE_IN_OUT }}
             />
             {[-52, -44, -36, -28].map(t => <line key={t} x1={t} x2={t} y1={-8} y2={-4} stroke="#E5E7EB" strokeWidth={1} />)}
             <rect x={-65} y={-12} width={3} height={24} rx={1} fill="#CBD5E1" />
             <motion.g
                 initial={{ x: 0 }}
                 animate={still ? { x: 0 } : { x: [0, 18, 0] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: EASE_IN_OUT }}
             >
                 <rect x={-86} y={-2} width={28} height={4} fill="#CBD5E1" />
                 <rect x={-90} y={-9} width={4} height={18} rx={1.5} fill="#E5E7EB" />

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { AthletePhoto } from './AthletePhoto';
+import { SPRING_TAB } from '../../../lib/motion';
 import { CASES } from './cases';
 import { AXIS_TICKS, LANES, caseMarks, slotPct, yearPct } from './layout';
 
@@ -52,7 +53,6 @@ export const Timeline = ({ active, onSelect }: TimelineProps) => (
                 style={{
                     left: `${yearPct(y)}%`, top: AXIS_Y, width: i === active ? 13 : 9, height: i === active ? 13 : 9,
                     background: i === active ? c.substanceColor : '#050510', borderColor: c.substanceColor,
-                    boxShadow: i === active ? `0 0 12px ${c.substanceColor}` : undefined,
                 }} />
         )))}
         {AXIS_TICKS.map(y => (
@@ -67,19 +67,20 @@ export const Timeline = ({ active, onSelect }: TimelineProps) => (
                 const on = i === active;
                 return (
                     <button key={c.id} type="button" onClick={() => onSelect(i)}
-                        className="relative flex min-w-0 flex-1 cursor-pointer flex-col items-center rounded-xl pt-1 transition-colors hover:bg-white/5"
+                        className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)] relative flex min-w-0 flex-1 cursor-pointer flex-col items-center rounded-xl pt-1 transition-colors hover:bg-white/5"
                         aria-pressed={on} aria-label={`${c.name}, ${c.year}`}>
                         {on && (
                             <motion.span layoutId="dossier-slot" className="absolute inset-0 rounded-xl"
                                 style={{ background: `${c.substanceColor}1f`, border: `1px solid ${c.substanceColor}88` }}
-                                transition={{ type: 'spring', stiffness: 380, damping: 34 }} />
+                                transition={SPRING_TAB} />
                         )}
                         <span className="relative block h-[38px] w-[38px] overflow-hidden rounded-full border-2"
                             style={{ borderColor: on ? c.substanceColor : 'rgba(255,255,255,0.25)', filter: on ? 'none' : 'grayscale(0.85)' }}>
                             <AthletePhoto src={c.image} name={c.name} className="h-full w-full" initialsSize={14} />
                         </span>
                         <span className={`relative mt-1 whitespace-nowrap text-[16px] leading-tight ${on ? 'font-semibold text-white' : 'text-gray-200'}`}>{c.name}</span>
-                        <span className="relative font-mono text-[15px] leading-tight" style={{ color: on ? c.substanceColor : '#D1D5DB' }}>{c.year}</span>
+                        {/* nowrap: "2016 / 2017" quebrava em duas linhas e empurrava a ficha vizinha. */}
+                        <span className="relative whitespace-nowrap font-mono text-[15px] leading-tight" style={{ color: on ? c.substanceColor : '#D1D5DB' }}>{c.year}</span>
                     </button>
                 );
             })}

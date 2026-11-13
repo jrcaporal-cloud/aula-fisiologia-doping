@@ -1,6 +1,8 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { useState, type ReactNode } from 'react';
 import { useSlideSteps } from '../../store/useSlideSteps';
+import { IllustrativeTag } from '../deck/IllustrativeTag';
 import { C, STEPS, TEXTS } from './beta2kinetics/content';
 import { DetectionScene } from './beta2kinetics/DetectionScene';
 import { CURSOR_PRESET, formatHours, hoursFromU } from './beta2kinetics/scales';
@@ -24,12 +26,10 @@ const BODY_H = ROOT_H - HEADER_H;
 const TEXT_SIZE: Readonly<Record<number, number>> = { 0: 15.5, 1: 18, 2: 15.5, 4: 17 };
 
 const Fade = ({ id, children, className }: { id: string; children: ReactNode; className?: string }) => (
-    <AnimatePresence mode="wait">
-        <motion.div key={id} className={className}
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.35, ease: 'easeOut' }}>
-            {children}
-        </motion.div>
-    </AnimatePresence>
+    <motion.div key={id} className={className}
+        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
+        {children}
+    </motion.div>
 );
 
 const Beta2KineticsSim = () => {
@@ -55,16 +55,14 @@ const Beta2KineticsSim = () => {
                         {scene === 'timeline' ? (
                             <>
                                 <div className="flex items-center justify-between px-1">
-                                    <span className="font-display text-[17px] font-semibold text-white">Quanto resta após uma dose</span>
-                                    <span className="text-[14px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
-                                        modelo ilustrativo
-                                    </span>
+                                    <span className="text-[17px] font-semibold text-white">Quanto resta após uma dose</span>
+                                    <IllustrativeTag>modelo ilustrativo</IllustrativeTag>
                                 </div>
                                 <div className="flex-1 min-h-0 relative mt-1"><Timeline step={step} cursorU={cursorU} /></div>
                                 <div className="flex items-center gap-4 pt-2 border-t border-white/10">
                                     <span className="font-mono text-[14px] uppercase tracking-wider text-gray-200 shrink-0">tempo</span>
                                     <input type="range" min={0} max={1} step={0.002} value={cursorU} onChange={e => setCursorU(Number(e.target.value))}
-                                        aria-label="Tempo após a dose (escala logarítmica)" className="flex-1 cursor-pointer" style={{ accentColor: C.clen }} />
+                                        aria-label="Tempo após a dose (escala logarítmica)" className="flex-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]" style={{ accentColor: C.clen }} />
                                     <span className="font-mono text-[16px] font-bold text-white shrink-0 text-right" style={{ width: 90 }}>{formatHours(hoursFromU(cursorU))}</span>
                                 </div>
                             </>

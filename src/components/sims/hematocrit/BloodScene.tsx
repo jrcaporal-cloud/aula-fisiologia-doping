@@ -14,9 +14,15 @@ import { VesselWall, type WallInputs } from './VesselWall';
 const MAX_CELLS = 540;
 const cellsFor = (hct: number) => Math.round((MAX_CELLS * hct) / HCT_MAX);
 
-/** Tempo de formação do microtrombo (s) e de desfazê-lo ao sair do cenário de risco. */
-const GROW_TIME = 6;
-const UNDO_TIME = 2.2;
+/**
+ * Tempo de formação do microtrombo (s) e de desfazê-lo ao sair do cenário de risco.
+ * Regra do palco: o microtrombo (e o alerta, oclusão > 0,55) aparece em ≤ 1,2 s depois do clique do sono;
+ * a estase começa quando a bradicardia passa da metade (SLEEP_RISK_BLEND ≈ 0,28 s) e o alerta sai em ≈ 0,95 s.
+ * Ao voltar, o alerta some em ≈ 0,6 s (oclusão < 0,35).
+ */
+const GROW_TIME = 1.2;
+const UNDO_TIME = 0.9;
+const SLEEP_RISK_BLEND = 0.5;
 const MAX_SUBSTEP = 1 / 20;
 const DPR_RANGE = [1, 1.75] as const;
 
@@ -60,7 +66,7 @@ const Blood = ({ hct, sleep, live, onAlertChange }: Omit<BloodSceneProps, 'alert
             s.sleepBlend += ((sleep ? 1 : 0) - s.sleepBlend) * Math.min(dt * 2.5, 1);
 
             // Estase: no sono (FC ~30 bpm) com hematócrito na faixa rhEPO o microtrombo se forma.
-            const risk = sleep && s.hct >= HCT_EPO_LOW - 0.25 && s.sleepBlend > 0.85;
+            const risk = sleep && s.hct >= HCT_EPO_LOW - 0.25 && s.sleepBlend > SLEEP_RISK_BLEND;
             s.occlusion = risk ? Math.min(s.occlusion + dt / GROW_TIME, 1) : Math.max(s.occlusion - dt / UNDO_TIME, 0);
 
             const sleepFactor = 1 + (sleepFlowFactor(s.time) - 1) * s.sleepBlend;
@@ -106,10 +112,10 @@ const Blood = ({ hct, sleep, live, onAlertChange }: Omit<BloodSceneProps, 'alert
 const ThrombusLabel = ({ visible }: { visible: boolean }) => (
     <Html position={[THROMBUS_X, LUMEN_R + WALL_THICKNESS + 0.3, 0]} center zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
         <div
-            className="flex flex-col items-center transition-all duration-500"
+            className="flex flex-col items-center transition-[opacity,transform] duration-450 ease-(--ease-out)"
             style={{ opacity: visible ? 1 : 0, transform: `translateY(${visible ? 0 : 8}px)` }}
         >
-            <div className="whitespace-nowrap rounded-lg border border-brand-red/70 bg-[rgba(40,4,14,0.88)] px-3 py-1 font-mono text-[15px] font-bold uppercase tracking-[0.12em] text-rose-100 shadow-[0_0_24px_rgba(225,29,72,0.55)]">
+            <div className="whitespace-nowrap rounded-lg border border-brand-red/70 bg-[rgba(40,4,14,0.88)] px-3 py-1 font-mono text-[15px] font-bold uppercase tracking-[0.12em] text-rose-100">
                 Microtrombo
             </div>
             <div className="h-5 w-px bg-gradient-to-b from-brand-red to-transparent" />

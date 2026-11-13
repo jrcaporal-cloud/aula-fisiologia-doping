@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { EASE_OUT } from '../../../lib/motion';
 import { NUMBERED, C_PERSISTS, C_REVERTS, type BodySpot } from './biologyData';
 
 /** Onde cada item aparece na silhueta (coordenadas do viewBox 0 0 220 400). */
@@ -9,7 +10,8 @@ const SPOTS: Record<BodySpot, { x: number; y: number }> = {
     forca: { x: 64, y: 130 },
     hematocrito: { x: 163, y: 176 },
     mionucleos: { x: 95, y: 246 },
-    ossea: { x: 128, y: 322 },
+    /** Fora da perna: o marcador ficava por cima do membro. */
+    ossea: { x: 166, y: 330 },
     estatura: { x: 18, y: 200 },
 };
 
@@ -31,11 +33,15 @@ interface BodyFigureProps {
 }
 
 /** Silhueta neutra e geométrica com os marcadores dos itens de reversibilidade. */
-export const BodyFigure = ({ step, hover }: BodyFigureProps) => (
+export const BodyFigure = ({ step, hover }: BodyFigureProps) => {
+    const reduce = useReducedMotion();
+    return (
     <svg viewBox="0 0 220 400" className="w-full h-full" aria-hidden>
         {/* estatura (cota vertical) */}
+        {/* A cota abre um vão onde entra o marcador da estatura: o número não fica sobre o tracejado. */}
         <g stroke="rgba(203,213,225,0.35)" strokeWidth={1.5}>
-            <line x1={18} y1={20} x2={18} y2={380} strokeDasharray="4 4" />
+            <line x1={18} y1={20} x2={18} y2={SPOTS.estatura.y - 18} strokeDasharray="4 4" />
+            <line x1={18} y1={SPOTS.estatura.y + 18} x2={18} y2={380} strokeDasharray="4 4" />
             <line x1={10} y1={20} x2={26} y2={20} />
             <line x1={10} y1={380} x2={26} y2={380} />
         </g>
@@ -58,14 +64,14 @@ export const BodyFigure = ({ step, hover }: BodyFigureProps) => (
             const fresh = r.reversed ? step === 1 : step === 2;
             return (
                 <g key={r.spot}>
-                    {shown && fresh && (
+                    {shown && fresh && !reduce && (
                         <motion.circle cx={x} cy={y} r={14} fill="none" stroke={color} strokeWidth={2}
                             initial={{ scale: 1, opacity: 0.8 }} animate={{ scale: 2.4, opacity: 0 }}
-                            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+                            transition={{ duration: 1.8, repeat: Infinity, ease: EASE_OUT }}
                             style={{ transformOrigin: `${x}px ${y}px` }} />
                     )}
                     <motion.g initial={false}
-                        animate={{ scale: shown ? (isHover ? 1.3 : 1) : 0, opacity: shown ? (fresh || isHover ? 1 : 0.6) : 0 }}
+                        animate={{ scale: shown ? (isHover ? 1.3 : 1) : 0, opacity: shown ? (fresh || isHover ? 1 : 0.88) : 0 }}
                         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
                         style={{ transformOrigin: `${x}px ${y}px` }}>
                         <circle cx={x} cy={y} r={14} fill={color} stroke="#050510" strokeWidth={2.5} />
@@ -75,4 +81,5 @@ export const BodyFigure = ({ step, hover }: BodyFigureProps) => (
             );
         })}
     </svg>
-);
+    );
+};

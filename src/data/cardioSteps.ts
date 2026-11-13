@@ -22,9 +22,9 @@ export const CARDIO_STEPS: StepData[] = [
         badge: 'VISÃO GERAL',
         title: 'O circuito sob pressão',
         short: 'Visão geral',
-        description: 'Ventrículo esquerdo em corte, valvas, aorta, uma artéria de condução, o leito de resistência e o retorno venoso. As etapas somam, uma a uma, os colaterais cardiovasculares dos EAA e mostram o que cada um faz com a pressão, o fluxo e o trabalho do músculo.',
-        cameraPosition: [2, 4, 46],
-        cameraTarget: [0, -0.5, 0],
+        description: 'O coração em corte de quatro câmaras (o plano do eco apical), as valvas, a aorta, uma artéria de condução, o leito de resistência e o retorno venoso — tudo cortado no mesmo plano. As etapas somam, uma a uma, os colaterais cardiovasculares dos EAA e mostram o que cada um faz com a pressão, o fluxo e o trabalho do músculo.',
+        cameraPosition: [-2.2, 2.8, 39],
+        cameraTarget: [-3.0, 1.2, 0],
     },
     {
         id: 1,
@@ -32,8 +32,8 @@ export const CARDIO_STEPS: StepData[] = [
         title: 'O coração do atleta treinado',
         short: 'Treinado',
         description: 'O treino já remodela o coração: a parede engrossa e a cavidade acompanha, de modo que o volume ejetado sobe. Enchimento rápido, relaxamento normal. É deste ponto que se parte — e é com ele que o remodelamento induzido precisa ser comparado, não com o de um sedentário.',
-        cameraPosition: [-6, 2.5, 26],
-        cameraTarget: [-7.5, 0, 0],
+        cameraPosition: [-6.6, 2.0, 25],
+        cameraTarget: [-7.4, 0.6, 0],
     },
     {
         id: 2,
@@ -41,8 +41,8 @@ export const CARDIO_STEPS: StepData[] = [
         title: 'A parede cresce para dentro',
         short: 'Hipertrofia',
         description: 'O miócito cardíaco tem receptor androgênico: o estímulo é direto, e a sobrecarga de pressão soma. A parede engrossa sem que a cavidade acompanhe — hipertrofia concêntrica, com a espessura relativa de parede aumentada. O espessamento começa cedo, antes de a função cair.',
-        cameraPosition: [-7.5, 1.5, 19],
-        cameraTarget: [-7.5, -0.2, 0],
+        cameraPosition: [-5.4, 0.0, 26],
+        cameraTarget: [-6.4, -0.9, 0],
     },
     {
         id: 3,
@@ -50,8 +50,8 @@ export const CARDIO_STEPS: StepData[] = [
         title: 'A diástole falha onde o Doppler comum não olha',
         short: 'Enchimento',
         description: 'Parede espessa e mais rígida relaxa devagar. O detalhe que importa na prática: a relação E/A do Doppler transmitral costuma vir normal nesses pacientes — quem mostra o problema é a velocidade de relaxamento precoce (E′) do Doppler tecidual. Um eco sem Doppler tecidual passa em branco.',
-        cameraPosition: [-9, -1, 17],
-        cameraTarget: [-7.2, 0.6, 0],
+        cameraPosition: [-6.6, 2.4, 21],
+        cameraTarget: [-6.0, 2.0, 0],
     },
     {
         id: 4,
@@ -59,8 +59,8 @@ export const CARDIO_STEPS: StepData[] = [
         title: 'A pós-carga realimenta a hipertrofia',
         short: 'Pressão',
         description: 'A pressão sobe por mais de uma via: atividade simpática aumentada, peptídeos natriuréticos suprimidos e artérias mais rígidas. Metade dos usuários tem hipertensão sistólica na medida de 24 horas. Cada sístole vence uma pressão maior, e a sobrecarga alimenta de volta o espessamento.',
-        cameraPosition: [0.3, 2, 35],
-        cameraTarget: [0, 0.5, 0],
+        cameraPosition: [-3.0, 4.8, 28],
+        cameraTarget: [-3.6, 4.2, 0],
     },
     {
         id: 5,
@@ -68,8 +68,8 @@ export const CARDIO_STEPS: StepData[] = [
         title: 'Sangue mais espesso, mesmo motor',
         short: 'Viscosidade',
         description: 'A testosterona eleva a eritropoetina e derruba a hepcidina, liberando ferro para a eritropoese. O hematócrito sobe e a viscosidade sobe com ele, mais que proporcionalmente. Sangue espesso exige mais pressão para o mesmo fluxo — sobretudo quando a frequência cardíaca cai, no sono.',
-        cameraPosition: [10, 1, 22],
-        cameraTarget: [9, 0, 0],
+        cameraPosition: [5.2, 1.4, 20],
+        cameraTarget: [6.0, 0.7, 0],
     },
     {
         id: 6,
@@ -77,8 +77,8 @@ export const CARDIO_STEPS: StepData[] = [
         title: 'Endotélio, lipídios e placa',
         short: 'Placa',
         description: 'O HDL despenca e o LDL sobe, com os orais 17-alfa-alquilados no pior extremo. Soma-se disfunção endotelial e artéria rígida: a placa cresce, e boa parte dela é placa não calcificada — a que o escore de cálcio não enxerga. Um cálcio zero não tranquiliza nesse paciente.',
-        cameraPosition: [8, -1.5, 18],
-        cameraTarget: [7.5, 0, 0],
+        cameraPosition: [3.1, 4.2, 11.5],
+        cameraTarget: [3.3, 3.7, 0],
     },
     {
         id: 7,
@@ -87,8 +87,8 @@ export const CARDIO_STEPS: StepData[] = [
         short: 'Desfecho',
         // Texto desta etapa depende do seletor: ver CARDIO_PHASE_TEXT.
         description: '',
-        cameraPosition: [1, 3, 42],
-        cameraTarget: [0, -0.5, 0],
+        cameraPosition: [-1.8, 3.2, 40],
+        cameraTarget: [-3.0, 1.1, 0],
     },
 ];
 

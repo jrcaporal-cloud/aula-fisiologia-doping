@@ -1,5 +1,6 @@
-import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
+import { MotionConfig, motion } from 'framer-motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { GapsView, KnownView } from './trans/GapsKnownViews';
 import { GAP_STEP, KNOWN_STEP, SCIENCE_STEPS, STUDIES } from './trans/scienceData';
 import { StepHeader, type StepChip } from './trans/StepHeader';
@@ -24,14 +25,12 @@ export const TransScienceReview = () => {
             <div className="not-prose w-full font-body text-white select-none flex flex-col gap-3" style={{ height: 510 }}>
                 <StepHeader step={step} title={SCIENCE_STEPS[step]} chips={CHIPS} accent="#A855F7" layoutId="ts-chip" onStep={setStep} />
                 <div className="flex-1 min-h-0">
-                    <AnimatePresence mode="wait">
-                        <motion.div key={view} className="h-full"
-                            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>
-                            {view === 'studies' && <StudiesView current={step} onPick={setStep} />}
-                            {view === 'gaps' && <GapsView />}
-                            {view === 'known' && <KnownView />}
-                        </motion.div>
-                    </AnimatePresence>
+                    <motion.div key={view} className="h-full"
+                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
+                        {view === 'studies' && <StudiesView current={step} onPick={setStep} />}
+                        {view === 'gaps' && <GapsView />}
+                        {view === 'known' && <KnownView />}
+                    </motion.div>
                 </div>
             </div>
         </MotionConfig>

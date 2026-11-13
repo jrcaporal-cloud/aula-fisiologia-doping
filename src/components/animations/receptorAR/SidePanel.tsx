@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { RotateCcw } from 'lucide-react';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { Clock } from './Clock';
 import { GENOMIC, GENOMIC_COLOR, NONGENOMIC, NONGENOMIC_COLOR, type RouteText } from './content';
 import { GENOMIC_TOTAL_S, NONGENOMIC_TOTAL_S } from './useSequence';
@@ -22,11 +23,11 @@ const ROUTES: Record<'g' | 'n', RouteMeta> = {
 };
 
 const RouteHeader = ({ meta, runKey, reduced }: { meta: RouteMeta; runKey: string | null; reduced: boolean }) => (
-    <div className="flex items-center gapx-3 py-3">
+    <div className="flex items-center gap-3 py-3">
         <Clock color={meta.color} turns={meta.turns} duration={meta.duration} runKey={runKey} reduced={reduced} />
         <div className="min-w-0">
-            <div className="font-display text-[21px] font-bold leading-tight" style={{ color: meta.color }}>
-                {meta.text.name} <span className="text-[15.5px] font-normal" style={{ color: meta.soft }}>({meta.text.speed})</span>
+            <div className="font-body text-[21px] font-bold leading-tight" style={{ color: meta.color }}>
+                {meta.text.name}{' '}<span className="ml-1 text-[15.5px] font-normal whitespace-nowrap" style={{ color: meta.soft }}>({meta.text.speed})</span>
             </div>
             <div className="font-mono text-[15.5px]" style={{ color: meta.soft }}>
                 {meta.text.span} · <strong className="text-white">{meta.text.clock}</strong>
@@ -50,7 +51,7 @@ const RouteDetail = ({ meta, active, runKey, reduced, onReplay }: RouteDetailPro
             <button
                 type="button"
                 onClick={onReplay}
-                className="mt-1 flex items-center gap-1 rounded-full border border-white/15 px-2 py-1 font-mono text-[15.5px] text-slate-200 hover:text-white"
+                className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)] mt-1 flex items-center gap-1 rounded-full border border-white/15 px-2 py-1 font-mono text-[15.5px] text-slate-200 hover:text-white"
                 aria-label="Repetir animação"
             >
                 <RotateCcw size={14} /> repetir
@@ -59,12 +60,9 @@ const RouteDetail = ({ meta, active, runKey, reduced, onReplay }: RouteDetailPro
         <p className="text-[15.5px] leading-snug text-slate-200">{meta.text.summary}</p>
         <ol className="flex flex-col gap-1.5">
             {meta.text.items.map((item, i) => (
-                <motion.li
+                <li
                     key={item.title}
-                    initial={false}
-                    animate={{ opacity: i <= active ? 1 : 0.62 }}
-                    transition={{ duration: reduced ? 0 : 0.4 }}
-                    className="flex gap-2 rounded-lg border px-2 py-1"
+                    className="flex gap-2 rounded-lg border px-2 py-1 transition-colors duration-300 ease-(--ease-out)"
                     style={{
                         borderColor: i === active ? `${meta.color}99` : 'rgba(255,255,255,0.06)',
                         background: i === active ? `${meta.color}1a` : 'rgba(0,0,0,0.25)',
@@ -77,10 +75,11 @@ const RouteDetail = ({ meta, active, runKey, reduced, onReplay }: RouteDetailPro
                         {i + 1}
                     </span>
                     <div>
-                        <div className="text-[16px] font-semibold leading-tight text-white">{item.title}</div>
-                        <div className="text-[15.5px] leading-[1.25] text-slate-200">{item.text}</div>
+                        {/* Etapa ainda não alcançada: cor mais apagada (sólida), não opacidade. */}
+                        <div className={`text-[16px] font-semibold leading-tight ${i <= active ? 'text-white' : 'text-[#9CA3AF]'}`}>{item.title}</div>
+                        <div className={`text-[15.5px] leading-[1.25] ${i <= active ? 'text-slate-200' : 'text-[#9CA3AF]'}`}>{item.text}</div>
                     </div>
-                </motion.li>
+                </li>
             ))}
         </ol>
     </div>
@@ -112,12 +111,12 @@ export const SidePanel = ({ step, gPhase, nPhase, run, reduced, onReplay }: Side
                 key={step}
                 initial={reduced ? false : { opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: reduced ? 0 : 0.35 }}
+                transition={{ duration: reduced ? 0 : DUR.enter, ease: EASE_OUT }}
                 className="flex min-h-0 flex-1 flex-col gap-2.5"
             >
                 {step === 0 && (
                     <>
-                        <div className="font-display text-[22px] font-semibold text-white">Duas vias, uma molécula</div>
+                        <div className="font-body text-[22px] font-semibold text-white">Duas vias, uma molécula</div>
                         <RouteSummary meta={ROUTES.g} reduced={reduced} />
                         <RouteSummary meta={ROUTES.n} reduced={reduced} />
                         
@@ -131,7 +130,7 @@ export const SidePanel = ({ step, gPhase, nPhase, run, reduced, onReplay }: Side
                 )}
                 {step === 3 && (
                     <>
-                        <div className="font-display text-[22px] font-semibold text-white">Lado a lado</div>
+                        <div className="font-body text-[22px] font-semibold text-white">Lado a lado</div>
                         <RouteSummary meta={ROUTES.n} reduced={reduced} />
                         <RouteSummary meta={ROUTES.g} reduced={reduced} />
                     </>

@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { DRUGS, SYSTEMS, UGT_NOTE } from './data';
 import { cardRect, slotRect } from './geometry';
 import { EASE } from './DrugCard';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 interface UgtCalloutProps {
     width: number;
@@ -17,7 +18,7 @@ export const UgtCallout = ({ width, reduced }: UgtCalloutProps) => {
     const box = slotRect(width, 'lane', 1, 2);
     const y = from.y + 30;
     const color = SYSTEMS.androgenico.color;
-    const delay = reduced ? 0 : 1.5;
+    const delay = reduced ? 0 : 0.3;
 
     return (
         <>
@@ -30,8 +31,8 @@ export const UgtCallout = ({ width, reduced }: UgtCalloutProps) => {
                     fill="none"
                     initial={{ pathLength: 0, opacity: 0 }}
                     animate={{ pathLength: 1, opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: reduced ? 0 : 0.6, delay, ease: EASE }}
+                    exit={{ opacity: 0, transition: { duration: DUR.exit } }}
+                    transition={{ duration: reduced ? 0 : DUR.draw, delay, ease: EASE_IN_OUT }}
                 />
                 <motion.circle
                     cx={box.x - 6}
@@ -40,8 +41,8 @@ export const UgtCallout = ({ width, reduced }: UgtCalloutProps) => {
                     fill={color}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2, delay: reduced ? 0 : delay + 0.5 }}
+                    exit={{ opacity: 0, transition: { duration: DUR.exit } }}
+                    transition={{ duration: reduced ? 0 : DUR.text, delay: reduced ? 0 : delay + 0.6, ease: EASE_OUT }}
                 />
             </svg>
             <motion.div
@@ -49,8 +50,8 @@ export const UgtCallout = ({ width, reduced }: UgtCalloutProps) => {
                 style={{ left: box.x, top: box.y, width: box.w, height: box.h, borderColor: `${color}80`, background: 'rgba(8,8,18,0.82)' }}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: reduced ? 0 : 0.5, delay: reduced ? 0 : delay + 0.35, ease: EASE }}
+                exit={{ opacity: 0, transition: { duration: DUR.exit } }}
+                transition={{ duration: reduced ? 0 : DUR.enter, delay: reduced ? 0 : delay + 0.3, ease: EASE }}
             >
                 <p className="text-[17px] leading-snug text-slate-50">
                     <span className="font-bold" style={{ color }}>*</span>{UGT_NOTE.slice(1)}

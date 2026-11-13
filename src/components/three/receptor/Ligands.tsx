@@ -12,6 +12,7 @@ import { useHover } from './useHover';
 interface LigandsProps { timeRef: TimeRef; ligand: LigandKind }
 
 const DRIFTERS = [V(20.5, 5.2, -3.5), V(23.5, -5.5, 2.5), V(19.5, 0.5, -6.5), V(24.5, 3.2, 6.5)];
+const DRIFTER_IDS = ['d0', 'd1', 'd2', 'd3'];
 
 const Main = ({ index, timeRef, ligand }: LigandsProps & { index: number }) => {
     const ref = useRef<THREE.Group>(null);
@@ -43,7 +44,8 @@ const Drifter = ({ index, ligand }: { index: number; ligand: LigandKind }) => {
         const g = ref.current;
         if (!g) return;
         const t = clock.elapsedTime * 0.35 + index * 1.7;
-        g.position.copy(DRIFTERS[index]).add(V(Math.sin(t) * 0.8, Math.cos(t * 0.8) * 0.6, Math.sin(t * 0.6) * 0.7));
+        const home = DRIFTERS[index];
+        g.position.set(home.x + Math.sin(t) * 0.8, home.y + Math.cos(t * 0.8) * 0.6, home.z + Math.sin(t * 0.6) * 0.7);
         g.rotation.set(t * 0.9, t * 0.6, t * 0.4);
     });
     return (
@@ -58,6 +60,6 @@ export const Ligands = ({ timeRef, ligand }: LigandsProps) => (
     <>
         <Main index={0} timeRef={timeRef} ligand={ligand} />
         <Main index={1} timeRef={timeRef} ligand={ligand} />
-        {DRIFTERS.map((_, i) => <Drifter key={i} index={i} ligand={ligand} />)}
+        {DRIFTER_IDS.map((id, i) => <Drifter key={id} index={i} ligand={ligand} />)}
     </>
 );

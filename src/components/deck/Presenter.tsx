@@ -94,12 +94,12 @@ const SlideCard = ({ index, label, dim }: { index: number; label: string; dim?: 
     const item = DECK[index];
     if (!item) {
         return (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-gray-500">Fim da aula</div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-gray-300">Fim da aula</div>
         );
     }
     return (
         <div className={`rounded-2xl border p-6 ${dim ? 'border-white/10 bg-white/[0.02]' : 'border-brand-red/50 bg-brand-crimson/15'}`}>
-            <p className="text-[11px] uppercase tracking-[0.25em] text-gray-400 mb-2">{label} · {String(index + 1).padStart(2, '0')} · {item.section || 'Abertura'}</p>
+            <p className="text-[12px] uppercase tracking-[0.25em] text-gray-300 mb-2">{label} · {String(index + 1).padStart(2, '0')} · {item.section || 'Abertura'}</p>
             <p className={`font-display font-semibold leading-tight ${dim ? 'text-2xl text-gray-300' : 'text-4xl text-white'}`}>{item.label}</p>
         </div>
     );
@@ -161,7 +161,7 @@ export const Presenter = () => {
         <div className="absolute inset-0 z-20 bg-[#05050d] text-white font-body overflow-hidden flex flex-col">
             <header className="flex items-center justify-between px-8 py-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
-                    <span className={`w-2.5 h-2.5 rounded-full ${connected ? 'bg-emerald-400 shadow-[0_0_10px_#34d399]' : 'bg-amber-400 animate-pulse'}`} />
+                    <span className={`w-2.5 h-2.5 rounded-full ${connected ? 'bg-emerald-400' : 'bg-amber-400 motion-safe:animate-pulse'}`} />
                     <span className="text-sm text-gray-300">
                         {connected ? 'Conectado à janela da aula' : 'Aguardando a janela da aula… (deixe-a aberta no projetor)'}
                     </span>
@@ -198,12 +198,12 @@ export const Presenter = () => {
                         </div>
                     )}
                     <label className="flex-1 flex flex-col min-h-[7rem]">
-                        <span className="text-[11px] uppercase tracking-[0.25em] text-gray-400 mb-2">Minhas anotações extras (salvas só neste navegador)</span>
+                        <span className="text-[12px] uppercase tracking-[0.25em] text-gray-300 mb-2">Minhas anotações extras (salvas só neste navegador)</span>
                         <textarea
                             value={notes[slideKey] ?? ''}
                             onChange={e => updateNote(e.target.value)}
                             placeholder="Escreva aqui o que quer lembrar de falar neste slide…"
-                            className="flex-1 min-h-0 resize-none rounded-2xl bg-white/[0.03] border border-white/10 focus:border-brand-red/60 outline-none p-5 text-xl leading-relaxed text-gray-100 placeholder:text-gray-600"
+                            className="flex-1 min-h-0 resize-none rounded-2xl bg-white/[0.03] border border-white/10 focus:border-brand-red/60 outline-none p-5 text-xl leading-relaxed text-gray-100 placeholder:text-gray-400"
                         />
                     </label>
                 </section>
@@ -223,7 +223,7 @@ export const Presenter = () => {
                             Avançar <ChevronRight />
                         </button>
                     </div>
-                    <p className="text-xs text-gray-500">O passador e as setas funcionam nesta janela também.</p>
+                    <p className="text-xs text-gray-300">O passador e as setas funcionam nesta janela também.</p>
                 </section>
             </main>
         </div>

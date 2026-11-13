@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 import { DensityStrip } from './DensityStrip';
 import {
     BOTTOM, FS, NODE_X, PL, PLOT_R, SLOT_W, TOP, VB_H, VB_W, bandPath, edgePath, slotX, vOf, yOf,
@@ -10,8 +11,12 @@ import {
 } from './model';
 import { useTween } from './useTween';
 
+import { LABEL_BACKDROP, SUBSTANCE } from '../../../lib/palette';
+
 const RED = '#E11D48';
 const BLUE = '#60A5FA';
+/** "Dentro da régua fixa" = permitido: azul claro, nunca verde (daltonismo). */
+const OK = SUBSTANCE.allowed;
 const FIXED_Y = yOf(FIXED_LIMIT);
 const NODES = NODE_X.length;
 
@@ -63,7 +68,7 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
 
     // Alvo do corredor (lo | hi por nó) + parâmetros da posteriori, interpolados juntos.
     const target = useMemo(() => corridorTarget(analysis), [analysis]);
-    const tw = useTween(target, dragging === null ? 900 : 90);
+    const tw = useTween(target, dragging === null ? DUR.draw * 1000 : 90);
     const lo = tw.slice(0, NODES);
     const hi = tw.slice(NODES, NODES * 2);
     const posterior = { m: tw[NODES * 2], s: tw[NODES * 2 + 1] };
@@ -89,10 +94,6 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
                     <stop offset={tunnel ? Math.min(1, tunnelStart + 0.12) : 1} stopColor={BLUE} stopOpacity={0.3} />
                     <stop offset={1} stopColor={BLUE} stopOpacity={tunnel ? 0.3 : 0.12} />
                 </linearGradient>
-                <filter id="bayes-glow" x="-100%" y="-100%" width="300%" height="300%">
-                    <feGaussianBlur stdDeviation="4" result="b" />
-                    <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
             </defs>
 
             {/* Área e eixos */}
@@ -107,18 +108,18 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
             </text>
 
             {/* Passo 0: tudo abaixo da régua fixa é "normal" para todos */}
-            <motion.rect x={PL} y={FIXED_Y} width={PLOT_R - PL} height={BOTTOM - FIXED_Y} fill="#10B981"
-                animate={{ opacity: fixedOnly ? 0.07 : 0 }} transition={{ duration: 0.6 }} />
+            <motion.rect x={PL} y={FIXED_Y} width={PLOT_R - PL} height={BOTTOM - FIXED_Y} fill={OK}
+                animate={{ opacity: fixedOnly ? 0.07 : 0 }} transition={{ duration: DUR.bar, ease: EASE_OUT }} />
             {fixedOnly && (
-                <motion.text x={PLOT_R - 12} y={BOTTOM - 14} textAnchor="end" fontSize={FS} fontWeight={600} fill="#6EE7B7"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+                <motion.text x={PLOT_R - 12} y={BOTTOM - 14} textAnchor="end" fontSize={FS} fontWeight={600} fill="#7DD3FC"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: DUR.text, ease: EASE_OUT }}>
                     abaixo de 4,0 = “normal” para qualquer atleta
                 </motion.text>
             )}
 
             {/* Corredor bayesiano */}
             {!fixedOnly && (
-                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.bar, ease: EASE_OUT }}>
                     <g clipPath="url(#bayes-clip)">
                         <path d={bandPath(lo, hi)} fill="url(#bayes-band)" />
                         <path d={edgePath(hi)} fill="none" stroke={BLUE} strokeWidth={1.8} strokeDasharray={tunnel ? undefined : '6 5'} />
@@ -137,14 +138,14 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
             {/* Coluna da coleta com ATF */}
             {flag !== null && (
                 <motion.rect key={`atf-${flag}`} x={slotX(flag) - 18} y={TOP} width={36} height={BOTTOM - TOP} rx={18} fill={RED}
-                    initial={{ opacity: 0 }} animate={{ opacity: 0.14 }} transition={{ duration: 0.5 }} />
+                    initial={{ opacity: 0 }} animate={{ opacity: 0.14 }} transition={{ duration: DUR.morph, ease: EASE_OUT }} />
             )}
 
             {/* Linha do atleta */}
             {!fixedOnly && values.slice(0, visibleCount).map((v, k) => k > 0 && (
                 <motion.line key={`seg-${k}`} x1={slotX(k - 1)} y1={yOf(values[k - 1])} x2={slotX(k)} y2={yOf(v)}
                     stroke={BLUE} strokeOpacity={0.5} strokeWidth={2}
-                    initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.45 }} />
+                    initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: DUR.morph, ease: EASE_IN_OUT }} />
             ))}
 
             {/* Exames */}
@@ -175,12 +176,11 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
                         {flagged && !reduce && (
                             <motion.circle cx={x} cy={y} fill="none" stroke={RED} strokeWidth={2}
                                 initial={{ r: 8, opacity: 0.85 }} animate={{ r: 24, opacity: 0 }}
-                                transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }} />
+                                transition={{ duration: 1.6, repeat: Infinity, ease: EASE_OUT }} />
                         )}
-                        <motion.circle cx={x} r={flagged ? 8 : 7} fill={fill} stroke="#050510" strokeWidth={2}
-                            filter={flagged ? 'url(#bayes-glow)' : undefined}
-                            initial={reduce ? false : { cy: y - 60, opacity: 0 }} animate={{ cy: y, opacity: 1 }}
-                            transition={dragging === k ? { duration: 0 } : { type: 'spring', stiffness: 240, damping: 18 }} />
+                        <motion.circle cx={x} cy={y} r={flagged ? 8 : 7} fill={fill} stroke="#050510" strokeWidth={2}
+                            initial={reduce ? false : { y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: DUR.enter, ease: EASE_OUT }} />
                         <circle cx={x} cy={y} r={18} fill="transparent" />
                     </g>
                 );
@@ -189,7 +189,7 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
             {/* Passo 0: a régua fixa aprova todos os exames */}
             {fixedOnly && (
                 <motion.text x={slotX(3) + 14} y={yOf(values[3]) - 18} textAnchor="end" fontSize={FS} fontWeight={600} fill="#E5E7EB"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: DUR.text, ease: EASE_OUT }}>
                     todos “normais”
                 </motion.text>
             )}
@@ -198,19 +198,21 @@ export const BayesChart = ({ values, analysis, visibleCount, fixedOnly, showLike
             {flag !== null && (() => {
                 const px = slotX(flag);
                 const py = yOf(values[flag]);
-                const bw = 268;
-                const bh = 116;
-                const bx = px - 28 - bw;
-                const by = Math.max(TOP, Math.min(FIXED_Y + 12, py - bh / 2));
+                // O balão fica abaixo do limite fixo e acima da linha do atleta, encostado na margem
+                // esquerda: é o maior vão livre do gráfico. Fundo translúcido para a curva não sumir.
+                const bw = 250;
+                const bh = 104;
+                const bx = PL + 8;
+                const by = FIXED_Y + 16;
                 return (
                     <motion.g key={`callout-${flag}`} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}>
-                        <line x1={bx + bw} y1={by + bh / 2} x2={px - 10} y2={py} stroke={RED} strokeWidth={1.6} />
-                        <rect x={bx} y={by} width={bw} height={bh} rx={10} fill="#1a0610" stroke={RED} strokeWidth={1.5} />
-                        <text x={bx + 12} y={by + 26} fontSize={FS} fontWeight={800} fill="#FDA4AF" style={{ fontFamily: 'var(--font-display)' }}>⚠ Achado Atípico (ATF)</text>
-                        <text x={bx + 12} y={by + 52} fontSize={FS} fill="#FFE4E6">fora do túnel privativo</text>
-                        <text x={bx + 12} y={by + 77} fontSize={FS} fill="#FFE4E6">abaixo de 4,0: normal</text>
-                        <text x={bx + 12} y={by + 102} fontSize={FS} fill="#FFE4E6">para outra pessoa</text>
+                        transition={{ duration: DUR.morph, delay: 0.25, ease: EASE_OUT }}>
+                        <line x1={bx + bw} y1={by + bh / 2} x2={px - 10} y2={py} stroke={RED} strokeWidth={1.6} strokeOpacity={0.85} />
+                        <rect x={bx} y={by} width={bw} height={bh} rx={10} fill={LABEL_BACKDROP} stroke={RED} strokeWidth={1.5} />
+                        <text x={bx + 12} y={by + 24} fontSize={FS} fontWeight={700} fill="#FDA4AF" style={{ fontFamily: 'var(--font-body)' }}>⚠ Achado Atípico (ATF)</text>
+                        <text x={bx + 12} y={by + 48} fontSize={FS} fill="#FFE4E6">fora do túnel privativo</text>
+                        <text x={bx + 12} y={by + 70} fontSize={FS} fill="#FFE4E6">abaixo de 4,0: normal</text>
+                        <text x={bx + 12} y={by + 92} fontSize={FS} fill="#FFE4E6">para outra pessoa</text>
                     </motion.g>
                 );
             })()}

@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../lib/motion';
+import { SUBSTANCE } from '../../lib/palette';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { STEPS, STEP_COUNT } from './transfusion/content';
 import type { Scenario } from './transfusion/model';
@@ -18,7 +20,7 @@ const CARD_BG = { background: 'rgba(8,8,18,0.72)' };
 const STEP_SCENARIO: Partial<Record<number, Scenario>> = { 3: 'completo', 4: 'falho' };
 
 const SCENARIOS: readonly { id: Scenario; label: string; color: string }[] = [
-    { id: 'completo', label: '3 basais + coleta oportuna', color: '#38BDF8' },
+    { id: 'completo', label: '3 basais + coleta oportuna', color: SUBSTANCE.allowed },
     { id: 'falho', label: 'histórico insuficiente', color: '#F59E0B' },
 ];
 
@@ -39,21 +41,26 @@ const TransfusionSim = () => {
     return (
         <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 516 }}>
             <div className="flex items-center justify-between gap-4 h-[46px] mb-2">
-                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 flex-1 text-balance leading-tight">
-                    <span className="font-display text-[17px] font-semibold" style={{ color: accent }}>{info.title}</span>
-                    <span className="text-[15px] text-gray-200"> · {info.caption}</span>
+                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="min-w-0 flex-1 text-balance leading-tight">
+                    <span className="flex items-baseline gap-2">
+                        <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: accent }} aria-hidden />
+                        <span>
+                            <span className="text-[20px] font-semibold" style={{ color: '#F3F4F6' }}>{info.title}</span>
+                            <span className="text-[15px] text-gray-200"> · {info.caption}</span>
+                        </span>
+                    </span>
                 </motion.div>
                 <div className="flex items-center gap-1 rounded-2xl border border-white/10 p-1 shrink-0" style={CARD_BG} role="tablist" aria-label="Fases da transfusão">
                     {STEPS.map((s, i) => {
                         const active = i === step;
                         return (
                             <button key={s.tab} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative px-2.5 py-1.5 rounded-xl text-[14.5px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-2.5 py-1.5 rounded-xl text-[14.5px] font-semibold cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="tf-step" className="absolute inset-0 rounded-xl"
                                         style={{ background: `${s.color}22`, border: `1px solid ${s.color}99` }}
-                                        transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                        transition={SPRING_TAB} />
                                 )}
                                 <span className="relative flex items-center gap-1.5">
                                     <span className="font-mono text-[14px]" style={{ color: s.color }}>{i + 1}</span>
@@ -76,12 +83,12 @@ const TransfusionSim = () => {
                                 const active = sc.id === scenario;
                                 return (
                                     <button key={sc.id} type="button" role="radio" aria-checked={active} onClick={() => setScenario(sc.id)}
-                                        className="relative px-2.5 py-1 rounded-lg text-[14.5px] font-semibold cursor-pointer transition-colors"
+                                        className="relative px-2.5 py-1 rounded-lg text-[14.5px] font-semibold cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                                         style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                         {active && (
                                             <motion.span layoutId="tf-scn" className="absolute inset-0 rounded-lg"
                                                 style={{ background: `${sc.color}26`, border: `1px solid ${sc.color}99` }}
-                                                transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                                transition={SPRING_TAB} />
                                         )}
                                         <span className="relative">{sc.label}</span>
                                     </button>

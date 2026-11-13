@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import { cellsFirst } from './pickHelpers';
 import { pinOrRelease } from './pickGesture';
+import { useSelection } from './selection';
 import { DRAG_PX } from './useStructure';
 
 /*
@@ -42,6 +43,40 @@ export const PickLayer = () => {
             el.removeEventListener('pointermove', onMove);
             el.removeEventListener('pointerup', onUp);
             el.removeEventListener('pointercancel', onCancel);
+        };
+    }, [el]);
+
+    return null;
+};
+
+/**
+ * Cursor do canvas escrito direto no elemento, sem estado do React: a mão vira dedo sobre uma
+ * estrutura (ou com algo fixado), "agarrando" enquanto o botão está apertado, e mão aberta no resto.
+ */
+const setCursor = (el: HTMLElement, cursor: string): void => { el.style.cursor = cursor; };
+
+export const CursorLayer = () => {
+    const el = useThree(s => s.gl.domElement);
+
+    useEffect(() => {
+        let pressed = false;
+        const paint = () => {
+            const s = useSelection.getState();
+            setCursor(el, pressed ? 'grabbing' : s.pin || s.hoverId !== null ? 'pointer' : 'grab');
+        };
+        const onDown = (e: PointerEvent) => { if (e.button === 0) { pressed = true; paint(); } };
+        const onUp = () => { pressed = false; paint(); };
+        paint();
+        const unsub = useSelection.subscribe(paint);
+        el.addEventListener('pointerdown', onDown);
+        window.addEventListener('pointerup', onUp);
+        window.addEventListener('pointercancel', onUp);
+        return () => {
+            unsub();
+            el.removeEventListener('pointerdown', onDown);
+            window.removeEventListener('pointerup', onUp);
+            window.removeEventListener('pointercancel', onUp);
+            setCursor(el, '');
         };
     }, [el]);
 

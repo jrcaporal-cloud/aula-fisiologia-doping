@@ -6,6 +6,8 @@ import { BloodScene } from './hematocrit/BloodScene';
 import { Hud } from './hematocrit/Hud';
 import { createLiveStore } from './hematocrit/liveStore';
 import { HCT_EPO_DEMO, HCT_MAX, HCT_MIN, HCT_NORMAL, SLEEP_HR, classify } from './hematocrit/model';
+import { DUR, EASE_OUT } from '../../lib/motion';
+import { IllustrativeTag } from '../deck/IllustrativeTag';
 
 const STEPS = [
     { label: 'Fisiologia normal · hematócrito ~45%', hct: HCT_NORMAL, sleep: false },
@@ -13,7 +15,8 @@ const STEPS = [
     { label: `Sono · FC ~${SLEEP_HR} bpm`, hct: HCT_EPO_DEMO, sleep: true },
 ] as const;
 
-const TWEEN_MS = 2200;
+/** Números contando: ≤ 900 ms (regra T). */
+const TWEEN_MS = DUR.draw * 1000;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const prefersReducedMotion = () =>
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -67,24 +70,22 @@ export default function HematocritSim() {
                 <BloodScene hct={hct} sleep={sleep} alert={alert} live={live} onAlertChange={setAlert} />
 
                 <div className="pointer-events-none absolute left-4 top-4 flex items-center gap-2.5">
-                    <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-3.5 py-2 backdrop-blur-md">
-                        <AnimatePresence mode="wait">
-                            <motion.span key={step} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="font-body text-[15.5px] font-bold text-white">
-                                {STEPS[step].label}
-                            </motion.span>
-                        </AnimatePresence>
+                    <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-[rgba(8,8,18,0.9)] px-3.5 py-2">
+                        <motion.span key={step} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: DUR.text, ease: EASE_OUT }} className="font-body text-[15.5px] font-bold text-white">
+                            {STEPS[step].label}
+                        </motion.span>
                     </div>
-                    <span className="rounded-md border border-amber-400/50 bg-[rgba(8,8,18,0.72)] px-2.5 py-1 font-mono text-[14px] text-amber-200">modelo ilustrativo</span>
+                    <IllustrativeTag className="font-mono">modelo ilustrativo</IllustrativeTag>
                 </div>
 
-                <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-4 rounded-xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-3.5 py-2 font-body text-[14.5px] text-gray-100 backdrop-blur-md">
+                <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-4 rounded-xl border border-white/10 bg-[rgba(8,8,18,0.9)] px-3.5 py-2 font-body text-[14.5px] text-gray-100">
                     <span className="flex items-center gap-1.5 font-mono text-[14px] uppercase tracking-[0.1em] text-sky-200">
                         fluxo <ArrowRight size={14} />
                     </span>
                     <Legend color="#e11d48" label="Hemácia" />
                     <AnimatePresence>
                         {alert && (
-                            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-4">
+                            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="flex items-center gap-4">
                                 <Legend color="#fde4c4" label="Plaqueta" />
                                 <Legend color="#fcd34d" label="Fibrina" line />
                             </motion.span>
@@ -97,10 +98,11 @@ export default function HematocritSim() {
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="pointer-events-none absolute bottom-4 right-4 rounded-xl border border-brand-red/70 bg-[rgba(40,4,14,0.85)] px-4 py-2 shadow-[0_0_30px_-4px_rgba(225,29,72,0.7)]"
+                            exit={{ opacity: 0, y: 10, transition: { duration: DUR.exit } }}
+                            transition={{ duration: DUR.enter, ease: EASE_OUT }}
+                            className="pointer-events-none absolute bottom-4 right-4 rounded-xl border border-brand-red/70 bg-[rgba(40,4,14,0.92)] px-4 py-2"
                         >
-                            <span className="font-display text-[17px] font-semibold uppercase tracking-wide text-rose-100">Microtrombose</span>
+                            <span className="text-[17px] font-semibold uppercase tracking-wide text-rose-100">Microtrombose</span>
                             <span className="ml-2 font-body text-[15px] text-gray-100">→ infarto agudo</span>
                         </motion.div>
                     )}
@@ -114,7 +116,7 @@ export default function HematocritSim() {
 
 const Legend = ({ color, label, line }: { color: string; label: string; line?: boolean }) => (
     <span className="flex items-center gap-1.5">
-        <span className={line ? 'h-0.5 w-4 rounded-full' : 'h-2.5 w-3.5 rounded-full'} style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
+        <span className={line ? 'h-0.5 w-4 rounded-full' : 'h-2.5 w-3.5 rounded-full'} style={{ background: color }} />
         {label}
     </span>
 );

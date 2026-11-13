@@ -2,6 +2,7 @@ import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import { Lock, RotateCcw } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useSlideSteps } from '../../store/useSlideSteps';
+import { DUR, EASE_OUT, stagger } from '../../lib/motion';
 import { BodyFigure } from './trans/BodyFigure';
 import {
     BIO_STEPS, C_PERSISTS, C_REVERTS, PERSISTS, REVERTS, T_GROUPS, fmt, numberOf,
@@ -9,6 +10,7 @@ import {
 } from './trans/biologyData';
 import { CARD, CARD_BG, StepHeader, type StepChip } from './trans/StepHeader';
 import { TestosteroneChart } from './trans/TestosteroneChart';
+import { MUTED_TEXT } from '../../lib/palette';
 
 const CHIPS: readonly StepChip[] = [
     { label: 'Testosterona', to: 0, steps: [0] },
@@ -31,12 +33,15 @@ const Column = ({ items, shown, fresh, reverts, onHover, footer }: ColumnProps) 
     const Icon = reverts ? RotateCcw : Lock;
     return (
         <div className="flex flex-col min-h-0">
-            <div className="flex items-center gap-2 mb-2 transition-opacity duration-500" style={{ opacity: shown ? 1 : 0.6 }}>
-                <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${color}22`, color }}>
+            {/* Coluna ainda fechada: o título apaga por COR, não por opacidade. */}
+            <div className="flex items-center gap-2 mb-2">
+                <span className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-450 ease-(--ease-out)"
+                    style={{ background: shown ? `${color}22` : 'rgba(255,255,255,0.06)', color: shown ? color : MUTED_TEXT }}>
                     <Icon size={18} strokeWidth={2.4} />
                 </span>
-                <span className="font-display text-[20px] font-semibold" style={{ color }}>{reverts ? 'Reverte' : 'Não reverte'}</span>
-                <span className="font-mono text-[15px] text-gray-300 ml-1">{items.length} itens</span>
+                <span className="font-body text-[20px] font-semibold transition-colors duration-450 ease-(--ease-out)"
+                    style={{ color: shown ? color : MUTED_TEXT }}>{reverts ? 'Reverte' : 'Não reverte'}</span>
+                <span className="font-mono text-[15px] ml-1" style={{ color: shown ? '#D1D5DB' : MUTED_TEXT }}>{items.length} itens</span>
             </div>
             <div className="flex flex-col gap-1.5">
                 {items.map((it, i) => (
@@ -45,13 +50,13 @@ const Column = ({ items, shown, fresh, reverts, onHover, footer }: ColumnProps) 
                         <AnimatePresence>
                             {shown && (
                                 <motion.div
-                                    initial={{ opacity: 0, x: reverts ? -16 : 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.45, delay: fresh ? 0.15 + i * 0.12 : 0, ease: [0.16, 1, 0.3, 1] }}
+                                    initial={{ opacity: 0, x: reverts ? -16 : 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }}
+                                    transition={{ duration: DUR.enter, delay: fresh ? stagger(i, 0.15, 0.12) : 0, ease: EASE_OUT }}
                                     onMouseEnter={() => onHover(it.spot)} onMouseLeave={() => onHover(null)}
                                     className="absolute inset-0 rounded-xl border px-3.5 flex items-center gap-3"
                                     style={{ borderColor: `${color}55`, background: `${color}12` }}>
                                     <span className="w-7 h-7 rounded-full shrink-0 flex items-center justify-center font-mono text-[15px] font-extrabold"
-                                        style={{ background: color, color: '#050510', boxShadow: `0 0 12px ${color}66` }}>{numberOf(it)}</span>
+                                        style={{ background: color, color: '#050510' }}>{numberOf(it)}</span>
                                     <div className="min-w-0">
                                         <div className="text-[17px] font-semibold text-white leading-tight">{it.item}</div>
                                         <div className="text-[15px] text-gray-300 leading-tight mt-0.5">{it.note}</div>
@@ -72,15 +77,15 @@ const TRecap = () => {
     const before = T_GROUPS[1];
     const after = T_GROUPS[2];
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: DUR.enter, ease: EASE_OUT }}
             className="mt-auto rounded-xl border border-white/10 px-3.5 py-2.5" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <div className="font-mono text-[14px] uppercase tracking-wider text-gray-300">Testosterona média (nmol/L)</div>
             {[before, after].map(g => (
                 <div key={g.label} className="flex items-center gap-3 mt-2">
                     <span className="text-[15px] text-gray-100 w-[200px] shrink-0">{g.label}</span>
                     <div className="flex-1 h-2.5 rounded-full bg-white/[0.06] overflow-hidden">
-                        <motion.div className="h-full rounded-full" style={{ background: g.color }}
-                            initial={{ width: 0 }} animate={{ width: `${(g.mean / 30) * 100}%` }} transition={{ duration: 0.9, delay: 0.7 }} />
+                        <motion.div className="h-full rounded-full" style={{ background: g.color, width: `${(g.mean / 30) * 100}%`, originX: 0 }}
+                            initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: DUR.bar, delay: 0.55, ease: EASE_OUT }} />
                     </div>
                     <span className="font-mono text-[15px] font-semibold w-10 text-right" style={{ color: g.color }}>{fmt(g.mean)}</span>
                 </div>
@@ -117,12 +122,10 @@ export const TransBiologyViz = () => {
             <div className="not-prose w-full font-body text-white select-none flex flex-col gap-2" style={{ height: 470 }}>
                 <StepHeader step={step} title={BIO_STEPS[step]} chips={CHIPS} accent="#C084FC" layoutId="tb-chip" onStep={setStep} />
                 <div className="flex-1 min-h-0">
-                    <AnimatePresence mode="wait">
-                        <motion.div key={step === 0 ? 'chart' : 'board'} className="h-full"
-                            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>
-                            {step === 0 ? <TestosteroneChart /> : <ReversibilityBoard step={step} />}
-                        </motion.div>
-                    </AnimatePresence>
+                    <motion.div key={step === 0 ? 'chart' : 'board'} className="h-full"
+                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
+                        {step === 0 ? <TestosteroneChart /> : <ReversibilityBoard step={step} />}
+                    </motion.div>
                 </div>
             </div>
         </MotionConfig>

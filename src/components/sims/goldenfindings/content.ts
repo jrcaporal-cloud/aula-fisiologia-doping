@@ -3,6 +3,7 @@
  * Cada achado aponta para o simulador da aula onde o assunto foi visto; o número do slide é
  * calculado a partir da ordem atual do deck (ver slideRefs.ts), com um valor de reserva.
  */
+import { SUBSTANCE } from '../../../lib/palette';
 
 export type EchoId = 'dose' | 'stack' | 'transfusion' | 'shelf' | 'ugt';
 
@@ -27,6 +28,10 @@ export interface Finding {
     readonly illustrative: boolean;
 }
 
+/**
+ * A cor de cada achado é a do slide de origem: EAA no 1, GH/IGF-1 no 2 (stack), sangue no 3,
+ * SARMs no 4; o 5 (UGT2B17) fica no âmbar do próprio slide de detecção — não é substância.
+ */
 export const FINDINGS: readonly Finding[] = [
     {
         n: 1,
@@ -34,7 +39,7 @@ export const FINDINGS: readonly Finding[] = [
         title: 'A Mágica está no Tempo e Dose',
         text: 'A testosterona exógena traz ganhos dependentes de dose, atingindo limites notáveis no músculo esquelético entre a 3ª e a 10ª semana de saturação via receptor AR.',
         tab: 'Tempo e dose',
-        color: '#60A5FA',
+        color: SUBSTANCE.eaa,
         sources: [{ comp: 'DoseResponseSim', fallback: 10 }],
         illustrative: true,
     },
@@ -44,7 +49,7 @@ export const FINDINGS: readonly Finding[] = [
         title: 'O Sinergismo Supremo',
         text: 'O “Stack Olímpico” mistura Testosterona (Músculo Bruto) + GH (Agente Abridor de Vias) + Insulina (Condutor e Bloqueador Máximo da Quebra) orquestrando a via mTOR e formando o coquetel indestrutível.',
         tab: 'Sinergismo',
-        color: '#10B981',
+        color: SUBSTANCE.gh,
         sources: [{ comp: 'StackSim', fallback: 15 }],
         illustrative: false,
     },
@@ -54,7 +59,7 @@ export const FINDINGS: readonly Finding[] = [
         title: 'O Reticulócito Mente',
         text: 'A Transfusão e o Passaporte Biológico correm de braços dados. A injeção de sua própria bolsa de sangue semanas após coletada em treino de altitude engana os sensores indiretos bayesianos na maioria dos casos.',
         tab: 'Reticulócito',
-        color: '#E11D48',
+        color: SUBSTANCE.blood,
         sources: [{ comp: 'TransfusionSim', fallback: 21 }, { comp: 'AbpConceptSim', fallback: 20 }],
         illustrative: true,
     },
@@ -64,7 +69,7 @@ export const FINDINGS: readonly Finding[] = [
         title: 'Cuidado na Prateleira',
         text: 'Moduladores Seletivos de Receptores Androgênicos (SARMs) mascaram-se e contaminam fórmulas proprietárias de vitaminas “naturais”, resultando no banimento diário de inocentes.',
         tab: 'Prateleira',
-        color: '#22D3EE',
+        color: SUBSTANCE.sarm,
         sources: [{ comp: 'SarmsSim', fallback: 22 }],
         illustrative: false,
     },

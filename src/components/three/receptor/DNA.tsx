@@ -1,11 +1,12 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { bubbleState } from './choreo';
+import { bubbleState, type Bubble } from './choreo';
 import { ARE_HALF, ARE_Z, DNA_BP, DNA_CENTER, DNA_R, DNA_RISE, ph, smooth } from './layout';
 import { SPHERE_LO, STICK_GEO, stickMatrix } from './geometry';
 import type { TimeRef } from './types';
 import { useHover } from './useHover';
+import { DNA_STRAND } from './shaders';
 
 /*
  * Dupla-hélice B (10,5 pb por volta, sulcos maior/menor), contas de fosfato + bases como meias-varetas.
@@ -30,6 +31,7 @@ const COL = {
 const tmpM = new THREE.Matrix4();
 const q0 = new THREE.Quaternion();
 const sc = new THREE.Vector3();
+const bubble: Bubble = { z: 0, open: 0 };
 
 export const DNA = ({ timeRef }: { timeRef: TimeRef }) => {
     const beads = useRef<THREE.InstancedMesh>(null);
@@ -64,7 +66,7 @@ export const DNA = ({ timeRef }: { timeRef: TimeRef }) => {
         const s = sticks.current;
         const r = rungs.current;
         if (!b || !s || !r) return;
-        const { z: zb, open } = bubbleState(T);
+        const { z: zb, open } = bubbleState(T, bubble);
         const readTo = zb;
         const reading = ph(T, [5.12, 5.3]);
         for (let i = 0; i < DNA_BP; i++) {
@@ -83,7 +85,7 @@ export const DNA = ({ timeRef }: { timeRef: TimeRef }) => {
                 tmpM.compose(pts[i * 2 + k], q0, sc.set(br, br, br));
                 b.setMatrixAt(i * 2 + k, tmpM);
                 const end = sc.copy(pts[i * 2 + k]).lerp(mids[i], 0.92 * (1 - 0.75 * smooth(g)));
-                r.setMatrixAt(i * 2 + k, stickMatrix(pts[i * 2 + k], end.clone(), 0.085, tmpM));
+                r.setMatrixAt(i * 2 + k, stickMatrix(pts[i * 2 + k], end, 0.085, tmpM));
             }
             // trecho já transcrito ganha um leve tom rosado (fita-molde lida)
             if (!isAre && z > -0.9) {
@@ -95,20 +97,22 @@ export const DNA = ({ timeRef }: { timeRef: TimeRef }) => {
             s.setMatrixAt(i * 2, stickMatrix(pts[i * 2], pts[i * 2 + 2], 0.07, tmpM));
             s.setMatrixAt(i * 2 + 1, stickMatrix(pts[i * 2 + 1], pts[i * 2 + 3], 0.07, tmpM));
         }
-        [b, s, r].forEach(x => { x.instanceMatrix.needsUpdate = true; });
+        b.instanceMatrix.needsUpdate = true;
+        s.instanceMatrix.needsUpdate = true;
+        r.instanceMatrix.needsUpdate = true;
         if (r.instanceColor) r.instanceColor.needsUpdate = true;
     });
 
     return (
         <group>
             <instancedMesh ref={beads} args={[SPHERE_LO, undefined, DNA_BP * 2]} frustumCulled={false}>
-                <meshStandardMaterial roughness={0.35} metalness={0.1} />
+                <meshStandardMaterial roughness={0.35} metalness={0.1} {...DNA_STRAND} />
             </instancedMesh>
             <instancedMesh ref={sticks} args={[STICK_GEO, undefined, (DNA_BP - 1) * 2]} frustumCulled={false}>
-                <meshStandardMaterial roughness={0.4} />
+                <meshStandardMaterial roughness={0.4} {...DNA_STRAND} />
             </instancedMesh>
             <instancedMesh ref={rungs} args={[STICK_GEO, undefined, DNA_BP * 2]} frustumCulled={false}>
-                <meshStandardMaterial roughness={0.55} />
+                <meshStandardMaterial roughness={0.55} {...DNA_STRAND} />
             </instancedMesh>
             <mesh {...hover} position={[DNA_CENTER.x, DNA_CENTER.y, DNA_CENTER.z + ARE_Z]} rotation={[Math.PI / 2, 0, 0]} scale={[1.5, ARE_HALF * 2, 1.5]}>
                 <cylinderGeometry args={[1, 1, 1, 10]} />

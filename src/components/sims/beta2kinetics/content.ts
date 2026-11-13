@@ -3,10 +3,16 @@
  * Frases e números copiados dos quatro cartões do slide; nada de fora.
  */
 
+import { SUBSTANCE } from '../../../lib/palette';
+
+/**
+ * Cores: clembuterol e Cardarine na cor fixa de beta-2/PPARδ (a mesma do s28); salbutamol, o beta-2
+ * permitido por inalação, no azul de "permitido" (nunca verde: daltonismo).
+ */
 export const C = {
-    clen: '#FB7185',
-    salb: '#10B981',
-    gw: '#A855F7',
+    clen: SUBSTANCE.beta2,
+    salb: SUBSTANCE.allowed,
+    gw: SUBSTANCE.beta2,
     amber: '#F59E0B',
     red: '#E11D48',
     cyan: '#22D3EE',

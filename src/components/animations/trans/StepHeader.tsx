@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../../lib/motion';
 
 /** Grupo de passos clicável no topo do slide (o passador continua mandando). */
 export interface StepChip {
@@ -25,8 +26,8 @@ export const CARD_BG = { background: 'rgba(8,8,18,0.72)' } as const;
 export const StepHeader = ({ step, title, chips, accent, layoutId, onStep }: StepHeaderProps) => (
     <div className="flex items-center justify-between gap-4 h-[36px] shrink-0">
         <div className="flex items-center gap-3 min-w-0">
-            <motion.span key={title} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-                className="font-display text-[20px] font-semibold text-white whitespace-nowrap">
+            <motion.span key={title} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}
+                className="font-body text-[20px] font-semibold text-white whitespace-nowrap">
                 {title}
             </motion.span>
         </div>
@@ -35,12 +36,12 @@ export const StepHeader = ({ step, title, chips, accent, layoutId, onStep }: Ste
                 const active = c.steps.includes(step);
                 return (
                     <button key={c.label} type="button" onClick={() => onStep(c.to)}
-                        className="relative px-3 py-1 rounded-lg text-[15px] font-semibold cursor-pointer transition-colors"
+                        className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)] relative px-3 py-1 rounded-lg text-[15px] font-semibold cursor-pointer transition-colors"
                         style={{ color: active ? '#fff' : '#D1D5DB' }}>
                         {active && (
                             <motion.span layoutId={layoutId} className="absolute inset-0 rounded-lg"
                                 style={{ background: `${accent}26`, border: `1px solid ${accent}99` }}
-                                transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                transition={SPRING_TAB} />
                         )}
                         <span className="relative">{c.label}</span>
                     </button>

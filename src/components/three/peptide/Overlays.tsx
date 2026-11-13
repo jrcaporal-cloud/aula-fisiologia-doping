@@ -8,14 +8,20 @@ import { PC } from './ligands';
 /* Destino do GH na etapa 7 (sangue → fígado → IGF-1), com o traçado de pulsos, ancorado na cena. */
 
 const BOX = 'rgba(5,5,16,0.88)';
+/** Janela em que o rótulo aparece (fixa: nada de vetor novo por quadro). */
+const SHOW = [PW.toBlood[0] + 0.1, PW.toBlood[0] + 0.45] as const;
 
 /** Traçado esquemático de pulsos (sem escala de tempo). */
 const PULSES = 'M0 26 L14 26 L19 6 L24 26 L44 26 L49 10 L54 26 L74 26 L79 4 L84 26 L104 26 L109 12 L114 26 L130 26';
 
 export const BloodTag = ({ timeRef }: { timeRef: TimeRef }) => {
     const root = useRef<HTMLDivElement>(null);
+    const lastO = useRef(-1);
     useFrame(() => {
-        const o = pp(timeRef.current.t, [PW.toBlood[0] + 0.1, PW.toBlood[0] + 0.45]);
+        const o = pp(timeRef.current.t, SHOW);
+        // escreve no DOM só quando a opacidade muda (parado, o quadro não toca no estilo)
+        if (Math.abs(o - lastO.current) < 1e-3) return;
+        lastO.current = o;
         if (root.current) {
             root.current.style.opacity = String(o);
             root.current.style.visibility = o > 0.01 ? 'visible' : 'hidden';

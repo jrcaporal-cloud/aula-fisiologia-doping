@@ -58,5 +58,5 @@ export const PLAYER_STATES: Record<PlayersState, { label: string; fill: string; 
     program: { label: 'no programa', fill: 'rgba(203,213,225,0.25)', stroke: 'rgba(203,213,225,0.6)', text: '#E2E8F0' },
     investigated: { label: 'investigados', fill: 'rgba(245,158,11,0.3)', stroke: 'rgba(245,158,11,0.8)', text: '#FDE68A' },
     cleared: { label: 'absolvidos', fill: 'rgba(56,189,248,0.3)', stroke: 'rgba(56,189,248,0.85)', text: '#BAE6FD' },
-    banned: { label: 'suspensos por 2 anos', fill: 'rgba(225,29,72,0.45)', stroke: '#FB7185', text: '#FDA4AF' },
+    banned: { label: 'suspensos por 2 anos', fill: 'rgba(167,139,250,0.45)', stroke: '#A78BFA', text: '#DDD6FE' },
 };

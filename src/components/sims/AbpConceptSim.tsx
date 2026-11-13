@@ -1,5 +1,6 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../lib/motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { STEPS, STEP_COUNT } from './abpconcept/content';
 import { InstrumentPanels } from './abpconcept/InstrumentPanels';
@@ -26,8 +27,9 @@ const AbpConceptSim = () => {
         <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 516 }}>
             {/* Cabeçalho do passo + atalhos */}
             <div className="flex items-center justify-between gap-4 h-[46px] mb-2">
-                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 flex-1 text-balance leading-tight">
-                    <span className="font-display text-[17px] font-semibold" style={{ color: info.color }}>{info.title}</span>
+                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="min-w-0 flex-1 text-balance leading-tight">
+                    <span className="inline-block w-2.5 h-2.5 rounded-full mr-2.5 align-middle -mt-0.5" style={{ background: info.color }} aria-hidden />
+                    <span className="text-[20px] font-semibold" style={{ color: '#F3F4F6' }}>{info.title}</span>
                     <span className="text-[15px] text-gray-200"> · {info.caption}</span>
                 </motion.div>
                 <div className="flex items-center gap-1 rounded-2xl border border-white/10 p-1 shrink-0" style={CARD_BG} role="tablist" aria-label="Partes do passaporte">
@@ -35,12 +37,12 @@ const AbpConceptSim = () => {
                         const active = i === step;
                         return (
                             <button key={s.tab} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative px-3 py-1.5 rounded-xl text-[14.5px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-3 py-1.5 rounded-xl text-[14.5px] font-semibold cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="abp-step" className="absolute inset-0 rounded-xl"
                                         style={{ background: `${s.color}22`, border: `1px solid ${s.color}99` }}
-                                        transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                        transition={SPRING_TAB} />
                                 )}
                                 <span className="relative flex items-center gap-1.5">
                                     <span className="font-mono text-[14px]" style={{ color: s.color }}>{i + 1}</span>
@@ -54,15 +56,13 @@ const AbpConceptSim = () => {
 
             <div className="grid gap-3" style={{ gridTemplateColumns: 'minmax(0,1fr) 360px', height: 462 }}>
                 <div className="relative rounded-2xl border border-white/10 overflow-hidden px-1.5 py-1" style={CARD_BG}>
-                    <AnimatePresence mode="wait">
-                        <motion.div key={visualKey} className="w-full h-full"
-                            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
-                            {step === 0 && <NeedleHaystack />}
-                            {step === 1 && <PopVsIndividual />}
-                            {step >= 2 && <InstrumentPanels step={step} deletion={deletion} onSelect={setStep} onToggleDeletion={() => setDeletion(v => !v)} />}
-                        </motion.div>
-                    </AnimatePresence>
+                    <motion.div key={visualKey} className="w-full h-full"
+                        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: DUR.enter, ease: EASE_OUT }}>
+                        {step === 0 && <NeedleHaystack />}
+                        {step === 1 && <PopVsIndividual />}
+                        {step >= 2 && <InstrumentPanels step={step} deletion={deletion} onSelect={setStep} onToggleDeletion={() => setDeletion(v => !v)} />}
+                    </motion.div>
                 </div>
 
                 <TextPanel step={step} onReplay={step <= 1 ? () => setReplay(r => r + 1) : undefined} />

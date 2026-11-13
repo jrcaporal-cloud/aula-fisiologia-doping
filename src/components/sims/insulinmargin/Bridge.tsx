@@ -2,27 +2,20 @@ import { motion } from 'framer-motion';
 import { Brain } from 'lucide-react';
 import { ZONE_ICONS } from '../insulin/zoneIcons';
 import { DOSE_COMA, DOSE_MICRO, DOSE_SATURATION, LABELS, ZONES, type ZoneId } from './content';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
+import { CAUTION, LABEL_BACKDROP } from '../../../lib/palette';
+import { MIN_W, SCENE_H, X_MICRO, dx } from './geometry';
 
 const BODY = 'var(--font-body), sans-serif';
 const MONO = 'var(--font-mono), monospace';
 const DISPLAY = 'var(--font-display), sans-serif';
 
-/** Altura do cartão da cena (px); a largura vem do layout (`width`). */
-export const SCENE_H = 366;
-/** Largura mínima de desenho: tudo até o abismo cabe em 1100 px. */
-export const MIN_W = 1100;
-
-/** Régua esquemática: posição horizontal = dose (UI). Só ~10, ~12 e ~15+ são marcados. */
-const PX_PER_UI = 49;
-const X_ZERO = 50;
-const dx = (dose: number): number => X_ZERO + dose * PX_PER_UI;
-
 const DECK_Y = 204;
-const X_MICRO = dx(DOSE_MICRO);
 const X_SAT = dx(DOSE_SATURATION);
 const X_EDGE = dx(DOSE_COMA);
 const X_PLUS4 = dx(DOSE_MICRO + 4);
-const EASE = [0.16, 1, 0.3, 1] as const;
+/** Exceção física: a queda no abismo acelera (ease-in de impacto), mas dentro do teto de 1,2 s. */
+const FALL_EASE = 'easeIn' as const;
 
 const PLATEAU = (h: number): string => `M0 ${DECK_Y} L${X_MICRO + 6} ${DECK_Y} L${X_MICRO + 12} ${DECK_Y + 16} L${X_MICRO - 2} ${DECK_Y + 44} L${X_MICRO + 8} ${DECK_Y + 76} L${X_MICRO - 10} ${DECK_Y + 112} L${X_MICRO - 2} ${DECK_Y + 140} L${X_MICRO - 16} ${h} L0 ${h} Z`;
 
@@ -70,11 +63,11 @@ const DoseMarker = ({ step, reduced }: { readonly step: number; readonly reduced
     const zone = zoneForStep(step);
     const color = zone ? ZONES[zone].color : '#E5E7EB';
     return (
-        <motion.g initial={false} animate={{ x }} transition={reduced ? { duration: 0 } : { duration: 0.9, ease: EASE }}>
+        <motion.g initial={false} animate={{ x }} transition={reduced ? { duration: 0 } : { duration: DUR.morph, ease: EASE_IN_OUT }}>
             <motion.g
                 initial={false}
                 animate={{ y: falling ? 112 : 0, opacity: step === 4 ? 0 : falling ? 0.8 : 1 }}
-                transition={reduced ? { duration: 0 } : falling ? { delay: step === 4 ? 0 : 0.8, duration: 0.7, ease: 'easeIn' } : { duration: 0.5, ease: EASE }}
+                transition={reduced ? { duration: 0 } : falling ? { delay: step === 4 ? 0 : 0.45, duration: DUR.bar, ease: FALL_EASE } : { duration: DUR.morph, ease: EASE_OUT }}
             >
                 <circle cx={0} cy={DECK_Y - 17} r={22} fill={color} opacity={0.22} />
                 <circle cx={0} cy={DECK_Y - 17} r={14} fill={color} stroke="#fff" strokeWidth={3} />
@@ -119,7 +112,7 @@ export const Bridge = ({ step, reduced, onZone, width }: BridgeProps) => {
 
             {/* Eixo: risco de hipoglicemia cresce para a direita */}
             <text x={20} y={26} fontFamily={MONO} fontSize={15.6} letterSpacing="0.1em" fill="#E5E7EB">{LABELS.risk.toUpperCase()}</text>
-            <text x={VIEW.w - 20} y={26} textAnchor="end" fontFamily={MONO} fontSize={15.6} fill="#CBD5E1">régua esquemática · sem escala</text>
+            <text x={VIEW.w - 20} y={26} textAnchor="end" fontFamily={MONO} fontSize={15.6} fill={CAUTION.text}>régua esquemática · sem escala</text>
             <line x1={20} x2={VIEW.w - 30} y1={38} y2={38} stroke="url(#im-risk)" strokeWidth={3} strokeLinecap="round" />
             <path d={`M${VIEW.w - 20} 38 L${VIEW.w - 34} 31 L${VIEW.w - 34} 45 Z`} fill="#E11D48" />
 
@@ -128,7 +121,7 @@ export const Bridge = ({ step, reduced, onZone, width }: BridgeProps) => {
                 x={X_EDGE} y={DECK_Y} width={VIEW.w - X_EDGE} height={VIEW.h - DECK_Y} fill="url(#im-abyss)"
                 initial={false}
                 animate={pulse ? { opacity: [0.65, 1, 0.65] } : { opacity: fell ? 0.9 : 0.45 }}
-                transition={pulse ? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.6 }}
+                transition={pulse ? { duration: 1.8, repeat: Infinity, ease: EASE_IN_OUT } : { duration: DUR.bar, ease: EASE_OUT }}
             />
             {[0.25, 0.5, 0.75].map(f => (
                 <line key={f} x1={X_EDGE + 10} x2={VIEW.w - 10} y1={DECK_Y + f * (VIEW.h - DECK_Y)} y2={DECK_Y + f * (VIEW.h - DECK_Y)} stroke="#E11D48" strokeOpacity={0.12 + f * 0.1} strokeDasharray="2 10" />
@@ -139,9 +132,9 @@ export const Bridge = ({ step, reduced, onZone, width }: BridgeProps) => {
             <motion.g
                 initial={false}
                 animate={{ opacity: fell ? 1 : 0.55 }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: DUR.bar, ease: EASE_OUT }}
             >
-                <motion.g initial={false} animate={{ opacity: fell ? 0.35 : 1 }} transition={{ delay: fell && !reduced ? 1.4 : 0, duration: 1.2 }}>
+                <motion.g initial={false} animate={{ opacity: fell ? 0.35 : 1 }} transition={{ delay: fell && !reduced ? 0.75 : 0, duration: DUR.morph, ease: EASE_OUT }}>
                     <Brain x={brainX - 30} y={DECK_Y + 22} width={60} height={60} color="#FDA4AF" strokeWidth={1.6} />
                 </motion.g>
                 {LABELS.cnsLines.map((l, i) => (
@@ -158,7 +151,7 @@ export const Bridge = ({ step, reduced, onZone, width }: BridgeProps) => {
             <motion.g
                 initial={false}
                 animate={step === 2 && !reduced ? { y: [0, 1.6, -1.2, 0.8, 0] } : { y: 0 }}
-                transition={step === 2 && !reduced ? { duration: 0.55, repeat: Infinity, repeatDelay: 0.6 } : { duration: 0.2 }}
+                transition={step === 2 && !reduced ? { duration: 0.55, repeat: Infinity, repeatDelay: 0.6 } : { duration: DUR.exit, ease: EASE_OUT }}
             >
                 <path d={BEAM} fill="url(#im-beam)" opacity={zone === 'yellow' || zone === 'red' ? 1 : 0.78} style={{ filter: zone === 'yellow' ? 'drop-shadow(0 0 10px #F59E0B)' : undefined }} />
             </motion.g>
@@ -173,34 +166,38 @@ export const Bridge = ({ step, reduced, onZone, width }: BridgeProps) => {
             <text x={X_MICRO - 12} y={96} textAnchor="end" fontFamily={DISPLAY} fontSize={56} fontWeight={700} fill="#22D3EE">{LABELS.micro}</text>
             <text x={X_MICRO - 12} y={122} textAnchor="end" fontFamily={MONO} fontSize={15.6} letterSpacing="0.08em" fill="#E5E7EB">{LABELS.microSub.toUpperCase()}</text>
             <ShieldIcon x={X_MICRO - 12 - 212} y={50} color="#22D3EE" />
-            <text x={X_EDGE + 14} y={98} fontFamily={DISPLAY} fontSize={56} fontWeight={700} fill="#E11D48" style={{ filter: 'drop-shadow(0 0 14px rgba(225,29,72,0.55))' }}>{LABELS.coma}</text>
+            <text x={X_EDGE + 14} y={98} fontFamily={DISPLAY} fontSize={56} fontWeight={700} fill="#E11D48">{LABELS.coma}</text>
             <text x={X_EDGE + 16} y={122} fontFamily={MONO} fontSize={15.6} letterSpacing="0.02em" fill="#E5E7EB">{LABELS.comaSub.toUpperCase()}</text>
             <SkullIcon x={X_EDGE + 14 + 214} y={54} color="#FB7185" />
 
             {/* Sob a viga: saturação e captação de CHO */}
             <AlertIcon x={X_SAT + 40 - 118} y={DECK_Y + 36} color="#F59E0B" />
-            <text x={X_SAT + 40} y={DECK_Y + 54} textAnchor="middle" fontFamily={DISPLAY} fontSize={24} fontWeight={700} fill="#F59E0B">{LABELS.sat}</text>
+            <text x={X_SAT + 40} y={DECK_Y + 54} textAnchor="middle" fontFamily={BODY} fontSize={24} fontWeight={700} fill="#F59E0B">{LABELS.sat}</text>
             <text x={X_SAT + 40} y={DECK_Y + 76} textAnchor="middle" fontFamily={BODY} fontSize={15.6} fill="#FDE68A">{LABELS.satSub}</text>
             {LABELS.uptake.map((l, i) => (
                 <text key={l} x={X_SAT + 40} y={DECK_Y + 106 + i * 19} textAnchor="middle" fontFamily={BODY} fontSize={15.6} fill="#E2E8F0">{l}</text>
             ))}
 
             {/* A margem: 2 a 4 unidades extras */}
-            <motion.g initial={false} animate={{ opacity: fell ? 1 : 0 }} transition={{ delay: fell && !reduced ? 0.4 : 0, duration: 0.5 }}>
-                <text x={(X_MICRO + X_PLUS4) / 2} y={DECK_Y - 104} textAnchor="middle" fontFamily={DISPLAY} fontSize={20} fontWeight={700} fill="#fff">{LABELS.margin.toUpperCase()}</text>
+            <motion.g initial={false} animate={{ opacity: fell ? 1 : 0 }} transition={{ delay: fell && !reduced ? 0.3 : 0, duration: DUR.enter, ease: EASE_OUT }}>
+                <rect x={(X_MICRO + X_PLUS4) / 2 - 104} y={DECK_Y - 122} width={208} height={48} rx={4} fill={LABEL_BACKDROP} />
+                <text x={(X_MICRO + X_PLUS4) / 2} y={DECK_Y - 104} textAnchor="middle" fontFamily={BODY} fontSize={20} fontWeight={600} fill="#F3F4F6">{LABELS.margin.toUpperCase()}</text>
                 <text x={(X_MICRO + X_PLUS4) / 2} y={DECK_Y - 82} textAnchor="middle" fontFamily={BODY} fontSize={16} fontWeight={600} fill="#FDA4AF">{LABELS.marginSub}</text>
                 <path d={`M${X_MICRO} ${DECK_Y - 58} L${X_MICRO} ${DECK_Y - 70} L${X_PLUS4} ${DECK_Y - 70} L${X_PLUS4} ${DECK_Y - 58}`} fill="none" stroke="#FDA4AF" strokeWidth={2} />
                 <line x1={X_SAT} x2={X_SAT} y1={DECK_Y - 70} y2={DECK_Y - 60} stroke="#FDA4AF" strokeWidth={2} />
+                <rect x={X_SAT - 20} y={DECK_Y - 53} width={40} height={22} rx={4} fill={LABEL_BACKDROP} />
                 <text x={X_SAT} y={DECK_Y - 38} textAnchor="middle" fontFamily={MONO} fontSize={15.6} fill="#FECDD3">+2</text>
+                <rect x={X_PLUS4 - 20} y={DECK_Y - 53} width={40} height={22} rx={4} fill={LABEL_BACKDROP} />
                 <text x={X_PLUS4} y={DECK_Y - 38} textAnchor="middle" fontFamily={MONO} fontSize={15.6} fill="#FECDD3">+4</text>
             </motion.g>
 
             <DoseMarker step={step} reduced={reduced} />
 
             {/* Rastro que some (passo 4) */}
-            <motion.g initial={false} animate={{ opacity: step === 4 ? 1 : 0 }} transition={{ delay: step === 4 && !reduced ? 0.3 : 0, duration: 0.8 }}>
-                <circle cx={X_EDGE + 58} cy={DECK_Y + 95} r={18} fill="none" stroke="#C084FC" strokeWidth={2} strokeDasharray="4 5" />
-                <text x={X_EDGE + 18} y={DECK_Y + 138} textAnchor="start" fontFamily={MONO} fontSize={15.6} fontWeight={600} fill="#E9D5FF">oculta</text>
+            <motion.g initial={false} animate={{ opacity: step === 4 ? 1 : 0 }} transition={{ delay: step === 4 && !reduced ? 0.3 : 0, duration: DUR.bar, ease: EASE_OUT }}>
+                <circle cx={X_EDGE + 58} cy={DECK_Y + 86} r={18} fill="#050510" fillOpacity={0.82} stroke="#C084FC" strokeWidth={2} strokeDasharray="4 5" />
+                <rect x={X_EDGE + 24} y={DECK_Y + 112} width={68} height={24} rx={4} fill={LABEL_BACKDROP} />
+                <text x={X_EDGE + 58} y={DECK_Y + 129} textAnchor="middle" fontFamily={MONO} fontSize={15.6} fontWeight={600} fill="#E9D5FF">oculta</text>
             </motion.g>
 
             {/* Áreas clicáveis: cada faixa leva ao passo correspondente */}

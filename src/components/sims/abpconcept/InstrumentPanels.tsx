@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { DUR } from '../../../lib/motion';
 import { COLORS } from './content';
 import { useTween } from './useTween';
 
@@ -108,11 +109,11 @@ interface PanelFrameProps {
 }
 
 const PanelFrame = ({ y, active, color, tint, kicker, title, since, onSelect, children }: PanelFrameProps) => (
-    <g opacity={active ? 1 : 0.62} style={{ transition: 'opacity 0.5s', cursor: active ? 'default' : 'pointer' }} onClick={onSelect}>
+    <g opacity={active ? 1 : 0.62} style={{ transition: 'opacity 450ms var(--ease-out)', cursor: active ? 'default' : 'pointer' }} onClick={onSelect}>
         <rect x={2} y={y} width={W - 4} height={PANEL_H} rx={16} fill={active ? `${color}12` : 'rgba(255,255,255,0.02)'}
             stroke={active ? color : 'rgba(255,255,255,0.14)'} strokeOpacity={active ? 0.75 : 1} strokeWidth={1.5} />
         <text x={22} y={y + 34} className="font-mono" fontSize={18} letterSpacing="0.05em" fill={tint}>{kicker}</text>
-        <text x={22} y={y + 68} className="font-display" fontSize={28} fontWeight={600} fill="#fff">{title}</text>
+        <text x={22} y={y + 68} className="font-body" fontSize={28} fontWeight={600} fill="#fff">{title}</text>
         <text x={22} y={y + 94} className="font-body" fontSize={18} fill="#E2E8F0">{since}</text>
         <g transform={`translate(${INSTR_DX} 0)`}>{children}</g>
     </g>
@@ -123,9 +124,9 @@ const PanelFrame = ({ y, active, color, tint, kicker, title, since, onSelect, ch
 const HEMA_X = [262, 450, 638] as const;
 
 const HematoPanel = ({ y, active, onSelect }: { y: number; active: boolean; onSelect: () => void }) => {
-    const hb = useTween(active ? 56 : 0, 1100, active ? 300 : 0);
-    const ret = useTween(active ? -64 : 0, 1100, active ? 700 : 0);
-    const off = useTween(active ? 72 : 0, 1100, active ? 1500 : 0);
+    const hb = useTween(active ? 56 : 0, DUR.bar * 1000, active ? 150 : 0);
+    const ret = useTween(active ? -64 : 0, DUR.bar * 1000, active ? 300 : 0);
+    const off = useTween(active ? 72 : 0, DUR.bar * 1000, active ? 450 : 0);
     const cy = y + 120;
     const merged = Math.min(1, Math.max(0, off / 72));
     return (
@@ -173,11 +174,11 @@ interface SteroidProps {
 const SteroidPanel = ({ y, active, deletion, onSelect, onToggleDeletion }: SteroidProps) => {
     const doped = active ? 1 : 0;
     const teTarget = !active ? TE_NATURAL : deletion ? TE_DELETION : TE_DOPED;
-    const te = useTween(teTarget, 1200, active ? 500 : 0);
-    const dose = useTween(doped, 1200, active ? 500 : 0);
+    const te = useTween(teTarget, DUR.draw * 1000, active ? 150 : 0);
+    const dose = useTween(doped, DUR.draw * 1000, active ? 150 : 0);
     const cy = y + 120;
     // Com a deleção, a T urinária some (T/E ~0,5:1 no slide 11), mesmo com a dose.
-    const tH = useTween(!active ? 26 : deletion ? 13 : 88, 1100, active ? 500 : 0);
+    const tH = useTween(!active ? 26 : deletion ? 13 : 88, DUR.draw * 1000, active ? 150 : 0);
     const eH = 26;
     const alarm = te > 30;
     const teStatus: string | readonly string[] = alarm ? ['acima de 4:1', 'alarme'] : deletion && active ? 'falso negativo' : '1:1 natural';
@@ -220,7 +221,8 @@ const SteroidPanel = ({ y, active, deletion, onSelect, onToggleDeletion }: Stero
                         fill={i === 2 ? (deletion ? 'none' : COLORS.cyan) : '#64748B'} stroke={i === 2 && deletion ? COLORS.red : 'none'} strokeDasharray="3 3" />
                 ))}
                 <rect x={584} y={cy - 28} width={136} height={24} rx={12} fill={deletion ? COLORS.red : 'rgba(255,255,255,0.14)'} />
-                <circle cx={deletion ? 708 : 596} cy={cy - 16} r={9} fill="#fff" style={{ transition: 'cx 0.3s' }} />
+                <circle cx={596} cy={cy - 16} r={9} fill="#fff"
+                    style={{ transform: `translateX(${deletion ? 112 : 0}px)`, transition: 'transform 300ms var(--ease-out)' }} />
                 <text x={deletion ? 641 : 662} y={cy - 10} textAnchor="middle" className="font-mono" fontSize={16.5} fontWeight={700} fill="#fff">{deletion ? 'deleção' : 'gene normal'}</text>
             </g>
             <InstrumentLabel x={652} y={cy + 34} name="Deleção UGT2B17" status={['contexto ·', 'ver UGT2B17']} color="#BFDBFE" />

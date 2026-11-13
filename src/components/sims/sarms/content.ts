@@ -4,6 +4,8 @@
  * para caber no esquema, o sentido é o mesmo do cartão original.
  */
 
+import { SUBSTANCE } from '../../../lib/palette';
+
 export interface StepInfo {
     readonly label: string;
     readonly title: string;
@@ -12,20 +14,22 @@ export interface StepInfo {
 }
 
 export const COLORS = {
-    red: '#E11D48',
+    red: SUBSTANCE.risk,
     rose: '#FB7185',
-    blue: '#60A5FA',
-    green: '#10B981',
+    /** Cor única dos SARMs na aula (não é o azul dos EAA). */
+    sarm: SUBSTANCE.sarm,
+    /** Coativador recrutado no receptor (elemento celular do desenho). */
+    coact: '#34D399',
     amber: '#F59E0B',
     cyan: '#22D3EE',
-    purple: '#A855F7',
+    purple: SUBSTANCE.beta2,
 } as const;
 
 export const STEPS: readonly StepInfo[] = [
-    { label: 'Alerta', title: 'Vendido como suplemento, detectado como doping', caption: 'amostras suspeitas da WADA', color: COLORS.rose },
+    { label: 'Alerta', title: 'Suplemento no rótulo, doping no exame', caption: 'amostras suspeitas da WADA', color: COLORS.rose },
     { label: 'Seletividade', title: 'O mesmo receptor androgênico, dois tecidos', caption: 'músculo ativa · próstata antagoniza', color: COLORS.cyan },
     { label: 'A conta', title: 'A falsa promessa de segurança', caption: 'fígado e eixo HPG pagam a conta', color: COLORS.red },
-    { label: 'Compostos', title: 'Compostos em destaque', caption: 'Ostarina · LGD-4033 · RAD-140', color: COLORS.blue },
+    { label: 'Compostos', title: 'Compostos em destaque', caption: 'Ostarina · LGD-4033 · RAD-140', color: COLORS.sarm },
 ];
 
 export const ALERT = {
@@ -88,7 +92,7 @@ export const COMPOUNDS: readonly Compound[] = [
         n: 1,
         name: 'Ostarina',
         code: 'MK-2866',
-        color: '#93C5FD',
+        color: SUBSTANCE.sarm,
         level: 1,
         action: 'Moderada',
         actionNote: 'Efeito focado em preservação de massa e osso.',
@@ -100,7 +104,7 @@ export const COMPOUNDS: readonly Compound[] = [
         n: 2,
         name: 'LGD-4033',
         code: 'Ligandrol',
-        color: '#60A5FA',
+        color: SUBSTANCE.sarm,
         level: 2,
         action: 'Alta',
         actionNote: 'Forte anabolismo comparável a doses leves de EAA.',
@@ -112,7 +116,7 @@ export const COMPOUNDS: readonly Compound[] = [
         n: 3,
         name: 'RAD-140',
         code: 'Testolone',
-        color: '#3B82F6',
+        color: SUBSTANCE.sarm,
         level: 3,
         action: 'Muito Alta',
         actionNote: 'Potência neurotrópica e androgênica forte.',

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { CardioPhase } from '../../../data/cardioSteps';
+import { SPRING_TAB } from '../../../lib/motion';
 import { PANEL_BG } from '../peptide/ui';
 
 /*
@@ -26,12 +27,12 @@ export const PhaseToggle = ({ phase, onChange }: PhaseToggleProps) => (
             const active = option.id === phase;
             return (
                 <button key={option.id} type="button" role="radio" aria-checked={active} onClick={() => onChange(option.id)}
-                    className="relative cursor-pointer whitespace-nowrap rounded-xl px-3 py-1.5 text-[15px] font-semibold transition-colors"
+                    className="relative cursor-pointer whitespace-nowrap rounded-xl px-3 py-1.5 text-[15px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                     style={{ color: active ? '#FFFFFF' : '#D1D5DB' }}>
                     {active && (
                         <motion.span layoutId="cardio-phase" className="absolute inset-0 rounded-xl border"
                             style={{ background: option.bg, borderColor: option.border }}
-                            transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                            transition={SPRING_TAB} />
                     )}
                     <span className="relative flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full" style={{ background: option.dot }} />

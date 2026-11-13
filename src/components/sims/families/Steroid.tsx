@@ -3,6 +3,7 @@ import {
     AROMATIC_R, C17_O_BOND, C18_BOND, C19_BOND, C19_END, C3_O_BOND, C3_O_SECOND,
     DOUBLE_45, H5_END, H5_HASHES, O17, O3, RING_CENTERS, RING_PATHS,
 } from './geometry';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 /** Estado do anel A: 4-eno-3-ona (testosterona), saturado 5α (DHT) ou aromático (estradiol). */
 export type RingAState = 'enone' | 'saturated' | 'aromatic';
@@ -50,24 +51,24 @@ const Draw = ({ d, at, still, color, width, dash, opacity = 1 }: DrawProps) => (
         strokeDasharray={dash}
         initial={still ? false : { pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity }}
-        transition={{ pathLength: { delay: at, duration: 0.7, ease: 'easeInOut' }, opacity: { delay: at, duration: 0.2 } }}
+        transition={{ pathLength: { delay: at, duration: DUR.morph, ease: EASE_IN_OUT }, opacity: { delay: at, duration: DUR.exit } }}
     />
 );
 
 const fadeIn = (still: boolean, at: number, to = 1) => ({
     initial: still ? false : { opacity: 0 },
     animate: { opacity: to },
-    transition: { delay: at, duration: 0.45 },
+    transition: { delay: at, duration: DUR.enter, ease: EASE_OUT },
 });
 
 /** Esqueleto esteroide parametrizável, desenhado ligação por ligação (coordenadas locais). */
 export const Steroid = ({
     color, ringA = 'enone', c19 = 'on', accent, showRings = false, showC19Label = false, showAtoms = true,
-    stroke = 4.5, font = 22, labelFont, delay = 0, ghostDelay = 1.2, still = false,
+    stroke = 4.5, font = 22, labelFont, delay = 0, ghostDelay = 0.45, still = false,
 }: SteroidProps) => {
     const sig = accent ?? color;
-    const t = (i: number) => delay + i * 0.12;
-    const atomAt = delay + 0.9;
+    const t = (i: number) => delay + i * 0.04;
+    const atomAt = delay + 0.45;
     const aromatic = ringA === 'aromatic';
     const c19Font = labelFont ?? font * 0.8;
     // Largura aproximada de "C19" em fonte mono (0,6 em por caractere) + traço-guia de 0,7 × font.
@@ -92,12 +93,12 @@ export const Steroid = ({
                     cx={RING_CENTERS.A[0]} cy={RING_CENTERS.A[1]} r={AROMATIC_R} stroke={sig}
                     initial={still ? false : { pathLength: 0, opacity: 0 }}
                     animate={{ pathLength: 1, opacity: 1 }}
-                    transition={{ pathLength: { delay: t(6), duration: 0.9, ease: 'easeInOut' }, opacity: { delay: t(6), duration: 0.2 } }}
+                    transition={{ pathLength: { delay: t(6), duration: DUR.bar, ease: EASE_IN_OUT }, opacity: { delay: t(6), duration: DUR.exit } }}
                 />
             )}
             {ringA === 'saturated' && (
                 <g stroke={sig} strokeWidth={stroke * 0.7}>
-                    {H5_HASHES.map((d, i) => <Draw key={d} d={d} at={t(6) + i * 0.05} still={still} />)}
+                    {H5_HASHES.map((d, i) => <Draw key={d} d={d} at={t(6) + i * 0.03} still={still} />)}
                 </g>
             )}
 
@@ -108,9 +109,9 @@ export const Steroid = ({
                         d={C19_BOND}
                         initial={still ? { opacity: 0 } : { opacity: 1 }}
                         animate={{ opacity: 0 }}
-                        transition={{ delay: ghostDelay, duration: 0.9, ease: 'easeInOut' }}
+                        transition={{ delay: ghostDelay, duration: DUR.morph, ease: EASE_IN_OUT }}
                     />
-                    <motion.path d={C19_BOND} stroke={sig} strokeDasharray="3 7" {...fadeIn(still, ghostDelay + 0.5, 0.9)} />
+                    <motion.path d={C19_BOND} stroke={sig} strokeDasharray="3 7" {...fadeIn(still, ghostDelay + 0.3, 0.9)} />
                 </>
             )}
 
@@ -126,14 +127,14 @@ export const Steroid = ({
                     </motion.g>
                 )}
                 {showRings && (
-                    <motion.g {...fadeIn(still, atomAt + 0.2)} fill="#CBD5E1" fontFamily={MONO_FONT} fontWeight={500} fontSize={font * 0.82} textAnchor="middle">
+                    <motion.g {...fadeIn(still, atomAt + 0.1)} fill="#CBD5E1" fontFamily={MONO_FONT} fontWeight={500} fontSize={font * 0.82} textAnchor="middle">
                         {(Object.keys(RING_CENTERS) as (keyof typeof RING_CENTERS)[]).map(k => (
                             <text key={k} x={RING_CENTERS[k][0]} y={RING_CENTERS[k][1] + font * 0.3}>{k}</text>
                         ))}
                     </motion.g>
                 )}
                 {(showC19Label || c19 === 'ghost') && c19 !== 'off' && (
-                    <motion.g {...fadeIn(still, c19 === 'ghost' ? ghostDelay + 0.5 : atomAt + 0.3)} fontFamily={MONO_FONT} fontSize={c19Font}>
+                    <motion.g {...fadeIn(still, c19 === 'ghost' ? ghostDelay + 0.3 : atomAt + 0.15)} fontFamily={MONO_FONT} fontSize={c19Font}>
                         {/* Fantasma: o traço-guia sai da metila e termina ANTES do rótulo (nunca o atravessa). */}
                         <text x={c19 === 'ghost' ? labelEnd : C19_END[0] - 7} y={C19_END[1] + c19Font * 0.3} textAnchor="end" fill={c19 === 'ghost' ? sig : '#CBD5E1'}>C19</text>
                         {c19 === 'ghost' && (
@@ -141,7 +142,7 @@ export const Steroid = ({
                                 x1={C19_END[0] - 4} x2={labelEnd + 6} y1={C19_END[1]} y2={C19_END[1]}
                                 stroke={sig} strokeWidth={2.2}
                                 initial={still ? false : { pathLength: 0 }} animate={{ pathLength: 1 }}
-                                transition={{ delay: ghostDelay + 0.9, duration: 0.4 }}
+                                transition={{ delay: ghostDelay + 0.4, duration: DUR.enter, ease: EASE_IN_OUT }}
                             />
                         )}
                     </motion.g>

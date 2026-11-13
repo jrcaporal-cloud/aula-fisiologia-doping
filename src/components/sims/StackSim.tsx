@@ -1,6 +1,8 @@
 import { useState, useSyncExternalStore } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Layers } from 'lucide-react';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../lib/motion';
+import { SUBSTANCE } from '../../lib/palette';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { PIECES, STEPS } from './stack/content';
 import { GearAssembly } from './stack/GearAssembly';
@@ -25,7 +27,7 @@ const getReduced = () => window.matchMedia(REDUCED_QUERY).matches;
 
 const CARD = 'relative rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] overflow-hidden';
 
-const stepColor = (i: number): string => (i < 3 ? PIECES[i].color : i === 3 ? '#22D3EE' : '#E11D48');
+const stepColor = (i: number): string => (i < 3 ? PIECES[i].color : i === 3 ? '#E5E7EB' : SUBSTANCE.risk);
 
 export default function StackSim() {
     const { step, setStep } = useSlideSteps(STEPS.length);
@@ -37,9 +39,12 @@ export default function StackSim() {
     return (
         <div className="w-full select-none font-body text-white" style={{ height: 512 }}>
             <div className="mb-2 flex h-[46px] items-center justify-between gap-4">
-                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 flex-1 text-balance leading-tight">
-                    <span className="font-display text-[17px] font-semibold" style={{ color: accent }}>{info.title}</span>
-                    <span className="text-[15px] text-gray-200"> · {info.caption}</span>
+                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="flex min-w-0 flex-1 items-baseline gap-2 text-balance leading-tight">
+                    <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: accent }} aria-hidden />
+                    <span>
+                        <span className="text-[20px] font-semibold" style={{ color: '#F3F4F6' }}>{info.title}</span>
+                        <span className="text-[15px] text-gray-200"> · {info.caption}</span>
+                    </span>
                 </motion.div>
                 <div className="flex shrink-0 items-center gap-1 rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] p-1" role="tablist" aria-label="Passos do stack">
                     {STEPS.map((s, i) => {
@@ -48,14 +53,14 @@ export default function StackSim() {
                         return (
                             <button
                                 key={s.tab} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative cursor-pointer rounded-xl px-3 py-1.5 text-[14.5px] font-semibold transition-colors"
+                                className="relative cursor-pointer rounded-xl px-3 py-1.5 text-[14.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}
                             >
                                 {active && (
                                     <motion.span
                                         layoutId="stack-step" className="absolute inset-0 rounded-xl"
                                         style={{ background: `${color}22`, border: `1px solid ${color}99` }}
-                                        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                                        transition={SPRING_TAB}
                                     />
                                 )}
                                 <span className="relative">{s.tab}</span>
@@ -70,7 +75,7 @@ export default function StackSim() {
                     <GearAssembly step={step} reduced={reduced} onSelect={setStep} />
                     <button
                         type="button" onClick={() => setOrigin(true)}
-                        className="absolute bottom-3 right-3 flex cursor-pointer items-center gap-1.5 rounded-xl border border-white/15 bg-[rgba(8,8,18,0.85)] px-3 py-1.5 text-[14px] font-semibold text-gray-100 transition-colors hover:border-white/40"
+                        className="absolute bottom-3 right-3 flex cursor-pointer items-center gap-1.5 rounded-xl border border-white/15 bg-[rgba(8,8,18,0.85)] px-3 py-1.5 text-[14px] font-semibold text-gray-100 transition-colors hover:border-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                     >
                         <Layers size={14} aria-hidden /> Por que “stack”?
                     </button>
@@ -83,7 +88,7 @@ export default function StackSim() {
                         className="h-full"
                         initial={reduced ? false : { opacity: 0, x: 18 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: DUR.enter, ease: EASE_OUT }}
                     >
                         {step < 3 && <PiecePanel piece={PIECES[step]} index={step} />}
                         {step === 3 && <TracePanel reduced={reduced} />}

@@ -127,9 +127,9 @@ export const Vitals = ({ vitals, baseline, focus, pinned, onHover, onTogglePin }
                         onMouseEnter={() => onHover(row.key)} onMouseLeave={() => onHover(null)}
                         onFocus={() => onHover(row.key)} onBlur={() => onHover(null)}
                         onClick={() => onTogglePin(row.key)}
-                        className="relative flex flex-col gap-0.5 rounded-xl border px-2.5 py-0.5 text-left outline-none transition-[opacity,background-color,border-color] duration-200 focus-visible:ring-2 focus-visible:ring-rose-300/70"
+                        className="relative flex flex-col gap-0.5 rounded-xl border px-2.5 py-0.5 text-left outline-none transition-[opacity,background-color,border-color] duration-180 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                         style={{
-                            opacity: dim ? 0.5 : 1,
+                            opacity: dim ? 0.62 : 1,
                             borderColor: active ? 'rgba(253,164,175,0.55)' : 'transparent',
                             background: active ? 'rgba(225,29,72,0.14)' : 'transparent',
                         }}>
@@ -138,18 +138,18 @@ export const Vitals = ({ vitals, baseline, focus, pinned, onHover, onTogglePin }
                                 {row.label}
                                 {pinned === row.key && <Pin size={13} className="text-rose-300" aria-label="fixado" />}
                             </span>
-                            <span className="whitespace-nowrap font-mono text-[19px] font-semibold leading-tight tabular-nums transition-colors duration-300" style={{ color }}>
+                            <span className="whitespace-nowrap font-mono text-[19px] font-semibold leading-tight tabular-nums transition-colors duration-300 ease-(--ease-out)" style={{ color }}>
                                 {row.value}
                                 <span className="ml-1 text-[14px] font-normal text-gray-300">{row.unit}</span>
                             </span>
                         </span>
                         <span className="relative h-[6px] overflow-hidden rounded-full bg-white/10">
-                            <span className="absolute inset-y-0 left-0 rounded-full transition-colors duration-300"
-                                style={{ background: color, width: `${row.fill * 100}%` }} />
+                            <span className="absolute inset-0 rounded-full transition-colors duration-300 ease-(--ease-out)"
+                                style={{ background: color, clipPath: `inset(0 ${100 - row.fill * 100}% 0 0 round 3px)` }} />
                             <span className="absolute inset-y-0 w-[2px] bg-white/70" style={{ left: `${row.mark * 100}%` }} />
                         </span>
                         <span className="flex min-h-[19px] items-center justify-between gap-2">
-                            <span className="font-mono text-[14px] text-gray-400">{row.ref}</span>
+                            <span className="font-mono text-[14px] text-gray-300">{row.ref}</span>
                             <DeltaChip row={row} />
                         </span>
                     </button>

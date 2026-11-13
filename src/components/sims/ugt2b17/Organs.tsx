@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 import {
     BLADDER, BLADDER_PATH, DUCTS, ENZYME, KIDNEY_PATHS, KIDNEYS, LIVER_PATH, SUGAR_PATH, SYRINGE_X, VESSEL,
 } from './geometry';
@@ -10,7 +11,7 @@ const LABEL = 'font-body';
 const DIM = 0.8;
 
 export const Fade = ({ on, children, dim = DIM }: { on: boolean; children: ReactNode; dim?: number }) => (
-    <motion.g initial={false} animate={{ opacity: on ? 1 : dim }} transition={{ duration: 0.6, ease: 'easeOut' }}>
+    <motion.g initial={false} animate={{ opacity: on ? 1 : dim }} transition={{ duration: DUR.bar, ease: EASE_OUT }}>
         {children}
     </motion.g>
 );
@@ -64,12 +65,12 @@ export const Syringe = ({ on }: { on: boolean }) => {
     const still = useReducedMotion();
     const x = SYRINGE_X;
     return (
-        <motion.g initial={false} animate={{ opacity: on ? 1 : 0, y: on ? 0 : -10 }} transition={{ duration: 0.5 }}>
+        <motion.g initial={false} animate={{ opacity: on ? 1 : 0, y: on ? 0 : -10 }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>
             <line x1={x} x2={x} y1={52} y2={VESSEL.y - 2} stroke="#E5E7EB" strokeWidth={1.6} />
             <rect x={x - 9} y={14} width={18} height={38} rx={3} fill="rgba(245,158,11,0.18)" stroke="#FCD34D" strokeWidth={1.4} />
-            <motion.rect x={x - 7} width={14} rx={2} fill="#F59E0B" fillOpacity={0.65}
-                initial={false} animate={still || !on ? { y: 30, height: 20 } : { y: [22, 40], height: [28, 10] }}
-                transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', repeatType: 'reverse' }} />
+            <motion.rect x={x - 7} y={22} width={14} height={28} rx={2} fill="#F59E0B" fillOpacity={0.65} style={{ originY: 1 }}
+                initial={false} animate={still || !on ? { scaleY: 20 / 28 } : { scaleY: [1, 10 / 28] }}
+                transition={still || !on ? { duration: 0 } : { duration: 2.6, repeat: Infinity, ease: EASE_IN_OUT, repeatType: 'reverse' }} />
             <rect x={x - 13} y={10} width={26} height={4} rx={1.5} fill="#E5E7EB" />
             <text x={x + 18} y={30} className={LABEL} fontSize={15} fontWeight={700} fill="#FCD34D">Cipionato</text>
             <text x={x + 18} y={47} className={LABEL} fontSize={15} fill="#E5E7EB">testosterona exógena</text>
@@ -109,7 +110,7 @@ export const Liver = ({ deleted }: { deleted: boolean }) => {
             ) : (
                 <g>
                     <motion.g style={{ transformOrigin: `${ENZYME.x}px ${ENZYME.y}px` }}
-                        animate={still ? undefined : { scale: [1, 1.06, 1] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}>
+                        animate={still ? undefined : { scale: [1, 1.06, 1] }} transition={{ duration: 1.8, repeat: Infinity, ease: EASE_IN_OUT }}>
                         <circle cx={ENZYME.x} cy={ENZYME.y} r={24} fill="#10B981" opacity={0.18} filter="url(#ug-glow)" />
                         {/* Proteína com fenda catalítica voltada para cima */}
                         <path d={`M${ENZYME.x - 6} ${ENZYME.y - 17} A 18 18 0 1 0 ${ENZYME.x + 6} ${ENZYME.y - 17} L ${ENZYME.x} ${ENZYME.y - 4} Z`}
@@ -144,7 +145,7 @@ export const Bladder = ({ urine }: { urine: boolean }) => (
         <path d={BLADDER_PATH} fill="rgba(253,230,138,0.06)" stroke="#fde68a" strokeOpacity={0.55} strokeWidth={1.4} />
         <g clipPath="url(#ug-bladder-clip)">
             <motion.rect x={BLADDER.x - 40} y={0} width={80} height={60} fill="url(#ug-urine)"
-                initial={false} animate={{ y: urine ? BLADDER.y - 6 : BLADDER.y + 32 }} transition={{ duration: 1.2, ease: 'easeOut' }} />
+                initial={false} animate={{ y: urine ? BLADDER.y - 6 : BLADDER.y + 32 }} transition={{ duration: DUR.draw, ease: EASE_OUT }} />
         </g>
         <path d={DUCTS.urethra} stroke="#fde68a" strokeOpacity={0.6} strokeWidth={5} strokeLinecap="round" />
         <path d={DUCTS.collect} fill="none" stroke="#fde68a" strokeOpacity={0.6} strokeWidth={1.6} strokeDasharray="5 5" />

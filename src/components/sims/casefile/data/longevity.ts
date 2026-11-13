@@ -1,4 +1,5 @@
 import { Stethoscope } from 'lucide-react';
+import { CASE_COLORS } from '../../../../lib/palette';
 import type { CaseData } from '../types';
 
 /**
@@ -8,7 +9,7 @@ import type { CaseData } from '../types';
  */
 export const LONGEVITY: CaseData = {
     caseNumber: 'Caso de consultório',
-    accent: '#38BDF8',
+    accent: CASE_COLORS.longevity,
     icon: Stethoscope,
     stepNames: ['Relato', 'Exames', 'Hipótese', 'Conduta'],
     stepCaptions: [
@@ -26,7 +27,7 @@ export const LONGEVITY: CaseData = {
                 { text: ' e ' },
                 { text: 'um secretagogo de GH "para dormir e recuperar"', strong: true },
                 { text: ', ' },
-                { text: 'comprados como "pesquisa"', mark: { fromStep: 3, label: 'sem registro', color: '#F59E0B' } },
+                { text: 'comprados como "pesquisa"', mark: { fromStep: 3, label: 'sem registro', color: CASE_COLORS.longevity } },
                 { text: '.' },
             ],
             [{ text: 'Queixas: fome maior, mãos inchadas ao acordar e formigamento nas mãos à noite.' }],

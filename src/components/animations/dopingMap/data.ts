@@ -2,7 +2,10 @@
  * Conteúdo do "Mapa do Doping de Elite" (slide 6). Os textos das células são os da tabela original
  * (ComparisonTable), verbatim. Única troca: "Transfusão Auto." → "Transfusão Autóloga", nome que a
  * aula já usa no título do slide 21 ("Transfusão Autóloga Homóloga").
+ * Cores: cada fármaco leva a cor da SUBSTÂNCIA (a mesma da aula toda, `SUBSTANCE`); a coluna leva a do
+ * sistema; a faixa de detecção tem cor própria (ciano / fúcsia / vermelho), nunca o âmbar das ressalvas.
  */
+import { SUBSTANCE } from '../../../lib/palette';
 
 export type SystemId = 'androgenico' | 'oxigenio' | 'metabolico';
 export type LaneId = 'detectavel' | 'quase' | 'indetectavel';
@@ -20,7 +23,7 @@ export interface LaneInfo {
     label: string;
     /** Resposta da coluna "Indetectável?" da tabela original (Não / Quase / Sim) que define a faixa. */
     answer: string;
-    /** Azul-ciano / âmbar / vermelho: distinguíveis em daltonismo; o selo ainda leva ícone e texto. */
+    /** Ciano / fúcsia / vermelho: distinguíveis em daltonismo; o selo ainda leva ícone e texto. */
     color: string;
 }
 
@@ -37,19 +40,22 @@ export interface Drug {
     icon: DrugIcon;
     /** Texto "Oculto/Colaterais" do detalhe expansível da tabela original. */
     detail: string;
+    /** Cor da substância (constante na aula). */
+    color: string;
 }
 
 export const SYSTEMS: Record<SystemId, SystemInfo> = {
-    androgenico: { id: 'androgenico', label: 'Eixo androgênico', color: '#60A5FA' },
-    oxigenio: { id: 'oxigenio', label: 'Transporte de O₂', color: '#F472B6' },
-    metabolico: { id: 'metabolico', label: 'Metabólico', color: '#A855F7' },
+    androgenico: { id: 'androgenico', label: 'Eixo androgênico', color: SUBSTANCE.eaa },
+    oxigenio: { id: 'oxigenio', label: 'Transporte de O₂', color: SUBSTANCE.blood },
+    /** Neutro: a coluna junta GH/IGF-1 (verde) e insulina (ciano); o roxo já é dos beta-2. */
+    metabolico: { id: 'metabolico', label: 'Metabólico', color: '#CBD5E1' },
 };
 
 export const SYSTEM_ORDER: SystemId[] = ['androgenico', 'oxigenio', 'metabolico'];
 
 export const LANES: Record<LaneId, LaneInfo> = {
     detectavel: { id: 'detectavel', label: 'Detectável', answer: 'Não', color: '#22D3EE' },
-    quase: { id: 'quase', label: 'Quase não detectável', answer: 'Quase', color: '#F59E0B' },
+    quase: { id: 'quase', label: 'Quase não detectável', answer: 'Quase', color: '#E879F9' },
     indetectavel: { id: 'indetectavel', label: 'Não detectável', answer: 'Sim', color: '#E11D48' },
 };
 
@@ -63,32 +69,32 @@ export const UGT_NOTE = '* Exceto em casos de deleção do gene UGT2B17.';
 export const DRUGS: Drug[] = [
     {
         id: 'eaa', name: 'EAA (Testo)', action: 'Receptor Androgênico', effect: 'Massa/Força', magnitude: '+10-20% força',
-        hidden: 'Não*', system: 'androgenico', lane: 'detectavel', icon: 'steroid',
+        hidden: 'Não*', system: 'androgenico', lane: 'detectavel', icon: 'steroid', color: SUBSTANCE.eaa,
         detail: 'Supressão do Eixo HPG obrigatória, hipertrofia ventricular esquerda (cardiopatia) irreversível, e dislipidemia severa (redução drástica do HDL bom). O exame antidoping tradicional utiliza a relação T/E para flagrar o composto exógeno.',
     },
     {
         id: 'epo', name: 'rhEPO', action: 'Via JAK/STAT', effect: 'Eritrócitos / VO₂máx', magnitude: '+3-7% VO₂máx',
-        hidden: 'Não', system: 'oxigenio', lane: 'detectavel', icon: 'droplets',
+        hidden: 'Não', system: 'oxigenio', lane: 'detectavel', icon: 'droplets', color: SUBSTANCE.blood,
         detail: 'Aumenta massivamente o hematócrito (volume de glóbulos vermelhos). Risco letal de hiperviscosidade sanguínea (sangue de lodo), predispondo a tromboses e paradas cardíacas noturnas. Foi o pesadelo do ciclismo nos anos 90.',
     },
     {
         id: 'gh', name: 'GH / IGF-1', action: 'Via mTOR', effect: 'Massa / Lipólise', magnitude: 'Sinergia Alta',
-        hidden: 'Quase', system: 'metabolico', lane: 'quase', icon: 'growth',
+        hidden: 'Quase', system: 'metabolico', lane: 'quase', icon: 'growth', color: SUBSTANCE.gh,
         detail: "Potencia a síntese colagênica e óssea, reduzindo a gordura corporal. Uso abusivo gera 'palumbismo' (crescimento das vísceras/alargamento de extremidades) e resistência insulínica maciça. É dificílimo flagrar o GH recombinante por sua meia-vida em plasma de meros ~20 minutos.",
     },
     {
         id: 'insulina', name: 'Insulina', action: 'Receptor IR', effect: 'Anabolismo Máximo', magnitude: '+5-8kg (Stack)',
-        hidden: 'Sim', system: 'metabolico', lane: 'indetectavel', icon: 'syringe',
+        hidden: 'Sim', system: 'metabolico', lane: 'indetectavel', icon: 'syringe', color: SUBSTANCE.insulin,
         detail: "O hormônio mais mortífero do esporte. Como é um peptídeo natural sem limite superior definido pela WADA, é clinicamente impossível punir um atleta por 'uso de Insulina'. Um erro na dosagem causa coma hipoglicêmico cerebral letal.",
     },
     {
         id: 'transfusao', name: 'Transfusão Autóloga', action: 'Expansão Direta', effect: 'VO₂máx / Endurance', magnitude: '+3-5% VO₂máx',
-        hidden: 'Sim', system: 'oxigenio', lane: 'indetectavel', icon: 'bag',
+        hidden: 'Sim', system: 'oxigenio', lane: 'indetectavel', icon: 'bag', color: SUBSTANCE.blood,
         detail: "O próprio sangue reinfundido. O Calcanhar de Aquiles do Passaporte Biológico. O atleta retira sua bolsa de sangue num dia 'alto' em montanha, guarda e a devolve ao corpo um dia antes da prova de endurance. Pode causar sobrecarga de ferro ou choque hemolítico por erro de armazenagem.",
     },
     {
         id: 'sarms', name: 'SARMs', action: 'AR (Seletivo)', effect: 'Massa', magnitude: 'Moderada',
-        hidden: 'Não', system: 'androgenico', lane: 'detectavel', icon: 'target',
+        hidden: 'Não', system: 'androgenico', lane: 'detectavel', icon: 'target', color: SUBSTANCE.sarm,
         detail: 'Prometem ação anabólica limpa bloqueada na próstata (Ostarina, RAD-140), mas a realidade empírica demonstra lesão biliar/hepática profunda (DILI) e supressão severa do eixo testicular, sem oferecer as janelas monstruosas de hipertrofia dos EAAs. Cai muito em doping cruzado na suplementação.',
     },
 ];

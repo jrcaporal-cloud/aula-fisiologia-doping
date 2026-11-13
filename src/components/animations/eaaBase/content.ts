@@ -75,4 +75,7 @@ export const TABS: { key: TabKey; label: string }[] = [
 export const STAGE_W = 600;
 export const STAGE_H = 460;
 
-export const EASE = [0.16, 1, 0.3, 1] as const;
+export { EASE_OUT as EASE } from '../../../lib/motion';
+
+/** Props dos palcos das camadas: índice da aba atual (os filmes temporizados cortam quando ela muda). */
+export interface StageProps { tab: number }

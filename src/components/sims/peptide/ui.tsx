@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
+import { SPRING_TAB } from '../../../lib/motion';
+import { SUBSTANCE } from '../../../lib/palette';
 
 /** Peças comuns aos simuladores do módulo de peptídeos (Ato II). */
 
@@ -20,11 +22,11 @@ export const StepTabs = ({ labels, step, onSelect, layoutId }: StepTabsProps) =>
             const active = i === step;
             return (
                 <button key={label} type="button" role="tab" aria-selected={active} onClick={() => onSelect(i)}
-                    className="relative px-3 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors"
+                    className="relative px-3 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                     style={{ color: active ? '#fff' : '#D1D5DB' }}>
                     {active && (
                         <motion.span layoutId={layoutId} className="absolute inset-0 rounded-xl bg-brand-crimson/45 border border-brand-red/70"
-                            transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                            transition={SPRING_TAB} />
                     )}
                     <span className="relative flex items-center gap-1.5">
                         <span className="font-mono text-[14px] text-rose-300">{i + 1}</span>
@@ -60,9 +62,12 @@ export const SvgText = ({ x, y, text, color = '#E5E7EB', size = 16, anchor = 'st
 );
 
 export const PEPTIDE_COLORS = {
-    peptide: '#38BDF8',
-    protein: '#F59E0B',
-    steroid: '#E11D48',
+    /** Peptídeo: a mesma cor em toda a aula. */
+    peptide: SUBSTANCE.peptide,
+    /** Proteína (acima de ~50 aminoácidos): neutra, para não disputar com a cor de nenhuma substância. */
+    protein: '#E2E8F0',
+    /** Esteroide = EAA. */
+    steroid: SUBSTANCE.eaa,
     receptor: '#A78BFA',
     membrane: 'rgba(253,164,175,0.55)',
     nucleus: 'rgba(167,139,250,0.22)',

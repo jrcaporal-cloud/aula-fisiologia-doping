@@ -1,4 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
+import { SUBSTANCE } from '../../../lib/palette';
 import { ALERT, COLORS, SUBTITLE_PARTS } from './content';
 
 /** Passo 0: o pote de "suplemento" que vira laudo positivo + 100 amostras suspeitas, 10–15 com SARM. */
@@ -38,7 +40,7 @@ const TubeGrid = () => {
                 const rank = highlight.get(cell);
                 const kind = rank === undefined ? 'clean' : tubeKind(rank);
                 const fill = kind === 'sure' ? COLORS.red : kind === 'range' ? 'url(#sarm-hatch)' : 'rgba(253,230,138,0.22)';
-                const delay = reduced ? 0 : 0.5 + (rank ?? 0) * 0.09;
+                const delay = reduced ? 0 : stagger(rank ?? 0, 0.15, 0.025);
                 return (
                     <g key={cell} transform={`translate(${x} ${y})`}>
                         <rect x={0} y={0} width={TUBE_W} height={TUBE_H} rx={TUBE_W / 2} fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.42)" strokeWidth={1} />
@@ -49,7 +51,7 @@ const TubeGrid = () => {
                             <motion.rect x={2} y={TUBE_H * 0.18} width={TUBE_W - 4} height={TUBE_H * 0.76} rx={(TUBE_W - 4) / 2} fill={fill}
                                 stroke={kind === 'sure' ? '#FDA4AF' : 'none'} strokeWidth={0.8}
                                 style={{ originY: 1 }} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-                                transition={{ delay, duration: reduced ? 0 : 0.5, ease: 'easeOut' }} />
+                                transition={{ delay, duration: reduced ? 0 : DUR.morph, ease: EASE_OUT }} />
                         )}
                     </g>
                 );
@@ -81,20 +83,20 @@ const SupplementFlow = () => {
             <g transform="translate(4 6)">
                 <rect x={14} y={0} width={108} height={24} rx={6} fill="#4B5563" stroke="#9CA3AF" strokeWidth={1.2} />
                 <rect x={0} y={22} width={136} height={142} rx={16} fill="url(#sarm-pot)" stroke="#9CA3AF" strokeWidth={1.2} />
-                <rect x={0} y={62} width={136} height={68} fill="rgba(16,185,129,0.18)" stroke="#34D399" strokeWidth={1} />
-                <text x={68} y={90} textAnchor="middle" className="font-mono" fontSize={16} fontWeight={700} fill="#D1FAE5">SUPLEMENTO</text>
-                <text x={68} y={113} textAnchor="middle" className="font-mono" fontSize={16} fill="#A7F3D0">cápsulas</text>
+                <rect x={0} y={62} width={136} height={68} fill="rgba(56,189,248,0.18)" stroke={SUBSTANCE.allowed} strokeWidth={1} />
+                <text x={68} y={90} textAnchor="middle" className="font-mono" fontSize={16} fontWeight={700} fill="#E0F2FE">SUPLEMENTO</text>
+                <text x={68} y={113} textAnchor="middle" className="font-mono" fontSize={16} fill="#BAE6FD">cápsulas</text>
             </g>
-            <text x={2} y={204} className="font-body" fontSize={16} fontWeight={600} fill="#A7F3D0">{SUBTITLE_PARTS.sold}</text>
+            <text x={2} y={204} className="font-body" fontSize={16} fontWeight={600} fill="#BAE6FD">{SUBTITLE_PARTS.sold}</text>
 
             {/* Trilho da cápsula */}
             <path d={RAIL} fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth={1.6} strokeDasharray="5 6" />
             <path d="M 312 98 L 324 114 L 305 118" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth={1.8} />
             <motion.g initial={{ offsetDistance: '0%' }}
                 animate={reduced ? { offsetDistance: '55%' } : { offsetDistance: ['0%', '100%'] }}
-                transition={{ duration: 2.4, repeat: reduced ? 0 : Infinity, ease: 'easeInOut', repeatDelay: 0.6 }}
+                transition={reduced ? { duration: 0 } : { duration: 2.4, repeat: Infinity, ease: EASE_IN_OUT, repeatDelay: 0.6 }}
                 style={{ offsetPath: `path("${RAIL}")`, offsetRotate: '0deg' }}>
-                <rect x={-14} y={-7} width={28} height={14} rx={7} fill="#34D399" />
+                <rect x={-14} y={-7} width={28} height={14} rx={7} fill={SUBSTANCE.allowed} />
                 <rect x={0} y={-7} width={14} height={14} rx={7} fill={COLORS.red} />
                 <rect x={-1} y={-7} width={7} height={14} fill={COLORS.red} />
             </motion.g>
@@ -104,7 +106,7 @@ const SupplementFlow = () => {
                 <rect x={0} y={0} width={116} height={18} rx={5} fill="#E5E7EB" />
                 <path d="M 10 18 L 106 18 L 100 150 Q 99 160 88 160 L 28 160 Q 17 160 16 150 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.5)" strokeWidth={1.2} />
                 <path d="M 13 62 L 103 62 L 100 150 Q 99 160 88 160 L 28 160 Q 17 160 16 150 Z" fill="url(#sarm-urine)" />
-                <motion.g initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: reduced ? 0 : 1.2, duration: 0.4 }}
+                <motion.g initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: reduced ? 0 : 0.5, duration: DUR.enter, ease: EASE_OUT }}
                     style={{ transformOrigin: '58px 100px' }}>
                     <rect x={8} y={84} width={100} height={32} rx={7} fill={COLORS.red} stroke="#FDA4AF" strokeWidth={1.2} />
                     <text x={58} y={106} textAnchor="middle" className="font-mono" fontSize={16} fontWeight={700} fill="#fff">SARM +</text>
@@ -120,10 +122,10 @@ export const Opening = () => (
         <div className="flex flex-col gap-3 min-h-0">
             <div className={`${CARD} px-5 py-3`} style={CARD_BG}>
                 <motion.div className="font-display font-bold leading-none whitespace-nowrap" style={{ fontSize: 76, color: COLORS.rose }}
-                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>
                     {ALERT.range}
                 </motion.div>
-                <p className="font-display text-[18px] leading-snug text-white mt-1.5">{ALERT.text}</p>
+                <p className="text-[18px] leading-snug text-white mt-1.5">{ALERT.text}</p>
             </div>
             <div className={`${CARD} p-3 flex flex-col flex-1 min-h-0`} style={CARD_BG}>
                 <div className="font-mono text-[14px] uppercase tracking-widest text-gray-200 px-1">Do pote ao laudo</div>
@@ -131,7 +133,7 @@ export const Opening = () => (
             </div>
         </div>
         <div className={`${CARD} px-6 py-3 flex flex-col min-h-0`} style={CARD_BG}>
-            <div className="font-display text-[18px] font-semibold text-white">100 amostras suspeitas</div>
+            <div className="text-[18px] font-semibold text-white">100 amostras suspeitas</div>
             <div className="text-[15px] text-gray-200">laboratórios da WADA · em vermelho, as que contêm SARMs</div>
             <div className="flex-1 min-h-0 relative" style={{ margin: '10px 0' }}><TubeGrid /></div>
             <div className="flex items-center gap-5 text-[15px] text-gray-100">

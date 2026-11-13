@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { AlertTriangle } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { HpgGlyph, LiverGlyph } from './BillGlyphs';
 import { COLORS, HPG, LIVER, MOA, MUSCLE, PROSTATE, VASCULAR } from './content';
 import { ReceptorGlyph, SarmMolecule } from './ReceptorGlyph';
@@ -37,7 +38,7 @@ const Tile = ({ glyph, kicker, verb, color, ink, lines, note }: TileProps) => (
         <div className="flex flex-col min-w-0 px-2 pb-1.5 pt-0.5">
             <div className="flex flex-wrap items-baseline gap-x-2.5">
                 <span className="font-mono text-[14px] uppercase tracking-wider" style={{ color: ink }}>{kicker}</span>
-                <span className="font-display font-bold leading-tight text-white text-[21px]">{verb}</span>
+                <span className="font-bold leading-tight text-white text-[21px]">{verb}</span>
             </div>
             <span className="text-[15px] leading-snug text-gray-100 mt-0.5">{lines.join(' ')}</span>
             {note && <span className="mt-1.5 text-[14px] leading-snug text-gray-200 border-t border-white/15 pt-1.5">{note}</span>}
@@ -46,8 +47,8 @@ const Tile = ({ glyph, kicker, verb, color, ink, lines, note }: TileProps) => (
 );
 
 const Column = ({ on, children }: { on: boolean; children: ReactNode }) => (
-    <motion.div className="flex flex-col gap-2 min-h-0" initial={false} animate={{ opacity: on ? 1 : DIM, filter: on ? 'saturate(1)' : 'saturate(0.7)' }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}>
+    <motion.div className="flex flex-col gap-2 min-h-0" initial={false} animate={{ opacity: on ? 1 : DIM }}
+        transition={{ duration: DUR.bar, ease: EASE_OUT }}>
         {children}
     </motion.div>
 );
@@ -59,14 +60,14 @@ const GlyphLegend = () => (
             <svg width="32" height="18" viewBox="-20 -9 40 18" aria-hidden><SarmMolecule x={0} y={0} /></svg> SARM
         </span>
         <span><b className="font-mono text-cyan-300">H12</b> hélice 12</span>
-        <span><b className="font-mono text-emerald-300">coat.</b> coativador</span>
+        <span><b className="font-mono" style={{ color: COLORS.coact }}>coat.</b> coativador</span>
         <span><b className="font-mono text-blue-300">LBD</b> domínio de ligação</span>
     </div>
 );
 
 const ColumnHead = ({ title, color, text }: { title: string; color: string; text: string }) => (
     <div className="h-[60px] flex flex-col justify-center px-1">
-        <span className="font-display text-[17px] font-semibold leading-tight" style={{ color }}>{title}</span>
+        <span className="text-[18px] font-semibold leading-tight" style={{ color }}>{title}</span>
         <span className="text-[14px] leading-snug text-gray-100">{text}</span>
     </div>
 );

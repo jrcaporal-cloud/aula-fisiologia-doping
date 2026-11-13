@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { V, phase, rng } from '../receptor/layout';
@@ -63,13 +63,15 @@ const buildStores = (): Sphere[] => {
 const ER = ({ active, timeRef }: SceneProps) => {
     const glows = useRef<(THREE.Sprite | null)[]>([]);
     const geos = useMemo(() => ER_CURVES.map((c, i) => new THREE.TubeGeometry(c, 64, ER_TUBE_R[i], 14, false)), []);
+    useEffect(() => () => { for (const g of geos) g.dispose(); }, [geos]);
     const stores = useMemo(() => buildStores(), []);
     const hover = useHover('Retículo endoplasmático', 'Reserva de cálcio da célula. O IP3 abre seus canais e o cálcio inunda o citosol.');
     const hoverCh = useHover('Canal de cálcio do retículo', 'Abre quando o IP3 se liga a ele e deixa o cálcio guardado sair para o citosol.');
     useFrame(() => {
         const T = timeRef.current.t;
         const open = active < 0 ? phase(T, PW.ca[0] - 0.06, PW.ca[0] + 0.12) * (1 - pp(T, PW.fade)) : 0;
-        glows.current.forEach(g => setOpacity(g, open * 0.9));
+        const gl = glows.current;
+        for (let i = 0; i < gl.length; i++) setOpacity(gl[i], open * 0.9);
     });
     return (
         <group>
@@ -80,7 +82,7 @@ const ER = ({ active, timeRef }: SceneProps) => {
             ))}
             <Cloud spheres={stores} color={PC.calcium} emissive="#e2e8f0" emissiveIntensity={0.8} lowPoly />
             {ER_CHANNELS.map((c, i) => (
-                <group key={i} position={c}>
+                <group key={`er-ch-${c.x.toFixed(2)}`} position={c}>
                     <mesh {...hoverCh}><cylinderGeometry args={[0.22, 0.28, 0.5, 10]} /><meshStandardMaterial color="#C7D2FE" emissive={PC.er} emissiveIntensity={0.5} roughness={0.4} /></mesh>
                     <Glow spriteRef={el => { glows.current[i] = el; }} color={PC.calcium} size={1.8} opacity={0} />
                 </group>
@@ -99,12 +101,13 @@ const Pka = ({ active, timeRef }: SceneProps) => {
     useFrame(() => {
         const T = timeRef.current.t;
         const on = active > 0 ? phase(T, 3.45, 3.75) * (1 - pp(T, PW.fade)) : 0;
-        glows.current.forEach(g => setOpacity(g, on * 0.75));
+        const gl = glows.current;
+        for (let i = 0; i < gl.length; i++) setOpacity(gl[i], on * 0.75);
     });
     return (
         <>
             {PKA_POS.map((p, i) => (
-                <group key={i} position={p}>
+                <group key={`pka-${p.x.toFixed(2)}`} position={p}>
                     <Cloud spheres={blobs[i]} color={PC.pka} color2="#4C1D95" roughness={0.55} />
                     <Glow spriteRef={el => { glows.current[i] = el; }} color={PC.pka} size={2.8} opacity={0} />
                     <mesh {...hover} scale={[0.95, 0.75, 0.8]}><sphereGeometry args={[1, 10, 8]} /><Invisible /></mesh>

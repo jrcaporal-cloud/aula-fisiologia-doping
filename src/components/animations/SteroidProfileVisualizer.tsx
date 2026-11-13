@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { REFERENCE_ID, STEROIDS, findSteroid } from './steroidProfiles/data';
 import { DetailPanel } from './steroidProfiles/DetailPanel';
 import { HalfLifeTimeline } from './steroidProfiles/HalfLifeTimeline';
@@ -52,7 +53,7 @@ export const SteroidProfileVisualizer = () => {
                             <button key={s.id} type="button" tabIndex={-1}
                                 onMouseDown={e => e.preventDefault()}
                                 onClick={() => select(s.id)}
-                                className={`flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-lg border px-1.5 py-1 text-[14px] font-semibold transition-colors duration-300 ${active ? 'text-white' : revealed ? 'border-white/10 bg-white/[0.04] text-zinc-200 hover:bg-white/10' : 'border-white/10 bg-transparent text-zinc-400 hover:text-zinc-200'}`}
+                                className={`flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-lg border px-1.5 py-1 text-[14px] font-semibold transition-colors duration-300 ease-(--ease-out) ${active ? 'text-white' : revealed ? 'border-white/10 bg-white/[0.04] text-zinc-200 hover:bg-white/10' : 'border-white/10 bg-transparent text-zinc-400 hover:text-zinc-200'}`}
                                 style={active ? { background: `${s.color}30`, borderColor: `${s.color}aa` } : undefined}>
                                 <MarkerIcon id={s.id} color={s.color} size={13} dim={!revealed} />
                                 {s.short}
@@ -69,14 +70,14 @@ export const SteroidProfileVisualizer = () => {
                     <motion.div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/10"
                         style={{ padding: CARD_PAD, background: 'rgba(8,8,18,0.72)', pointerEvents: showTimeline ? 'none' : 'auto' }}
                         initial={false} animate={{ opacity: showTimeline ? 0 : 1 }}
-                        transition={{ duration: reduce ? 0 : 0.4 }} aria-hidden={showTimeline}>
+                        transition={{ duration: reduce ? 0 : DUR.enter, ease: EASE_OUT }} aria-hidden={showTimeline}>
                         <ProfileMap height={MAP_H} step={step} selectedId={visibleId} onSelect={select} />
                     </motion.div>
                     {showTimeline && (
                         <motion.div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/10"
                             style={{ padding: CARD_PAD, background: 'rgba(8,8,18,0.72)' }}
                             initial={{ opacity: 0, y: reduce ? 0 : 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}>
+                            transition={{ duration: reduce ? 0 : DUR.enter, delay: reduce ? 0 : 0.15, ease: EASE_OUT }}>
                             <div className="px-3 py-1.5">
                                 <HalfLifeTimeline width={MAP_W - 24} height={TIMELINE_H} selectedId={visibleId} onSelect={select} />
                             </div>

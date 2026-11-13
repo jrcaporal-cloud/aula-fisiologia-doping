@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { HeartPulse } from 'lucide-react';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
+import { IllustrativeTag } from '../deck/IllustrativeTag';
 import { CARDIO_VITALS, type CardioPhase } from '../../data/cardioSteps';
 import { PANEL_BG, StepTabs } from './peptide/ui';
 import { Convergence } from './cardio/Convergence';
@@ -74,11 +76,11 @@ const BASELINE = CARDIO_VITALS.uso[1];
 
 /** Painel do desenho que acende ou apaga conforme a linha do painel hemodinâmico em foco. */
 const Frame = ({ state, className = '', children }: { state: 'idle' | 'active' | 'dim'; className?: string; children: ReactNode }) => (
-    <div className={`relative overflow-hidden rounded-2xl border transition-[opacity,border-color,box-shadow] duration-300 ${className}`}
+    <div className={`relative overflow-hidden rounded-2xl border transition-[opacity,border-color,box-shadow] duration-300 ease-(--ease-out) ${className}`}
         style={{
             ...PANEL_BG,
             borderColor: state === 'active' ? 'rgba(253,164,175,0.7)' : 'rgba(255,255,255,0.1)',
-            boxShadow: state === 'active' ? '0 0 0 1px rgba(253,164,175,0.35), 0 0 30px -8px rgba(225,29,72,0.7)' : 'none',
+            boxShadow: state === 'active' ? '0 0 0 1px rgba(253,164,175,0.35)' : 'none',
             opacity: state === 'dim' ? 0.55 : 1,
         }}>
         {children}
@@ -126,9 +128,7 @@ export default function CardioSim() {
                 <StepTabs labels={tabs} step={step} onSelect={setStep} layoutId="cardio-tabs" />
                 <div className="flex items-center gap-3">
                     <PhaseToggle phase={phase} onChange={setPhase} />
-                    <span className="shrink-0 whitespace-nowrap rounded-md border border-amber-400/50 px-2.5 py-1 font-mono text-[14px] text-amber-200" style={PANEL_BG}>
-                        valores ilustrativos
-                    </span>
+                    <IllustrativeTag className="shrink-0 whitespace-nowrap">valores ilustrativos</IllustrativeTag>
                 </div>
             </div>
 
@@ -152,13 +152,13 @@ export default function CardioSim() {
 
                         <div className="flex min-w-0 flex-1 flex-col gap-3">
                             {/* Sem AnimatePresence: trocas rápidas de passo nunca deixam texto antigo na tela. */}
-                            <motion.div key={step} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
+                            <motion.div key={step} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.text, ease: EASE_OUT }}
                                 className="min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/10 px-5 py-3" style={PANEL_BG}>
-                                <h3 className="flex items-center gap-2 font-display text-[1.22rem] font-semibold leading-tight text-white">
+                                <h3 className="flex items-center gap-2 text-[1.22rem] font-semibold leading-tight text-white">
                                     <HeartPulse size={22} className="shrink-0 text-rose-300" aria-hidden />
                                     {plan.headline}
                                 </h3>
-                                <motion.p key={showAfterText ? 'apos' : 'uso'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
+                                <motion.p key={showAfterText ? 'apos' : 'uso'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}
                                     className="mt-1.5 text-[1.02rem] leading-snug"
                                     style={{ color: showAfterText ? '#CFFAFE' : '#F3F4F6' }}>
                                     {showAfterText && (

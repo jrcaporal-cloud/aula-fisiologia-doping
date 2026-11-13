@@ -1,12 +1,16 @@
-import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { NUCLEUS_CENTER, NUCLEUS_R, NUCLEUS_R_INNER, NUC_CUT_ANG, NUC_CUT_DIR, PORE_DIRS, PORE_HOLE, rng } from './layout';
 import { SPHERE_LO } from './geometry';
 import { useHover } from './useHover';
+import { ENVELOPE_NOISE, RC_U } from './shaders';
 
 /*
  * Envelope nuclear: duas membranas (externa e interna) com borda de Fresnel e furos onde estão os
  * complexos de poro (anel citoplasmático, anel nuclear, raios e "cesta" nuclear).
+ * No shader: membrana mosqueada (fbm de 2 oitavas que some abaixo de ~1 px), cromatina periférica
+ * vista por dentro da membrana interna, e o anel do poro que acende quando o dímero entra (poro 0)
+ * e quando o mRNA sai (poro 1).
  */
 
 const vert = /* glsl */ `
@@ -21,8 +25,13 @@ void main(){
 const frag = /* glsl */ `
 uniform vec3 uColor; uniform vec3 uRim; uniform float uOpacity; uniform float uCosHole; uniform vec3 uPores[${PORE_DIRS.length}];
 uniform vec3 uCutDir; uniform float uCosCut;
+uniform float uChroma; uniform float uImport; uniform float uExport;
 varying vec3 vN; varying vec3 vView; varying vec3 vDir;
+${ENVELOPE_NOISE}
 void main(){
+  // derivadas antes de qualquer descarte/ramo
+  vec3 q = vDir * 9.0;
+  float px = length(fwidth(q));
   float edge = 0.0;
   float cc = dot(vDir, uCutDir);
   if (cc > uCosCut) discard;
@@ -34,10 +43,26 @@ void main(){
   }
   float f = pow(clamp(1.0 - abs(dot(normalize(vN), normalize(vView))), 0.0, 1.0), 2.2);
   vec3 col = mix(uColor, uRim, f) + uRim * (edge * 0.8 + cutEdge * 1.4);
-  gl_FragColor = vec4(col, uOpacity * (0.1 + 0.85 * f) + edge * 0.35 + cutEdge * 0.75);
+  float a = uOpacity * (0.1 + 0.85 * f) + edge * 0.35 + cutEdge * 0.75;
+  // lâmina/membrana mosqueada (2 oitavas: o envelope é transparente e duplo, cobre a tela em camadas)
+  float n = rcFbm(q, px, 2);
+  col *= 0.9 + 0.45 * n;
+  // cromatina periférica (heterocromatina junto da lâmina), só por dentro da membrana interna
+  if (uChroma > 0.5 && !gl_FrontFacing) {
+    float h = rcFbm(q * 1.4 + 5.3, px * 1.4, 2);
+    float blob = smoothstep(0.04, 0.3, h);
+    col = mix(col, vec3(0.5, 0.36, 0.86), blob * 0.45);
+    a += blob * 0.065;
+  }
+  // poro de importação (0) e de exportação (1): anel aceso durante a passagem
+  float r0 = smoothstep(uCosHole - 0.035, uCosHole, dot(vDir, uPores[0]));
+  float r1 = smoothstep(uCosHole - 0.035, uCosHole, dot(vDir, uPores[1]));
+  col += uRim * r0 * uImport * 1.1 + vec3(0.95, 0.45, 0.72) * r1 * uExport * 1.1;
+  a += (r0 * uImport + r1 * uExport) * 0.35;
+  gl_FragColor = vec4(col, a);
 }`;
 
-const envelopeMaterial = (r: number, color: string, rim: string, opacity: number) => new THREE.ShaderMaterial({
+const envelopeMaterial = (r: number, color: string, rim: string, opacity: number, chroma: number) => new THREE.ShaderMaterial({
     vertexShader: vert,
     fragmentShader: frag,
     transparent: true,
@@ -51,6 +76,9 @@ const envelopeMaterial = (r: number, color: string, rim: string, opacity: number
         uPores: { value: PORE_DIRS },
         uCutDir: { value: NUC_CUT_DIR },
         uCosCut: { value: Math.cos(NUC_CUT_ANG) },
+        uChroma: { value: chroma },
+        uImport: RC_U.uImport,
+        uExport: RC_U.uExport,
     },
 });
 
@@ -61,6 +89,7 @@ const Pores = () => {
     const rings = useRef<THREE.InstancedMesh>(null);
     const spokes = useRef<THREE.InstancedMesh>(null);
     const ringGeo = useMemo(() => new THREE.TorusGeometry(PORE_HOLE + 0.12, 0.3, 12, 48), []);
+    useEffect(() => () => ringGeo.dispose(), [ringGeo]);
     const SPOKES = 8;
     const hover = useHover('Complexo do poro nuclear', 'Canal que atravessa as duas membranas do envelope nuclear: o dímero AR–ligante entra ativamente no núcleo e o mRNA sai para o citoplasma.');
 
@@ -74,6 +103,7 @@ const Pores = () => {
         const u = new THREE.Vector3();
         const v = new THREE.Vector3();
         const one = new THREE.Vector3(1, 1, 1);
+        const sv = new THREE.Vector3();
         const rand = rng(3);
         let si = 0;
         PORE_DIRS.forEach((d, k) => {
@@ -91,7 +121,7 @@ const Pores = () => {
                     p.copy(d).multiplyScalar(rad).add(NUCLEUS_CENTER)
                         .addScaledVector(u, c * (PORE_HOLE - 0.05)).addScaledVector(v, sn * (PORE_HOLE - 0.05));
                     const sz = 0.36 + rand() * 0.08;
-                    s.setMatrixAt(si++, m.compose(p, q, new THREE.Vector3(sz, sz, sz)));
+                    s.setMatrixAt(si++, m.compose(p, q, sv.set(sz, sz, sz)));
                 }
             }
         });
@@ -111,10 +141,16 @@ const Pores = () => {
 };
 
 export const Nucleus = () => {
-    const outer = useMemo(() => envelopeMaterial(NUCLEUS_R, '#1e1b4b', '#818cf8', 0.85), []);
-    const inner = useMemo(() => envelopeMaterial(NUCLEUS_R_INNER, '#1e1b4b', '#6366f1', 0.6), []);
+    const outer = useMemo(() => envelopeMaterial(NUCLEUS_R, '#1e1b4b', '#818cf8', 0.85, 0), []);
+    const inner = useMemo(() => envelopeMaterial(NUCLEUS_R_INNER, '#1e1b4b', '#6366f1', 0.6, 1), []);
     const geoO = useMemo(() => new THREE.SphereGeometry(NUCLEUS_R, 120, 80), []);
     const geoI = useMemo(() => new THREE.SphereGeometry(NUCLEUS_R_INNER, 120, 80), []);
+    useEffect(() => () => {
+        outer.dispose();
+        inner.dispose();
+        geoO.dispose();
+        geoI.dispose();
+    }, [outer, inner, geoO, geoI]);
     return (
         <group>
             <mesh geometry={geoO} material={outer} position={NUCLEUS_CENTER} renderOrder={2} />

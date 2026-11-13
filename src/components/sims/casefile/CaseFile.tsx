@@ -1,6 +1,7 @@
 import { motion, MotionConfig } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../../lib/motion';
 import { useSlideSteps } from '../../../store/useSlideSteps';
 import { LabPanel } from './LabPanel';
 import { ProfileCard } from './ProfileCard';
@@ -37,8 +38,9 @@ export const CaseFile = ({ data }: CaseFileProps) => {
             <div className="w-full font-body text-white pointer-events-auto select-none flex flex-col" style={{ height: CASE_HEIGHT }}>
                 <div className="flex items-center justify-between gap-4 h-[36px] mb-2 shrink-0">
                     <div className="flex items-center gap-3 min-w-0">
-                        <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 truncate">
-                            <span className="font-display text-[18px] font-semibold" style={{ color: data.accent }}>{data.stepNames[step]}</span>
+                        <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="min-w-0 truncate">
+                            <span className="inline-block w-2.5 h-2.5 rounded-full mr-2.5 align-middle -mt-0.5" style={{ background: data.accent }} aria-hidden />
+                            <span className="text-[20px] font-semibold" style={{ color: '#F3F4F6' }}>{data.stepNames[step]}</span>
                             <span className="text-[15px] text-gray-200"> · {data.stepCaptions[step]}</span>
                         </motion.div>
                     </div>
@@ -48,12 +50,12 @@ export const CaseFile = ({ data }: CaseFileProps) => {
                                 const active = i === step;
                                 return (
                                     <button key={name} type="button" onClick={() => setStep(i)}
-                                        className="relative px-2.5 py-1 rounded-lg text-[14px] font-semibold cursor-pointer transition-colors"
+                                        className="relative px-2.5 py-1 rounded-lg text-[14px] font-semibold cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                                         style={{ color: active ? '#fff' : i < step ? '#E5E7EB' : '#C4C9D2' }}>
                                         {active && (
                                             <motion.span layoutId={`cf-step-${data.caseNumber}`} className="absolute inset-0 rounded-lg"
                                                 style={{ background: `${data.accent}26`, border: `1px solid ${data.accent}99` }}
-                                                transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                                transition={SPRING_TAB} />
                                         )}
                                         <span className="relative">{i + 1}. {name}</span>
                                     </button>
@@ -61,9 +63,9 @@ export const CaseFile = ({ data }: CaseFileProps) => {
                             })}
                         </div>
                         <button type="button" onClick={() => setHidden(h => !h)} aria-pressed={hidden}
-                            className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[14px] font-semibold cursor-pointer border transition-colors"
+                            className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[14px] font-semibold cursor-pointer border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                             style={hidden
-                                ? { borderColor: 'rgba(245,158,11,0.7)', background: 'rgba(245,158,11,0.14)', color: '#FDE68A' }
+                                ? { borderColor: 'rgba(255,255,255,0.45)', background: 'rgba(255,255,255,0.10)', color: '#F3F4F6' }
                                 : { borderColor: 'rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.03)', color: '#E5E7EB' }}>
                             {hidden ? <EyeOff size={15} /> : <Eye size={15} />}
                             {hidden ? 'Resposta oculta' : 'Esconder resposta'}
@@ -77,7 +79,7 @@ export const CaseFile = ({ data }: CaseFileProps) => {
                         <div className="font-mono text-[14px] uppercase tracking-tight text-gray-200 mb-1.5">{center.title}</div>
                         <div className="flex-1 min-h-0">
                             {center.kind === 'labs'
-                                ? <LabPanel rows={center.rows} layout={center.layout} step={step} evidence={evidence} />
+                                ? <LabPanel rows={center.rows} layout={center.layout} step={step} evidence={evidence} accent={data.accent} />
                                 : <center.Scene step={step} revealed={revealed} />}
                         </div>
                     </div>

@@ -1,138 +1,131 @@
-import { useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useEffect, useMemo } from 'react';
+import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
-import { SPHERE_LO } from '../receptor/geometry';
-import { V, clamp01 } from '../receptor/layout';
-import { CC } from './colors';
-import { FLOW, SAMPLES, rangeOf, type CardioStateRef } from './flow';
-import { ENDO_AT, PLAQUE_U, PLAQUE_W, type Kind } from './layout';
-import { makeTube } from './tube';
-import { visibleRaycast, type PickKind } from './pickHelpers';
+import { V } from '../receptor/layout';
+import { FLOW, rangeOf, type CardioStateRef } from './flow';
+import type { Kind } from './layout';
+import { makeTube, type Tube } from './tube';
+import { makeVesselFx, type VesselFx, type VesselStyle } from './tissueShaders';
+import { noRaycast, type PickKind } from './pickHelpers';
+import { armPin, useSelection } from './selection';
 import type { StructureId } from './structures';
 import { useStructure } from './useStructure';
 
 /*
- * Paredes do circuito. Tudo translúcido: o que importa é ver as hemácias passando por dentro.
- * Aorta e artéria pulsam com a sístole; o segmento com placa estreita o lúmen e o fluxo acelera ali.
+ * Os vasos em corte longitudinal (ver tube.ts). Opacos: a parede tem cor e camadas de tecido, e o
+ * sangue corre à vista na metade de trás. Aorta e artéria pulsam com a sístole (menos quanto mais
+ * rígidas); a placa cresce de um lado da parede da artéria e estreita a luz.
  */
 
-interface FlowTubeProps {
-    kind: Kind;
-    color: string;
-    opacity: number;
-    stateRef: CardioStateRef;
-    structure: StructureId;
-    /** < 1 desenha uma camada interna (revestimento endotelial). */
-    rScale?: number;
-}
+const SOLID: { pick: PickKind } = { pick: 'solid' };
 
-const FlowTube = ({ kind, color, opacity, stateRef, structure, rScale = 1 }: FlowTubeProps) => {
+const useTube = (kind: Kind): Tube => {
     const tube = useMemo(() => {
         const [a, b] = rangeOf(kind);
         // uma amostra de folga em cada ponta para os trechos se encostarem sem fenda
-        return makeTube(Math.max(a - 1, 0), Math.min(b + 1, SAMPLES - 1), rScale);
-    }, [kind, rScale]);
+        return makeTube(a - 1, b + 1);
+    }, [kind]);
+    useEffect(() => () => tube.geometry.dispose(), [tube]);
+    return tube;
+};
+
+interface VesselMatProps { fx: VesselFx; clearcoat?: number }
+
+const VesselMaterial = ({ fx, clearcoat = 0.7 }: VesselMatProps) => (
+    <meshPhysicalMaterial
+        color="#ffffff" roughness={0.42} metalness={0} clearcoat={clearcoat} clearcoatRoughness={0.25}
+        onBeforeCompile={fx.onBeforeCompile} customProgramCacheKey={fx.customProgramCacheKey}
+    />
+);
+
+interface FlowTubeProps { kind: Kind; style: VesselStyle; structure: StructureId; stateRef: CardioStateRef }
+
+const FlowTube = ({ kind, style, structure, stateRef }: FlowTubeProps) => {
+    const tube = useTube(kind);
+    const fx = useMemo(() => makeVesselFx(style), [style]);
     const { bind, lit } = useStructure(structure);
-    useFrame(() => {
-        tube.write(stateRef.current.f);
-    });
+    useEffect(() => fx.set('uLit', lit ? 1 : 0), [lit, fx]);
+    useFrame(() => tube.write(stateRef.current.f));
     return (
-        <mesh geometry={tube.geometry} {...bind}>
-            <meshStandardMaterial
-                color={color}
-                roughness={0.38}
-                metalness={0.05}
-                side={THREE.DoubleSide}
-                transparent
-                opacity={lit ? Math.min(opacity * 2, 0.62) : opacity}
-                depthWrite={false}
-            />
+        <mesh geometry={tube.geometry} userData={SOLID} {...bind}>
+            <VesselMaterial fx={fx} />
         </mesh>
     );
 };
 
-/** A placa é opaca: hemácia atrás dela não pode ser apontada através dela. */
-const SOLID: { pick: PickKind } = { pick: 'solid' };
+/**
+ * A artéria de condução distingue três alvos pelo triângulo sob o ponteiro: a parede (corte e
+ * adventícia), o endotélio (a luz) e a placa (a luz sobre a lesão).
+ */
+const ARTERY_IDS: readonly StructureId[] = ['arteria', 'endotelio', 'placa'];
 
-const tmpM = new THREE.Matrix4();
-const tmpQ = new THREE.Quaternion();
-const tmpS = new THREE.Vector3();
-
-/** Núcleo lipídico da lesão: cresce na parede e empurra o lúmen (o estreitamento está em `radiusAt`). */
-const Plaque = ({ stateRef }: { stateRef: CardioStateRef }) => {
-    const mesh = useRef<THREE.InstancedMesh>(null);
-    const { bind, lit } = useStructure('placa');
-    const blobs = useMemo(() => {
-        const [a, b] = rangeOf('arteria');
-        const out: { p: THREE.Vector3; r: number }[] = [];
-        for (let i = a; i <= b; i++) {
-            const s = FLOW[i];
-            const d = (s.localU - PLAQUE_U) / PLAQUE_W;
-            if (Math.abs(d) > 1) continue;
-            const k = 1 - Math.abs(d);
-            if (out.length && out[out.length - 1].p.distanceTo(s.p) < 0.22) continue;
-            // o núcleo se acomoda num lado do vaso, logo sob o endotélio
-            out.push({ p: V(s.p.x, s.p.y, s.p.z).addScaledVector(s.n, s.r0 * 0.5), r: s.r0 * (0.3 + 0.42 * k) });
-        }
-        return out;
-    }, []);
-
-    useFrame(() => {
-        const m = mesh.current;
-        if (!m) return;
-        const k = clamp01(stateRef.current.p.v.placa * 1.25);
-        m.visible = k > 0.02;
-        if (!m.visible) return;
-        blobs.forEach((b, i) => {
-            const r = b.r * k;
-            m.setMatrixAt(i, tmpM.compose(b.p, tmpQ.identity(), tmpS.set(r, r * 0.8, r)));
-        });
-        m.instanceMatrix.needsUpdate = true;
+const ConductingArtery = ({ stateRef }: { stateRef: CardioStateRef }) => {
+    const tube = useTube('arteria');
+    const fx = useMemo(() => makeVesselFx('artery'), []);
+    const lit = useSelection(s => {
+        const id = s.pin ? s.pin.id : s.hoverId;
+        return id !== null && ARTERY_IDS.includes(id);
     });
-
+    useEffect(() => fx.set('uLit', lit ? 1 : 0), [lit, fx]);
+    useFrame(() => {
+        const st = stateRef.current;
+        tube.write(st.f);
+        fx.set('uDys', st.p.v.placa);
+    });
+    const bind = useMemo(() => {
+        const idOf = (e: ThreeEvent<PointerEvent>): StructureId => {
+            const face = e.faceIndex ?? Infinity;
+            if (face >= tube.innerTris) return 'arteria';
+            const i = tube.sampleOfFace(face);
+            return stateRef.current.f.sten[i] > 0.04 ? 'placa' : 'endotelio';
+        };
+        return {
+            onPointerMove: (e: ThreeEvent<PointerEvent>) => {
+                e.stopPropagation();
+                useSelection.getState().setHover(idOf(e));
+            },
+            onPointerOut: () => {
+                const s = useSelection.getState();
+                if (s.hoverId && ARTERY_IDS.includes(s.hoverId)) s.setHover(null);
+            },
+            onPointerDown: (e: ThreeEvent<PointerEvent>) => {
+                e.stopPropagation();
+                armPin(idOf(e), [e.point.x, e.point.y, e.point.z]);
+            },
+        };
+    }, [tube, stateRef]);
     return (
-        <instancedMesh
-            ref={mesh} args={[SPHERE_LO, undefined, blobs.length]} frustumCulled={false} visible={false}
-            userData={SOLID} raycast={visibleRaycast} {...bind}
-        >
-            <meshStandardMaterial color={CC.plaque} roughness={0.5} emissive="#4a2b02" emissiveIntensity={lit ? 1.1 : 0.45} />
-        </instancedMesh>
+        <mesh geometry={tube.geometry} userData={SOLID} {...bind}>
+            <VesselMaterial fx={fx} />
+        </mesh>
     );
 };
 
-/** Anel de endotélio em corte: o revestimento que perde a capacidade de dilatar. */
-const EndotheliumRing = () => {
-    const { bind, lit } = useStructure('endotelio');
-    return (
-        <group position={ENDO_AT} rotation={[0, Math.PI / 2, -0.08]} {...bind}>
-            <mesh>
-                <torusGeometry args={[0.44, 0.05, 6, 24]} />
-                <meshStandardMaterial color={CC.endo} emissive={CC.endo} emissiveIntensity={lit ? 2.2 : 0.9} roughness={0.3} toneMapped={false} />
-            </mesh>
-            {/* alvo de clique mais gordo que o anel de 0,05, invisível */}
-            <mesh>
-                <torusGeometry args={[0.44, 0.2, 6, 24]} />
-                <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-            </mesh>
-        </group>
-    );
-};
-
-/** Ramos curtos do leito de resistência (decorativos: o fluxo corre pelo trecho principal). */
+/** Ramos do leito de resistência (decorativos: o fluxo corre pelo trecho principal). */
 const ArterioleBranches = () => {
     const geo = useMemo(() => {
-        const curves = [
-            [V(11.3, 0.9, 0), V(12.3, 0.7, -0.4), V(13.1, 0.95, -1.0)],
-            [V(11.45, 0.1, 0), V(12.6, -0.15, 0.5), V(13.4, -0.2, 1.2)],
-            [V(11.1, -0.75, 0), V(12.2, -1.1, -0.3), V(12.9, -1.6, -0.9)],
+        const [a, b] = rangeOf('arteriola');
+        const at = (u: number) => FLOW[Math.round(a + (b - a) * u) % FLOW.length].p;
+        const branch = (u: number, d: THREE.Vector3, r: number) => {
+            const p0 = at(u).clone();
+            const p1 = p0.clone().add(d.clone().multiplyScalar(0.55)).add(V(0, 0, -0.25));
+            const p2 = p0.clone().add(d).add(V(0, 0, -0.5));
+            return new THREE.TubeGeometry(new THREE.CatmullRomCurve3([p0, p1, p2]), 12, r, 7, false);
+        };
+        return [
+            branch(0.2, V(1.5, 0.5, 0), 0.09),
+            branch(0.35, V(1.7, -0.2, 0), 0.08),
+            branch(0.5, V(1.6, -0.4, 0), 0.08),
+            branch(0.68, V(1.3, -0.9, 0), 0.07),
+            branch(0.15, V(1.1, 1.0, 0), 0.06),
         ];
-        return curves.map(pts => new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 10, 0.1, 6, false));
     }, []);
+    useEffect(() => () => geo.forEach(g => g.dispose()), [geo]);
     return (
         <group>
             {geo.map((g, i) => (
-                <mesh key={i} geometry={g}>
-                    <meshStandardMaterial color={CC.arteriole} roughness={0.5} transparent opacity={0.5} depthWrite={false} />
+                <mesh key={i} geometry={g} raycast={noRaycast}>
+                    <meshPhysicalMaterial color="#c97a7f" roughness={0.45} clearcoat={0.5} clearcoatRoughness={0.3} />
                 </mesh>
             ))}
         </group>
@@ -141,26 +134,11 @@ const ArterioleBranches = () => {
 
 export const Vessels = ({ stateRef }: { stateRef: CardioStateRef }) => (
     <group>
-        <FlowTube
-            kind="aorta" color={CC.artery} opacity={0.3} stateRef={stateRef} structure="aorta"
-        />
-        <FlowTube
-            kind="arteria" color={CC.artery} opacity={0.3} stateRef={stateRef} structure="arteria"
-        />
-        <FlowTube
-            kind="arteria" color={CC.endo} opacity={0.12} stateRef={stateRef} rScale={0.88} structure="endotelio"
-        />
-        <FlowTube
-            kind="arteriola" color={CC.arteriole} opacity={0.4} stateRef={stateRef} structure="arteriola"
-        />
-        <FlowTube
-            kind="veia" color={CC.vein} opacity={0.26} stateRef={stateRef} structure="veia"
-        />
-        <FlowTube
-            kind="pulmonar" color={CC.pulm} opacity={0.16} stateRef={stateRef} structure="pulmonar"
-        />
+        <FlowTube kind="aorta" style="aorta" structure="aorta" stateRef={stateRef} />
+        <ConductingArtery stateRef={stateRef} />
+        <FlowTube kind="arteriola" style="arteriole" structure="arteriola" stateRef={stateRef} />
+        <FlowTube kind="veia" style="vein" structure="veia" stateRef={stateRef} />
+        <FlowTube kind="pulmonar" style="pulm" structure="pulmonar" stateRef={stateRef} />
         <ArterioleBranches />
-        <EndotheliumRing />
-        <Plaque stateRef={stateRef} />
     </group>
 );

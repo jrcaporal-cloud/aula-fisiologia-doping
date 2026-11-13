@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import type { Pillar } from './data';
-import { Chain } from './Chain';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
+import { drugColor, type Pillar } from './data';
+import { Chain, LINK_STEP } from './Chain';
 import { FiberIllustration, HeartIllustration, MitoIllustration } from './Illustrations';
 
 const ILLUSTRATION = { heart: HeartIllustration, mito: MitoIllustration, fiber: FiberIllustration };
@@ -18,7 +19,12 @@ interface PillarCardProps {
     onToggle: () => void;
 }
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+/** Coluna que encolhe/abre (layout): mudança dentro da tela. Todos os filhos com `layout` usam a mesma, senão descolam. */
+const LAYOUT_T = { duration: DUR.bar, ease: EASE_IN_OUT } as const;
+
+/** Atraso da 1ª cadeia causal depois que o pilar abre (s). */
+/** As cadeias acendem juntas, a de baixo um elo atrás: o passo termina em ~1,1 s mesmo com 2 cadeias. */
+const CHAIN_START = 0.2;
 
 /** Tamanho (px) da ilustração em cada modo e o rótulo "ATP" que dá ~15 px na tela. */
 const ART = {
@@ -27,6 +33,16 @@ const ART = {
 } as const;
 
 const COMPACT_W = 192;
+
+/** Chip do agente: texto claro, borda e fundo na cor da substância (constante na aula). */
+const DrugChip = ({ drug }: { drug: string }) => {
+    const c = drugColor(drug);
+    return (
+        <span className="text-[16px] px-2.5 py-0.5 rounded-full border text-slate-100" style={{ borderColor: `${c}99`, background: `${c}24` }}>
+            {drug}
+        </span>
+    );
+};
 
 /** Um pilar: capitel, fuste canelado com a ilustração e base; em foco, abre o mecanismo. */
 export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) => {
@@ -44,23 +60,24 @@ export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) =
             aria-label={`${pillar.label}: ${focus ? 'fechar' : 'abrir'} mecanismo`}
             className="relative flex flex-col text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 rounded-t-md"
             style={compact ? { flex: `0 0 ${COMPACT_W}px`, minWidth: 0 } : { flex: '1 1 0', minWidth: 0 }}
-            animate={{ y: 0, opacity: dim ? 0.74 : 1, filter: dim ? 'saturate(0.8)' : 'saturate(1)' }}
-            transition={{ layout: { duration: 0.7, ease: EASE }, y: { duration: 0.9, ease: EASE, delay: 0.15 + index * 0.14 }, duration: 0.5 }}
+            animate={{ y: 0, opacity: dim ? 0.74 : 1 }}
+            transition={{ layout: LAYOUT_T, y: { duration: DUR.bar, ease: EASE_OUT, delay: stagger(index, 0.1, 0.1) }, duration: DUR.enter, ease: EASE_OUT }}
             initial={{ opacity: 0, y: 60 }}
             whileHover={dim ? { opacity: 0.95 } : undefined}
         >
             {/* Capitel */}
             <motion.div
                 layout
+                transition={{ layout: LAYOUT_T, duration: DUR.morph, ease: EASE_OUT }}
                 className="h-4 mx-[-6px] rounded-t-md"
                 style={{ background: `linear-gradient(180deg, ${pillar.color}, ${pillar.color}55)` }}
-                animate={{ boxShadow: focus ? `0 -6px 30px ${pillar.color}` : `0 -4px 14px ${pillar.color}66` }}
             />
-            <motion.div layout className="h-1.5 mx-[-2px]" style={{ background: `${pillar.color}33` }} />
+            <motion.div layout transition={{ layout: LAYOUT_T }} className="h-1.5 mx-[-2px]" style={{ background: `${pillar.color}33` }} />
 
             {/* Fuste */}
             <motion.div
                 layout
+                transition={{ layout: LAYOUT_T }}
                 className="relative flex-1 overflow-hidden border-x"
                 style={{
                     borderColor: `${pillar.color}40`,
@@ -73,7 +90,7 @@ export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) =
                         className="h-full flex flex-col gap-1.5 px-5 py-2"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.4 }}
+                        transition={{ delay: 0.15, duration: DUR.enter, ease: EASE_OUT }}
                     >
                         <div className="flex items-center gap-4">
                             <div className="flex-shrink-0" style={{ width: ART.small.w, height: ART.small.h }}>
@@ -81,12 +98,12 @@ export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) =
                             </div>
                             <div className="min-w-0 flex-1">
                                 <div className="text-[16px] font-mono tracking-[0.14em] text-slate-300">EIXO {index + 1}</div>
-                                <div className="font-display font-semibold text-[22px] leading-tight whitespace-nowrap" style={{ color: pillar.color }}>{pillar.label}</div>
+                                <div className="font-body font-semibold text-[22px] leading-tight whitespace-nowrap" style={{ color: pillar.color }}>{pillar.label}</div>
                                 <div className="text-[16px] uppercase tracking-[0.06em] text-slate-200">{pillar.sub}</div>
                             </div>
                             <div className="flex w-[190px] flex-shrink-0 flex-wrap justify-end gap-1.5">
                                 {pillar.drugs.map(d => (
-                                    <span key={d} className="text-[16px] px-2.5 py-0.5 rounded-full border font-medium" style={{ color: pillar.color, borderColor: `${pillar.color}66`, background: `${pillar.color}1a` }}>{d}</span>
+                                    <DrugChip key={d} drug={d} />
                                 ))}
                             </div>
                         </div>
@@ -98,10 +115,10 @@ export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) =
                                         key={f.label}
                                         initial={{ opacity: 0, y: 8 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.5 + k * 0.15 }}
+                                        transition={{ delay: stagger(k, 0.25), duration: DUR.enter, ease: EASE_OUT }}
                                         className={`rounded-xl border px-3 py-1 ${f.tone === 'risk' ? 'border-rose-500/60 bg-rose-500/10' : 'border-white/10 bg-white/[0.03]'}`}
                                     >
-                                        <div className={`font-display text-[24px] leading-none font-bold tabular-nums whitespace-nowrap ${f.tone === 'risk' ? 'text-rose-300' : 'text-white'}`}>{f.value}</div>
+                                        <div className={`font-body text-[24px] leading-none font-bold tabular-nums whitespace-nowrap ${f.tone === 'risk' ? 'text-rose-300' : 'text-white'}`}>{f.value}</div>
                                         <div className="text-[17px] leading-snug text-slate-100 mt-1">{f.label}</div>
                                     </motion.div>
                                 ))}
@@ -114,7 +131,7 @@ export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) =
                             <div className="text-[16px] font-mono tracking-[0.14em] text-slate-300 mb-1">MECANISMO</div>
                             <div className="flex flex-col gap-2">
                                 {pillar.chains.map((links, k) => (
-                                    <Chain key={k} links={links} color={pillar.color} delay={0.4 + k * 1.4} />
+                                    <Chain key={k} links={links} color={pillar.color} delay={CHAIN_START + k * LINK_STEP} />
                                 ))}
                             </div>
                         </div>
@@ -126,12 +143,12 @@ export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) =
                         </div>
                         <div className="text-center">
                             <div className="text-[16px] font-mono tracking-[0.14em] text-slate-300">EIXO {index + 1}</div>
-                            <div className="font-display font-semibold leading-tight mt-1 text-[21px]" style={{ color: pillar.color }}>{pillar.label}</div>
+                            <div className="font-body font-semibold leading-tight mt-1 text-[21px]" style={{ color: pillar.color }}>{pillar.label}</div>
                             <div className="text-[16px] uppercase tracking-[0.04em] text-slate-200 mt-1.5 leading-snug">{pillar.sub}</div>
                         </div>
                         <div className="flex flex-wrap justify-center gap-1.5">
                             {pillar.drugs.map(d => (
-                                <span key={d} className="text-[16px] px-2.5 py-0.5 rounded-full border text-slate-100" style={{ borderColor: `${pillar.color}77`, background: `${pillar.color}1f` }}>{d}</span>
+                                <DrugChip key={d} drug={d} />
                             ))}
                         </div>
                     </div>
@@ -142,12 +159,12 @@ export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) =
                         </div>
                         <div className="mt-3 text-center">
                             <div className="text-[16px] font-mono tracking-[0.14em] text-slate-300">EIXO {index + 1}</div>
-                            <div className="font-display font-semibold leading-tight mt-1 text-2xl" style={{ color: pillar.color }}>{pillar.label}</div>
+                            <div className="font-body font-semibold leading-tight mt-1 text-2xl" style={{ color: pillar.color }}>{pillar.label}</div>
                             <div className="text-[16px] uppercase tracking-[0.06em] text-slate-200 mt-1">{pillar.sub}</div>
                         </div>
                         <div className="mt-4 flex flex-wrap justify-center gap-1.5">
                             {pillar.drugs.map(d => (
-                                <span key={d} className="text-[16px] px-2.5 py-0.5 rounded-full border text-slate-100" style={{ borderColor: `${pillar.color}77`, background: `${pillar.color}1f` }}>{d}</span>
+                                <DrugChip key={d} drug={d} />
                             ))}
                         </div>
                     </div>
@@ -155,8 +172,8 @@ export const PillarCard = ({ pillar, index, mode, onToggle }: PillarCardProps) =
             </motion.div>
 
             {/* Base */}
-            <motion.div layout className="h-1.5 mx-[-4px]" style={{ background: `${pillar.color}33` }} />
-            <motion.div layout className="h-3 mx-[-10px] rounded-b-sm bg-white/[0.07] border border-white/10" />
+            <motion.div layout transition={{ layout: LAYOUT_T }} className="h-1.5 mx-[-4px]" style={{ background: `${pillar.color}33` }} />
+            <motion.div layout transition={{ layout: LAYOUT_T }} className="h-3 mx-[-10px] rounded-b-sm bg-white/[0.07] border border-white/10" />
         </motion.button>
     );
 };

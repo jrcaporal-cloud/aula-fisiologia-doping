@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, CornerDownRight, Dumbbell, Flame, Wind } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { DUR, EASE_OUT, stagger } from '../../../lib/motion';
 import { C } from './content';
 
 /**
@@ -19,7 +20,7 @@ const LIT: readonly (readonly NodeId[])[] = [
 ];
 
 const ORDER: readonly NodeId[] = LIT[2];
-const delayOf = (id: NodeId) => ORDER.indexOf(id) * 0.12;
+const delayOf = (id: NodeId) => stagger(ORDER.indexOf(id), 0, 0.06);
 
 interface StepNodeProps {
     readonly lit: ReadonlySet<NodeId>;
@@ -36,7 +37,7 @@ const StepNode = ({ lit, id, color, mono, icon, children }: StepNodeProps) => {
         <motion.div className={`flex items-center gap-1.5 rounded-xl border px-3 py-1 text-[15px] font-bold whitespace-nowrap ${mono ? 'font-mono' : 'font-body'}`}
             initial={false}
             animate={{ opacity: on ? 1 : 0.66, backgroundColor: on ? `${color}2e` : 'rgba(255,255,255,0.04)', borderColor: on ? color : 'rgba(255,255,255,0.32)' }}
-            transition={{ duration: 0.4, delay: on ? delayOf(id) : 0 }}
+            transition={{ duration: DUR.morph, delay: on ? delayOf(id) : 0, ease: EASE_OUT }}
             style={{ color: on ? '#fff' : '#D1D5DB' }}>
             {icon}{children}
         </motion.div>
@@ -44,7 +45,7 @@ const StepNode = ({ lit, id, color, mono, icon, children }: StepNodeProps) => {
 };
 
 const Link = ({ on, color }: { on: boolean; color: string }) => (
-    <motion.span className="shrink-0 flex" initial={false} animate={{ color: on ? color : 'rgba(255,255,255,0.45)' }} transition={{ duration: 0.4 }}>
+    <motion.span className="shrink-0 flex" initial={false} animate={{ color: on ? color : 'rgba(255,255,255,0.45)' }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>
         <ArrowRight size={18} strokeWidth={2.4} />
     </motion.span>
 );
@@ -59,13 +60,13 @@ export const Cascade = ({ step }: CascadeProps) => {
     return (
         <div className="flex flex-col justify-center gap-2.5 h-full">
             <div className="flex items-center gap-1.5">
-                <StepNode lit={lit} id="b2" color={C.cyan} mono>β2</StepNode>
-                <Link on={both('b2', 'ac')} color={C.cyan} />
-                <StepNode lit={lit} id="ac" color={C.cyan}>adenilato ciclase</StepNode>
-                <Link on={both('ac', 'camp')} color={C.cyan} />
-                <StepNode lit={lit} id="camp" color={C.cyan} mono>ATP → cAMP</StepNode>
-                <Link on={both('camp', 'pka')} color={C.cyan} />
-                <StepNode lit={lit} id="pka" color={C.cyan} mono>PKA</StepNode>
+                <StepNode lit={lit} id="b2" color={C.beta2} mono>β2</StepNode>
+                <Link on={both('b2', 'ac')} color={C.beta2} />
+                <StepNode lit={lit} id="ac" color={C.beta2}>adenilato ciclase</StepNode>
+                <Link on={both('ac', 'camp')} color={C.beta2} />
+                <StepNode lit={lit} id="camp" color={C.beta2} mono>ATP → cAMP</StepNode>
+                <Link on={both('camp', 'pka')} color={C.beta2} />
+                <StepNode lit={lit} id="pka" color={C.beta2} mono>PKA</StepNode>
                 <Link on={both('pka', 'bronco')} color={C.inhaled} />
                 <div className="flex flex-col gap-1.5">
                     <StepNode lit={lit} id="bronco" color={C.inhaled} icon={<Wind size={16} />}>broncodilatação</StepNode>
@@ -74,7 +75,7 @@ export const Cascade = ({ step }: CascadeProps) => {
             </div>
             <div className="flex items-center gap-1.5">
                 <motion.span className="shrink-0 flex items-center gap-1.5 font-mono text-[15px] font-bold pr-1" initial={false}
-                    animate={{ color: lit.has('pi3k') ? '#FDA4AF' : 'rgba(229,231,235,0.7)' }} transition={{ duration: 0.4 }}>
+                    animate={{ color: lit.has('pi3k') ? '#FDA4AF' : 'rgba(229,231,235,0.7)' }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>
                     <CornerDownRight size={18} strokeWidth={2.4} />oral &gt;8 mg
                 </motion.span>
                 <StepNode lit={lit} id="pi3k" color={C.rose} mono>PI3K/Akt</StepNode>

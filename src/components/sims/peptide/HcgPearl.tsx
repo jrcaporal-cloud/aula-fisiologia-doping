@@ -15,25 +15,27 @@ const BEATS: readonly Beat[] = [
     { icon: Medal, when: '2016', text: 'Thomas Van der Plaetsen é campeão europeu do decatlo' },
 ];
 
+/** Exceção de tempo (decisão do Rinaldo, 09/11/2026): os 4 momentos entram um a um (fecho em ~2,6 s) — a cadência é conteúdo. */
 export const HcgPearl = () => {
     const tone = TONE_STYLES.sky;
+    const line = 'rgba(196,181,253,0.3)';
     return (
         <div className="h-full flex flex-col gap-4">
             <div className="flex items-baseline gap-3">
-                <h3 className="font-display text-[1.6rem] font-semibold leading-tight" style={{ color: tone.text }}>Pérola clínica: o positivo que salvou a vida</h3>
+                <h3 className="text-[1.6rem] font-semibold leading-tight" style={{ color: tone.text }}>Pérola clínica: o positivo que salvou a vida</h3>
             </div>
             <div className="relative grid grid-cols-4 gap-3 flex-1 min-h-0">
-                <div className="absolute left-[12%] right-[12%] top-[42px] h-[2px] bg-sky-300/25" />
+                <div className="absolute left-[12%] right-[12%] top-[42px] h-[2px]" style={{ background: line }} />
                 {BEATS.map((b, i) => {
                     const Icon = b.icon;
                     return (
                         <motion.div key={b.text} className="relative flex flex-col items-center text-center gap-2"
                             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.2 + i * 0.45 }}>
                             <span className="w-[84px] h-[84px] rounded-full flex items-center justify-center border-2"
-                                style={{ borderColor: tone.border, background: '#0b1a26', boxShadow: `0 0 22px ${tone.bg}` }}>
+                                style={{ borderColor: tone.border, background: '#140f23' }}>
                                 <Icon size={38} color={tone.text} aria-hidden />
                             </span>
-                            <span className="font-mono text-[15px] text-sky-200">{b.when}</span>
+                            <span className="font-mono text-[15px]" style={{ color: tone.text }}>{b.when}</span>
                             <p className="text-[1.2rem] leading-snug text-gray-100">{b.text}</p>
                         </motion.div>
                     );

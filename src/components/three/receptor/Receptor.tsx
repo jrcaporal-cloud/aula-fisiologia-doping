@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { arPose, h12Angle, makePose } from './choreo';
@@ -9,6 +9,8 @@ import type { TimeRef } from './types';
 import type { LigandKind } from './molecules';
 import { LIGANDS } from './ligandInfo';
 import { useHover } from './useHover';
+import { raycastIfShown } from './instancing';
+import { proteinPatch, type MaterialPatch } from './shaders';
 
 /*
  * Receptor androgênico estilizado: domínio de ligação (LBD) como feixe de hélices em "sanduíche" ao redor
@@ -101,6 +103,10 @@ const buildHsp = (seed: number): ArmSet => {
 
 interface ReceptorProps { timeRef: TimeRef; ligand: LigandKind }
 
+/** Resíduos marcados no shader: ~1 por volta de hélice na cadeia, ~1 por meia volta na H12. */
+const CHAIN_PATCH: MaterialPatch = proteinPatch(150);
+const H12_PATCH: MaterialPatch = proteinPatch(10);
+
 const Monomer = ({ index, chainGeo, h12Geo, timeRef, ligand }: { index: number; chainGeo: THREE.BufferGeometry; h12Geo: THREE.BufferGeometry } & ReceptorProps) => {
     const root = useRef<THREE.Group>(null);
     const h12 = useRef<THREE.Group>(null);
@@ -109,6 +115,7 @@ const Monomer = ({ index, chainGeo, h12Geo, timeRef, ligand }: { index: number; 
     const matA = useRef<THREE.MeshStandardMaterial>(null);
     const matB = useRef<THREE.MeshStandardMaterial>(null);
     const glow = useRef<THREE.Sprite>(null);
+    const hspHit = useRef<THREE.Mesh>(null);
     const pose = useMemo(() => makePose(), []);
     const hsp = useMemo(() => buildHsp(31 + index * 17), [index]);
     const hoverAR = useHover('Receptor androgênico (AR)', 'Fator de transcrição ativado por ligante. O domínio de ligação (LBD) tem um bolsão para o androgênio; a hélice 12 fecha sobre ele como uma tampa.');
@@ -133,6 +140,8 @@ const Monomer = ({ index, chainGeo, h12Geo, timeRef, ligand }: { index: number; 
             hspB.current.rotation.x = -rel * 0.5;
             hspA.current.visible = hspB.current.visible = gone < 0.999;
         }
+        // chaperonas já soltas: o alvo de hover delas sai do raycast
+        if (hspHit.current) hspHit.current.visible = gone < 0.999;
         const op = (1 - 0.55 * rel) * (1 - gone);
         if (matA.current) matA.current.opacity = op;
         if (matB.current) matB.current.opacity = op;
@@ -140,17 +149,18 @@ const Monomer = ({ index, chainGeo, h12Geo, timeRef, ligand }: { index: number; 
             const bound = ph(T, W.h12);
             const m = glow.current.material as THREE.SpriteMaterial;
             m.opacity = bound * info.glow * (0.85 + 0.15 * Math.sin(clock.elapsedTime * 2.4));
+            glow.current.visible = m.opacity > 0.002;
         }
     });
 
     return (
         <group ref={root}>
             <mesh geometry={chainGeo}>
-                <meshStandardMaterial vertexColors roughness={0.42} metalness={0.05} />
+                <meshStandardMaterial vertexColors roughness={0.42} metalness={0.05} {...CHAIN_PATCH} />
             </mesh>
             <group ref={h12} position={H12_PIVOT}>
                 <mesh geometry={h12Geo}>
-                    <meshStandardMaterial color="#22D3EE" emissive="#0e7490" emissiveIntensity={0.55} roughness={0.35} />
+                    <meshStandardMaterial color="#22D3EE" emissive="#0e7490" emissiveIntensity={0.55} roughness={0.35} {...H12_PATCH} />
                 </mesh>
             </group>
             {/* zinco dos dedos de zinco do DBD */}
@@ -164,7 +174,7 @@ const Monomer = ({ index, chainGeo, h12Geo, timeRef, ligand }: { index: number; 
                 <sphereGeometry args={[1, 10, 8]} />
                 <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
             </mesh>
-            <mesh {...hoverHsp} scale={[0.9, 2.2, 1.4]} position={[-2.3, 0, 0]}>
+            <mesh ref={hspHit} {...hoverHsp} scale={[0.9, 2.2, 1.4]} position={[-2.3, 0, 0]} raycast={raycastIfShown}>
                 <sphereGeometry args={[1, 10, 8]} />
                 <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
             </mesh>
@@ -179,6 +189,7 @@ export const Receptors = ({ timeRef, ligand }: ReceptorProps) => {
         coil(V(0, -0.05, 0.05), V(0, -1, 0.12).normalize(), 1.5, 0, pts);
         return tubeWithGradient(pts, 0.1, ['#67e8f9', '#22d3ee']);
     }, []);
+    useEffect(() => () => { chainGeo.dispose(); h12Geo.dispose(); }, [chainGeo, h12Geo]);
     return (
         <>
             <Monomer index={0} chainGeo={chainGeo} h12Geo={h12Geo} timeRef={timeRef} ligand={ligand} />

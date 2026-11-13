@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { Plus, RotateCcw } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useSlideSteps } from '../../store/useSlideSteps';
@@ -6,6 +7,7 @@ import { BayesChart } from './bayes/BayesChart';
 import { STEPS, STEP_COUNT } from './bayes/content';
 import { MIN_BASELINE, SCRIPT, analyze } from './bayes/model';
 import { TextPanel } from './bayes/TextPanel';
+import { SUBSTANCE } from '../../lib/palette';
 
 /**
  * Slide "Como Funciona o Algoritmo Bayesiano?": a mecânica da atualização, exame a exame.
@@ -31,7 +33,7 @@ const BayesSim = () => {
     const lastInside = step === STEP_COUNT - 1 && !lastFlagged;
     const title = lastInside ? 'Dentro do túnel' : info.title;
     const caption = lastInside ? 'Arraste o exame 4 para fora do corredor azul.' : info.caption;
-    const color = lastInside ? '#6EE7B7' : info.color;
+    const color = lastInside ? SUBSTANCE.allowed : info.color;
     const canCollect = step < STEP_COUNT - 1;
 
     const status = fixedOnly ? 'régua fixa'
@@ -41,19 +43,20 @@ const BayesSim = () => {
     return (
         <div className="w-full font-body text-white pointer-events-auto select-none" style={{ height: 512 }}>
             <div className="flex items-center justify-between gap-4 h-[38px] mb-2">
-                <motion.div key={`${step}-${title}`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0">
-                    <span className="font-display text-[17px] font-semibold" style={{ color }}>{title}</span>
+                <motion.div key={`${step}-${title}`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="min-w-0">
+                    <span className="inline-block w-2.5 h-2.5 rounded-full mr-2.5 align-middle -mt-0.5" style={{ background: color }} aria-hidden />
+                    <span className="text-[20px] font-semibold" style={{ color: '#F3F4F6' }}>{title}</span>
                     <span className="text-[15px] text-gray-200"> · {caption}</span>
                 </motion.div>
                 <div className="flex items-center gap-2 shrink-0">
                     <span className="font-mono text-[14px] text-gray-100 px-2.5 py-1 rounded-lg border border-white/10 whitespace-nowrap" style={CARD_BG}>{status}</span>
                     <button type="button" onClick={() => setStep(step + 1)} disabled={!canCollect}
-                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[14px] font-semibold cursor-pointer border transition-colors hover:brightness-125 whitespace-nowrap disabled:opacity-40 disabled:cursor-default"
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[14px] font-semibold cursor-pointer border transition-colors hover:brightness-125 whitespace-nowrap disabled:opacity-40 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                         style={{ background: 'rgba(96,165,250,0.16)', borderColor: 'rgba(96,165,250,0.6)', color: '#DBEAFE' }}>
                         <Plus size={15} /> {step === 0 ? 'Iniciar modelo' : 'Coletar exame'}
                     </button>
                     <button type="button" onClick={() => { setValues(SCRIPT); setStep(0); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[14px] font-semibold cursor-pointer border border-white/15 text-gray-200 hover:bg-white/5 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[14px] font-semibold cursor-pointer border border-white/15 text-gray-100 hover:bg-white/5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                         style={CARD_BG}>
                         <RotateCcw size={14} /> Reiniciar
                     </button>

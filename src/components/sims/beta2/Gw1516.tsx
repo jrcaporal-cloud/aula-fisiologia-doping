@@ -1,7 +1,9 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { AlertOctagon, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
+import { DUR, EASE_IN_OUT, EASE_OUT, STAGGER_CAP } from '../../../lib/motion';
 import { Beta2Glyph } from './Beta2Glyph';
+import { IllustrativeTag } from '../../deck/IllustrativeTag';
 import { C, CARCINOGEN, CARCINOGEN_NOTE } from './content';
 
 /**
@@ -49,8 +51,8 @@ const Scene = ({ reduced, run }: { reduced: boolean; run: number }) => (
         aria-label="GW1516 não se liga ao beta-2; ativa PPAR delta no núcleo, PGC-1 alfa, e fibras rápidas viram lentas oxidativas">
         {/* Membrana com β2: o GW1516 passa direto */}
         <rect x={20} y={66} width={210} height={20} rx={4} fill="rgba(252,211,77,0.12)" stroke="rgba(252,211,77,0.4)" />
-        <Beta2Glyph x={92} y={70} on={false} color={C.cyan} scale={1.6} />
-        <text x={92} y={114} textAnchor="middle" className="font-mono" fontSize={18} fontWeight={700} fill="#A5F3FC">β2</text>
+        <Beta2Glyph x={92} y={70} on={false} color={C.beta2} scale={1.6} />
+        <text x={92} y={114} textAnchor="middle" className="font-mono" fontSize={18} fontWeight={700} fill="#E9D5FF">β2</text>
         <g transform="translate(92 34)">
             <path d="M -14 -14 L 14 14 M 14 -14 L -14 14" stroke={C.red} strokeWidth={5} strokeLinecap="round" />
         </g>
@@ -59,7 +61,7 @@ const Scene = ({ reduced, run }: { reduced: boolean; run: number }) => (
         {/* trajeto até o núcleo */}
         <path d="M 170 30 C 230 30, 300 60, 360 96" fill="none" stroke="rgba(168,85,247,0.6)" strokeWidth={2} strokeDasharray="5 5" />
         <motion.g initial={{ offsetDistance: '0%' }} animate={{ offsetDistance: reduced ? '100%' : ['0%', '100%'] }}
-            transition={{ duration: reduced ? 0 : 2.2, repeat: reduced ? 0 : Infinity, repeatDelay: 0.8, ease: 'easeInOut' }}
+            transition={{ duration: reduced ? 0 : 2.2, repeat: reduced ? 0 : Infinity, repeatDelay: 0.8, ease: EASE_IN_OUT }}
             style={{ offsetPath: 'path("M 170 30 C 230 30, 300 60, 360 96")', offsetRotate: '0deg' }}>
             <GwMolecule x={0} y={0} />
         </motion.g>
@@ -88,8 +90,8 @@ const Scene = ({ reduced, run }: { reduced: boolean; run: number }) => (
             {FIBERS.map(f => (
                 <g key={f.k}>
                     <motion.circle cx={f.x} cy={f.y} r={15.5} stroke="#fff" strokeOpacity={0.25} initial={{ fill: FAST }} animate={{ fill: SLOW }}
-                        transition={{ delay: reduced ? 0 : 1.2 + convertDelay(f.k) * 2.4, duration: reduced ? 0 : 0.6 }} />
-                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 1.5 + convertDelay(f.k) * 2.4, duration: 0.5 }}>
+                        transition={{ delay: reduced ? 0 : 0.15 + convertDelay(f.k) * STAGGER_CAP, duration: reduced ? 0 : DUR.morph, ease: EASE_OUT }} />
+                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 0.35 + convertDelay(f.k) * STAGGER_CAP, duration: DUR.enter, ease: EASE_OUT }}>
                         <circle cx={f.x - 5} cy={f.y - 4} r={2.2} fill="#FDE68A" />
                         <circle cx={f.x + 5} cy={f.y + 3} r={2.2} fill="#FDE68A" />
                     </motion.g>
@@ -113,15 +115,13 @@ export const Gw1516Scene = () => {
     return (
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-1">
-                <span className="font-display text-[17px] font-semibold text-white">Outra via: PPARδ, não β2</span>
+                <span className="text-[17px] font-semibold text-white">Outra via: PPARδ, não β2</span>
                 <button type="button" onClick={() => setRun(r => r + 1)}
-                    className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-lg text-[14px] font-semibold border border-white/25 text-gray-100 cursor-pointer hover:bg-white/5">
+                    className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-lg text-[14px] font-semibold border border-white/25 text-gray-100 cursor-pointer hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]">
                     <RotateCcw size={14} /> repetir a conversão
                 </button>
                 <span style={{ width: 12 }} />
-                <span className="text-[14px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
-                    esquema
-                </span>
+                <IllustrativeTag>esquema</IllustrativeTag>
             </div>
             <div className="flex-1 min-h-0 relative mt-1"><Scene reduced={reduced} run={run} /></div>
         </div>
@@ -130,10 +130,10 @@ export const Gw1516Scene = () => {
 
 export const CarcinogenBox = () => (
     <motion.div className="rounded-2xl border p-4 flex-1 flex flex-col justify-center" style={{ borderColor: 'rgba(225,29,72,0.6)', background: 'linear-gradient(160deg, rgba(225,29,72,0.22), rgba(8,8,18,0.7) 75%)' }}
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.4 }}>
+        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: DUR.enter, ease: EASE_OUT }}>
         <div className="flex items-center gap-2 text-rose-200">
             <AlertOctagon size={24} />
-            <span className="font-display text-[26px] font-bold">{CARCINOGEN}</span>
+            <span className="text-[26px] font-bold">{CARCINOGEN}</span>
         </div>
         <p className="text-[18px] leading-snug mt-2" style={{ color: '#FFF1F2' }}>{CARCINOGEN_NOTE}</p>
         <p className="font-mono text-[14px] text-gray-200 mt-2">detalhe do slide dos pilares (o caso GW501516)</p>

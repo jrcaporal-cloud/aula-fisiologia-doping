@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { COLORS } from './content';
 import { SCENE } from './SystemicLocalScene';
+import { EASE_IN_OUT } from '../../../lib/motion';
 
 /**
  * Passo 4: o GH é diabetogênico (neoglicogênese hepática; insulina menos eficaz no adipócito) e, no stack com
@@ -64,7 +65,7 @@ const FatVignette = ({ animate }: { animate: boolean }) => (
 export const CollateralScene = () => {
     const reduce = useReducedMotion();
     const rock = reduce ? { rotate: TILT } : { rotate: [-TILT, TILT, -TILT] };
-    const rockT = { duration: 6, repeat: Infinity, ease: 'easeInOut' as const };
+    const rockT = { duration: 6, repeat: Infinity, ease: EASE_IN_OUT };
     return (
         <svg viewBox={`0 0 ${SCENE.w} ${SCENE.h}`} className="absolute inset-0 w-full h-full block" preserveAspectRatio="xMidYMid meet" role="img"
             aria-label="GH diabetogênico: neoglicogênese hepática e insulina menos eficaz no adipócito; gangorra entre resistência insulínica e hipoglicemia">

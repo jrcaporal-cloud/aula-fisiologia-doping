@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { GENOMIC, NONGENOMIC, NONGENOMIC_COLOR } from './content';
+import { IllustrativeTag } from '../../deck/IllustrativeTag';
 
 /** Azul da barra: mais fundo que o da via no desenho, para o texto branco passar de 4,5:1. */
 const GENOMIC_BAR = '#2563EB';
@@ -26,14 +28,14 @@ const Bar = ({ from, to, color, label, lit, reduced, delay }: BarProps) => (
             style={{ left: `${from}%`, width: `${to - from}%`, transformOrigin: 'left center' }}
             initial={false}
             animate={{ scaleX: lit ? 1 : 0.98 }}
-            transition={{ duration: reduced ? 0 : 0.6, delay: reduced || !lit ? 0 : delay }}
+            transition={{ duration: reduced ? 0 : DUR.bar, delay: reduced || !lit ? 0 : delay, ease: EASE_OUT }}
         >
             <motion.div
                 className="absolute inset-0"
                 style={{ background: color }}
                 initial={false}
                 animate={{ opacity: lit ? 1 : 0.62 }}
-                transition={{ duration: reduced ? 0 : 0.6, delay: reduced || !lit ? 0 : delay }}
+                transition={{ duration: reduced ? 0 : DUR.bar, delay: reduced || !lit ? 0 : delay, ease: EASE_OUT }}
             />
             <span className="relative flex h-full items-center whitespace-nowrap px-3 font-mono text-[16px] font-semibold text-white">
                 {label}
@@ -53,8 +55,8 @@ export const TimeScale = ({ step, reduced }: TimeScaleProps) => {
     return (
         <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] px-4 py-2">
             <div className="w-[170px] flex-none">
-                <div className="font-display text-[16px] font-semibold leading-tight text-white">Escala de tempo</div>
-                <div className="font-mono text-[15.5px] leading-tight text-slate-300">ordinal, não proporcional</div>
+                <div className="font-body text-[16px] font-semibold leading-tight text-white">Escala de tempo</div>
+                <IllustrativeTag className="mt-1">ordinal, não proporcional</IllustrativeTag>
             </div>
             <div className="relative min-w-0 flex-1">
                 <div className="flex flex-col gap-1.5 px-1">

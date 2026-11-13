@@ -3,6 +3,7 @@ import { STEROIDS, halfLifeCenter, type SteroidData } from './data';
 import { Shape } from './markers';
 import { shapeOf } from './markerShapes';
 import { TIME_BANDS, TIME_TICKS, timeFrac } from './scales';
+import { DUR, EASE_OUT, stagger } from '../../../lib/motion';
 
 interface HalfLifeTimelineProps {
     width: number;
@@ -23,6 +24,8 @@ const TICK_FONT = 15;
 /** Marcas coladas (1 sem e 2 sem): afastadas ~8 px para os rótulos não se tocarem. */
 const TICK_NUDGE: Readonly<Record<number, number>> = { 168: -8, 336: 8 };
 const BAR_H = 12;
+/** O valor passa sobre as marcas verticais da régua: contorno escuro atrás do texto (regra do rótulo sobre arte). */
+const TEXT_HALO = { paintOrder: 'stroke', stroke: '#050510', strokeWidth: 4, strokeLinejoin: 'round' } as const;
 /** Largura aproximada de um caractere de JetBrains Mono a 16px (0,61 em). */
 const MONO_CHAR_W = FONT * 0.61;
 
@@ -79,7 +82,7 @@ export const HalfLifeTimeline = ({ width, height, selectedId, onSelect }: HalfLi
                     <motion.g key={s.id}
                         initial={{ opacity: 0, x: reduce ? 0 : -12 }}
                         animate={{ opacity: selected ? 1 : 0.92, x: 0 }}
-                        transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : 0.25 + i * 0.07 }}
+                        transition={{ duration: reduce ? 0 : DUR.enter, delay: reduce ? 0 : stagger(i, 0.25, 0.07), ease: EASE_OUT }}
                         style={{ cursor: 'pointer' }}
                         onClick={() => onSelect(s.id)}
                     >
@@ -94,8 +97,8 @@ export const HalfLifeTimeline = ({ width, height, selectedId, onSelect }: HalfLi
                         ) : (
                             <rect x={x0} y={barY} width={Math.max(x1 - x0, BAR_H)} height={BAR_H} rx={BAR_H / 2} fill={s.color} />
                         )}
-                        <text x={fitsFromLeft ? barLeft : Math.min(barRight, width - 2)} y={cy + 20} fontSize={FONT}
-                            textAnchor={fitsFromLeft ? 'start' : 'end'}
+                        <text x={fitsFromLeft ? barLeft : Math.min(barRight, width - 2)} y={cy + 23} fontSize={FONT}
+                            textAnchor={fitsFromLeft ? 'start' : 'end'} style={TEXT_HALO}
                             className={selected ? 'fill-white font-mono font-bold' : 'fill-zinc-100 font-mono'}>
                             {s.halfLifeLabel}
                         </text>

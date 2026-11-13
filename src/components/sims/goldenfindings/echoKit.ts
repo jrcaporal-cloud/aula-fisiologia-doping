@@ -2,7 +2,7 @@
 
 export const VIEW_W = 600;
 export const VIEW_H = 400;
-export const EASE = [0.22, 1, 0.36, 1] as const;
+export { EASE_OUT as EASE } from '../../../lib/motion';
 
 export interface EchoProps {
     /** Versão miniatura (passo final): só o desenho, sem rótulos. */

@@ -1,11 +1,11 @@
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useStore } from '../../store/useStore';
 import { TitleSlide } from '../presentation/TitleSlide';
 import { BentoSlide } from '../presentation/BentoSlide';
 import { ProseSlide } from '../presentation/ProseSlide';
 import { QuoteSlide } from '../presentation/QuoteSlide';
-import { FitStage } from './FitStage';
+import { FitStage, PAD_X_SELF, SLIDE_WIDTH } from './FitStage';
 import { SlideErrorBoundary } from './SlideErrorBoundary';
 import { preloadAllSims } from '../presentation/slideContent';
 import { DeckChrome } from './DeckChrome';
@@ -15,6 +15,8 @@ import { useDeckNavigation } from './useDeckNavigation';
 import { useSlideStepStore } from '../../store/useSlideSteps';
 import { PRESENTER_CHANNEL, openPresenterWindow, type PresenterMessage } from './presenterChannel';
 import { toggleDetails } from '../../lib/detailsEvent';
+import { DUR, EASE_OUT } from '../../lib/motion';
+import { actColor } from '../../lib/palette';
 
 const renderSlide = ({ slide }: DeckSlide) => {
     if (slide.id === 0) return <TitleSlide slide={slide} />;
@@ -24,6 +26,19 @@ const renderSlide = ({ slide }: DeckSlide) => {
 };
 
 const IDLE_MS = 2600;
+
+/** Cliques mais rápidos que isto (passador) tiram o slide anterior na hora: nunca empilham 2–3 slides saindo. */
+const RAPID_NAV_MS = 260;
+
+/** Troca de slide: só esmaece (entra DUR.enter, sai DUR.exit). O slide é a única camada que entra; título e texto não têm entrada própria. */
+const SLIDE_VARIANTS = {
+    enter: { opacity: 0 },
+    center: { opacity: 1, transition: { duration: DUR.enter, ease: EASE_OUT } },
+    exit: (nav: { current: number }) => ({
+        opacity: 0,
+        transition: { duration: performance.now() - nav.current < RAPID_NAV_MS ? 0 : DUR.exit, ease: EASE_OUT },
+    }),
+};
 
 // Os modelos 3D (cena + pós-processamento) só são baixados quando alguém os abre (ou na pré-carga).
 const loadReceptor3D = () => import('../three/Mechanism3DModal');
@@ -45,7 +60,7 @@ export const Deck = () => {
     const toggleOverview = useCallback(() => setOverview(o => !o), []);
     const closeOverlays = useCallback(() => setOverview(false), []);
 
-    const { index, direction, goTo, next, prev } = useDeckNavigation({
+    const { index, goTo, next, prev } = useDeckNavigation({
         total: DECK.length,
         paused: modalOpen,
         rootRef,
@@ -53,10 +68,16 @@ export const Deck = () => {
         onCloseOverlays: closeOverlays,
     });
 
+    // Instante da última troca de slide (lido pela saída, que começa depois do render).
+    const navAtRef = useRef(0);
+    useEffect(() => { navAtRef.current = performance.now(); }, [index]);
+
     const current = DECK[index];
     const model3D = MODEL_3D_BY_SLIDE.get(current.slide.id) ?? null;
     const has3D = model3D !== null;
     const show3D = open3D !== null;
+    // Cor do ato: só a casca a usa (régua do título, ponto da seção, barra de progresso, cartão ativo, anel de foco).
+    const act = actColor(current.section);
 
     useEffect(() => setSlide(index), [index, setSlide]);
 
@@ -134,34 +155,34 @@ export const Deck = () => {
         <div
             ref={rootRef}
             data-idle={idle || undefined}
+            style={{ '--act-color': act } as CSSProperties}
             className={`deck-root absolute inset-0 z-10 overflow-hidden font-body selection:bg-brand-crimson selection:text-white ${idle && !overview ? 'cursor-none' : ''}`}
         >
-            <AnimatePresence initial={false} custom={direction}>
+            <AnimatePresence initial={false} custom={navAtRef}>
                 <motion.section
                     key={index}
-                    custom={direction}
+                    custom={navAtRef}
+                    // A cor do ato fica presa ao slide: o que sai mantém a sua durante o esmaecimento.
+                    style={{ '--act-color': act } as CSSProperties}
                     className="absolute inset-0"
                     aria-roledescription="slide"
                     aria-label={`${index + 1} de ${DECK.length}: ${current.label}`}
-                    variants={{
-                        enter: (d: number) => ({ opacity: 0, y: d * 40 }),
-                        center: { opacity: 1, y: 0 },
-                        exit: (d: number) => ({ opacity: 0, y: d * -40 }),
-                    }}
+                    variants={SLIDE_VARIANTS}
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <FitStage><SlideErrorBoundary resetKey={index}>{renderSlide(current)}</SlideErrorBoundary></FitStage>
+                    <FitStage width={SLIDE_WIDTH} padX={PAD_X_SELF}><SlideErrorBoundary resetKey={index}>{renderSlide(current)}</SlideErrorBoundary></FitStage>
                 </motion.section>
             </AnimatePresence>
+
+            {/* Leitor de tela: anuncia cada troca de slide (o passo é anunciado pela pílula de passos). */}
+            <p className="sr-only" aria-live="polite" aria-atomic="true">{`Slide ${index + 1} de ${DECK.length}: ${current.label}`}</p>
 
             <DeckChrome
                 index={index}
                 total={DECK.length}
                 section={current.section}
-                idle={idle}
                 has3D={has3D}
                 onPrev={prev}
                 onNext={next}

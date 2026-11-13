@@ -8,12 +8,15 @@
 export const C = {
     serm: '#A78BFA',
     ia: '#FBBF24',
-    hcg: '#34D399',
-    red: '#E11D48',
+    /** hCG/rhFSH são peptídeos: a mesma cor do eixo gonadal no mapa dos peptídeos (não o verde do GH). */
+    hcg: SUBSTANCE.peptide,
+    red: SUBSTANCE.risk,
     redInk: '#FDA4AF',
-    blue: '#60A5FA',
-    cyan: '#22D3EE',
+    blue: SUBSTANCE.eaa,
+    cyan: SUBSTANCE.insulin,
 } as const;
+
+import { SUBSTANCE } from '../../../lib/palette';
 
 export interface StepInfo {
     readonly label: string;

@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 /**
  * Metáfora da capa: o traço de um cromatograma em que o pico existe, mas para
@@ -50,13 +51,13 @@ export const Chromatogram = () => {
                 x1="0" x2={W} y1={LOD} y2={LOD}
                 stroke="#E11D48" strokeWidth="1.5" strokeDasharray="7 7"
                 initial={still ? false : { opacity: 0 }} animate={{ opacity: 0.85 }}
-                transition={{ delay: DRAW_DELAY - 0.3, duration: 0.8 }}
+                transition={{ delay: DRAW_DELAY - 0.3, duration: DUR.morph, ease: EASE_OUT }}
             />
             <motion.text
-                x={W} y={LOD - 8} textAnchor="end" fill="#FB7185" fontSize="13" letterSpacing="2.5"
+                x={W} y={LOD - 8} textAnchor="end" fill="#FB7185" fontSize="14" letterSpacing="2.5"
                 fontFamily="var(--font-mono, monospace)"
                 initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: DRAW_DELAY, duration: 0.8 }}
+                transition={{ delay: DRAW_DELAY, duration: DUR.morph, ease: EASE_OUT }}
             >
                 LIMITE DE DETECÇÃO
             </motion.text>
@@ -72,7 +73,8 @@ export const Chromatogram = () => {
             <motion.path
                 d={tracePath} fill="none" stroke="url(#chroma-fade)" strokeWidth="2" strokeLinejoin="round"
                 initial={still ? false : { pathLength: 0 }} animate={{ pathLength: 1 }}
-                transition={{ delay: DRAW_DELAY, duration: DRAW_TIME, ease: 'easeInOut' }}
+                // Capa (exceção 2 da regra T): o traço pode desenhar devagar.
+                transition={{ delay: DRAW_DELAY, duration: DRAW_TIME, ease: EASE_IN_OUT }}
             />
         </svg>
     );

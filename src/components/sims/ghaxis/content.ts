@@ -5,6 +5,8 @@
  * Sistêmico") de `data/parsedPresentation.json`.
  */
 
+import { SUBSTANCE } from '../../../lib/palette';
+
 export type LevelId = 'hipotalamo' | 'hipofise' | 'figado';
 export type SectionIcon = 'pill' | 'scope' | 'warn' | 'trend' | 'zap';
 
@@ -25,14 +27,23 @@ export interface Level {
     readonly sections: readonly [Section, Section, Section];
 }
 
+/**
+ * Cores do eixo. GH e IGF-1 são a MESMA substância da aula (eixo GH-IGF-1): ficam no verde
+ * `SUBSTANCE.gh`, com o IGF-1 num tom mais claro para separar as duas moléculas na cena.
+ * O GHRP é peptídeo (`SUBSTANCE.peptide`); a glicemia/insulina é ciano; vermelho só para risco.
+ * O âmbar marca a VIA do que foi injetado (seringa/vaso), não a molécula — convenção que o s14
+ * imprime em palavras ("exógeno (âmbar) e endógeno: mesma molécula").
+ */
 export const COLORS = {
     hipotalamo: '#60A5FA',
-    hipofise: '#34D399',
+    hipofise: SUBSTANCE.gh,
     figado: '#F87171',
-    igf: '#FB7185',
+    igf: '#6EE7B7',
+    peptide: SUBSTANCE.peptide,
+    /** Via/seringa do que foi injetado — o s14 nomeia essa convenção no próprio texto ("exógeno (âmbar)"). */
     exo: '#F59E0B',
-    glucose: '#22D3EE',
-    red: '#E11D48',
+    glucose: SUBSTANCE.insulin,
+    red: SUBSTANCE.risk,
 } as const;
 
 export const LEVELS: readonly [Level, Level, Level] = [

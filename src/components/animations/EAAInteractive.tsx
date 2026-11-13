@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type { ComponentType } from 'react';
 import { useSlideSteps } from '../../store/useSlideSteps';
-import { EASE, LAYERS, TABS } from './eaaBase/content';
+import { EASE, LAYERS, TABS, type StageProps } from './eaaBase/content';
+import { DUR } from '../../lib/motion';
 import { LayerPanel } from './eaaBase/LayerPanel';
 import { Overview } from './eaaBase/Overview';
 import { StageRatio } from './eaaBase/StageRatio';
@@ -9,7 +10,7 @@ import { StageSatellite } from './eaaBase/StageSatellite';
 import { StageSideEffects } from './eaaBase/StageSideEffects';
 import { StageSynthetic } from './eaaBase/StageSynthetic';
 
-const STAGES: ComponentType[] = [StageSynthetic, StageRatio, StageSatellite, StageSideEffects];
+const STAGES: ComponentType<StageProps>[] = [StageSynthetic, StageRatio, StageSatellite, StageSideEffects];
 const TAB_COUNT = TABS.length;
 /** Passo 0 = visão geral; depois, cada camada gasta um passo por aba (Química → Mecanismo → Risco Real). */
 const STEP_COUNT = 1 + LAYERS.length * TAB_COUNT;
@@ -24,7 +25,8 @@ export const EAAInteractive = () => {
     const { step, setStep } = useSlideSteps(STEP_COUNT);
     const layerIndex = step > 0 ? Math.floor((step - 1) / TAB_COUNT) : -1;
     const layer = layerIndex >= 0 ? LAYERS[layerIndex] : null;
-    const tab = TABS[(step - 1 + TAB_COUNT) % TAB_COUNT].key;
+    const tabIndex = (step - 1 + TAB_COUNT) % TAB_COUNT;
+    const tab = TABS[tabIndex].key;
     const Stage = layer ? STAGES[layer.id] : null;
     const crumbs = [{ label: 'Visão geral', color: '#E11D48', at: 0 }, ...LAYERS.map(l => ({ label: `${l.id + 1} · ${l.short}`, color: l.color, at: firstStepOf(l.id) }))];
 
@@ -39,7 +41,7 @@ export const EAAInteractive = () => {
                             key={c.label}
                             type="button"
                             onClick={() => setStep(c.at)}
-                            className="text-[15px] px-3.5 py-1 rounded-full border cursor-pointer transition-colors"
+                            className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)] text-[15px] px-3.5 py-1 rounded-full border cursor-pointer transition-colors"
                             style={on
                                 ? { borderColor: c.color, color: '#fff', background: `${c.color}2e` }
                                 : { borderColor: 'rgba(255,255,255,0.2)', color: '#CBD5E1', background: 'rgba(255,255,255,0.02)' }}
@@ -56,12 +58,12 @@ export const EAAInteractive = () => {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.35, ease: EASE }}
+                            transition={{ duration: DUR.enter, ease: EASE }}
                             className="absolute inset-0 grid gap-4"
                             style={{ gridTemplateColumns: '600px 1fr' }}
                         >
                             <div className="rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)] overflow-hidden">
-                                <Stage />
+                                <Stage tab={tabIndex} />
                             </div>
                             <LayerPanel layer={layer} tab={tab} onTab={key => setStep(firstStepOf(layer.id) + TABS.findIndex(t => t.key === key))} />
                         </motion.div>
@@ -71,7 +73,7 @@ export const EAAInteractive = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.35 }}
+                            transition={{ duration: DUR.enter, ease: EASE }}
                             className="absolute inset-0"
                         >
                             <Overview onPick={id => setStep(id + 1)} />

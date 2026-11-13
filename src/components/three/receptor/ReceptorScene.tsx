@@ -20,7 +20,8 @@ import { SPHERE_LO } from './geometry';
 import { Sarcomere } from './Sarcomere';
 import { Transcription } from './Transcription';
 import { Translation } from './Translation';
-import type { TimeState } from './types';
+import type { TimeRef, TimeState } from './types';
+import { updateShaderSignals } from './signals';
 
 const LAST = STEPS.length - 1;
 const v3 = (a: [number, number, number]) => new THREE.Vector3(...a);
@@ -53,14 +54,16 @@ const buildCameraPath = () => {
 type CameraPath = ReturnType<typeof buildCameraPath>;
 
 /** Câmera: segue a spline das poses-chave, parametrizada pelo mesmo tempo T da coreografia. */
-const CameraRig = ({ timeRef, tween, path }: { timeRef: { current: TimeState }; tween: { current: TweenState }; path: CameraPath }) => {
+const makeTween = (): TweenState => ({ active: false, u: 1, offP: new THREE.Vector3(), offT: new THREE.Vector3() });
+
+const CameraRig = ({ timeRef, tween, path }: { timeRef: { current: TimeState }; tween: { current: TweenState | null }; path: CameraPath }) => {
     const camera = useThree(s => s.camera);
     const controls = useThree(s => s.controls) as OrbitControlsImpl | null;
     const tp = useMemo(() => new THREE.Vector3(), []);
     const tt = useMemo(() => new THREE.Vector3(), []);
     useFrame(() => {
         const tw = tween.current;
-        if (!tw.active || !controls) return;
+        if (!tw || !tw.active || !controls) return;
         const T = timeRef.current.t;
         const fade = 1 - smoother(Math.min(tw.u * 1.25, 1));
         path.pos(T, tp).addScaledVector(tw.offP, fade);
@@ -81,10 +84,12 @@ const Backdrop = () => {
         fragmentShader: `varying vec3 vP; void main(){
             float h = vP.y * 0.5 + 0.5;
             vec3 c = mix(vec3(0.008,0.008,0.02), vec3(0.04,0.035,0.11), smoothstep(0.2, 0.95, h));
-            c += vec3(0.05,0.02,0.07) * pow(max(vP.x, 0.0), 3.0) * 0.6;
+            float sx = max(vP.x, 0.0);
+            c += vec3(0.05,0.02,0.07) * (sx * sx * sx) * 0.6;
             gl_FragColor = vec4(c, 1.0);
         }`,
     }), []);
+    useEffect(() => () => mat.dispose(), [mat]);
     return <mesh material={mat} scale={160}><sphereGeometry args={[1, 32, 16]} /></mesh>;
 };
 
@@ -111,7 +116,8 @@ const Cytosol = () => {
         if (!m) return;
         const mat = new THREE.Matrix4();
         const q = new THREE.Quaternion();
-        pts.forEach((x, i) => m.setMatrixAt(i, mat.compose(x.p, q, new THREE.Vector3(x.r, x.r, x.r))));
+        const sv = new THREE.Vector3();
+        pts.forEach((x, i) => m.setMatrixAt(i, mat.compose(x.p, q, sv.set(x.r, x.r, x.r))));
         m.instanceMatrix.needsUpdate = true;
     }, [pts]);
     return (
@@ -119,6 +125,12 @@ const Cytosol = () => {
             <meshStandardMaterial color="#475569" emissive="#1e293b" emissiveIntensity={0.6} roughness={0.8} />
         </instancedMesh>
     );
+};
+
+/** Sinais da coreografia → uniformes dos shaders (um único useFrame para todos os materiais). */
+const ShaderSignals = ({ timeRef, reduced }: { timeRef: TimeRef; reduced: boolean }) => {
+    useFrame(({ clock }) => updateShaderSignals(timeRef.current.t, clock.elapsedTime, reduced));
+    return null;
 };
 
 export interface ReceptorSceneProps {
@@ -131,7 +143,7 @@ export interface ReceptorSceneProps {
 
 export const ReceptorScene = ({ step, settled, ligand, reduced, onSettled }: ReceptorSceneProps) => {
     const timeRef = useRef<TimeState>({ t: step });
-    const tween = useRef<TweenState>({ active: false, u: 1, offP: new THREE.Vector3(), offT: new THREE.Vector3() });
+    const tween = useRef<TweenState | null>(null);
     const camera = useThree(s => s.camera);
     const controls = useThree(s => s.controls) as OrbitControlsImpl | null;
     const path = useMemo(() => buildCameraPath(), []);
@@ -139,11 +151,12 @@ export const ReceptorScene = ({ step, settled, ligand, reduced, onSettled }: Rec
     useEffect(() => {
         if (!controls) return;
         const time = timeRef.current;
+        tween.current ??= makeTween();
         const tw = tween.current;
         const from = time.t;
         const d = step - from;
-        tw.offP.copy(camera.position).sub(path.pos(from, new THREE.Vector3()));
-        tw.offT.copy(controls.target).sub(path.tgt(from, new THREE.Vector3()));
+        path.pos(from, tw.offP).negate().add(camera.position);
+        path.tgt(from, tw.offT).negate().add(controls.target);
         tw.active = true;
         tw.u = 0;
         const dist = Math.abs(d);
@@ -174,6 +187,7 @@ export const ReceptorScene = ({ step, settled, ligand, reduced, onSettled }: Rec
 
             <OrbitControls makeDefault enablePan={false} enableDamping dampingFactor={0.08} minDistance={3} maxDistance={70} />
             <CameraRig timeRef={timeRef} tween={tween} path={path} />
+            <ShaderSignals timeRef={timeRef} reduced={reduced} />
 
             <Membrane timeRef={timeRef} />
             <Ligands timeRef={timeRef} ligand={ligand} />
@@ -187,7 +201,7 @@ export const ReceptorScene = ({ step, settled, ligand, reduced, onSettled }: Rec
 
             {labels.map((l, i) => <Label3D key={`${step}-${ligand}-${l.id}`} spec={l} timeRef={timeRef} delay={0.08 + i * 0.12} />)}
 
-            <EffectComposer multisampling={4}>
+            <EffectComposer multisampling={2}>
                 <Bloom mipmapBlur luminanceThreshold={0.82} luminanceSmoothing={0.2} intensity={0.55} radius={0.55} />
                 <Vignette offset={0.28} darkness={0.7} />
             </EffectComposer>

@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { AlertTriangle, Timer } from 'lucide-react';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { PIECES, RESULT } from './content';
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Último passo: o ganho documentado e o preço (a insulina, com janela de erro de minutos). */
 export const ResultPanel = ({ reduced }: { readonly reduced: boolean }) => (
@@ -13,16 +13,16 @@ export const ResultPanel = ({ reduced }: { readonly reduced: boolean }) => (
                 <motion.span
                     className="font-display font-bold leading-none text-white" style={{ fontSize: 76 }}
                     initial={reduced ? false : { opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 18, delay: 0.1 }}
+                    transition={{ duration: DUR.enter, delay: 0.1, ease: EASE_OUT }}
                 >
                     {RESULT.from}
                 </motion.span>
                 <span className="font-display text-gray-300" style={{ fontSize: 44 }}>→</span>
                 <motion.span
                     className="font-display font-bold leading-none text-brand-red"
-                    style={{ fontSize: 76, textShadow: '0 0 28px rgba(225,29,72,0.45)' }}
+                    style={{ fontSize: 76 }}
                     initial={reduced ? false : { opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 18, delay: 0.3 }}
+                    transition={{ duration: DUR.enter, delay: 0.3, ease: EASE_OUT }}
                 >
                     {RESULT.to}
                 </motion.span>
@@ -42,11 +42,11 @@ export const ResultPanel = ({ reduced }: { readonly reduced: boolean }) => (
             className="mt-auto rounded-2xl border-2 border-brand-red/70 px-5 py-4"
             style={{ background: 'rgba(60,6,20,0.55)' }}
             initial={reduced ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6, ease: EASE }}
+            transition={{ delay: 0.6, duration: DUR.bar, ease: EASE_OUT }}
         >
             <div className="flex items-center gap-2.5">
                 <AlertTriangle size={22} className="text-rose-300" aria-hidden />
-                <span className="font-display text-[19px] font-semibold uppercase tracking-wide text-rose-200">{RESULT.riskTitle}</span>
+                <span className="text-[19px] font-semibold uppercase tracking-wide text-rose-200">{RESULT.riskTitle}</span>
             </div>
             <p className="mt-2 font-body text-[17px] leading-snug text-rose-50">{RESULT.riskText}</p>
             <div className="mt-3 flex items-center gap-3 border-t border-rose-400/25 pt-3">

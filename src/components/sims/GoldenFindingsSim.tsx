@@ -1,10 +1,11 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { AllFive } from './goldenfindings/AllFive';
 import { ALL_STEP, FINDINGS, STEP_COUNT } from './goldenfindings/content';
 import { FocusView } from './goldenfindings/FocusView';
 import { slideRef, slidesPhrase } from './goldenfindings/slideRefs';
 import { StepHeader, type HeaderStep } from './sarms/StepHeader';
+import { DUR, EASE_OUT } from '../../lib/motion';
 
 /**
  * "Os 5 Achados de Ouro da Imersão" (parsedPresentation.json, id 25): a recapitulação da aula.
@@ -31,16 +32,14 @@ const GoldenFindingsSim = () => {
         <div className="not-prose w-full select-none font-body text-white pointer-events-auto" style={{ height: 520 }}>
             <StepHeader steps={HEADER_STEPS} step={step} onSelect={setStep} id="golden" />
             <div className="relative" style={{ height: 470 }}>
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={all ? 'all' : step}
-                        className="absolute inset-0"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25 }}
-                    >
-                        {all ? <AllFive onOpen={setStep} /> : <FocusView finding={FINDINGS[step]} />}
-                    </motion.div>
-                </AnimatePresence>
+                <motion.div
+                    key={all ? 'all' : step}
+                    className="absolute inset-0"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                    transition={{ duration: DUR.text, ease: EASE_OUT }}
+                >
+                    {all ? <AllFive onOpen={setStep} /> : <FocusView finding={FINDINGS[step]} />}
+                </motion.div>
             </div>
         </div>
     );

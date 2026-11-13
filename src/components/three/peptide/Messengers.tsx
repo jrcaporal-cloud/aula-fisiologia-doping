@@ -95,10 +95,28 @@ const place = (pt: Particle, T: number, clock: number, spin: boolean): boolean =
     return true;
 };
 
-const HIDDEN = new THREE.Matrix4().makeScale(0, 0, 0);
 const TETRA = new THREE.TetrahedronGeometry(1, 0);
 const OCTA = new THREE.OctahedronGeometry(1, 0);
 const CA_GEO = new THREE.SphereGeometry(1, 8, 6);
+
+/**
+ * Escreve só as partículas visíveis, em sequência no começo do buffer, e desenha só elas (`count`):
+ * as que ainda não nasceram ou já sumiram não sobem para a GPU nem custam vértices.
+ */
+const writeLive = (mesh: THREE.InstancedMesh, list: Particle[], T: number, clock: number, spin: boolean) => {
+    let n = 0;
+    for (let i = 0; i < list.length; i++) {
+        if (!place(list[i], T, clock, spin)) continue;
+        mesh.setMatrixAt(n++, tmpM);
+    }
+    mesh.count = n;
+    mesh.visible = n > 0;
+    if (n === 0) return;
+    const attr = mesh.instanceMatrix;
+    attr.clearUpdateRanges();
+    attr.addUpdateRange(0, n * 16);
+    attr.needsUpdate = true;
+};
 
 interface MessengersProps { active: Side; timeRef: TimeRef }
 
@@ -113,17 +131,18 @@ export const Messengers = ({ active, timeRef }: MessengersProps) => {
     const caColor = useMemo(() => new THREE.Color(PC.calcium).multiplyScalar(2.2), []);
 
     useFrame(({ clock }) => {
+        const msg = msgRef.current;
+        const ca = caRef.current;
+        if (!msg || !ca) return;
         const T = timeRef.current.t;
-        const c = clock.elapsedTime;
         const live = T > PW.msg1[0] - 0.05 && T < PW.fade[1] + 0.5;
-        const pairs: [THREE.InstancedMesh | null, Particle[], boolean][] = [[msgRef.current, msgs, true], [caRef.current, cas, false]];
-        pairs.forEach(([mesh, list, spin]) => {
-            if (!mesh) return;
-            if (!live && !mesh.visible) return;
-            mesh.visible = live;
-            list.forEach((pt, i) => mesh.setMatrixAt(i, live && place(pt, T, c, spin) ? tmpM : HIDDEN));
-            mesh.instanceMatrix.needsUpdate = true;
-        });
+        if (!live) {
+            msg.visible = false;
+            ca.visible = false;
+            return;
+        }
+        writeLive(msg, msgs, T, clock.elapsedTime, true);
+        writeLive(ca, cas, T, clock.elapsedTime, false);
     });
 
     return (

@@ -6,6 +6,7 @@ import {
     ANAB_DOMAIN, ANAB_TICKS, ANDRO_DOMAIN, ANDRO_TICKS, MAP_MARGIN, MAP_W, RATIO_LINES, mapGeometry,
     type MapGeometry,
 } from './scales';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 
 interface ProfileMapProps {
     height: number;
@@ -97,7 +98,7 @@ const Zones = ({ g, showLabels }: { g: MapGeometry; showLabels: boolean }) => {
             <polygon points={`${left},${top} ${x1},${y1} ${x0},${y0} ${left},${bottom}`} fill="rgba(16,185,129,0.06)" />
             <polygon points={`${x0},${y0} ${x1},${y1} ${right},${top} ${right},${bottom}`} fill="rgba(225,29,72,0.07)" />
             <motion.g transform={`translate(${mx} ${my}) rotate(${angle})`} initial={false}
-                animate={{ opacity: showLabels ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.3 }}>
+                animate={{ opacity: showLabels ? 1 : 0 }} transition={{ duration: reduce ? 0 : DUR.enter, ease: EASE_OUT }}>
                 <text y={-12} textAnchor="middle" fontSize={AXIS_FONT} className="fill-emerald-300 font-body font-semibold">
                     ↑ mais anabólico que androgênico
                 </text>
@@ -158,13 +159,13 @@ const RatioLines = ({ g, step }: { g: MapGeometry; step: number }) => {
                 const [x0, y0, x1, y1] = [g.x(a0), g.y(a0 * k), g.x(a1), g.y(a1 * k)];
                 return (
                     <motion.g key={k} initial={false} animate={{ opacity: visible ? 1 : 0 }}
-                        transition={{ duration: reduce ? 0 : 0.6, delay: visible && !main ? 0.9 : 0 }}>
+                        transition={{ duration: reduce ? 0 : DUR.enter, delay: visible && !main ? 0.5 : 0, ease: EASE_OUT }}>
                         <motion.line x1={x0} y1={y0} x2={x1} y2={y1}
                             stroke={main ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.28)'}
                             strokeWidth={main ? 1.8 : 1.2} strokeDasharray={main ? undefined : '5 6'}
                             initial={main && !reduce ? { pathLength: 0 } : false}
                             animate={{ pathLength: 1 }}
-                            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }} />
+                            transition={{ duration: DUR.draw, ease: EASE_IN_OUT }} />
                         {/* 1:1 à direita da reta, logo abaixo do canto; 3:1 e 10:1 na borda de cima */}
                         <text x={main ? x1 - 3 : x1 + 5} y={main ? y1 + 40 : y1 + 15} fontSize={AXIS_FONT}
                             textAnchor={main ? 'end' : 'start'}
@@ -189,7 +190,7 @@ const SelectionGuides = ({ g, plotBottom, selected }: GuidesProps) => {
     return (
         <AnimatePresence>
             <motion.g key={selected.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}>
+                transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                 <line x1={px} x2={px} y1={py} y2={plotBottom} stroke={selected.color} strokeOpacity={0.7} strokeDasharray="2 4" />
                 <line x1={MAP_MARGIN.left} x2={px} y1={py} y2={py} stroke={selected.color} strokeOpacity={0.7} strokeDasharray="2 4" />
                 <ValuePill x={px} y={plotBottom + 15} value={selected.androgenic} color={selected.color} />
@@ -228,16 +229,16 @@ const Point = ({ s, g, order, visible, selected, showReference, onSelect }: Poin
             <motion.g
                 initial={false}
                 animate={{ opacity: visible ? 1 : 0, scale: visible ? 1 : 0.2 }}
-                transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 20, delay: visible ? 0.1 + order * 0.09 : 0 }}
+                transition={reduce ? { duration: 0 } : { duration: DUR.enter, ease: EASE_OUT, delay: visible ? stagger(order, 0.1, 0.06) : 0 }}
             >
                 {selected && (
                     <motion.circle r={15} fill="none" stroke={s.color} strokeWidth={2}
                         initial={{ opacity: 0.9, scale: 1 }}
                         animate={reduce ? { opacity: 0.6 } : { opacity: [0.9, 0], scale: [1, 1.9] }}
-                        transition={reduce ? { duration: 0 } : { duration: 1.6, repeat: Infinity, ease: 'easeOut' }} />
+                        transition={reduce ? { duration: 0 } : { duration: 1.6, repeat: Infinity, ease: EASE_OUT }} />
                 )}
                 <circle r={18} fill="transparent" />
-                <g style={{ filter: `drop-shadow(0 0 ${selected ? 10 : 4}px ${s.color})` }}>
+                <g>
                     <Shape shape={shapeOf(s.id)} r={selected ? 10.5 : 8.5} fill={s.color}
                         stroke={selected ? '#fff' : '#050510'} strokeWidth={selected ? 2.2 : 2} />
                 </g>

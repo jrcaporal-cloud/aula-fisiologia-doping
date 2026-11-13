@@ -5,9 +5,10 @@ import { PEPTIDE_N, RIBO_EXIT_LOCAL, finalRiboPose, makePose, peptideBeads, ribo
 import { W, phase } from './layout';
 import { Cloud } from './primitives';
 import { SPHERE_GEO, STICK_GEO, ellipsoidCloud, stickMatrix } from './geometry';
-import { DELIVERY_TARGETS } from './Sarcomere';
+import { DELIVERY_TARGETS } from './sarcLattice';
 import type { TimeRef } from './types';
 import { useHover } from './useHover';
+import { commitInstances, raycastIfShown } from './instancing';
 
 /*
  * Tradução: subunidades menor e maior do ribossomo se encaixam sobre o mRNA e o percorrem; a cadeia
@@ -24,6 +25,7 @@ const tmpM = new THREE.Matrix4();
 const q0 = new THREE.Quaternion();
 const sc = new THREE.Vector3();
 const DELIVER_N = DELIVERY_TARGETS.length;
+const PEP_R = new THREE.Vector3(0.15, 0.15, 0.15);
 
 export const Translation = ({ timeRef }: { timeRef: TimeRef }) => {
     const ribo = useRef<THREE.Group>(null);
@@ -53,47 +55,49 @@ export const Translation = ({ timeRef }: { timeRef: TimeRef }) => {
         }
         if (large.current) large.current.position.set(0, LARGE_Y + (1 - asm) * 3.5, (1 - asm) * 1.5);
         if (small.current) small.current.position.set(0, SMALL_Y - (1 - asm) * 3.0, -(1 - asm) * 1.2);
-        [large.current, small.current].forEach(g => g?.scale.setScalar(0.4 + 0.6 * asm));
+        large.current?.scale.setScalar(0.4 + 0.6 * asm);
+        small.current?.scale.setScalar(0.4 + 0.6 * asm);
 
         exit.copy(RIBO_EXIT_LOCAL).applyQuaternion(pose.q).add(pose.p);
-        peptideBeads(T, exit, pose.q, beads);
+        // a cadeia nascente é um prefixo (0 … n-1): count corta o resto
+        const n = peptideBeads(T, exit, pose.q, beads);
         const pm = pepRef.current;
         const pl = pepLinks.current;
         if (pm && pl) {
-            for (let j = 0; j < PEPTIDE_N; j++) {
-                const hidden = beads[j].y < -900;
-                const r = hidden ? 0 : 0.15;
-                pm.setMatrixAt(j, tmpM.compose(beads[j], q0, sc.set(r, r, r)));
-                if (j < PEPTIDE_N - 1) {
-                    const ok = !hidden && beads[j + 1].y > -900;
-                    pl.setMatrixAt(j, ok ? stickMatrix(beads[j], beads[j + 1], 0.06, tmpM) : tmpM.makeScale(0, 0, 0));
-                }
+            for (let j = 0; j < n; j++) {
+                pm.setMatrixAt(j, tmpM.compose(beads[j], q0, PEP_R));
+                if (j < n - 1) pl.setMatrixAt(j, stickMatrix(beads[j], beads[j + 1], 0.06, tmpM));
             }
-            pm.instanceMatrix.needsUpdate = true;
-            pl.instanceMatrix.needsUpdate = true;
+            commitInstances(pm, n);
+            commitInstances(pl, Math.max(n - 1, 0));
         }
         const pc = parcels.current;
         if (pc) {
+            let w = 0;
             for (let k = 0; k < DELIVER_N; k++) {
                 const a = W.deliver[0] + k * 0.07;
                 const u = phase(T, a, a + 0.36);
-                const visible = u > 0 && u < 1;
-                const tgt = DELIVERY_TARGETS[k];
-                sc.copy(start).lerp(tgt, u);
+                if (u <= 0 || u >= 1) continue;
+                sc.copy(start).lerp(DELIVERY_TARGETS[k], u);
                 sc.y += Math.sin(Math.PI * u) * 1.8;
                 sc.z += Math.sin(Math.PI * u) * 1.2;
-                const r = visible ? 0.42 * (1 - 0.4 * u) : 0;
-                pc.setMatrixAt(k, tmpM.compose(sc, q0, new THREE.Vector3(r, r, r)));
+                const r = 0.42 * (1 - 0.4 * u);
+                pc.setMatrixAt(w++, tmpM.makeScale(r, r, r).setPosition(sc));
             }
-            pc.instanceMatrix.needsUpdate = true;
+            commitInstances(pc, w);
         }
     });
 
     return (
         <group>
-            <group ref={ribo} visible={false} {...hoverR}>
+            <group ref={ribo} visible={false}>
                 <group ref={large}><Cloud spheres={LARGE} color="#38bdf8" color2="#0284c7" roughness={0.6} /></group>
                 <group ref={small}><Cloud spheres={SMALL} color="#7dd3fc" color2="#38bdf8" roughness={0.6} /></group>
+                {/* alvo de hover em casca simples (as ~390 esferas das subunidades não entram no raycast) */}
+                <mesh {...hoverR} position={[0, 0.45, 0]} scale={[1.75, 1.95, 1.55]} raycast={raycastIfShown}>
+                    <sphereGeometry args={[1, 10, 8]} />
+                    <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
+                </mesh>
             </group>
             <instancedMesh ref={pepRef} args={[SPHERE_GEO, undefined, PEPTIDE_N]} frustumCulled={false} {...hoverP}>
                 <meshStandardMaterial color="#fde047" emissive="#ca8a04" emissiveIntensity={0.55} roughness={0.35} />

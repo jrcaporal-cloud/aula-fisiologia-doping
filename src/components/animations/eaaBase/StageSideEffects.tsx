@@ -1,23 +1,30 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { EASE, LAYERS, STAGE_H, STAGE_W } from './content';
+import { EASE, LAYERS, STAGE_H, STAGE_W, type StageProps } from './content';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
+import { MUTED_TEXT } from '../../../lib/palette';
 
 const RED = LAYERS[3].color;
 const RED_INK = LAYERS[3].ink;
 const ON = '#34D399';
 const OFF = 'rgba(203,213,225,0.55)';
 
-/** Instantes (ms) das fases: T exógena → GnRH/LH/FSH param → Leydig atrofiam → VE engrossa. */
+/**
+ * Instantes (ms) das fases: T exógena → GnRH/LH/FSH param → Leydig atrofiam → VE engrossa.
+ * Exceção de palco (regra T-3): a sequência É o conteúdo (~5 s); decisão do Rinaldo em 09/11/2026 (opção B).
+ * Trocar de aba corta o filme na hora: a cena salta para o estado final (ver `cut`).
+ */
 const PHASE_AT = [400, 1700, 2900, 4100];
 
-const usePhase = (still: boolean) => {
+const usePhase = (still: boolean, cut: boolean) => {
     const [phase, setPhase] = useState(still ? PHASE_AT.length : 0);
     useEffect(() => {
         if (still) return;
         const timers = PHASE_AT.map((ms, i) => window.setTimeout(() => setPhase(i + 1), ms));
         return () => timers.forEach(window.clearTimeout);
     }, [still]);
-    return phase;
+    // Filme cortado (o passador trocou de aba): mostra o fim na hora.
+    return cut ? PHASE_AT.length : phase;
 };
 
 const NODE_X = 30;
@@ -32,11 +39,14 @@ const LINKS = [
     { y1: 198, y2: 262, label: 'LH/FSH' },
 ];
 
-interface AxisProps { phase: number; still: boolean }
+interface AxisProps { phase: number; still: boolean; cut: boolean }
 
 /** Eixo HPG: a T exógena desliga o eixo por feedback negativo. */
-const HpgAxis = ({ phase, still }: AxisProps) => {
-    const dur = still ? 0 : 0.7;
+const HpgAxis = ({ phase, still, cut }: AxisProps) => {
+    /** Com o filme cortado, tudo assenta em DUR.exit e sem atraso. */
+    const time = (d: number) => (still ? 0 : cut ? DUR.exit : d);
+    const wait = (d: number) => (still || cut ? 0 : d);
+    const dur = time(DUR.bar);
     const off = phase >= 2;
     const cx = NODE_X + NODE_W / 2;
     return (
@@ -46,15 +56,15 @@ const HpgAxis = ({ phase, still }: AxisProps) => {
                 <g key={l.label}>
                     <motion.line
                         x1={cx} x2={cx} y1={l.y1} y2={l.y2 - 6} strokeWidth={3} strokeLinecap="round"
-                        animate={{ stroke: off ? OFF : ON, strokeDasharray: off ? '4 6' : '0 0' }} transition={{ duration: dur }}
+                        animate={{ stroke: off ? OFF : ON, strokeDasharray: off ? '4 6' : '0 0' }} transition={{ duration: dur, ease: EASE_OUT }}
                     />
                     <motion.path d={`M${cx - 7} ${l.y2 - 12} L${cx} ${l.y2 - 3} L${cx + 7} ${l.y2 - 12}`} fill="none" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"
-                        animate={{ stroke: off ? OFF : ON }} transition={{ duration: dur }} />
+                        animate={{ stroke: off ? OFF : ON }} transition={{ duration: dur, ease: EASE_OUT }} />
                     <motion.text x={cx - 14} y={(l.y1 + l.y2) / 2 + 5} textAnchor="end" fontSize={15} fontWeight={700} className="font-mono"
-                        animate={{ fill: off ? '#CBD5E1' : '#A7F3D0' }} transition={{ duration: dur }}>{l.label}</motion.text>
+                        animate={{ fill: off ? '#CBD5E1' : '#A7F3D0' }} transition={{ duration: dur, ease: EASE_OUT }}>{l.label}</motion.text>
                     {off && (
                         <motion.text x={cx + 12} y={(l.y1 + l.y2) / 2 + 6} fill={RED_INK} fontSize={15} fontWeight={700} className="font-body"
-                            initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: dur }}>
+                            initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: dur, ease: EASE_OUT }}>
                             ✕ para
                         </motion.text>
                     )}
@@ -64,11 +74,11 @@ const HpgAxis = ({ phase, still }: AxisProps) => {
                 const atrophy = i === 2 && phase >= 3;
                 return (
                     <motion.g key={n.label}
-                        animate={{ scale: atrophy ? 0.86 : 1 }} transition={{ duration: still ? 0 : 1, ease: EASE }}
+                        animate={{ scale: atrophy ? 0.86 : 1 }} transition={{ duration: time(DUR.draw), ease: EASE }}
                         style={{ transformOrigin: `${cx}px ${n.y + 20}px` }}>
                         <motion.rect x={NODE_X} y={n.y} width={NODE_W} height={40} rx={12} strokeWidth={1.5}
                             animate={{ fill: atrophy ? 'rgba(225,29,72,0.12)' : 'rgba(255,255,255,0.05)', stroke: atrophy ? RED : 'rgba(255,255,255,0.25)' }}
-                            transition={{ duration: dur }} />
+                            transition={{ duration: dur, ease: EASE_OUT }} />
                     </motion.g>
                 );
             })}
@@ -77,12 +87,15 @@ const HpgAxis = ({ phase, still }: AxisProps) => {
                 <text key={n.label} x={cx} y={n.y + 26} textAnchor="middle" fill="#F3F4F6" fontSize={15} fontWeight={600} className="font-body">{n.label}</text>
             ))}
             {/* Saída dos testículos */}
-            <motion.g animate={{ opacity: phase >= 3 ? 0.35 : 1 }} transition={{ duration: dur }}>
-                <line x1={cx} x2={cx} y1={306} y2={340} stroke="#CBD5E1" strokeWidth={2} />
-                <text x={cx} y={364} textAnchor="middle" fill="#E5E7EB" fontSize={15} className="font-body">T e espermatozoides</text>
-            </motion.g>
+            {/* Produção que cessa: o texto apaga por COR (legível no projetor), só o traço perde opacidade. */}
+            <g>
+                <motion.line x1={cx} x2={cx} y1={306} y2={340} stroke="#CBD5E1" strokeWidth={2}
+                    animate={{ opacity: phase >= 3 ? 0.35 : 1 }} transition={{ duration: dur, ease: EASE_OUT }} />
+                <motion.text x={cx} y={364} textAnchor="middle" fontSize={15} className="font-body"
+                    animate={{ fill: phase >= 3 ? MUTED_TEXT : '#E5E7EB' }} transition={{ duration: dur, ease: EASE_OUT }}>T e espermatozoides</motion.text>
+            </g>
             {phase >= 3 && (
-                <motion.g initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: dur }}>
+                <motion.g initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: dur, ease: EASE_OUT }}>
                     <text x={20} y={410} fill={RED_INK} fontSize={15} fontWeight={700} className="font-body">Sem LH, células de Leydig atrofiam</text>
                     <text x={20} y={432} fill="#E5E7EB" fontSize={15} className="font-body">produção endógena nula em semanas</text>
                 </motion.g>
@@ -97,13 +110,14 @@ const HpgAxis = ({ phase, still }: AxisProps) => {
                 d={`M243 204 C 243 120, 240 72, ${NODE_X + NODE_W + 8} 72`}
                 fill="none" stroke={RED} strokeWidth={2.5} strokeLinecap="round"
                 initial={{ pathLength: still ? 1 : 0 }} animate={{ pathLength: phase >= 1 ? 1 : 0 }}
-                transition={{ duration: still ? 0 : 0.9, delay: still ? 0 : 0.3, ease: 'easeInOut' }}
+                transition={{ duration: time(DUR.draw), delay: wait(0.3), ease: EASE_IN_OUT }}
             />
             <motion.line x1={NODE_X + NODE_W + 8} x2={NODE_X + NODE_W + 8} y1={60} y2={84} stroke={RED} strokeWidth={3.5} strokeLinecap="round"
-                initial={{ opacity: still ? 1 : 0 }} animate={{ opacity: phase >= 1 ? 1 : 0 }} transition={{ delay: still ? 0 : 1.1, duration: 0.2 }} />
-            <motion.text x={236} y={160} textAnchor="end" fill={RED_INK} fontSize={15} fontWeight={600} className="font-body"
-                initial={{ opacity: still ? 1 : 0 }} animate={{ opacity: phase >= 1 ? 1 : 0 }} transition={{ delay: still ? 0 : 1, duration: 0.4 }}>
-                <tspan x={236}>feedback</tspan><tspan x={236} dy={18}>negativo</tspan>
+                initial={{ opacity: still ? 1 : 0 }} animate={{ opacity: phase >= 1 ? 1 : 0 }} transition={{ delay: wait(0.9), duration: time(DUR.text), ease: EASE_OUT }} />
+            {/* Rótulo abaixo da pílula "T exógena": livre da curva vermelha, dos "✕ para" e das caixas do eixo. */}
+            <motion.text x={198} y={260} fill={RED_INK} fontSize={15} fontWeight={600} className="font-body"
+                initial={{ opacity: still ? 1 : 0 }} animate={{ opacity: phase >= 1 ? 1 : 0 }} transition={{ delay: wait(0.8), duration: time(DUR.enter), ease: EASE_OUT }}>
+                <tspan x={198}>feedback</tspan><tspan x={198} dy={18}>negativo</tspan>
             </motion.text>
         </g>
     );
@@ -125,7 +139,7 @@ const Heart = ({ thick, onToggle, still }: { thick: boolean; onToggle: (v: boole
         const p2 = [cx + (outer + 1) * Math.cos(a2), cy - (outer + 1) * Math.sin(a2)];
         return `M${p1[0]} ${p1[1]} C ${cx - outer - 70} ${cy - outer * 0.9}, ${cx - outer - 70} ${cy + outer * 0.9}, ${p2[0]} ${p2[1]} Z`;
     };
-    const t = { duration: still ? 0 : 1.4, ease: EASE };
+    const t = { duration: still ? 0 : DUR.bar, ease: EASE_IN_OUT };
     const label = thick ? '13,2 mm' : '9,8 mm';
     return (
         <g>
@@ -166,14 +180,17 @@ const Heart = ({ thick, onToggle, still }: { thick: boolean; onToggle: (v: boole
 };
 
 /** Camada 4 — eixo HPG suprimido + hipertrofia ventricular concêntrica. */
-export const StageSideEffects = () => {
+export const StageSideEffects = ({ tab }: StageProps) => {
     const still = !!useReducedMotion();
-    const phase = usePhase(still);
+    // A cena lembra em que aba começou: se o passador troca de aba, o filme é cortado.
+    const [startTab] = useState(tab);
+    const cut = tab !== startTab;
+    const phase = usePhase(still, cut);
     const [manual, setManual] = useState<boolean | null>(null);
     const thick = manual ?? phase >= 4;
     return (
         <svg viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} className="w-full h-full" role="img" aria-label="Eixo HPG suprimido pela T exógena e hipertrofia ventricular concêntrica">
-            <HpgAxis phase={phase} still={still} />
+            <HpgAxis phase={phase} still={still} cut={cut} />
             <line x1={302} x2={302} y1={20} y2={440} stroke="rgba(255,255,255,0.1)" />
             <Heart thick={thick} onToggle={setManual} still={still} />
         </svg>

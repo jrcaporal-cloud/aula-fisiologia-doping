@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { COLORS } from './content';
 import { FIBER, LocalFiber } from './LocalFiber';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 
 /**
  * Passos 0–2: o fígado manda IGF-1 pelo sangue para todas as células-alvo (sistêmico) e, no zoom, a fibra sob
@@ -94,14 +95,14 @@ export const SystemicLocalScene = ({ step, boost }: SceneProps) => {
         <svg viewBox={`0 0 ${SCENE.w} ${SCENE.h}`} className="absolute inset-0 w-full h-full block" preserveAspectRatio="xMidYMid meet" role="img"
             aria-label="Fígado enviando IGF-1 pelo sangue a todas as células e fibra muscular produzindo MGF no local do dano">
             {/* ── Sistêmico ── */}
-            <motion.g animate={{ opacity: systemicOn ? 1 : 0.6 }} transition={{ duration: 0.6 }}>
+            <motion.g animate={{ opacity: systemicOn ? 1 : 0.6 }} transition={{ duration: DUR.bar, ease: EASE_OUT }}>
                 <path d={LIVER_D} fill="rgba(159,18,57,0.55)" stroke={COLORS.liver} strokeWidth={2} />
                 <Text x={132} y={92} text="Fígado" size={19} color="#FFF1F2" weight={700} />
                 <Text x={132} y={112} text="IGF-1 hepático" size={16} color="#FECDD3" />
                 <g>
                     <circle cx={292} cy={84} r={30} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={10} />
                     <motion.circle cx={292} cy={84} r={30} fill="none" stroke={COLORS.igf} strokeWidth={10} strokeLinecap="butt"
-                        transform="rotate(-90 292 84)" initial={{ pathLength: 0 }} animate={{ pathLength: 0.7 }} transition={{ duration: reduce ? 0 : 1.2, delay: 0.3 }} />
+                        transform="rotate(-90 292 84)" initial={{ pathLength: 0 }} animate={{ pathLength: 0.7 }} transition={{ duration: reduce ? 0 : DUR.draw, delay: 0.15, ease: EASE_OUT }} />
                     <Text x={292} y={90} text="~70%" size={17} color="#FFFFFF" weight={700} />
                     <Text x={280} y={138} text="do IGF-1 circulante" size={15.5} color="#BFDBFE" />
                 </g>
@@ -129,7 +130,7 @@ export const SystemicLocalScene = ({ step, boost }: SceneProps) => {
             </motion.g>
 
             {/* ── Local (zoom) ── */}
-            <motion.g animate={{ opacity: localOn ? 1 : 0.6 }} transition={{ duration: 0.6 }}>
+            <motion.g animate={{ opacity: localOn ? 1 : 0.6 }} transition={{ duration: DUR.bar, ease: EASE_OUT }}>
                 <rect x={356} y={16} width={352} height={212} rx={16} fill="rgba(6,78,59,0.14)" stroke="rgba(52,211,153,0.45)" strokeWidth={1.4} />
                 <Text x={372} y={40} text="Zoom · fibra sob tensão mecânica" anchor="start" size={16.5} color="#A7F3D0" />
                 <LocalFiber active={localOn} boost={boost} />
@@ -142,7 +143,7 @@ export const SystemicLocalScene = ({ step, boost }: SceneProps) => {
             </motion.g>
 
             {/* lupa: o músculo do corpo é a fibra do zoom */}
-            <motion.g animate={{ opacity: localOn ? 1 : 0 }} transition={{ duration: 0.5 }}>
+            <motion.g animate={{ opacity: localOn ? 1 : 0 }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>
                 <path d={`M${TARGETS[0].x + 40},${TARGET_TOP + 6} L366,220`} stroke="rgba(167,243,208,0.45)" strokeDasharray="4 4" fill="none" />
                 <rect x={TARGETS[0].x - 60} y={TARGET_TOP + 2} width={120} height={52} rx={24} fill="none" stroke="rgba(167,243,208,0.6)" strokeDasharray="4 4" />
             </motion.g>

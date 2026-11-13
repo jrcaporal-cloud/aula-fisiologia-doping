@@ -1,4 +1,5 @@
 /** Conteúdo do slide "Casos que Mudaram as Regras do Esporte" — verbatim do componente original. */
+import { SUBSTANCE } from '../../../lib/palette';
 
 export type CaseResult = 'win' | 'lose' | 'neutral' | 'lose_for_policy';
 
@@ -82,9 +83,9 @@ export interface Policy {
 
 /** Políticas das federações, em ordem cronológica (o original listava COI, WA, World Aquatics, NCAA). */
 export const POLICIES: readonly Policy[] = [
-    { org: 'COI', year: 2021, rule: 'Eliminou limites de T. Delegou às federações. "Presunção de não vantagem."', color: '#10B981', stance: 'inclusivo' },
+    { org: 'COI', year: 2021, rule: 'Eliminou limites de T. Delegou às federações. "Presunção de não vantagem."', color: SUBSTANCE.allowed, stance: 'inclusivo' },
     { org: 'World Aquatics', year: 2022, rule: 'Exclui trans femininas que passaram por puberdade masculina. Permite transição pré-puberal.', color: '#F59E0B', stance: 'restritivo' },
-    { org: 'NCAA', year: 2022, rule: 'Seguiu as regras de cada federação esportiva (caso a caso por modalidade).', color: '#60A5FA', stance: 'neutro' },
+    { org: 'NCAA', year: 2022, rule: 'Seguiu as regras de cada federação esportiva (caso a caso por modalidade).', color: '#CBD5E1', stance: 'neutro' },
     { org: 'World Athletics', year: 2023, rule: 'Mulheres trans pós-puberdade masculina fora da categoria feminina. Atletas com DSD: T < 2,5 nmol/L por 24 meses.', color: '#E11D48', stance: 'restritivo' },
 ];
 
@@ -94,7 +95,8 @@ export const FRAGMENTATION = {
 } as const;
 
 export const RESULT_COLOR: Record<CaseResult, string> = {
-    win: '#34D399',
+    /** Sem verde: azul de "permitido/dentro da faixa" (o verde é do GH na aula toda). */
+    win: SUBSTANCE.allowed,
     lose: '#FB7185',
     neutral: '#FBBF24',
     lose_for_policy: '#C084FC',

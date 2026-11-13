@@ -65,11 +65,11 @@ export const EMITTERS: readonly Emitter[] = [
         steps: [{ n: 4, phase: 0.0, spread: 0.12 }, { n: 4, phase: 0.0, spread: 0.12 }, { n: 2, phase: 0.0, spread: 0.1 }, null],
     },
     {
-        id: 'ghrpHypo', path: 'ghrpHypo', color: '#A855F7', exo: true, travel: 1.0, size: 3.2, jitter: 2.5,
+        id: 'ghrpHypo', path: 'ghrpHypo', color: COLORS.peptide, exo: true, travel: 1.0, size: 3.2, jitter: 2.5,
         steps: [null, { rate: 2.2 }, null, null],
     },
     {
-        id: 'ghrpPit', path: 'ghrpPit', color: '#A855F7', exo: true, travel: 0.5, size: 3.2, jitter: 2,
+        id: 'ghrpPit', path: 'ghrpPit', color: COLORS.peptide, exo: true, travel: 0.5, size: 3.2, jitter: 2,
         steps: [null, { rate: 1.6 }, null, null],
     },
     {

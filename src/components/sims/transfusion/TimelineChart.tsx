@@ -1,7 +1,9 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_OUT, stagger } from '../../../lib/motion';
 import { useTween } from '../abpconcept/useTween';
 import { BloodBag } from './BloodBag';
 import { C } from './content';
+import { LABEL_BACKDROP } from '../../../lib/palette';
 import {
     ALT_START, BAND_FROM, BAND_HCT, BAND_RET, BASAL_HI, BASAL_LO, COLLECT_T, DAYS_X0, HCT_TOP,
     PLOT_X0, PLOT_X1, RACE_T, REINFUSE_T, RET_BOTTOM, RET_TOP, SAMPLES, STORAGE_CHECKS, T_END, UCI_LIMIT,
@@ -69,17 +71,18 @@ const sampleColor = (kind: AbpSample['kind'], alert: boolean): string =>
     kind === 'basal' ? C.normal : kind === 'oportuna' ? (alert ? C.red : C.amber) : '#CBD5E1';
 
 const SampleMarker = ({ s, alert, index }: MarkerProps) => {
+    const reduce = useReducedMotion();
     const x = tx(s.t);
     const color = sampleColor(s.kind, alert);
     return (
-        <motion.g initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.25 + index * 0.18, duration: 0.35 }}
+        <motion.g initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: stagger(index, 0.1, 0.08), duration: DUR.enter, ease: EASE_OUT }}
             style={{ transformOrigin: `${x}px ${hy(hct(s.t))}px` }}>
             <line x1={x} x2={x} y1={hy(hct(s.t))} y2={ry(ret(s.t))} stroke={color} strokeOpacity={0.45} strokeDasharray="2 4" />
             <Mark x={x} y={hy(hct(s.t))} r={6.5} color={color} kind={s.kind} />
             <Mark x={x} y={ry(ret(s.t))} r={5.5} color={color} kind={s.kind} />
-            {alert && s.kind === 'oportuna' && (
+            {alert && s.kind === 'oportuna' && !reduce && (
                 <motion.circle cx={x} cy={hy(hct(s.t))} fill="none" stroke={C.red} strokeWidth={2}
-                    initial={{ r: 10, opacity: 0.9 }} animate={{ r: [10, 22], opacity: [0.9, 0] }} transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }} />
+                    initial={{ r: 10, opacity: 0.9 }} animate={{ r: [10, 22], opacity: [0.9, 0] }} transition={{ duration: 1.4, repeat: Infinity, ease: EASE_OUT }} />
             )}
         </motion.g>
     );
@@ -96,7 +99,7 @@ const Callout = ({ scenario }: CalloutProps) => {
     const x = PLOT_X1 - w;
     const y = 262;
     return (
-        <motion.g key={scenario} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 0.45 }}>
+        <motion.g key={scenario} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: DUR.enter, ease: EASE_OUT }}>
             <rect x={x} y={y} width={w} height={90} rx={10} fill="rgba(8,8,18,0.94)" stroke={color} strokeWidth={1.8} />
             <text x={x + 12} y={y + 25} className="font-mono" fontSize={FS} fontWeight={700} letterSpacing="0.04em" fill={ok ? '#FDA4AF' : '#FCD34D'}>
                 {ok ? 'ALERTA DO ABP' : 'SEM ALERTA'}
@@ -124,10 +127,11 @@ interface TimelineChartProps {
 }
 
 export const TimelineChart = ({ step, scenario }: TimelineChartProps) => {
-    const revealX = useTween(tx(REVEAL_T[step]), 1700, 150, PLOT_X0);
-    const bagX = useTween(BAG_X[Math.min(step, 2)], 1100, 0);
-    const bagFill = useTween(step === 0 ? 1 : step === 1 ? 1 : 0, step === 2 ? 1300 : 900, step === 0 ? 1300 : step === 2 ? 900 : 0, 0);
-    const frozen = useTween(step === 1 ? 1 : 0, 700, step === 1 ? 700 : 0);
+    // Passo (ms): curva 100+900 · bolsa anda 700 · enche/esvazia 500+600 · congela 500+500 → tudo parado em ≤ 1,1 s.
+    const revealX = useTween(tx(REVEAL_T[step]), 900, 100, PLOT_X0);
+    const bagX = useTween(BAG_X[Math.min(step, 2)], 700, 0);
+    const bagFill = useTween(step === 0 ? 1 : step === 1 ? 1 : 0, 600, step === 0 || step === 2 ? 500 : 0, 0);
+    const frozen = useTween(step === 1 ? 1 : 0, 500, step === 1 ? 500 : 0);
     const abp = step >= 3;
     const samples = abp ? SAMPLES[scenario] : [];
     const alert = abp && scenario === 'completo';
@@ -169,39 +173,45 @@ export const TimelineChart = ({ step, scenario }: TimelineChartProps) => {
             {/* corredor individual do ABP (cenário completo) */}
             <AnimatePresence>
                 {showBand && (
-                    <motion.g key="band" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 0.8, duration: 0.5 }}>
+                    <motion.g key="band" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ delay: 0.3, duration: DUR.morph, ease: EASE_OUT }}>
                         <rect x={tx(BAND_FROM)} y={hy(BAND_HCT.hi)} width={PLOT_X1 - tx(BAND_FROM)} height={hy(BAND_HCT.lo) - hy(BAND_HCT.hi)}
                             fill={C.normal} fillOpacity={0.16} stroke={C.normal} strokeOpacity={0.75} strokeDasharray="4 4" />
                         <rect x={tx(BAND_FROM)} y={ry(BAND_RET.hi)} width={PLOT_X1 - tx(BAND_FROM)} height={ry(BAND_RET.lo) - ry(BAND_RET.hi)}
                             fill={C.normal} fillOpacity={0.16} stroke={C.normal} strokeOpacity={0.75} strokeDasharray="4 4" />
-                        <text className="font-body" fontSize={FS_NOTE} fill="#7DD3FC">
-                            <tspan x={tx(-52)} y={hy(BAND_HCT.lo) + 21}>perfil individual</tspan>
-                            <tspan x={tx(-52)} y={hy(BAND_HCT.lo) + 42}>(após 3 amostras basais)</tspan>
-                        </text>
+                        <g>
+                            <rect x={tx(-52) - 6} y={hy(BAND_HCT.lo) + 10} width={248} height={44} rx={5} fill={LABEL_BACKDROP} />
+                            <text className="font-body" fontSize={FS_NOTE} fill="#7DD3FC">
+                                <tspan x={tx(-52)} y={hy(BAND_HCT.lo) + 26}>perfil individual</tspan>
+                                <tspan x={tx(-52)} y={hy(BAND_HCT.lo) + 46}>(após 3 amostras basais)</tspan>
+                            </text>
+                        </g>
                     </motion.g>
                 )}
             </AnimatePresence>
 
             {/* curvas, reveladas fase a fase */}
             <g clipPath="url(#tf-reveal)">
-                <path d={HCT_PATH} fill="none" stroke={C.red} strokeWidth={3} strokeLinejoin="round" />
+                <path d={HCT_PATH} fill="none" stroke={C.blood} strokeWidth={3} strokeLinejoin="round" />
                 <path d={RET_PATH} fill="none" stroke={C.cyan} strokeWidth={2.4} strokeLinejoin="round" />
             </g>
-            <circle cx={Math.min(revealX, PLOT_X1)} cy={hy(hct(tInv(revealX)))} r={4.5} fill={C.red} opacity={revealX < PLOT_X1 - 1 ? 1 : 0} />
+            <circle cx={Math.min(revealX, PLOT_X1)} cy={hy(hct(tInv(revealX)))} r={4.5} fill={C.blood} opacity={revealX < PLOT_X1 - 1 ? 1 : 0} />
 
             {/* anotações das âncoras */}
             <g className="font-body" fontSize={FS_NOTE} fontWeight={600}>
                 <text x={tx(COLLECT_T)} y={hy(53.5) - 12} textAnchor="middle" fill="#BFDBFE">coleta: 52–55%</text>
                 {step >= 2 && (
-                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.4 }}>
+                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: DUR.enter, ease: EASE_OUT }}>
                         <text x={PLOT_X1} y={hy(50.5) - 24} textAnchor="end" fill="#FDA4AF">~43% → 49–51%</text>
-                        <text x={PLOT_X1} y={RET_TOP - 10} textAnchor="end" fill="#A5F3FC">queda abrupta de %Ret</text>
+                        <g>
+                            <rect x={PLOT_X1 - 196} y={RET_TOP - 27} width={196} height={24} rx={5} fill={LABEL_BACKDROP} />
+                            <text x={PLOT_X1 - 6} y={RET_TOP - 10} textAnchor="end" fill="#A5F3FC">queda abrupta de %Ret</text>
+                        </g>
                     </motion.g>
                 )}
             </g>
 
             {/* reinfusão e prova */}
-            <line x1={tx(REINFUSE_T)} x2={tx(REINFUSE_T)} y1={HCT_TOP - 28} y2={RET_BOTTOM + 6} stroke={C.red} strokeOpacity={step >= 2 ? 0.9 : 0.35} strokeWidth={1.5} />
+            <line x1={tx(REINFUSE_T)} x2={tx(REINFUSE_T)} y1={HCT_TOP - 28} y2={RET_BOTTOM + 6} stroke={C.blood} strokeOpacity={step >= 2 ? 0.9 : 0.35} strokeWidth={1.5} />
             <line x1={tx(RACE_T)} x2={tx(RACE_T)} y1={HCT_TOP - 28} y2={RET_BOTTOM + 6} stroke="#fff" strokeOpacity={0.6} strokeWidth={1.5} strokeDasharray="3 4" />
             <text x={tx(REINFUSE_T) - 5} y={PHASE_LABEL_Y} textAnchor="end" className="font-mono" fontSize={FS} letterSpacing="0.02em" fill="#FDA4AF">REINFUSÃO</text>
             <path d={`M${tx(RACE_T)} ${PHASE_LABEL_Y - 13} l12 4.5 l-12 4.5 z`} fill="#fff" />
@@ -209,7 +219,7 @@ export const TimelineChart = ({ step, scenario }: TimelineChartProps) => {
 
             {/* coletas de rotina no armazenamento */}
             {step === 1 && STORAGE_CHECKS.map((t, i) => (
-                <motion.g key={t} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 + i * 0.25, duration: 0.3 }}>
+                <motion.g key={t} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: stagger(i, 0.4, 0.15), duration: DUR.enter, ease: EASE_OUT }}>
                     <circle cx={tx(t)} cy={hy(hct(t))} r={6} fill="#050510" stroke={C.normal} strokeWidth={2.4} />
                     {i === 1 && <text x={tx(t)} y={hy(hct(t)) + 28} textAnchor="middle" className="font-body" fontSize={FS_NOTE} fill="#7DD3FC">ABP: dentro da faixa</text>}
                 </motion.g>
@@ -231,18 +241,18 @@ export const TimelineChart = ({ step, scenario }: TimelineChartProps) => {
             {/* a bolsa de sangue */}
             <AnimatePresence>
                 {step === 1 && (
-                    <motion.g key="freezer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+                    <motion.g key="freezer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                         <rect x={FREEZER_X0} y={LANE_Y - 34} width={FREEZER_X1 - FREEZER_X0} height={68} rx={12} fill="rgba(186,230,253,0.07)" stroke={C.ice} strokeOpacity={0.7} strokeDasharray="5 5" />
-                        <text x={FREEZER_X0 + 14} y={LANE_Y - 5} className="font-display" fontSize={20} fontWeight={600} fill="#E0F2FE">–80 °C · DMSO</text>
+                        <text x={FREEZER_X0 + 14} y={LANE_Y - 5} className="font-body" fontSize={20} fontWeight={700} fill="#E0F2FE">–80 °C · DMSO</text>
                         <text x={FREEZER_X0 + 14} y={LANE_Y + 18} className="font-body" fontSize={FS_NOTE} fill="#BAE6FD">armazenada por meses</text>
                     </motion.g>
                 )}
             </AnimatePresence>
-            <g style={{ opacity: step >= 3 ? 0 : 1, transition: 'opacity 0.4s' }}>
+            <g style={{ opacity: step >= 3 ? 0 : 1, transition: 'opacity 300ms var(--ease-out)' }}>
                 <BloodBag x={bagX} y={LANE_Y + 4} fill={bagFill} frozen={frozen} />
             </g>
             {abp && (
-                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="font-body" fontSize={FS_NOTE}>
+                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="font-body" fontSize={FS_NOTE}>
                     <text x={8} y={26} className="font-mono" fontSize={FS} letterSpacing="0.04em" fill="#E5E7EB">COLETAS DO ABP</text>
                     <Mark x={18} y={LEGEND_Y} r={6} color={C.normal} kind="basal" />
                     <text x={32} y={LEGEND_Y + 6} fill="#F1F5F9">amostra basal</text>
@@ -252,16 +262,16 @@ export const TimelineChart = ({ step, scenario }: TimelineChartProps) => {
                     <text x={294} y={LEGEND_Y + 6} fill="#F1F5F9">coleta oportuna (após a reinfusão)</text>
                 </motion.g>
             )}
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 {step === 0 && (
-                    <motion.g key="l0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 1.2, duration: 0.4 }}>
-                        <text x={tx(COLLECT_T) + 30} y={LANE_Y - 1} className="font-display" fontSize={20} fontWeight={600} fill="#fff">coleta: 450–900 mL</text>
+                    <motion.g key="l0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ delay: 0.5, duration: DUR.enter, ease: EASE_OUT }}>
+                        <text x={tx(COLLECT_T) + 30} y={LANE_Y - 1} className="font-body" fontSize={20} fontWeight={700} fill="#fff">coleta: 450–900 mL</text>
                         <text x={tx(COLLECT_T) + 30} y={LANE_Y + 21} className="font-body" fontSize={FS_NOTE} fill="#E2E8F0">no pico da adaptação</text>
                     </motion.g>
                 )}
                 {step === 2 && (
-                    <motion.g key="l2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 0.6, duration: 0.4 }}>
-                        <text x={tx(REINFUSE_T) - 30} y={LANE_Y - 1} textAnchor="end" className="font-display" fontSize={20} fontWeight={600} fill="#fff">descongelada, lavada, 37 °C</text>
+                    <motion.g key="l2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ delay: 0.4, duration: DUR.enter, ease: EASE_OUT }}>
+                        <text x={tx(REINFUSE_T) - 30} y={LANE_Y - 1} textAnchor="end" className="font-body" fontSize={20} fontWeight={700} fill="#fff">descongelada, lavada, 37 °C</text>
                         <text x={tx(REINFUSE_T) - 30} y={LANE_Y + 21} textAnchor="end" className="font-body" fontSize={FS_NOTE} fill="#E2E8F0">reinfundida IV em 30–45 min</text>
                     </motion.g>
                 )}

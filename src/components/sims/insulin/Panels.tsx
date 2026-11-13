@@ -12,6 +12,7 @@ import {
     zoneForDose,
 } from './model';
 import { ZONE_ICONS } from './zoneIcons';
+import { IllustrativeTag } from '../../deck/IllustrativeTag';
 
 const CARD = 'rounded-2xl border border-white/10 bg-[rgba(8,8,18,0.72)]';
 
@@ -20,7 +21,7 @@ export const StepCard = ({ step }: { step: number }) => {
     return (
         <div className={`${CARD} px-4 py-2.5`}>
             <div className="font-mono text-[14px] uppercase tracking-[0.1em] text-gray-300">{info.kicker}</div>
-            <h3 className="mt-1 font-display text-[22px] font-semibold leading-tight text-white">{info.title}</h3>
+            <h3 className="mt-1 text-[22px] font-semibold leading-tight text-white">{info.title}</h3>
             <p className="mt-1 font-body text-[15.5px] leading-snug text-gray-200">{info.text}</p>
         </div>
     );
@@ -58,7 +59,6 @@ export const Meters = ({ glucose, glycogen }: MetersProps) => {
                         style={{
                             transform: `scaleY(${Math.max(glucose, 0.02)})`,
                             background: `linear-gradient(to top, ${gColor}, ${gColor}aa)`,
-                            boxShadow: `0 0 18px ${gColor}88`,
                         }}
                     />
                 </div>
@@ -73,7 +73,7 @@ export const Meters = ({ glucose, glycogen }: MetersProps) => {
                             >
                                 <span className="h-[2px] w-3 flex-none" style={{ background: b.color }} />
                                 <span
-                                    className="font-body text-[14.5px] leading-tight transition-colors"
+                                    className="font-body text-[14.5px] leading-tight transition-colors duration-180 ease-(--ease-out)"
                                     style={{ color: active ? '#fff' : '#cbd5e1', fontWeight: active ? 700 : 400 }}
                                 >
                                     {b.label}
@@ -89,15 +89,12 @@ export const Meters = ({ glucose, glycogen }: MetersProps) => {
                         style={{
                             transform: `scaleY(${Math.max(glycogen, 0.02)})`,
                             background: 'linear-gradient(to top, #0E7490, #67E8F9)',
-                            boxShadow: '0 0 16px rgba(103,232,249,0.45)',
                         }}
                     />
                 </div>
             </div>
             <div className="mt-auto flex items-center pt-1.5">
-                <span className="whitespace-nowrap rounded-full border border-amber-400/50 bg-amber-400/10 px-2 py-0.5 font-mono text-[14px] text-amber-200">
-                    modelo ilustrativo · sem mg/dL
-                </span>
+                <IllustrativeTag className="font-mono">modelo ilustrativo · sem mg/dL</IllustrativeTag>
             </div>
         </div>
     );
@@ -120,7 +117,7 @@ export const DoseControl = ({ dose, onDose }: DoseControlProps) => {
         <div className={`${CARD} grid grid-cols-[148px_1fr_384px] items-center gap-4 px-4 py-2`} style={{ height: 124 }}>
             <div>
                 <div className="font-mono text-[14px] uppercase tracking-[0.06em] text-gray-300">Dose de insulina</div>
-                <div className="font-display text-[40px] font-semibold leading-none transition-colors duration-300" style={{ color: zone.color }}>
+                <div className="font-display text-[40px] font-semibold leading-none transition-colors duration-300 ease-(--ease-out)" style={{ color: zone.color }}>
                     {doseLabel(dose)}
                 </div>
             </div>
@@ -129,7 +126,7 @@ export const DoseControl = ({ dose, onDose }: DoseControlProps) => {
                 <div className="absolute top-0 -translate-x-1/2 whitespace-nowrap font-body text-[15px] text-amber-200" style={{ left: pct(DOSE_SATURATION) }}>
                     ~12 UI · saturação de receptores IR
                 </div>
-                <div className="relative h-4 rounded-full border border-white/15">
+                <div className="relative h-4 rounded-full border border-white/15 [container-type:inline-size]">
                     <div
                         className="absolute inset-0 rounded-full"
                         style={{
@@ -140,10 +137,15 @@ export const DoseControl = ({ dose, onDose }: DoseControlProps) => {
                         <span key={d} className="absolute -bottom-1.5 -top-1.5 w-[3px] -translate-x-1/2 rounded bg-white/90" style={{ left: pct(d) }} />
                     ))}
                     <div
-                        className="pointer-events-none absolute top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[3px] border-white text-[#050510] transition-[left] duration-150"
-                        style={{ left: pct(dose), background: zone.color, boxShadow: `0 0 0 4px ${zone.color}44, 0 0 18px ${zone.color}` }}
+                        className="pointer-events-none absolute left-0 top-1/2 w-0 transition-transform duration-180 ease-(--ease-out)"
+                        style={{ transform: `translateX(${(dose / DOSE_MAX) * 100}cqw)` }}
                     >
-                        <ZoneIcon size={16} strokeWidth={2.6} aria-hidden />
+                        <div
+                            className="flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[3px] border-white text-[#050510]"
+                            style={{ background: zone.color, boxShadow: `0 0 0 4px ${zone.color}44, 0 0 18px ${zone.color}` }}
+                        >
+                            <ZoneIcon size={16} strokeWidth={2.6} aria-hidden />
+                        </div>
                     </div>
                     <input
                         type="range"
@@ -167,7 +169,7 @@ export const DoseControl = ({ dose, onDose }: DoseControlProps) => {
             </div>
 
             <div className="border-l-[3px] pl-3" style={{ borderColor: zone.color }}>
-                <div className="flex items-center gap-2 font-display text-[18px] font-semibold uppercase leading-tight tracking-wide" style={{ color: zone.color }}>
+                <div className="flex items-center gap-2 text-[18px] font-semibold uppercase leading-tight tracking-wide" style={{ color: zone.color }}>
                     <ZoneIcon size={20} strokeWidth={2.2} className="flex-none" aria-hidden />
                     {zone.title}
                 </div>

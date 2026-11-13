@@ -3,6 +3,8 @@
  * detalhes) são os mesmos da versão anterior; as cadeias só reorganizam em etapas
  * o que cada `detail` já afirma.
  */
+import { MUTED_TEXT, SUBSTANCE } from '../../../lib/palette';
+
 export type PillarKind = 'heart' | 'mito' | 'fiber';
 
 export interface ChainLink {
@@ -86,3 +88,21 @@ export const PILLARS: Pillar[] = [
         facts: [],
     },
 ];
+
+/**
+ * Cor de cada agente nos chips: a cor da SUBSTÂNCIA (a mesma da aula toda), não a do eixo.
+ * AICAR não tem categoria própria na paleta: fica neutro.
+ */
+export const DRUG_COLOR: Readonly<Record<string, string>> = {
+    EPO: SUBSTANCE.blood,
+    Transfusões: SUBSTANCE.blood,
+    AICAR: MUTED_TEXT,
+    'Beta-2 Agonistas': SUBSTANCE.beta2,
+    GW501516: SUBSTANCE.beta2,
+    EAA: SUBSTANCE.eaa,
+    hGH: SUBSTANCE.gh,
+    Insulina: SUBSTANCE.insulin,
+    'IGF-1': SUBSTANCE.gh,
+};
+
+export const drugColor = (drug: string): string => DRUG_COLOR[drug] ?? MUTED_TEXT;

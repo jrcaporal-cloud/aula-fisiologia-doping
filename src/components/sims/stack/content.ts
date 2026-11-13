@@ -8,6 +8,8 @@
  *  - Tooltip "A Origem do Termo" do título original (slidesData.ts).
  */
 
+import { SUBSTANCE } from '../../../lib/palette';
+
 /** Trecho de texto com destaque opcional (negrito branco ou itálico). */
 export interface Span {
     readonly t: string;
@@ -58,7 +60,7 @@ export const PIECES: readonly Piece[] = [
         ],
         half: '7–10 dias',
         detect: '3 meses',
-        color: '#60A5FA',
+        color: SUBSTANCE.eaa,
         soft: '#BFDBFE',
     },
     {
@@ -83,7 +85,7 @@ export const PIECES: readonly Piece[] = [
         ],
         half: '15–20 min',
         detect: '24–48 h',
-        color: '#10B981',
+        color: SUBSTANCE.gh,
         soft: '#A7F3D0',
     },
     {
@@ -106,8 +108,8 @@ export const PIECES: readonly Piece[] = [
         ],
         half: '4–6 min',
         detect: 'Difícil de detectar',
-        color: '#E11D48',
-        soft: '#FECDD3',
+        color: SUBSTANCE.insulin,
+        soft: '#A5F3FC',
     },
 ];
 

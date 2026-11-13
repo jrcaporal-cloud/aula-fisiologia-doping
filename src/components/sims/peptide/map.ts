@@ -93,10 +93,15 @@ export const ALREADY_SEEN: readonly { name: string; wada: string; where: string 
     { name: 'EPO', wada: 'S2.1', where: 'Ato III' },
 ];
 
+/**
+ * Um tom por família. Nenhum deles é o vermelho de risco: a família BPC-157 ganhou o rosa-magenta,
+ * o eixo gonadal usa o lilás dos peptídeos (o mesmo do hCG no slide da TPC) e o GLP-1, que é o único
+ * não proibido, usa o azul de "permitido" da aula.
+ */
 export const TONE_STYLES: Record<FamilyTone, { border: string; text: string; bg: string; badge: string }> = {
-    red: { border: 'rgba(225,29,72,0.75)', text: '#FDA4AF', bg: 'rgba(225,29,72,0.14)', badge: 'bg-brand-red/20 text-rose-200 border-brand-red/50' },
+    red: { border: 'rgba(244,114,182,0.8)', text: '#F9A8D4', bg: 'rgba(244,114,182,0.14)', badge: 'bg-pink-400/15 text-pink-200 border-pink-300/45' },
     amber: { border: 'rgba(245,158,11,0.75)', text: '#FDE68A', bg: 'rgba(245,158,11,0.12)', badge: 'bg-amber-400/15 text-amber-200 border-amber-300/40' },
     violet: { border: 'rgba(167,139,250,0.75)', text: '#DDD6FE', bg: 'rgba(167,139,250,0.13)', badge: 'bg-violet-400/15 text-violet-200 border-violet-300/40' },
-    sky: { border: 'rgba(56,189,248,0.75)', text: '#BAE6FD', bg: 'rgba(56,189,248,0.12)', badge: 'bg-sky-400/15 text-sky-200 border-sky-300/40' },
-    slate: { border: 'rgba(203,213,225,0.6)', text: '#E2E8F0', bg: 'rgba(203,213,225,0.08)', badge: 'bg-white/10 text-gray-100 border-white/25' },
+    sky: { border: 'rgba(196,181,253,0.75)', text: '#C4B5FD', bg: 'rgba(196,181,253,0.12)', badge: 'bg-violet-300/15 text-violet-100 border-violet-200/40' },
+    slate: { border: 'rgba(56,189,248,0.7)', text: '#BAE6FD', bg: 'rgba(56,189,248,0.10)', badge: 'bg-sky-400/15 text-sky-200 border-sky-300/40' },
 };

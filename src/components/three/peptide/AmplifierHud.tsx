@@ -25,20 +25,32 @@ export const AmplifierHud = ({ ligand, timeRef }: AmplifierHudProps) => {
     useEffect(() => {
         const s = sideOf(ligand);
         let raf = 0;
+        let shown: boolean | null = null;
         const tick = () => {
             raf = requestAnimationFrame(tick);
             const T = timeRef.current.t;
             const o = phase(T, 4.0, 4.3) * (1 - phase(T, 5.25, 5.6));
             const el = root.current;
+            // escondido e parado: nada a escrever no DOM neste quadro
+            if (o <= 0.01 && shown === false) return;
+            shown = o > 0.01;
             if (el) {
                 el.style.opacity = String(o);
-                el.style.visibility = o > 0.01 ? 'visible' : 'hidden';
+                el.style.visibility = shown ? 'visible' : 'hidden';
             }
-            if (o <= 0.01) return;
-            const lit = [nucleotide(s, s, T).gtp, extraGtp(s, s, 0, T), extraGtp(s, s, 1, T)];
-            gDots.current.forEach((d, i) => { if (d) d.style.opacity = String(0.2 + 0.8 * lit[i]); });
+            if (!shown) return;
+            const g = gDots.current;
+            for (let i = 0; i < g.length; i++) {
+                const lit = i === 0 ? nucleotide(s, s, T).gtp : extraGtp(s, s, i - 1, T);
+                const d = g[i];
+                if (d) d.style.opacity = String(0.2 + 0.8 * lit);
+            }
             const n = Math.round(bornFraction(T) * DOTS);
-            mDots.current.forEach((d, i) => { if (d) d.style.opacity = i < n ? '1' : '0.15'; });
+            const m = mDots.current;
+            for (let i = 0; i < m.length; i++) {
+                const d = m[i];
+                if (d) d.style.opacity = i < n ? '1' : '0.15';
+            }
             if (word.current) word.current.style.opacity = String(phase(T, 4.6, 4.85));
         };
         tick();

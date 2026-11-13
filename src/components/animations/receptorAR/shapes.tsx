@@ -12,7 +12,7 @@ export const ARE_X = [152, 198] as const;
 export const GPCR_X = 410;
 export const CHANNEL_X = 600;
 
-export const EASE = [0.45, 0, 0.2, 1] as const;
+export { EASE_IN_OUT as EASE } from '../../../lib/motion';
 export const LABEL = '#CBD5E1';
 export const EAA_COLOR = '#FBBF24';
 export const CORTISOL_COLOR = '#10B981';

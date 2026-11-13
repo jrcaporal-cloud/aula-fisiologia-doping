@@ -6,6 +6,9 @@ import { AxisDiagram } from './ghaxis/AxisDiagram';
 import { LEVELS, STEPS } from './ghaxis/content';
 import { LevelPanel } from './ghaxis/LevelPanel';
 import { MiniChart } from './ghaxis/MiniChart';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../lib/motion';
+import { IllustrativeTag } from '../deck/IllustrativeTag';
+import { SUBSTANCE } from '../../lib/palette';
 
 /**
  * Slide "Eixo GH-IGF-1 — os pontos de hackeamento fisiológico".
@@ -14,7 +17,20 @@ import { MiniChart } from './ghaxis/MiniChart';
  */
 
 const CARD_BG = { background: 'rgba(8,8,18,0.72)' };
-const INSULIN_DELAY_MS = 2600;
+/** Insulina automática logo depois do bypass; somada à barra do medidor (DUR.bar), fecha em 1,2 s. */
+const INSULIN_DELAY_MS = 600;
+
+/** Terceiro título: corpo claro; a cor do nível fica só no "Ponto N" à esquerda. */
+const StepTitle = ({ title, color }: { title: string; color: string }) => {
+    const at = title.indexOf(' · ');
+    if (at < 0) return <>{title}</>;
+    return (
+        <>
+            <span style={{ color }}>{title.slice(0, at)}</span>
+            {title.slice(at)}
+        </>
+    );
+};
 
 const CHART_TITLES = [
     'GH pulsátil × IGF-1 estável',
@@ -50,8 +66,10 @@ const GhAxisSim = () => {
             {/* Cabeçalho do passo + atalhos */}
             <div className="flex items-center justify-between gap-4 h-[44px] mb-1.5">
                 <div className="flex items-center gap-3 min-w-0">
-                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 leading-tight">
-                        <div className="font-display text-[17px] font-semibold" style={{ color: accent }}>{info.title}</div>
+                    <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="min-w-0 leading-tight">
+                        <div className="text-[20px] font-semibold" style={{ color: '#F3F4F6' }}>
+                            <StepTitle title={info.title} color={accent} />
+                        </div>
                         <div className="text-[15px] text-gray-100">{info.caption}</div>
                     </motion.div>
                 </div>
@@ -61,12 +79,12 @@ const GhAxisSim = () => {
                         const color = i === 0 ? '#E5E7EB' : LEVELS[i - 1].color;
                         return (
                             <button key={s.label} type="button" role="tab" aria-selected={active} onClick={() => setStep(i)}
-                                className="relative px-3 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors"
+                                className="relative px-3 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer transition-colors duration-180 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]"
                                 style={{ color: active ? '#fff' : '#D1D5DB' }}>
                                 {active && (
                                     <motion.span layoutId="gh-step" className="absolute inset-0 rounded-xl"
                                         style={{ background: `${color}22`, border: `1px solid ${color}99` }}
-                                        transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                        transition={SPRING_TAB} />
                                 )}
                                 <span className="relative flex items-center gap-1.5">
                                     {i > 0 && <span className="font-mono text-[14px]" style={{ color }}>{i}</span>}
@@ -84,9 +102,9 @@ const GhAxisSim = () => {
                     <AxisDiagram step={step} insulin={insulin} onSelect={setStep} />
                     {step === 3 && (
                         <button type="button" onClick={() => setInsulinChoice(!insulin)} aria-pressed={insulin}
-                            className="absolute left-3 bottom-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer border transition-colors"
+                            className="absolute left-3 bottom-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[15px] font-semibold cursor-pointer border transition-colors duration-180 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]"
                             style={insulin
-                                ? { background: 'rgba(34,211,238,0.16)', borderColor: 'rgba(34,211,238,0.7)', color: '#CFFAFE' }
+                                ? { background: `${SUBSTANCE.insulin}29`, borderColor: `${SUBSTANCE.insulin}B3`, color: '#CFFAFE' }
                                 : { background: 'rgba(8,8,18,0.8)', borderColor: 'rgba(255,255,255,0.18)', color: '#E5E7EB' }}>
                             <SyringeIcon size={16} /> {insulin ? 'com insulina' : '+ insulina'}
                         </button>
@@ -99,20 +117,18 @@ const GhAxisSim = () => {
                     {/* Mini-gráfico do passo */}
                     <div className="rounded-2xl border border-white/10 px-3.5 pt-2.5 pb-1.5 shrink-0" style={CARD_BG}>
                         <div className="flex items-center justify-between gap-3 mb-0.5">
-                            <span className="font-display text-[15px] font-semibold text-white truncate">{CHART_TITLES[step]}</span>
+                            <span className="text-[15px] font-semibold text-white truncate">{CHART_TITLES[step]}</span>
                             <div className="flex items-center gap-2 shrink-0">
                                 {step === 1 && (
                                     <button type="button" onClick={() => setSynergy(v => !v)} aria-pressed={synergy}
-                                        className="px-2.5 py-1 rounded-lg text-[14px] font-semibold cursor-pointer border transition-colors"
+                                        className="px-2.5 py-1 rounded-lg text-[14px] font-semibold cursor-pointer border transition-colors duration-180 ease-(--ease-out) focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]"
                                         style={synergy
-                                            ? { background: 'rgba(245,158,11,0.16)', borderColor: 'rgba(245,158,11,0.7)', color: '#FDE68A' }
+                                            ? { background: 'rgba(167,139,250,0.2)', borderColor: 'rgba(167,139,250,0.8)', color: '#DDD6FE' }
                                             : { background: 'transparent', borderColor: 'rgba(255,255,255,0.18)', color: '#E5E7EB' }}>
                                         + GHRH (CJC-1295)
                                     </button>
                                 )}
-                                <span className="text-[14px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md text-amber-200 border border-amber-400/40" style={{ background: 'rgba(245,158,11,0.10)' }}>
-                                    modelo ilustrativo
-                                </span>
+                                <IllustrativeTag className="font-mono uppercase tracking-wider">modelo ilustrativo</IllustrativeTag>
                             </div>
                         </div>
                         <MiniChart step={step} synergy={synergy} />

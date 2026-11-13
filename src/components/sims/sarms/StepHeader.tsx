@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT, SPRING_TAB } from '../../../lib/motion';
 
 /** Cabeçalho dos simuladores de SARMs e beta-2: título do passo + abas (o contador "passo n/N" fica no rodapé do deck). */
 
@@ -26,21 +27,24 @@ export const StepHeader = ({ steps, step, onSelect, id }: StepHeaderProps) => {
     const info = steps[step];
     return (
         <div className="flex items-center justify-between gap-4 h-[38px] mb-2">
-            <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="min-w-0 truncate">
-                <span className="font-display text-[16px] font-semibold" style={{ color: info.color }}>{info.title}</span>
-                <span className="text-[14px] text-gray-200"> · {info.caption}</span>
+            <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }} className="flex min-w-0 items-baseline gap-2">
+                <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: info.color }} aria-hidden />
+                <span className="min-w-0 truncate">
+                    <span className="text-[20px] font-semibold" style={{ color: '#F3F4F6' }}>{info.title}</span>
+                    <span className="text-[15px] text-gray-200"> · {info.caption}</span>
+                </span>
             </motion.div>
             <div className="flex items-center gap-1 rounded-2xl border border-white/10 p-[3px] shrink-0" style={CARD_BG} role="tablist" aria-label="Passos do slide">
                 {steps.map((s, i) => {
                     const active = i === step;
                     return (
                         <button key={s.label} type="button" role="tab" aria-selected={active} onClick={() => onSelect(i)}
-                            className="relative px-3 py-1 rounded-xl text-[14.5px] font-semibold cursor-pointer transition-colors"
+                            className="relative px-3 py-1 rounded-xl text-[14.5px] font-semibold cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                             style={{ color: active ? '#fff' : '#D1D5DB' }}>
                             {active && (
                                 <motion.span layoutId={`${id}-step`} className="absolute inset-0 rounded-xl"
                                     style={{ background: `${s.color}22`, border: `1px solid ${s.color}99` }}
-                                    transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                                    transition={SPRING_TAB} />
                             )}
                             <span className="relative flex items-center gap-1.5">
                                 <span className="font-mono text-[14px]" style={{ color: s.color }}>{i + 1}</span>

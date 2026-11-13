@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 import type { VertexId } from './content';
 
 /**
@@ -8,7 +9,6 @@ import type { VertexId } from './content';
 
 const VW = 620;
 const VH = 122;
-const EASE = [0.16, 1, 0.3, 1] as const;
 /** Tamanho dos textos dos esquemas (escala de exibição ≈ 1,0 na largura de desenho 1280). */
 const FS = 17;
 
@@ -26,8 +26,9 @@ const TransVisual = ({ reduce }: { reduce: boolean }) => {
             <Label x={0} y={16} color="#C4B5FD" weight={700}>supressão farmacológica atual</Label>
             {/* nível de testosterona descendo até o limite */}
             <rect x={0} y={26} width={250} height={22} rx={11} fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" />
-            <motion.rect x={0} y={26} height={22} rx={11} fill="rgba(168,85,247,0.55)"
-                initial={reduce ? false : { width: 240 }} animate={{ width: 64 }} transition={{ duration: 1.6, delay: 0.4, ease: EASE }} />
+            <motion.rect x={0} y={26} width={240} height={22} rx={11} fill="rgba(168,85,247,0.55)"
+                initial={reduce ? false : { clipPath: 'inset(0 0px 0 0 round 11px)' }} animate={{ clipPath: 'inset(0 176px 0 0 round 11px)' }}
+                transition={{ duration: DUR.bar, delay: 0.3, ease: EASE_OUT }} />
             <line x1={64} x2={64} y1={20} y2={54} stroke="#fff" strokeWidth={2} />
             <Label x={0} y={74}>testosterona ≤ limite da WADA</Label>
             <Label x={0} y={98} size={20} weight={700} color="#fff">2,5 nmol/L</Label>
@@ -37,7 +38,7 @@ const TransVisual = ({ reduce }: { reduce: boolean }) => {
             <rect x={290} y={26} width={330} height={22} rx={11} fill="rgba(244,114,182,0.12)" stroke="rgba(244,114,182,0.45)" />
             {nuclei.map(i => (
                 <motion.ellipse key={i} cx={312 + i * 42} cy={37} rx={7} ry={4.5} fill="#C4B5FD"
-                    initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.2 + i * 0.06 }} />
+                    initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.enter, delay: stagger(i, 0.2, 0.06), ease: EASE_OUT }} />
             ))}
             <Label x={290} y={74}>adição permanente de mionúcleos</Label>
             <Label x={290} y={96} color="#E5E7EB">pelve estreita · maior densidade óssea</Label>
@@ -68,11 +69,11 @@ const DiliVisual = ({ reduce }: { reduce: boolean }) => {
                     </text>
                 </g>
             ))}
-            <motion.g initial={reduce ? false : { x: 0 }} animate={{ x: last - x0 }} transition={{ duration: 1.8, delay: 0.3, ease: EASE }}>
+            <motion.g initial={reduce ? false : { x: 0 }} animate={{ x: last - x0 }} transition={{ duration: DUR.draw, delay: 0.15, ease: EASE_IN_OUT }}>
                 <circle cx={x0} cy={58} r={9} fill="#F59E0B" stroke="#050510" strokeWidth={2} />
                 <circle cx={x0} cy={58} r={16} fill="none" stroke="#F59E0B" strokeOpacity={0.5} />
             </motion.g>
-            <motion.g initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.9, duration: 0.4 }}>
+            <motion.g initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75, duration: DUR.enter, ease: EASE_OUT }}>
                 <rect x={last - 340} y={24} width={310} height={24} rx={8} fill="rgba(245,158,11,0.22)" stroke="rgba(245,158,11,0.6)" />
                 <Label x={last - 185} y={42} anchor="middle" color="#FEF3C7" weight={600}>resíduos de SARMs e Diuréticos</Label>
             </motion.g>
@@ -98,10 +99,11 @@ const WadaVisual = ({ reduce }: { reduce: boolean }) => {
                         <Label x={0} y={y + 6} weight={600} color="#fff">{r.label}</Label>
                         <rect x={262} y={y - 8} width={120} height={16} rx={8} fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" />
                         {r.w > 0 ? (
-                            <motion.rect x={262} y={y - 8} height={16} rx={8} fill="rgba(225,29,72,0.6)"
-                                initial={reduce ? false : { width: 0 }} animate={{ width: r.w }} transition={{ duration: 0.8, delay: 0.3 + i * 0.2, ease: EASE }} />
+                            <motion.rect x={262} y={y - 8} width={r.w} height={16} rx={8} fill="rgba(225,29,72,0.6)"
+                                style={{ originX: 0 }} initial={reduce ? false : { scaleX: 0 }} animate={{ scaleX: 1 }}
+                                transition={{ duration: DUR.bar, delay: stagger(i, 0.15, 0.12), ease: EASE_OUT }} />
                         ) : (
-                            <motion.circle cx={272} cy={y} r={5} fill="#FDA4AF" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} />
+                            <motion.circle cx={272} cy={y} r={5} fill="#FDA4AF" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: DUR.enter, ease: EASE_OUT }} />
                         )}
                         <Label x={396} y={y + 6} color="#FFE4E6">{r.detail}</Label>
                     </g>

@@ -3,8 +3,9 @@ import { useMemo, useRef, type PointerEvent } from 'react';
 import { AnimatedNumber } from './AnimatedNumber';
 import { CHART_H, CHART_W, M, PH, PW, doseFromX, sx, sy } from './geometry';
 import { DOSE_MAX, DOSE_MIN, STAGES, fmt, gainAt, slopeAt, stageAtDose } from './model';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
+import { CAUTION } from '../../../lib/palette';
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 const X_TICKS = [0, 100, 200, 300, 400, 500, 600, 700];
 const Y_TICKS = [0, 1, 2, 3, 4, 5, 6, 7];
 const TRIANGLE_RUN = 100;
@@ -85,10 +86,6 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
                     <stop offset="75%" stopColor="#FFFFFF" stopOpacity="0.9" />
                     <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                 </linearGradient>
-                <filter id="dose-glow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="5" result="b" />
-                    <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
                 <clipPath id="dose-plot-clip">
                     <rect x={M.left} y={M.top - 4} width={PW} height={PH + 4} />
                 </clipPath>
@@ -106,16 +103,16 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
                             x={x0} y={M.top} width={w} height={PH} fill={s.color}
                             initial={false}
                             animate={{ opacity: on ? (current ? 0.13 : 0.06) : 0.015 }}
-                            transition={{ duration: 0.6 }}
+                            transition={{ duration: DUR.bar, ease: EASE_OUT }}
                         />
                         <motion.rect
                             x={x0 + 1} y={M.top - 6} width={w - 2} height={3} rx={1.5} fill={s.color}
-                            initial={false} animate={{ opacity: on ? 0.95 : 0.15 }} transition={{ duration: 0.6 }}
+                            initial={false} animate={{ opacity: on ? 0.95 : 0.15 }} transition={{ duration: DUR.bar, ease: EASE_OUT }}
                         />
                         <motion.text
                             x={x0 + w / 2} y={M.top - 16} textAnchor="middle"
                             className="font-mono" fontSize={15} fontWeight={600} letterSpacing="0.04em" fill={s.color}
-                            initial={false} animate={{ opacity: on ? 1 : 0.3 }} transition={{ duration: 0.6 }}
+                            initial={false} animate={{ opacity: on ? 1 : 0.3 }} transition={{ duration: DUR.bar, ease: EASE_OUT }}
                         >
                             {s.bandLabel.toUpperCase()}
                         </motion.text>
@@ -150,13 +147,13 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
                 <motion.path
                     d={areaPath} fill="url(#dose-area-grad)"
                     initial={false} animate={{ opacity: showCurve ? 1 : 0 }}
-                    transition={{ duration: reduce ? 0 : 1.2, delay: showCurve && !reduce ? 0.6 : 0 }}
+                    transition={{ duration: reduce ? 0 : DUR.bar, delay: showCurve && !reduce ? 0.3 : 0, ease: EASE_OUT }}
                 />
                 <motion.path
                     d={curvePath} fill="none" stroke="url(#dose-curve-grad)" strokeWidth={4} strokeLinecap="round"
                     initial={false}
                     animate={{ pathLength: showCurve ? 1 : 0, opacity: showCurve ? 1 : 0 }}
-                    transition={{ duration: reduce ? 0 : 1.4, ease: EASE }}
+                    transition={{ duration: reduce ? 0 : DUR.draw, ease: EASE_IN_OUT }}
                 />
             </g>
 
@@ -166,33 +163,33 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
                 const px = sx(s.dose);
                 const py = sy(s.gain);
                 const lab = LABEL_OFFSET[s.id];
-                const dur = reduce ? 0 : 0.9;
+                const dur = reduce ? 0 : DUR.draw;
                 return (
-                    <motion.g key={s.id} initial={false} animate={{ opacity: on ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.35 }}>
+                    <motion.g key={s.id} initial={false} animate={{ opacity: on ? 1 : 0 }} transition={{ duration: reduce ? 0 : DUR.enter, ease: EASE_OUT }}>
                         {/* haste crescendo do eixo até o ponto */}
                         <motion.line
                             x1={px} x2={px} y1={sy(0)} stroke={s.color} strokeWidth={2} strokeDasharray="4 5" strokeOpacity={0.75}
-                            initial={false} animate={{ y2: on ? py : sy(0) }} transition={{ duration: dur, ease: EASE }}
+                            initial={false} animate={{ y2: on ? py : sy(0) }} transition={{ duration: dur, ease: EASE_OUT }}
                         />
                         <motion.g
                             initial={false}
                             animate={{ y: on ? 0 : sy(0) - py, scale: on ? 1 : 0.2 }}
-                            transition={{ duration: dur, ease: EASE }}
+                            transition={{ duration: dur, ease: EASE_OUT }}
                         >
                             <circle cx={px} cy={py} r={18} fill={s.color} opacity={0.16} />
-                            <circle cx={px} cy={py} r={10} fill="#050510" stroke={s.color} strokeWidth={3.5} filter={step === i ? 'url(#dose-glow)' : undefined} />
+                            <circle cx={px} cy={py} r={10} fill="#050510" stroke={s.color} strokeWidth={3.5} />
                             <circle cx={px} cy={py} r={4} fill={s.color} />
                         </motion.g>
                         <motion.text
                             x={px + lab.dx} y={py + lab.dy} textAnchor={lab.anchor}
-                            className="font-display" fontSize={24} fontWeight={600} fill={s.color}
+                            className="font-body" fontSize={24} fontWeight={600} fill={s.color}
                             initial={false} animate={{ opacity: on ? 1 : 0, y: on ? 0 : 10 }}
-                            transition={{ duration: reduce ? 0 : 0.5, delay: on && !reduce ? 0.55 : 0 }}
+                            transition={{ duration: reduce ? 0 : DUR.enter, delay: on && !reduce ? 0.55 : 0, ease: EASE_OUT }}
                         >
                             {s.id === 'fisio' ? '~0 kg' : (
                                 <AnimatedNumber
                                     value={on ? s.gain : 0} prefix="+" suffix={s.id === 'abuso' ? ' kg+' : ' kg'}
-                                    delay={on && !reduce ? 0.25 : 0} duration={1.1}
+                                    delay={on && !reduce ? 0.25 : 0} duration={DUR.draw}
                                 />
                             )}
                         </motion.text>
@@ -201,7 +198,7 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
             })}
 
             {/* Cursor, tangente e triângulo Δ */}
-            <motion.g initial={false} animate={{ opacity: showCurve ? 1 : 0 }} transition={{ duration: 0.5, delay: showCurve && !reduce ? 1.1 : 0 }}
+            <motion.g initial={false} animate={{ opacity: showCurve ? 1 : 0 }} transition={{ duration: DUR.enter, delay: showCurve && !reduce ? 0.6 : 0, ease: EASE_OUT }}
                 style={{ pointerEvents: 'none' }}>
                 <line x1={cx} x2={cx} y1={cy} y2={sy(0)} stroke="#FFFFFF" strokeOpacity={0.35} strokeDasharray="2 4" />
                 <line x1={M.left} x2={cx} y1={cy} y2={cy} stroke="#FFFFFF" strokeOpacity={0.35} strokeDasharray="2 4" />
@@ -223,7 +220,7 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
                 </g>
 
                 <circle cx={cx} cy={cy} r={16} fill="#FFFFFF" opacity={0.12} />
-                <circle cx={cx} cy={cy} r={8} fill="#FFFFFF" stroke="#050510" strokeWidth={2.5} filter="url(#dose-glow)" />
+                <circle cx={cx} cy={cy} r={8} fill="#FFFFFF" stroke="#050510" strokeWidth={2.5} />
 
                 {/* etiquetas nos eixos */}
                 <g transform={`translate(${cx} ${sy(0) + 24})`}>
@@ -237,14 +234,14 @@ export const DoseChart = ({ step, dose, onDose, onDragStart }: DoseChartProps) =
             </motion.g>
 
             {/* Legenda */}
-            <motion.g initial={false} animate={{ opacity: showCurve ? 1 : 0 }} transition={{ duration: 0.5, delay: showCurve && !reduce ? 0.9 : 0 }}>
+            <motion.g initial={false} animate={{ opacity: showCurve ? 1 : 0 }} transition={{ duration: DUR.enter, delay: showCurve && !reduce ? 0.6 : 0, ease: EASE_OUT }}>
                 <g transform={`translate(${M.left + 20} ${M.top + 22})`}>
                     <circle cx={6} cy={0} r={6} fill="#050510" stroke="#E4E4E7" strokeWidth={2.5} />
                     <text x={20} y={5} className="font-body" fontSize={15} fill="#E4E4E7">Pontos: dados da aula</text>
                     <rect x={0} y={24} width={14} height={4} rx={2} fill="url(#dose-legend-grad)" />
                     <text x={20} y={31} className="font-body" fontSize={15} fill="#E4E4E7">Curva:</text>
-                    <rect x={68} y={14} width={170} height={25} rx={12} fill="#F59E0B" fillOpacity={0.16} stroke="#F59E0B" strokeOpacity={0.7} />
-                    <text x={153} y={31} textAnchor="middle" className="font-mono" fontSize={15} fontWeight={600} fill="#FBBF24">modelo ilustrativo</text>
+                    <rect x={68} y={14} width={170} height={25} rx={12} fill={CAUTION.bg} stroke={CAUTION.border} />
+                    <text x={153} y={31} textAnchor="middle" className="font-mono" fontSize={15} fontWeight={600} fill={CAUTION.text}>modelo ilustrativo</text>
                 </g>
             </motion.g>
 

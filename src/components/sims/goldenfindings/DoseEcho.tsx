@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { DOSE_MAX, DOSE_MIN, STAGES, gainAt } from '../dose/model';
 import { EASE, strokeK, type EchoProps } from './echoKit';
 import { EchoSvg, Label } from './EchoParts';
+import { DUR, EASE_IN_OUT, stagger } from '../../../lib/motion';
 
 /**
  * Eco do slide "O Paradoxo da Dose": os 4 pontos da aula (Fisiol./100/300/600+ mg → ~0/+1,2/+3,5/+6,0 kg)
@@ -63,7 +64,7 @@ export const DoseEcho = ({ compact }: EchoProps) => {
             <motion.path
                 d={CURVE} fill="none" stroke="url(#gf-dose-grad)" strokeWidth={4 * k} strokeLinecap="round"
                 initial={reduce ? false : { pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: d(1.3), delay: d(1.4), ease: EASE }}
+                transition={{ duration: d(DUR.draw), delay: d(0.3), ease: EASE_IN_OUT }}
             />
 
             {/* pontos da aula */}
@@ -75,21 +76,21 @@ export const DoseEcho = ({ compact }: EchoProps) => {
                         <motion.line
                             x1={px} x2={px} y1={Y_BOT} stroke={s.color} strokeWidth={2 * k} strokeDasharray={compact ? undefined : '4 5'} strokeOpacity={0.7}
                             initial={reduce ? false : { y2: Y_BOT }} animate={{ y2: py }}
-                            transition={{ duration: d(0.7), delay: d(0.2 + i * 0.3), ease: EASE }}
+                            transition={{ duration: d(DUR.bar), delay: d(stagger(i, 0.1, 0.1)), ease: EASE }}
                         />
                         <motion.g
                             initial={reduce ? false : { opacity: 0, y: Y_BOT - py }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: d(0.7), delay: d(0.2 + i * 0.3), ease: EASE }}
+                            transition={{ duration: d(DUR.bar), delay: d(stagger(i, 0.1, 0.1)), ease: EASE }}
                         >
                             <circle cx={px} cy={py} r={9 * k} fill="#050510" stroke={s.color} strokeWidth={3 * k} />
                             <circle cx={px} cy={py} r={3.5 * k} fill={s.color} />
                         </motion.g>
-                        <Label compact={compact} x={i === 0 ? px + 14 : px} y={Y_BOT + 24} anchor={i === 0 ? 'end' : 'middle'} size={16} mono fill="#E5E7EB" delay={0.3 + i * 0.3}>
+                        <Label compact={compact} x={i === 0 ? px + 14 : px} y={Y_BOT + 24} anchor={i === 0 ? 'end' : 'middle'} size={16} mono fill="#E5E7EB" delay={stagger(i, 0.3, 0.1)}>
                             {s.doseText}
                         </Label>
                         <Label
                             compact={compact} x={px + GAIN_LABEL[s.id].dx} y={py + GAIN_LABEL[s.id].dy}
-                            anchor={GAIN_LABEL[s.id].anchor} size={19} weight={700} fill={s.color} delay={0.6 + i * 0.3}
+                            anchor={GAIN_LABEL[s.id].anchor} size={19} weight={700} fill={s.color} delay={stagger(i, 0.6, 0.1)}
                         >
                             {s.gainText}
                         </Label>
@@ -104,15 +105,16 @@ export const DoseEcho = ({ compact }: EchoProps) => {
                 <line key={w} x1={WEEK_X(w)} x2={WEEK_X(w)} y1={RULER_Y} y2={RULER_Y + (w % 4 === 0 ? 8 : 5)} stroke="#fff" strokeOpacity={0.45} strokeWidth={k} />
             ))}
             <motion.rect
-                x={WEEK_X(BAND.from)} y={RULER_Y - 30} height={30} rx={6} fill="#60A5FA" fillOpacity={0.22} stroke="#60A5FA" strokeWidth={1.5 * k}
-                initial={reduce ? false : { width: 0 }} animate={{ width: WEEK_X(BAND.to) - WEEK_X(BAND.from) }}
-                transition={{ duration: d(1.1), delay: d(1.0), ease: EASE }}
+                x={WEEK_X(BAND.from)} y={RULER_Y - 30} width={WEEK_X(BAND.to) - WEEK_X(BAND.from)} height={30} rx={6} fill="#60A5FA" fillOpacity={0.22} stroke="#60A5FA" strokeWidth={1.5 * k}
+                style={{ originX: 0 }}
+                initial={reduce ? false : { scaleX: 0 }} animate={{ scaleX: 1 }}
+                transition={{ duration: d(DUR.bar), delay: d(0.3), ease: EASE }}
             />
-            <Label compact={compact} x={(WEEK_X(BAND.from) + WEEK_X(BAND.to)) / 2} y={RULER_Y - 10} anchor="middle" size={17} weight={600} fill="#DBEAFE" delay={1.7}>
+            <Label compact={compact} x={(WEEK_X(BAND.from) + WEEK_X(BAND.to)) / 2} y={RULER_Y - 10} anchor="middle" size={17} weight={600} fill="#DBEAFE" delay={0.6}>
                 saturação via receptor AR
             </Label>
-            <Label compact={compact} x={WEEK_X(BAND.from)} y={RULER_Y + 26} anchor="middle" size={16} mono fill="#BFDBFE" delay={1.1}>3ª semana</Label>
-            <Label compact={compact} x={WEEK_X(BAND.to)} y={RULER_Y + 26} anchor="middle" size={16} mono fill="#BFDBFE" delay={1.8}>10ª semana</Label>
+            <Label compact={compact} x={WEEK_X(BAND.from)} y={RULER_Y + 26} anchor="middle" size={16} mono fill="#BFDBFE" delay={0.3}>3ª semana</Label>
+            <Label compact={compact} x={WEEK_X(BAND.to)} y={RULER_Y + 26} anchor="middle" size={16} mono fill="#BFDBFE" delay={0.75}>10ª semana</Label>
         </EchoSvg>
     );
 };

@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useMemo } from 'react';
+import { DUR, EASE_IN_OUT } from '../../../lib/motion';
 import { COLORS } from './content';
 import { useTween } from './useTween';
 
@@ -116,7 +117,7 @@ const distortionArea = (cx: number, d: number): string => {
 const PanelHeader = ({ x, kicker, title, sub, color }: { x: number; kicker: string; title: string; sub: string; color: string }) => (
     <g>
         <text x={x} y={30} textAnchor="middle" className="font-mono" fontSize={17.5} letterSpacing="0.06em" fill={color}>{kicker}</text>
-        <text x={x} y={62} textAnchor="middle" className="font-display" fontSize={24} fontWeight={600} fill="#fff">{title}</text>
+        <text x={x} y={62} textAnchor="middle" className="font-body" fontSize={24} fontWeight={600} fill="#fff">{title}</text>
         <text x={x} y={88} textAnchor="middle" className="font-body" fontSize={18} fill="#E2E8F0">{sub}</text>
     </g>
 );
@@ -127,7 +128,7 @@ const LENS_PATH_Y = [-120, -150, -70, -40, -80, -110, -120];
 export const NeedleHaystack = () => {
     const reduced = useReducedMotion() ?? false;
     const strands = useMemo(() => makeStrands(7), []);
-    const d = useTween(1, 2400, 1100, 0);
+    const d = useTween(1, DUR.draw * 1000, 150, 0);
 
     const needleX = LEFT_CX - 46;
     const needleY = BASE_Y - 84;
@@ -150,7 +151,7 @@ export const NeedleHaystack = () => {
             <motion.g
                 initial={{ x: LEFT_CX + LENS_PATH_X[0], y: BASE_Y + LENS_PATH_Y[0] }}
                 animate={reduced ? undefined : { x: LENS_PATH_X.map(v => LEFT_CX + v), y: LENS_PATH_Y.map(v => BASE_Y + v) }}
-                transition={{ duration: 11, ease: 'easeInOut', repeat: Infinity }}
+                transition={{ duration: 11, ease: EASE_IN_OUT, repeat: Infinity }}
             >
                 <circle r={34} fill="rgba(255,255,255,0.07)" stroke="#F3F4F6" strokeWidth={2.5} />
                 <circle r={27} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth={1} />

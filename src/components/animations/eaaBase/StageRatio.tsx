@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { EASE, LAYERS, STAGE_H, STAGE_W } from './content';
+import { DUR, stagger } from '../../../lib/motion';
 
 const PURPLE = LAYERS[1].color;
 const PURPLE_INK = LAYERS[1].ink;
@@ -79,7 +80,7 @@ const Tissue = ({ x, title, sub, converts, delay }: TissueProps) => {
 /** Camada 2 — afinidade pelo AR (Trembolona 3×) e seletividade tecidual pela 5α-redutase. */
 export const StageRatio = () => {
     const still = useReducedMotion();
-    const t = (delay: number, duration = 0.6) => (still ? { duration: 0 } : { delay, duration, ease: EASE });
+    const t = (delay: number, duration: number = DUR.enter) => (still ? { duration: 0 } : { delay, duration, ease: EASE });
     const rows = [
         { y: 70, label: 'Testosterona', units: 1, value: '1×', note: 'referência', color: '#CBD5E1' },
         { y: 116, label: 'Trembolona', units: 3, value: '3×', note: '', color: PURPLE },
@@ -97,30 +98,30 @@ export const StageRatio = () => {
                             fill={r.color} opacity={0.88}
                             initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
                             style={{ transformOrigin: `${BAR_X + k * UNIT}px ${r.y}px` }}
-                            transition={t(0.3 + i * 0.5 + k * 0.35, 0.45)}
+                            transition={t(stagger(k, 0.1 + i * 0.25, 0.1), DUR.bar)}
                         />
                     ))}
                     <motion.text
                         x={BAR_X + r.units * UNIT + 10} y={r.y + 6} fill={i ? PURPLE_INK : '#E5E7EB'} fontSize={20} fontWeight={700} className="font-mono"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(0.8 + i * 1.1)}
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(0.4 + i * 0.3)}
                     >{r.value}</motion.text>
                     {r.note && (
                         <motion.text x={BAR_X + r.units * UNIT + 46} y={r.y + 5} fill="#E5E7EB" fontSize={15} className="font-body"
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(0.9)}>{r.note}</motion.text>
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(0.45)}>{r.note}</motion.text>
                     )}
                 </g>
             ))}
             <motion.text x={20} y={152} fill="#E5E7EB" fontSize={15} className="font-body"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(2.2)}>
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(0.8)}>
                 Trembolona liga-se ao AR 3x mais forte que a Testosterona basal
             </motion.text>
 
             <line x1={20} x2={580} y1={170} y2={170} stroke="rgba(255,255,255,0.1)" />
             <text x={20} y={192} fill="#CBD5E1" fontSize={15} className="font-mono" letterSpacing={0}>SELETIVIDADE TECIDUAL · 5α-REDUTASE (T → DHT)</text>
 
-            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(2.4)}>
-                <Tissue x={20} title="Músculo" sub="baixa 5α-redutase" converts={false} delay={2.6} />
-                <Tissue x={310} title="Próstata e couro cabeludo" sub="alta 5α-redutase" converts delay={2.6} />
+            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={t(0.9)}>
+                <Tissue x={20} title="Músculo" sub="baixa 5α-redutase" converts={false} delay={0.9} />
+                <Tissue x={310} title="Próstata e couro cabeludo" sub="alta 5α-redutase" converts delay={0.9} />
                 <text x={20} y={422} fill="#E5E7EB" fontSize={15} className="font-body">
                     <tspan fill="#F3F4F6" fontWeight={600}>Resistem à 5α-redução</tspan> (ex.: Trembolona, Nandrolona):
                 </text>

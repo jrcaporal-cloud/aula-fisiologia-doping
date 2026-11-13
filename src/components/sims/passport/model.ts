@@ -10,6 +10,8 @@
  * distribuição populacional e cada coleta estreita o corredor em torno do atleta.
  */
 
+import { SUBSTANCE } from '../../../lib/palette';
+
 export type ProtocolId = 'limpo' | 'microdose' | 'transfusao';
 export type MarkerId = 'hb' | 'ret' | 'off';
 
@@ -113,7 +115,7 @@ export interface Protocol {
 
 export const PROTOCOLS: readonly Protocol[] = [
     {
-        id: 'limpo', label: 'Atleta limpo', short: 'Limpo', color: '#10B981',
+        id: 'limpo', label: 'Atleta limpo', short: 'Limpo', color: SUBSTANCE.allowed,
         samples: [...BASE, { hb: 13.3, ret: 1.06 }, { hb: 13.0, ret: 1.13 }, { hb: 13.4, ret: 1.07 }],
         phases: [],
         description: 'Sem manipulação. O atleta é comparado só com o próprio histórico: as variações naturais ficam dentro do túnel.',
@@ -130,11 +132,11 @@ export const PROTOCOLS: readonly Protocol[] = [
         source: 'Dossiê Lance Armstrong · slide "Raio-X do ABP"',
     },
     {
-        id: 'transfusao', label: 'Transfusão autóloga', short: 'Transfusão', color: '#E11D48',
+        id: 'transfusao', label: 'Transfusão autóloga', short: 'Transfusão', color: SUBSTANCE.blood,
         samples: [...BASE, { hb: 12.8, ret: 1.12 }, { hb: 15.4, ret: 0.58 }, { hb: 15.0, ret: 0.62 }],
         phases: [
             { from: 6, to: 6, label: 'Retirada', color: '#F59E0B' },
-            { from: 7, to: 8, label: 'Reinfusão', color: '#E11D48' },
+            { from: 7, to: 8, label: 'Reinfusão', color: SUBSTANCE.blood },
         ],
         description: 'Retirada de 450–900 mL, criopreservação e reinfusão 12–24 h antes da prova. Sem molécula exógena: a Hb sobe e o %Ret afunda (medula "apagada").',
         source: 'Slide "Transfusão Autóloga" · "Passaporte Biológico (ABP)"',

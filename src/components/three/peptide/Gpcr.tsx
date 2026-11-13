@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { V, rng } from '../receptor/layout';
@@ -9,6 +9,7 @@ import type { TimeRef } from '../receptor/types';
 import { arrestinPos, helix6Angle, receptorPos, vesicleScale } from './choreo';
 import { HELIX_HALF, PW, RING_R, ligandOf, pp, type Side } from './layout';
 import { PC, PEPTIDE_LIGANDS } from './ligands';
+import { helixMaterial, makeU, setU } from './shaders';
 
 /*
  * Receptor acoplado à proteína G: sete hélices transmembrana em anel (fita em espiral + núcleo), alças como
@@ -38,6 +39,7 @@ const COIL_GEO = buildCoil();
 const CORE_GEO = new THREE.CylinderGeometry(0.19, 0.19, HELIX_HALF * 2, 12, 1);
 
 const qTmp = new THREE.Quaternion();
+const qTop = new THREE.Quaternion();
 const helixQuat = (k: number, a6: number, out: THREE.Quaternion) => {
     out.setFromAxisAngle(tangent(k), TILT[k]);
     if (k === TM6) out.premultiply(qTmp.setFromAxisAngle(tangent(k), a6));
@@ -49,7 +51,7 @@ const ends = (k: number, a6: number, top: THREE.Vector3, bot: THREE.Vector3) => 
     const c = radial(k).multiplyScalar(RING_R);
     helixQuat(k, a6, qTmp);
     if (k === TM6) {
-        top.set(0, HELIX_HALF, 0).applyQuaternion(new THREE.Quaternion().setFromAxisAngle(tangent(k), TILT[k])).add(c);
+        top.set(0, HELIX_HALF, 0).applyQuaternion(qTop.setFromAxisAngle(tangent(k), TILT[k])).add(c);
         bot.set(0, -2 * HELIX_HALF, 0).applyQuaternion(qTmp).add(top);
     } else {
         top.set(0, HELIX_HALF, 0).applyQuaternion(qTmp).add(c);
@@ -85,6 +87,58 @@ const loopBeads = (a6: number): THREE.Vector3[] => {
 };
 const LOOP_N = loopBeads(0).length;
 
+/*
+ * Tabela das contas das alças por ângulo da hélice 6 (0 … A6_MAX), calculada uma vez: no quadro, só
+ * interpola entre duas linhas (nada de curvas nem vetores novos a cada quadro).
+ */
+const A6_MAX = 0.42;
+const A6_STEPS = 24;
+const LOOP_LUT: Float32Array[] = Array.from({ length: A6_STEPS + 1 }, (_, k) => {
+    const pts = loopBeads((k / A6_STEPS) * A6_MAX);
+    const arr = new Float32Array(LOOP_N * 3);
+    pts.forEach((p, i) => p.toArray(arr, i * 3));
+    return arr;
+});
+const LOOP_SCALE = new THREE.Vector3(0.13, 0.13, 0.13);
+const IDENT_Q = new THREE.Quaternion();
+const loopM = new THREE.Matrix4();
+const loopP = new THREE.Vector3();
+const writeLoops = (mesh: THREE.InstancedMesh, a6: number) => {
+    const x = Math.min(Math.max(a6 / A6_MAX, 0), 1) * A6_STEPS;
+    const k0 = Math.min(Math.floor(x), A6_STEPS - 1);
+    const f = x - k0;
+    const a = LOOP_LUT[k0];
+    const b = LOOP_LUT[k0 + 1];
+    for (let i = 0; i < LOOP_N; i++) {
+        const o = i * 3;
+        loopP.set(a[o] + (b[o] - a[o]) * f, a[o + 1] + (b[o + 1] - a[o + 1]) * f, a[o + 2] + (b[o + 2] - a[o + 2]) * f);
+        mesh.setMatrixAt(i, loopM.compose(loopP, IDENT_Q, LOOP_SCALE));
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+};
+/** Pose fixa de cada hélice (a 6 é girada à parte, no quadro). */
+const HELIX_POSE = Array.from({ length: 7 }, (_, k) => ({
+    pos: radial(k).multiplyScalar(RING_R),
+    quat: helixQuat(k, 0, new THREE.Quaternion()),
+}));
+const TM6_TOP = (() => {
+    const top = new THREE.Vector3();
+    ends(TM6, 0, top, new THREE.Vector3());
+    return top;
+})();
+const TM6_AXIS = tangent(TM6);
+
+/** Materiais de um receptor: hélices com o pulso do sinal, núcleo, alças. Descartados ao desmontar. */
+const buildReceptorMats = (color: string, on: boolean) => {
+    const act = makeU(0);
+    return {
+        act,
+        coil: helixMaterial(new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: on ? 0.28 : 0.08, roughness: 0.38 }), act, HELIX_HALF, color),
+        tm6: helixMaterial(new THREE.MeshStandardMaterial({ color: '#F8FAFC', emissive: color, emissiveIntensity: 0.35, roughness: 0.35 }), act, HELIX_HALF, color),
+        core: new THREE.MeshStandardMaterial({ color: new THREE.Color(color).multiplyScalar(0.45), roughness: 0.6 }),
+    };
+};
+
 interface GpcrProps { s: Side; active: Side; timeRef: TimeRef }
 
 const Receptor = ({ s, active, timeRef }: GpcrProps) => {
@@ -98,11 +152,12 @@ const Receptor = ({ s, active, timeRef }: GpcrProps) => {
     const on = s === active;
     const hover = useHover(info.receptor, 'Receptor acoplado à proteína G: sete hélices atravessam a membrana. O peptídeo encaixa na face de fora; na face de dentro abre-se o sítio da proteína G.');
     const hover6 = useHover('Hélice 6', 'Na ativação, as hélices internas se reorganizam: a hélice 6 se afasta do feixe e abre o sítio da proteína G na face de dentro.');
-    const tm6Center = useMemo(() => {
-        const top = new THREE.Vector3();
-        ends(TM6, 0, top, new THREE.Vector3());
-        return top;
-    }, []);
+    const mats = useMemo(() => buildReceptorMats(info.color, on), [info.color, on]);
+    useEffect(() => () => {
+        mats.coil.dispose();
+        mats.tm6.dispose();
+        mats.core.dispose();
+    }, [mats]);
 
     useFrame(() => {
         const T = timeRef.current.t;
@@ -110,36 +165,30 @@ const Receptor = ({ s, active, timeRef }: GpcrProps) => {
         if (!g) return;
         receptorPos(s, active, T, g.position);
         const a6 = helix6Angle(s, active, T);
-        if (tm6.current) {
-            tm6.current.quaternion.setFromAxisAngle(tangent(TM6), TILT[TM6] + a6);
-        }
+        if (tm6.current) tm6.current.quaternion.setFromAxisAngle(TM6_AXIS, TILT[TM6] + a6);
         if (loops.current && Math.abs(a6 - lastA.current) > 1e-4) {
             lastA.current = a6;
-            const m = new THREE.Matrix4();
-            const q = new THREE.Quaternion();
-            const sc = new THREE.Vector3(0.13, 0.13, 0.13);
-            loopBeads(a6).forEach((p, i) => loops.current?.setMatrixAt(i, m.compose(p, q, sc)));
-            loops.current.instanceMatrix.needsUpdate = true;
+            writeLoops(loops.current, a6);
         }
         const open = on ? pp(T, PW.h6) * (1 - pp(T, PW.couple)) : 0;
         if (site.current) (site.current.material as THREE.SpriteMaterial).opacity = open * 0.85;
         const bound = on ? pp(T, PW.dock) * (1 - pp(T, PW.fade)) : 0;
         if (pocket.current) (pocket.current.material as THREE.SpriteMaterial).opacity = bound * 0.5;
+        setU(mats.act, bound);
     });
 
-    const coreColor = new THREE.Color(info.color).multiplyScalar(0.45).getStyle();
     return (
         <group ref={root} rotation={[0, s > 0 ? Math.PI : 0, 0]}>
-            {Array.from({ length: 7 }, (_, k) => k === TM6 ? null : (
-                <group key={k} position={radial(k).multiplyScalar(RING_R)} quaternion={helixQuat(k, 0, new THREE.Quaternion())}>
-                    <mesh geometry={COIL_GEO}><meshStandardMaterial color={info.color} emissive={info.color} emissiveIntensity={on ? 0.28 : 0.08} roughness={0.38} /></mesh>
-                    <mesh geometry={CORE_GEO}><meshStandardMaterial color={coreColor} roughness={0.6} /></mesh>
+            {HELIX_POSE.map((h, k) => k === TM6 ? null : (
+                <group key={`tm${k + 1}`} position={h.pos} quaternion={h.quat}>
+                    <mesh geometry={COIL_GEO} material={mats.coil} />
+                    <mesh geometry={CORE_GEO} material={mats.core} />
                 </group>
             ))}
-            <group position={tm6Center} ref={tm6}>
+            <group position={TM6_TOP} ref={tm6}>
                 <group position={[0, -HELIX_HALF, 0]}>
-                    <mesh geometry={COIL_GEO}><meshStandardMaterial color="#F8FAFC" emissive={info.color} emissiveIntensity={0.35} roughness={0.35} /></mesh>
-                    <mesh geometry={CORE_GEO}><meshStandardMaterial color={coreColor} roughness={0.6} /></mesh>
+                    <mesh geometry={COIL_GEO} material={mats.tm6} />
+                    <mesh geometry={CORE_GEO} material={mats.core} />
                     <mesh {...hover6} scale={[0.5, HELIX_HALF * 2, 0.5]}>
                         <cylinderGeometry args={[1, 1, 1, 8]} />
                         <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
@@ -181,7 +230,7 @@ const Internalization = ({ s, timeRef }: { s: Side; timeRef: TimeRef }) => {
     useFrame(() => {
         const T = timeRef.current.t;
         if (arr.current) {
-            const { scale } = arrestinPos(s, T, arr.current.position);
+            const scale = arrestinPos(s, T, arr.current.position);
             arr.current.scale.setScalar(Math.max(scale, 1e-3));
             arr.current.visible = scale > 0.01;
         }

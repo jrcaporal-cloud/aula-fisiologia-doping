@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useId } from 'react';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 import { COLORS, REAL, WADA, WAVE_MS, WAVE_TOTAL_S } from './data';
 import {
     CELL_H, CELL_W, GRID_H, ICON_H, ICON_W, PAD_TOP, PAD_X, SVG_H, SVG_W, TOTAL,
@@ -12,8 +13,6 @@ interface StadiumGridProps {
     reduced: boolean;
 }
 
-
-const ease = [0.16, 1, 0.3, 1] as const;
 
 const cellFill = (i: number, step: number, guess: number): string => {
     if (step === 0) return i < guess ? COLORS.amber : COLORS.neutral;
@@ -72,7 +71,7 @@ export const StadiumGrid = ({ step, guess, reduced }: StadiumGridProps) => {
             <motion.g
                 initial={false}
                 animate={{ opacity: step >= 2 ? 1 : 0 }}
-                transition={{ duration: reduced ? 0 : 0.7, delay: step >= 2 ? after(WAVE_TOTAL_S * 0.6) : 0 }}
+                transition={{ duration: reduced ? 0 : DUR.morph, delay: step >= 2 ? after(WAVE_TOTAL_S * 0.6) : 0, ease: EASE_OUT }}
             >
                 <rect x={PAD_X} y={PAD_TOP} width={SVG_W} height={GRID_H} fill="rgba(225,29,72,0.10)" mask={`url(#${ids.mask})`} />
                 <rect x={PAD_X} y={PAD_TOP} width={SVG_W} height={GRID_H} fill={`url(#${ids.hatch})`} mask={`url(#${ids.mask})`} />
@@ -86,22 +85,20 @@ export const StadiumGrid = ({ step, guess, reduced }: StadiumGridProps) => {
                         style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
                         initial={{ scale: 0.6, opacity: 0 }}
                         animate={{ scale: [0.6, 1.55], opacity: [0.55, 0] }}
-                        transition={{ duration: 1.9, repeat: Infinity, ease: 'easeOut', delay: 0.35 + i * 0.25 }} />
+                        transition={{ duration: 1.9, repeat: Infinity, ease: EASE_OUT, delay: 0.35 + i * 0.25 }} />
                 );
             })}
 
             {/* 100 atletas */}
             {Array.from({ length: TOTAL }, (_, i) => {
                 const p = cellPos(i);
-                const isBlue = step >= 1 && i < WADA.pct;
                 return (
                     <use key={i} href={`#${ids.athlete}`}
                         x={p.x + (CELL_W - ICON_W) / 2} y={p.y + (CELL_H - ICON_H) / 2}
                         width={ICON_W} height={ICON_H}
                         style={{
                             fill: cellFill(i, step, guess),
-                            filter: isBlue ? `drop-shadow(0 0 6px ${COLORS.blueDeep})` : undefined,
-                            transition: reduced ? 'none' : 'fill 420ms cubic-bezier(0.16,1,0.3,1)',
+                            transition: reduced ? 'none' : 'fill 450ms var(--ease-out)',
                             transitionDelay: `${cellDelay(i, step, reduced)}ms`,
                         }} />
                 );
@@ -113,20 +110,20 @@ export const StadiumGrid = ({ step, guess, reduced }: StadiumGridProps) => {
                     <motion.path key="real" d={realPath} fill="none" stroke={COLORS.red} strokeWidth={2} strokeLinejoin="round"
                         initial={{ pathLength: reduced ? 1 : 0, opacity: 1 }}
                         animate={{ pathLength: 1, opacity: 1 }}
-                        exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                        transition={{ duration: reduced ? 0 : 0.9, delay: after(WAVE_TOTAL_S * 0.7), ease }} />
+                        exit={{ opacity: 0, transition: { duration: DUR.exit } }}
+                        transition={{ duration: reduced ? 0 : DUR.draw, delay: after(0.3), ease: EASE_IN_OUT }} />
                 )}
             </AnimatePresence>
 
             {/* Contorno dos detectados */}
             {wadaPath && (
                 <motion.path d={wadaPath} fill="none" stroke={COLORS.blue} strokeWidth={2} strokeLinejoin="round"
-                    initial={false} animate={{ opacity: step >= 1 ? 1 : 0 }} transition={{ duration: reduced ? 0 : 0.4 }} />
+                    initial={false} animate={{ opacity: step >= 1 ? 1 : 0 }} transition={{ duration: reduced ? 0 : DUR.morph, ease: EASE_OUT }} />
             )}
 
             {/* Palpite da turma: depois do passo 0, vira só uma marca tracejada */}
             {guessPath && (
-                <motion.g initial={false} animate={{ opacity: step >= 1 ? 1 : 0 }} transition={{ duration: reduced ? 0 : 0.4 }}>
+                <motion.g initial={false} animate={{ opacity: step >= 1 ? 1 : 0 }} transition={{ duration: reduced ? 0 : DUR.morph, ease: EASE_OUT }}>
                     <path d={guessPath} fill="none" stroke={COLORS.amber} strokeWidth={1.8} strokeDasharray="6 5" strokeLinejoin="round" />
                     <line x1={guessEdge} y1={PAD_TOP} x2={guessEdge} y2={PAD_TOP - 12} stroke={COLORS.amber} strokeWidth={1.4} />
                     <text x={guessEdge} y={PAD_TOP - 16} textAnchor={guessEdge < 150 ? 'start' : 'end'}
@@ -139,12 +136,12 @@ export const StadiumGrid = ({ step, guess, reduced }: StadiumGridProps) => {
 
             {/* Colchete do abismo */}
             <motion.g initial={false} animate={{ opacity: step >= 2 ? 1 : 0, y: step >= 2 ? 0 : -6 }}
-                transition={{ duration: reduced ? 0 : 0.6, delay: step >= 2 ? after(WAVE_TOTAL_S + 0.35) : 0, ease }}>
+                transition={{ duration: reduced ? 0 : DUR.enter, delay: step >= 2 ? after(WAVE_TOTAL_S + 0.15) : 0, ease: EASE_OUT }}>
                 <path d={`M${PAD_X + 1} ${bracketY} V${bracketY + 9} H${realEdge - 1} V${bracketY}`}
                     fill="none" stroke={COLORS.redSoft} strokeWidth={1.5} strokeOpacity={0.85} />
                 <line x1={(PAD_X + realEdge) / 2} y1={bracketY + 9} x2={(PAD_X + realEdge) / 2} y2={bracketY + 15}
                     stroke={COLORS.redSoft} strokeWidth={1.5} strokeOpacity={0.85} />
-                <text x={(PAD_X + realEdge) / 2} y={bracketY + 34} textAnchor="middle" className="font-display"
+                <text x={(PAD_X + realEdge) / 2} y={bracketY + 34} textAnchor="middle" className="font-body"
                     fontSize={20} fontWeight={600} fill={COLORS.redSoft} letterSpacing="0.04em">
                     o abismo
                 </text>

@@ -7,8 +7,9 @@ export const VB = {
     pl: 44,
     pr: 756,
     bandTop: 2,
-    bandH: 28,
-    pillY: 35,
+    bandH: 26,
+    // A pílula do dia do teste fica numa faixa própria, sem encostar na barra das fases acima.
+    pillY: 34,
     lanesTop: 62,
     lanesBottom: 354,
     axisY: 358,

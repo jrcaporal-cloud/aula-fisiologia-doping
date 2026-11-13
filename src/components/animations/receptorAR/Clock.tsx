@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { EASE_IN_OUT } from '../../../lib/motion';
 
 interface ClockProps {
     color: string;
@@ -36,7 +37,7 @@ export const Clock = ({ color, turns, duration, runKey, reduced, size = 44 }: Cl
                 key={runKey ?? 'final'}
                 initial={animateNow ? { rotate: 0 } : false}
                 animate={{ rotate: turns * 360 }}
-                transition={animateNow ? { duration, ease: [0.3, 0, 0.25, 1] } : { duration: 0 }}
+                transition={animateNow ? { duration, ease: EASE_IN_OUT } : { duration: 0 }}
             >
                 {/* círculo invisível: faz o centro de rotação coincidir com o centro do mostrador */}
                 <circle cx={r} cy={r} r={r - 1.5} fill="transparent" />

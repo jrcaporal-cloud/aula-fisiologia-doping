@@ -7,6 +7,7 @@ import { Cloud, Glow } from './primitives';
 import { SPHERE_GEO, STICK_GEO, ellipsoidCloud, stickMatrix } from './geometry';
 import type { TimeRef } from './types';
 import { useHover } from './useHover';
+import { commitInstances, raycastIfShown } from './instancing';
 
 /*
  * Maquinaria de transcrição: coativador SRC-1 (atraído pelo dímero no ARE), RNA polimerase II em corte
@@ -25,7 +26,9 @@ const SRC_SPHERES = ellipsoidCloud(53, 80, [0.95, 0.75, 0.85], 0.26, 0.4);
 
 const tmpM = new THREE.Matrix4();
 const q0 = new THREE.Quaternion();
-const sc = new THREE.Vector3();
+const SRC_LOCAL = V(0.1, 2.55, 0);
+const SRC_FROM = V(3, 4, 2.5);
+const MRNA_R = new THREE.Vector3(0.17, 0.17, 0.17);
 
 export const Transcription = ({ timeRef }: { timeRef: TimeRef }) => {
     const rnap = useRef<THREE.Group>(null);
@@ -45,7 +48,7 @@ export const Transcription = ({ timeRef }: { timeRef: TimeRef }) => {
         if (Math.abs(T - lastT.current) < 1e-5) return;
         lastT.current = T;
         if (rnap.current) {
-            const { scale } = rnapPose(T, rp);
+            const scale = rnapPose(T, rp);
             rnap.current.position.copy(rp);
             rnap.current.scale.setScalar(Math.max(scale, 0.001));
             rnap.current.visible = scale > 0.01;
@@ -53,25 +56,21 @@ export const Transcription = ({ timeRef }: { timeRef: TimeRef }) => {
         if (src.current) {
             const k = ph(T, W.src1);
             dimerFrame(T, pose);
-            src.current.position.copy(V(0.1, 2.55, 0).applyQuaternion(pose.q).add(pose.p)).add(V(3, 4, 2.5).multiplyScalar(1 - k));
+            src.current.position.copy(SRC_LOCAL).applyQuaternion(pose.q).add(pose.p).addScaledVector(SRC_FROM, 1 - k);
             src.current.scale.setScalar(Math.max(k, 0.001));
             src.current.visible = k > 0.01;
         }
         const b = beadsRef.current;
         const l = linksRef.current;
         if (!b || !l) return;
-        mrnaBeads(T, beads);
-        for (let i = 0; i < MRNA_N; i++) {
-            const hidden = beads[i].y < -900;
-            const r = hidden ? 0 : 0.17;
-            b.setMatrixAt(i, tmpM.compose(beads[i], q0, sc.set(r, r, r)));
-            if (i < MRNA_N - 1) {
-                const ok = !hidden && beads[i + 1].y > -900;
-                l.setMatrixAt(i, ok ? stickMatrix(beads[i], beads[i + 1], 0.07, tmpM) : tmpM.makeScale(0, 0, 0));
-            }
+        // os nucleotídeos já transcritos são um prefixo (0 … n-1): count corta o resto
+        const n = mrnaBeads(T, beads);
+        for (let i = 0; i < n; i++) {
+            b.setMatrixAt(i, tmpM.compose(beads[i], q0, MRNA_R));
+            if (i < n - 1) l.setMatrixAt(i, stickMatrix(beads[i], beads[i + 1], 0.07, tmpM));
         }
-        b.instanceMatrix.needsUpdate = true;
-        l.instanceMatrix.needsUpdate = true;
+        commitInstances(b, n);
+        commitInstances(l, Math.max(n - 1, 0));
     });
 
     return (
@@ -79,11 +78,11 @@ export const Transcription = ({ timeRef }: { timeRef: TimeRef }) => {
             <group ref={rnap} visible={false}>
                 <Cloud spheres={RNAP_SPHERES} color="#94a3b8" color2="#64748b" roughness={0.65} />
                 <Glow color="#f472b6" size={1.6} opacity={0.55} />
-                <mesh {...hoverPol} scale={2.1}><sphereGeometry args={[1, 10, 8]} /><meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} /></mesh>
+                <mesh {...hoverPol} scale={2.1} raycast={raycastIfShown}><sphereGeometry args={[1, 10, 8]} /><meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} /></mesh>
             </group>
             <group ref={src} visible={false}>
                 <Cloud spheres={SRC_SPHERES} color="#2dd4bf" color2="#0d9488" roughness={0.6} />
-                <mesh {...hoverSrc} scale={1}><sphereGeometry args={[1, 10, 8]} /><meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} /></mesh>
+                <mesh {...hoverSrc} scale={1} raycast={raycastIfShown}><sphereGeometry args={[1, 10, 8]} /><meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} /></mesh>
             </group>
             <instancedMesh ref={beadsRef} args={[SPHERE_GEO, undefined, MRNA_N]} frustumCulled={false} {...hoverM}>
                 <meshStandardMaterial color="#f472b6" emissive="#be185d" emissiveIntensity={0.45} roughness={0.35} />

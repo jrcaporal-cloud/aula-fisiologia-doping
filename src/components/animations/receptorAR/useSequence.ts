@@ -10,6 +10,11 @@ const getReduced = () => window.matchMedia(REDUCED_QUERY).matches;
 
 export const useReducedMotion = (): boolean => useSyncExternalStore(subscribeReduced, getReduced, () => false);
 
+/*
+ * Exceção de palco (regra T, exceção 3 — confirmada pelo Rinaldo em 09/11/2026): o tempo da via É o conteúdo
+ * (genômica ~6,9 s × não genômica ~3,3 s, com o relógio). O texto do passo já está legível em ≤ 0,6 s e o
+ * próximo clique corta a sequência (troca de runId limpa os timers). Não comprimir estas fases.
+ */
 /** Início (ms) de cada fase da via genômica: entrada → ligação/HSP → dímero → núcleo/ARE → SRC-1 → mRNA → proteínas. */
 export const GENOMIC_TIMES = [0, 1100, 2200, 3100, 4200, 4900, 5900] as const;
 /** Início (ms) de cada fase da via não genômica: acoplamento → cascatas → bloqueio do cortisol → Ca²⁺. */

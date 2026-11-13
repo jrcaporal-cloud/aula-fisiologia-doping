@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import { motion } from 'framer-motion';
+import { EASE_IN_OUT } from '../../../lib/motion';
 import { areaAbove, areaUnder, linePath, STRIP_H, type Interval, type LaneBox, type Sample, type YMap } from './geometry';
 import { VB, xFromU } from './scales';
 
@@ -7,6 +8,8 @@ export const RED = '#E11D48';
 const RED_SOFT = '#FDA4AF';
 const MONO = 'JetBrains Mono, ui-monospace, monospace';
 const MONO_CHAR = 9.7; // largura média de um caractere mono a 16px
+/** Respiro entre a barra e o rótulo que a nomeia (nenhum rótulo encosta no desenho). */
+const LABEL_GAP = 14;
 
 export interface StripSpec {
     intervals: Interval[];
@@ -43,11 +46,11 @@ interface StripProps {
 
 const StripLabel = ({ end, y, text, color }: { end: number; y: number; text: string; color: string }) => {
     const w = text.length * MONO_CHAR;
-    const outside = end + 8 + w < VB.pr;
-    const x = outside ? end + 8 : Math.max(end - 16 - w, VB.pl + 4);
+    const outside = end + LABEL_GAP + w < VB.pr;
+    const x = outside ? end + LABEL_GAP : Math.max(end - LABEL_GAP - 8 - w, VB.pl + 4);
     return (
         <g>
-            <rect x={x - 5} y={y + 0.5} width={w + 10} height={STRIP_H - 1} rx={4} fill="#050510" fillOpacity={0.9} />
+            <rect x={x - 6} y={y - 1} width={w + 12} height={STRIP_H + 2} rx={4} fill="#050510" fillOpacity={0.94} />
             <text x={x} y={y + STRIP_H / 2 + 5.5} fontSize={16} fontFamily={MONO} fill={color}>{text}</text>
         </g>
     );
@@ -88,18 +91,20 @@ export const LaneView = ({ spec, hatchId }: LaneViewProps) => {
         <g>
             <defs>
                 <clipPath id={clipId}>
-                    <motion.rect x={VB.pl - 2} y={box.top} height={box.bottom - box.top + 2}
-                        initial={{ width: 0 }} animate={{ width: VB.pr - VB.pl + 4 }}
-                        transition={{ duration: spec.reveal.duration, delay: spec.reveal.delay, ease: [0.45, 0, 0.2, 1] }} />
+                    <motion.rect x={VB.pl - 2} y={box.top} width={VB.pr - VB.pl + 4} height={box.bottom - box.top + 2}
+                        style={{ originX: 0 }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                        transition={{ duration: spec.reveal.duration, delay: spec.reveal.delay, ease: EASE_IN_OUT }} />
                 </clipPath>
             </defs>
 
             {/* Cabeçalho da faixa */}
             <circle cx={VB.pl + 6} cy={box.top + 11} r={5.5} fill={color} />
-            <text x={VB.pl + 18} y={box.top + 17} fontSize={16.5} fill="#fff" stroke="#050510" strokeWidth={4} paintOrder="stroke" style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>
+            <text x={VB.pl + 18} y={box.top + 17} fontSize={16.5} fill="#fff" stroke="#050510" strokeWidth={4} paintOrder="stroke" style={{ fontFamily: 'var(--font-body)', fontWeight: 600 }}>
                 {spec.title}
-                <tspan dx={10} fontSize={15.2} fontFamily={MONO} fill={color} letterSpacing={0.3}>{spec.badge}</tspan>
             </text>
+            {/* Selo da fase na outra ponta do cabeçalho: longe do título e do começo da curva. */}
+            <text x={VB.pr - 4} y={box.top + 17} textAnchor="end" fontSize={15.2} fontFamily={MONO} fill={color} letterSpacing={0.3}
+                stroke="#050510" strokeWidth={4} paintOrder="stroke">{spec.badge}</text>
 
             {/* Fundo do gráfico com décadas */}
             <rect x={VB.pl} y={box.plotTop} width={VB.pr - VB.pl} height={plotH} rx={6} fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.08)" />
@@ -110,7 +115,7 @@ export const LaneView = ({ spec, hatchId }: LaneViewProps) => {
             <g clipPath={`url(#${clipId})`}>
                 {spec.area ? (
                     <>
-                        <path d={areaUnder(spec.main, y, box.plotBottom)} fill={color} fillOpacity={0.22} />
+                        <path d={areaUnder(spec.main, y, box.plotBottom)} fill={color} fillOpacity={0.3} />
                         <path d={linePath(spec.main, y)} fill="none" stroke={color} strokeWidth={2.4} strokeLinejoin="round" />
                     </>
                 ) : (
@@ -119,8 +124,7 @@ export const LaneView = ({ spec, hatchId }: LaneViewProps) => {
                         {spec.secondary && (
                             <path d={linePath(spec.secondary, y)} fill="none" stroke={color} strokeOpacity={0.85} strokeWidth={2} strokeDasharray="7 5" />
                         )}
-                        <path d={linePath(spec.main, y)} fill="none" stroke={color} strokeWidth={2.4} strokeLinejoin="round"
-                            style={{ filter: `drop-shadow(0 0 5px ${color}88)` }} />
+                        <path d={linePath(spec.main, y)} fill="none" stroke={color} strokeWidth={2.4} strokeLinejoin="round" />
                     </>
                 )}
                 {spec.effect && <Strip spec={spec.effect} y={box.effY} fill={color} textColor={color} />}

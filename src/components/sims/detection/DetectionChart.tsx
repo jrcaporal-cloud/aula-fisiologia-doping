@@ -1,5 +1,6 @@
 import { useId, useMemo, useRef, type PointerEvent } from 'react';
 import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { STRAT } from './model';
 import { buildLogLanes, buildStratLanes, COLORS } from './lanes';
 import { LaneView, RED } from './LaneView';
@@ -25,11 +26,11 @@ const Axis = ({ ticks, title }: { ticks: Tick[]; title: string }) => (
             <g key={t.u} transform={`translate(${xFromU(t.u)},${VB.axisY})`}>
                 <line y1={-(VB.axisY - VB.lanesTop)} y2={0} stroke="rgba(255,255,255,0.06)" />
                 <line y1={0} y2={t.major ? 7 : 5} stroke="rgba(255,255,255,0.55)" />
-                {t.label && <text y={21} textAnchor="middle" fontSize={16} fontFamily={MONO} fill={t.major ? '#F3F4F6' : '#CBD5E1'}
+                {t.label && <text y={21} textAnchor="middle" fontSize={16} fontFamily={MONO} fill={t.major ? '#F9FAFB' : '#D1D5DB'}
                     stroke="#050510" strokeWidth={4} paintOrder="stroke">{t.label}</text>}
             </g>
         ))}
-        <text x={(VB.pl + VB.pr) / 2} y={VB.h - 4} textAnchor="middle" fontSize={16} fill="#CBD5E1" style={{ fontFamily: 'var(--font-body)' }}>{title}</text>
+        <text x={(VB.pl + VB.pr) / 2} y={VB.h - 4} textAnchor="middle" fontSize={16} fill="#D1D5DB" style={{ fontFamily: 'var(--font-body)' }}>{title}</text>
     </g>
 );
 
@@ -39,7 +40,7 @@ const LogBand = () => (
             <g key={r.label}>
                 {i > 0 && <line x1={xFromU(r.u0)} x2={xFromU(r.u0)} y1={VB.bandTop + 4} y2={VB.bandTop + VB.bandH - 4} stroke="rgba(255,255,255,0.18)" />}
                 <text x={(xFromU(r.u0) + xFromU(r.u1)) / 2} y={VB.bandTop + 19} textAnchor="middle" fontSize={16} fontFamily={MONO}
-                    fill="#CBD5E1" letterSpacing={0.4}>{r.label}</text>
+                    fill="#D1D5DB" letterSpacing={0.4}>{r.label}</text>
             </g>
         ))}
     </g>
@@ -49,7 +50,7 @@ const Phase = ({ d0, d1, color, label, delay }: { d0: number; d1: number; color:
     const x0 = xFromU(uFromDay(d0));
     const x1 = xFromU(uFromDay(d1));
     return (
-        <motion.g initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay }}>
+        <motion.g initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, delay, ease: EASE_OUT }}>
             <rect x={x0 + 1} y={VB.bandTop} width={x1 - x0 - 2} height={VB.bandH} rx={6} fill={color} fillOpacity={0.16} stroke={color} strokeOpacity={0.6} />
             <text x={(x0 + x1) / 2} y={VB.bandTop + 19.5} textAnchor="middle" fontSize={16} fontWeight={600} fill="#fff" style={{ fontFamily: 'var(--font-body)' }}>{label}</text>
         </motion.g>
@@ -64,8 +65,10 @@ const StratBackdrop = () => {
             <rect x={xz} y={VB.lanesTop - 4} width={VB.pr - xz} height={VB.axisY - VB.lanesTop + 4} fill="rgba(96,165,250,0.05)" />
             <line x1={xz} x2={xz} y1={VB.lanesTop - 4} y2={VB.axisY} stroke="rgba(96,165,250,0.35)" strokeDasharray="3 4" />
             {/* quebra de escala no eixo */}
-            <path d={`M${xz - 6},${VB.axisY + 5} l4,-10 M${xz + 2},${VB.axisY + 5} l4,-10`} stroke="#93C5FD" strokeWidth={1.6} />
-            <line x1={xp} x2={xp} y1={VB.bandTop + VB.bandH} y2={VB.axisY} stroke={COLORS.prova} strokeWidth={2} strokeOpacity={0.85} />
+            {/* Marca da quebra de escala: acima do eixo, fora dos rótulos "−4 sem" e "−21 d". */}
+            <path d={`M${xz - 7},${VB.axisY - 3} l4,-10 M${xz + 1},${VB.axisY - 3} l4,-10`} stroke="#CBD5E1" strokeWidth={1.6} />
+            {/* Tracejada: a marca da prova não se confunde com a linha cheia do dia do teste. */}
+            <line x1={xp} x2={xp} y1={VB.bandTop + VB.bandH} y2={VB.axisY} stroke={COLORS.prova} strokeWidth={2} strokeOpacity={0.8} strokeDasharray="7 5" />
         </g>
     );
 };
@@ -82,8 +85,7 @@ const StratBand = () => (
 const TestRule = ({ u }: { u: number }) => {
     const x = xFromU(u);
     return (
-        <line x1={x} x2={x} y1={VB.pillY + 24} y2={VB.axisY} stroke="#fff" strokeWidth={2} pointerEvents="none"
-            style={{ filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.7))' }} />
+        <line x1={x} x2={x} y1={VB.pillY + 24} y2={VB.axisY} stroke="#fff" strokeWidth={2} pointerEvents="none" />
     );
 };
 
@@ -94,7 +96,7 @@ const TestPill = ({ u, text }: { u: number; text: string }) => {
     return (
         <g pointerEvents="none">
             <path d={`M${x - 6},${VB.axisY} L${x + 6},${VB.axisY} L${x},${VB.axisY - 8} Z`} fill="#fff" />
-            <rect x={px} y={VB.pillY} width={w} height={24} rx={12} fill="#fff" />
+            <rect x={px} y={VB.pillY} width={w} height={24} rx={12} fill="#fff" stroke="#050510" strokeWidth={2} />
             <text x={px + w / 2} y={VB.pillY + 17} textAnchor="middle" fontSize={16} fontFamily={MONO} fontWeight={700} fill="#050510">
                 ◂ {text} ▸
             </text>
@@ -144,11 +146,11 @@ export const DetectionChart = ({ mode, mix, u, pillText, onScrubStart, onScrub }
             <TestRule u={u} />
 
             {/* Troca de modo: o grupo novo monta e entra com fade (sem exit, robusto a toques rápidos). */}
-            <motion.g key={mode} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.45 }}>
+            <motion.g key={mode} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>
                 {mode === 'strat' && <StratBackdrop />}
                 {mode === 'log' ? <LogBand /> : <StratBand />}
                 <text transform={`translate(16, ${yLabelMid}) rotate(-90)`} textAnchor="middle" fontSize={16}
-                    fill="#CBD5E1" style={{ fontFamily: 'var(--font-body)' }}>concentração relativa (escala log)</text>
+                    fill="#D1D5DB" style={{ fontFamily: 'var(--font-body)' }}>concentração relativa (escala log)</text>
                 {lanes.map((lane, i) => (
                     <g key={lane.title} opacity={mode === 'log' && i === 1 ? mix : 1}>
                         <LaneView spec={lane} hatchId={hatchId} />

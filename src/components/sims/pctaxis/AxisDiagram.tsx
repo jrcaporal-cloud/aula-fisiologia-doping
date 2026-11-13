@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 import { C, NUMBERS } from './content';
 import { Pulses, RailParticles } from './Pulses';
 
@@ -55,8 +56,8 @@ const Node = ({ box, label, dim }: { box: { x: number; y: number; w: number; h: 
     <g>
         <motion.rect x={box.x} y={box.y} width={box.w} height={box.h} rx={14} strokeWidth={1.5}
             initial={false} animate={{ fill: dim ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.07)', stroke: dim ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.5)' }}
-            transition={{ duration: 0.5 }} />
-        <text x={box.x + 16} y={box.y + 31} className="font-display" fontSize={20} fontWeight={600} fill="#F9FAFB">{label}</text>
+            transition={{ duration: DUR.morph, ease: EASE_OUT }} />
+        <text x={box.x + 16} y={box.y + 31} className="font-body" fontSize={20} fontWeight={700} fill="#F9FAFB">{label}</text>
     </g>
 );
 
@@ -67,7 +68,7 @@ const Socket = ({ y, serm, reduced }: { y: number; serm: boolean; reduced: boole
             fill="#F472B6" fillOpacity={0.35} stroke="#F9A8D4" strokeWidth={1.4} />
         <motion.rect x={SOCKET_X + 4} y={y - 7} width={14} height={14} rx={2} fill={C.serm} stroke="#fff" strokeWidth={1.2}
             style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
-            initial={false} animate={{ opacity: serm ? 1 : 0, rotate: 45, x: serm ? 0 : 30 }} transition={{ duration: reduced ? 0 : 0.6, delay: serm && !reduced ? 0.3 : 0 }} />
+            initial={false} animate={{ opacity: serm ? 1 : 0, rotate: 45, x: serm ? 0 : 30 }} transition={{ duration: reduced ? 0 : DUR.morph, delay: serm && !reduced ? 0.15 : 0, ease: EASE_OUT }} />
     </g>
 );
 
@@ -81,11 +82,11 @@ const Arrow = ({ x1, y1, x2, y2, level, color, label, labelX, labelAnchor }: {
     return (
         <g>
             <motion.line x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth={3} strokeLinecap="round" initial={false}
-                animate={{ stroke, strokeOpacity: on ? 0.45 + 0.55 * level : 1, strokeDasharray: on ? '0 0' : '4 6' }} transition={{ duration: 0.5 }} />
+                animate={{ stroke, strokeOpacity: on ? 0.45 + 0.55 * level : 1, strokeDasharray: on ? '0 0' : '4 6' }} transition={{ duration: DUR.morph, ease: EASE_OUT }} />
             <motion.path d={`M ${head(0.45)} L ${x2} ${y2} L ${head(-0.45)}`} fill="none" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"
-                initial={false} animate={{ stroke }} transition={{ duration: 0.5 }} />
+                initial={false} animate={{ stroke }} transition={{ duration: DUR.morph, ease: EASE_OUT }} />
             <motion.text x={labelX} y={(y1 + y2) / 2 + 5} textAnchor={labelAnchor} className="font-mono" fontSize={18} fontWeight={700}
-                initial={false} animate={{ fill: on ? color : '#D1D5DB' }} transition={{ duration: 0.5 }}>{label}</motion.text>
+                initial={false} animate={{ fill: on ? color : '#D1D5DB' }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>{label}</motion.text>
         </g>
     );
 };
@@ -97,13 +98,13 @@ const Testis = ({ s, reduced }: { s: AxisState; reduced: boolean }) => {
     const cy = TES.y + TES.h / 2;
     const leydigOn = s.tOut > 0.5;
     return (
-        <motion.g style={{ transformOrigin: `${CX}px ${cy}px` }} initial={false} animate={{ scale: s.testis }} transition={{ duration: reduced ? 0 : 1.2, ease: 'easeInOut' }}>
+        <motion.g style={{ transformOrigin: `${CX}px ${cy}px` }} initial={false} animate={{ scale: s.testis }} transition={{ duration: reduced ? 0 : DUR.draw, ease: EASE_IN_OUT }}>
             <rect x={TES.x} y={TES.y} width={TES.w} height={TES.h} rx={58} fill="rgba(159,18,57,0.16)" stroke="rgba(253,164,175,0.55)" strokeWidth={1.5} />
             <line x1={CX} x2={CX} y1={TES.y + 14} y2={TES.y + TES.h - 14} stroke="rgba(253,164,175,0.35)" strokeDasharray="4 5" />
-            <text x={CX} y={TES.y - 8} textAnchor="middle" className="font-display" fontSize={20} fontWeight={600} fill="#F9FAFB">Testículo</text>
+            <text x={CX} y={TES.y - 8} textAnchor="middle" className="font-body" fontSize={20} fontWeight={700} fill="#F9FAFB">Testículo</text>
             {LEYDIG.map(([dx, dy], k) => (
                 <motion.circle key={k} cx={CX - 70 + dx * 1.2} cy={cy - 14 + dy} r={8} initial={false}
-                    animate={{ fill: leydigOn ? '#F59E0B' : '#6B7280', fillOpacity: leydigOn ? 0.85 : 0.5 }} transition={{ duration: 0.6 }} stroke="#fff" strokeOpacity={0.3} />
+                    animate={{ fill: leydigOn ? '#F59E0B' : '#6B7280', fillOpacity: leydigOn ? 0.85 : 0.5 }} transition={{ duration: DUR.bar, ease: EASE_OUT }} stroke="#fff" strokeOpacity={0.3} />
             ))}
             <text x={TES.x + 24} y={TES.y + TES.h - 32} className="font-body" fontSize={17.5} fontWeight={700} fill="#FDE68A">células de</text>
             <text x={TES.x + 24} y={TES.y + TES.h - 12} className="font-body" fontSize={17.5} fontWeight={700} fill="#FDE68A">Leydig</text>
@@ -121,9 +122,9 @@ const Testis = ({ s, reduced }: { s: AxisState; reduced: boolean }) => {
 const Badge = ({ x, y, w, label, sub, color, show, delay, reduced }: {
     x: number; y: number; w: number; label: string; sub?: string; color: string; show: boolean; delay: number; reduced: boolean;
 }) => (
-    <motion.g initial={false} animate={{ opacity: show ? 1 : 0, y: show ? 0 : 6 }} transition={{ duration: reduced ? 0 : 0.45, delay: show && !reduced ? delay : 0 }}>
+    <motion.g initial={false} animate={{ opacity: show ? 1 : 0, y: show ? 0 : 6 }} transition={{ duration: reduced ? 0 : DUR.enter, delay: show && !reduced ? delay : 0, ease: EASE_OUT }}>
         <rect x={x} y={y} width={w} height={sub ? 52 : 34} rx={10} fill={`${color}2a`} stroke={color} strokeWidth={1.5} />
-        <text x={x + w / 2} y={y + 24} textAnchor="middle" className="font-display" fontSize={19} fontWeight={700} fill="#fff">{label}</text>
+        <text x={x + w / 2} y={y + 24} textAnchor="middle" className="font-body" fontSize={19} fontWeight={700} fill="#fff">{label}</text>
         {sub && <text x={x + w / 2} y={y + 44} textAnchor="middle" className="font-mono" fontSize={17} fill="#F9FAFB">{sub}</text>}
     </motion.g>
 );
@@ -141,7 +142,7 @@ export const AxisDiagram = ({ step }: { step: number }) => {
             aria-label="Eixo hipotálamo-hipófise-testículo com o feedback negativo do estradiol e os pontos de ação de SERMs, inibidores de aromatase, hCG e rhFSH">
             <g transform={`translate(${SHIFT_X} 0)`}>
             {/* Freio: E2 → receptores no hipotálamo/hipófise */}
-            <motion.g initial={false} animate={{ opacity: e2Opacity }} transition={{ duration: 0.8 }}>
+            <motion.g initial={false} animate={{ opacity: e2Opacity }} transition={{ duration: DUR.draw, ease: EASE_OUT }}>
                 <path d={railD} fill="none" stroke={C.red} strokeWidth={2.6} strokeLinejoin="round" />
                 <path d={branchD} fill="none" stroke={C.red} strokeWidth={2.6} />
                 {[Y_HYPO, Y_PIT].map(y => (
@@ -170,7 +171,7 @@ export const AxisDiagram = ({ step }: { step: number }) => {
             <Arrow x1={285} y1={PIT.y + PIT.h + 4} x2={312} y2={TES.y - 26} level={s.lh} color={C.cyan} label="FSH" labelX={314} labelAnchor="start" />
             <Pulses x1={285} y1={PIT.y + PIT.h + 6} x2={312} y2={TES.y - 30} level={s.lh} color={C.cyan} reduced={reduced} />
             {axisOff && (
-                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                     <text x={CX + 14} y={90} className="font-body" fontSize={17.5} fontWeight={700} fill={C.redInk}>suprimido</text>
                     <text x={CX} y={184} textAnchor="middle" className="font-body" fontSize={17.5} fontWeight={700} fill={C.redInk}>suprimidos</text>
                 </motion.g>
@@ -178,37 +179,37 @@ export const AxisDiagram = ({ step }: { step: number }) => {
 
             {/* Testículo → T → aromatase */}
             <Testis s={s} reduced={reduced} />
-            <motion.g initial={false} animate={{ opacity: 0.25 + 0.75 * s.tOut }} transition={{ duration: 0.6 }}>
+            <motion.g initial={false} animate={{ opacity: 0.25 + 0.75 * s.tOut }} transition={{ duration: DUR.bar, ease: EASE_OUT }}>
                 <line x1={TES.x + TES.w + 4} x2={AROM.x - 6} y1={AROM.y + AROM.h / 2} y2={AROM.y + AROM.h / 2} stroke="#FDE68A" strokeWidth={3} />
                 <path d={`M ${AROM.x - 15} ${AROM.y + AROM.h / 2 - 7} L ${AROM.x - 5} ${AROM.y + AROM.h / 2} L ${AROM.x - 15} ${AROM.y + AROM.h / 2 + 7}`} fill="none" stroke="#FDE68A" strokeWidth={3} strokeLinecap="round" />
                 <text x={(TES.x + TES.w + AROM.x) / 2} y={AROM.y + AROM.h / 2 - 9} textAnchor="middle" className="font-mono" fontSize={19} fontWeight={700} fill="#FDE68A">T</text>
             </motion.g>
             <rect x={AROM.x} y={AROM.y} width={AROM.w} height={AROM.h} rx={12} fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.45)" strokeWidth={1.4} />
-            <text x={AROM.x + 14} y={AROM.y + 25} className="font-display" fontSize={19} fontWeight={600} fill="#F9FAFB">Aromatase</text>
+            <text x={AROM.x + 14} y={AROM.y + 25} className="font-body" fontSize={19} fontWeight={700} fill="#F9FAFB">Aromatase</text>
             <text x={AROM.x + 14} y={AROM.y + 47} className="font-mono" fontSize={17} fill="#F3F4F6">CYP19A1 · periférica</text>
 
             {/* IA: bloqueio da aromatase */}
-            <motion.g initial={false} animate={{ opacity: s.ia ? 1 : 0 }} transition={{ duration: reduced ? 0 : 0.4, delay: s.ia && !reduced ? 0.2 : 0 }}>
+            <motion.g initial={false} animate={{ opacity: s.ia ? 1 : 0 }} transition={{ duration: reduced ? 0 : DUR.enter, delay: s.ia && !reduced ? 0.1 : 0, ease: EASE_OUT }}>
                 <rect x={RAIL_X - 34} y={AROM.y - 16} width={68} height={12} rx={6} fill={C.ia} />
                 <rect x={AROM.x - 2} y={AROM.y - 2} width={AROM.w + 4} height={AROM.h + 4} rx={13} fill="none" stroke={C.ia} strokeWidth={2.5} />
             </motion.g>
-            <Badge x={AROM.x + 10} y={AROM.y + AROM.h + 12} w={176} label="IA" sub={`E2 cai até ${NUMBERS.e2Drop}%`} color={C.ia} show={s.ia} delay={0.4} reduced={reduced} />
+            <Badge x={AROM.x + 10} y={AROM.y + AROM.h + 26} w={176} label="IA" sub={`E2 cai até ${NUMBERS.e2Drop}%`} color={C.ia} show={s.ia} delay={0.2} reduced={reduced} />
 
             {/* SERM nos receptores */}
-            <Badge x={SOCKET_X + 40} y={Y_HYPO + 48} w={96} label="SERM" color={C.serm} show={s.serm} delay={0.5} reduced={reduced} />
+            <Badge x={SOCKET_X + 40} y={Y_HYPO + 48} w={96} label="SERM" color={C.serm} show={s.serm} delay={0.25} reduced={reduced} />
 
             {/* hCG → Leydig; rhFSH → espermatozoides */}
-            <Badge x={2} y={TES.y + 14} w={82} label="hCG" sub="≈ LH" color={C.hcg} show={s.hcg} delay={0.3} reduced={reduced} />
-            <motion.g initial={false} animate={{ opacity: s.hcg ? 1 : 0 }} transition={{ duration: 0.4, delay: s.hcg && !reduced ? 0.5 : 0 }}>
-                <line x1={84} x2={122} y1={TES.y + 38} y2={TES.y + 46} stroke={C.hcg} strokeWidth={3} />
+            <Badge x={2} y={TES.y + 14} w={74} label="hCG" sub="≈ LH" color={C.hcg} show={s.hcg} delay={0.15} reduced={reduced} />
+            <motion.g initial={false} animate={{ opacity: s.hcg ? 1 : 0 }} transition={{ duration: DUR.enter, delay: s.hcg && !reduced ? 0.25 : 0, ease: EASE_OUT }}>
+                <line x1={78} x2={122} y1={TES.y + 38} y2={TES.y + 46} stroke={C.hcg} strokeWidth={3} />
                 <path d={`M 112 ${TES.y + 37} L 124 ${TES.y + 46.5} L 109 ${TES.y + 51}`} fill="none" stroke={C.hcg} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
             </motion.g>
-            <Badge x={TES.x + TES.w - 40} y={TES.y + TES.h + 14} w={100} label="rhFSH" color={C.hcg} show={s.hcg} delay={0.7} reduced={reduced} />
-            <motion.g initial={false} animate={{ opacity: s.hcg ? 1 : 0 }} transition={{ duration: 0.4, delay: s.hcg && !reduced ? 0.8 : 0 }}>
-                <line x1={TES.x + TES.w - 26} x2={TES.x + TES.w - 48} y1={TES.y + TES.h + 20} y2={TES.y + TES.h - 4} stroke={C.hcg} strokeWidth={3} />
+            <Badge x={TES.x + TES.w - 6} y={TES.y + TES.h + 24} w={100} label="rhFSH" color={C.hcg} show={s.hcg} delay={0.4} reduced={reduced} />
+            <motion.g initial={false} animate={{ opacity: s.hcg ? 1 : 0 }} transition={{ duration: DUR.enter, delay: s.hcg && !reduced ? 0.5 : 0, ease: EASE_OUT }}>
+                <line x1={TES.x + TES.w + 2} x2={TES.x + TES.w - 42} y1={TES.y + TES.h + 28} y2={TES.y + TES.h - 6} stroke={C.hcg} strokeWidth={2.2} />
             </motion.g>
             {step === 3 && (
-                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 0.9, duration: 0.4 }}>
+                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 0.6, duration: DUR.enter, ease: EASE_OUT }}>
                     <text x={PIT.x - 12} y={Y_PIT - 4} textAnchor="end" className="font-body" fontSize={17.5} fill="#F3F4F6">{NUMBERS.hcgWhen}:</text>
                     <text x={PIT.x - 12} y={Y_PIT + 17} textAnchor="end" className="font-body" fontSize={17.5} fill="#F3F4F6">eixo suprimido</text>
                 </motion.g>
@@ -216,7 +217,7 @@ export const AxisDiagram = ({ step }: { step: number }) => {
 
             {caption && (
                 <motion.text key={caption} x={4} y={VB.h - 6} className="font-body" fontSize={18} fontWeight={700} fill="#F9FAFB"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 0.6, duration: 0.4 }}>{caption}</motion.text>
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 0.3, duration: DUR.enter, ease: EASE_OUT }}>{caption}</motion.text>
             )}
             </g>
         </svg>

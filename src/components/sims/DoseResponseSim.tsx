@@ -5,6 +5,7 @@ import { DoseChart } from './dose/DoseChart';
 import { CHART_W, sx } from './dose/geometry';
 import { SidePanel } from './dose/SidePanel';
 import { DOSE_MAX, DOSE_MIN } from './dose/model';
+import { DUR, EASE_OUT } from '../../lib/motion';
 
 /**
  * "O Paradoxo da Dose" (slide id 8): curva dose-resposta da testosterona.
@@ -19,8 +20,10 @@ const STEP_LABELS = [
 ];
 const STEPS = STEP_LABELS.length;
 const CURVE_STEP = 4;
-const SWEEP_DELAY_MS = 1500;
-const SWEEP_MS = 4200;
+/** A varredura começa quando a curva termina de se desenhar (DUR.draw). */
+const SWEEP_DELAY_MS = DUR.draw * 1000;
+/** Varredura 0 → 600 mg (exceção 3: o tempo é o conteúdo; arrastar interrompe). Decisão do Rinaldo: 2,4 s. */
+const SWEEP_MS = 2400;
 const RESTING_DOSE = 450;
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
@@ -115,12 +118,12 @@ const DoseSlider = ({ visible, dose, onDose, onDragStart }: DoseSliderProps) => 
             className="relative h-11"
             initial={false}
             animate={{ opacity: visible ? 1 : 0 }}
-            transition={{ duration: 0.4, delay: visible ? 1.2 : 0 }}
+            transition={{ duration: DUR.enter, delay: visible ? 0.6 : 0, ease: EASE_OUT }}
             style={{ pointerEvents: visible ? 'auto' : 'none' }}
         >
             <div
                 ref={trackRef}
-                className="absolute top-1/2 h-8 -translate-y-1/2 cursor-ew-resize"
+                className="absolute top-1/2 h-8 -translate-y-1/2 cursor-ew-resize [container-type:inline-size]"
                 style={{ left, width, touchAction: 'none' }}
                 onPointerDown={e => { dragging.current = true; e.currentTarget.setPointerCapture(e.pointerId); onDragStart(); toDose(e); }}
                 onPointerMove={e => { if (dragging.current) toDose(e); }}
@@ -128,10 +131,12 @@ const DoseSlider = ({ visible, dose, onDose, onDragStart }: DoseSliderProps) => 
                 onPointerCancel={() => { dragging.current = false; }}
             >
                 <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-white/10" />
-                <div className="absolute left-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full"
-                    style={{ width: `${frac * 100}%`, background: 'linear-gradient(90deg,#A1A1AA,#60A5FA 20%,#F87171 55%,#E11D48)' }} />
-                <div className="absolute top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#050510] bg-white shadow-[0_0_16px_rgba(255,255,255,0.55)]"
-                    style={{ left: `${frac * 100}%` }} />
+                {/* Recorte por clip-path (sem animar width); o degradê acompanha o preenchimento, como antes. */}
+                <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-no-repeat"
+                    style={{ clipPath: `inset(0 ${100 - frac * 100}% 0 0 round 9999px)`, backgroundSize: `${frac * 100}% 100%`, backgroundImage: 'linear-gradient(90deg,#A1A1AA,#60A5FA 20%,#F87171 55%,#E11D48)' }} />
+                <div className="absolute left-0 top-1/2 w-0" style={{ transform: `translateX(${frac * 100}cqw)` }}>
+                    <div className="h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#050510] bg-white" />
+                </div>
             </div>
             <div className="absolute top-1/2 -translate-y-1/2 font-body text-[14px] text-zinc-300" style={{ left: left + width + 22 }}>
                 ↔ arraste

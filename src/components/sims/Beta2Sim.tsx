@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import type { ReactNode } from 'react';
 import { useSlideSteps } from '../../store/useSlideSteps';
 import { Cascade } from './beta2/Cascade';
@@ -22,12 +23,10 @@ const BODY_H = ROOT_H - HEADER_H;
 const CASCADE_H = 152;
 
 const Fade = ({ id, children, className }: { id: string; children: ReactNode; className?: string }) => (
-    <AnimatePresence mode="wait">
-        <motion.div key={id} className={className}
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.35, ease: 'easeOut' }}>
-            {children}
-        </motion.div>
-    </AnimatePresence>
+    <motion.div key={id} className={className}
+        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
+        {children}
+    </motion.div>
 );
 
 const Beta2Sim = () => {

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { COLORS } from './content';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 import {
     CONTROL_T, DETECT_WINDOW_H, INJ_T, ISO_WINDOW_H, N3_BLOCKS, SC_HALF_T, SC_PEAK, SLEEP, T_MAX,
     exoFn, ghEndo, igf, sampleFn, type Pt, type Route,
@@ -31,7 +32,7 @@ const Label = ({ x, y, text, color, anchor = 'start', size = FONT, weight = 600 
 );
 
 const Fade = ({ delay = 0, children, k }: { delay?: number; children: ReactNode; k: string }) => (
-    <motion.g key={k} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, delay }}>{children}</motion.g>
+    <motion.g key={k} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ duration: DUR.enter, delay, ease: EASE_OUT }}>{children}</motion.g>
 );
 
 const TICKS: readonly number[] = [1, 4, 8, 13, 17, 21, 25];
@@ -98,7 +99,7 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
     return (
         <svg viewBox={`0 0 ${CHART.w} ${CHART.h}`} className="absolute inset-0 w-full h-full block" preserveAspectRatio="xMidYMid meet" role="img"
             aria-label="Linha do tempo de uma noite: pulsos de GH, injeção às 23h, controle às 6h e IGF-1 (modelo ilustrativo)">
-            <motion.g animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+            <motion.g animate={{ opacity: 1 }} transition={{ duration: DUR.bar, ease: EASE_OUT }}>
                 <SleepStrip />
 
                 {/* janela do teste de isoformas (< 12 h após o uso) */}
@@ -116,18 +117,18 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                 <Axes showRight={step >= 4} />
 
                 {/* GH endógeno (verde) */}
-                <motion.path d={toBand(endoPts, zero)} fill={COLORS.endo} initial={{ opacity: 0 }} animate={{ opacity: 0.2 }} transition={{ duration: dur(0.8), delay: dur(0.6) }} />
+                <motion.path d={toBand(endoPts, zero)} fill={COLORS.endo} initial={{ opacity: 0 }} animate={{ opacity: 0.2 }} transition={{ duration: dur(DUR.bar), delay: dur(0.3), ease: EASE_OUT }} />
                 <motion.path d={toPath(endoPts)} fill="none" stroke={COLORS.endo} strokeWidth={step >= 1 ? 1.6 : 2.6} strokeLinejoin="round"
-                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: dur(2), ease: 'easeInOut' }} />
+                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: dur(DUR.draw), ease: EASE_IN_OUT }} />
 
                 {/* rhGH empilhado sobre o endógeno + total medido */}
                 <AnimatePresence>
                     {showExo && (
-                        <motion.g key={`exo-${route}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+                        <motion.g key={`exo-${route}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                             <motion.path d={toPath(totalPts)} fill="none" stroke={COLORS.total} strokeWidth={2.4} strokeLinejoin="round"
-                                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: dur(1.6), ease: 'easeInOut' }} />
+                                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: dur(DUR.draw), ease: EASE_IN_OUT }} />
                             <motion.path d={toBand(totalPts, endoPts)} fill={COLORS.exo}
-                                initial={{ opacity: 0 }} animate={{ opacity: 0.55 }} transition={{ duration: dur(0.8), delay: dur(step === 1 ? 1.8 : 0.3) }} />
+                                initial={{ opacity: 0 }} animate={{ opacity: 0.55 }} transition={{ duration: dur(DUR.bar), delay: dur(step === 1 ? 0.6 : 0.3), ease: EASE_OUT }} />
                         </motion.g>
                     )}
                 </AnimatePresence>
@@ -146,13 +147,13 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                 {/* rótulos do passo */}
                 <AnimatePresence>
                     {step === 0 && (
-                        <Fade k="l0" delay={dur(1.4)}>
+                        <Fade k="l0" delay={dur(0.6)}>
                             <Label x={sx(2.0) + 12} y={sy(1.0) + 4} text="pulso de alta amplitude · sono profundo (N3)" color="#6EE7B7" />
                             <Label x={sx(16)} y={sy(0.42)} text="durante o dia: pulsos pequenos" color="#A7F3D0" anchor="middle" />
                         </Fade>
                     )}
                     {step === 1 && (
-                        <Fade k="l1" delay={dur(1.2)}>
+                        <Fade k="l1" delay={dur(0.6)}>
                             <Label x={sx(5.2)} y={sy(1.55)} text="o laboratório mede só o total (linha branca)" color="#F3F4F6" />
                             <Label x={sx(5.2)} y={sy(1.55) + 21} text="exógeno (âmbar) e endógeno: mesma molécula" color="#FCD34D" />
                         </Fade>
@@ -183,10 +184,10 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                 {/* IGF-1 (eixo direito) */}
                 <AnimatePresence>
                     {step >= 4 && (
-                        <motion.g key="igf" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <motion.g key="igf" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: DUR.exit } }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
                             <motion.path d={toPath(igfPts, syR)} fill="none" stroke={COLORS.igf} strokeWidth={3.2} strokeLinecap="round"
-                                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: dur(2.2), ease: 'easeInOut' }} />
-                            <Fade k="igf-l" delay={dur(1.6)}>
+                                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: dur(DUR.draw), ease: EASE_IN_OUT }} />
+                            <Fade k="igf-l" delay={dur(0.6)}>
                                 <Label x={sx(15)} y={syR(igfPeak) - 16} text="IGF-1: sobe devagar e cai devagar (t½ ~15 h)" color="#93C5FD" anchor="middle" />
                             </Fade>
                         </motion.g>
@@ -223,7 +224,7 @@ export const TimelineChart = ({ step, route, collectT }: TimelineChartProps) => 
                 {/* janela urinária/sanguínea < 24 h (passo 2) */}
                 <AnimatePresence>
                     {step === 2 && (
-                        <Fade k="w24" delay={dur(1)}>
+                        <Fade k="w24" delay={dur(0.75)}>
                             <line x1={sx(INJ_T)} x2={sx(INJ_T + DETECT_WINDOW_H) - 26} y1={CHART.base + 62} y2={CHART.base + 62} stroke="#FDA4AF" strokeWidth={1.6} />
                             <line x1={sx(INJ_T)} x2={sx(INJ_T)} y1={CHART.base + 56} y2={CHART.base + 68} stroke="#FDA4AF" strokeWidth={1.6} />
                             <path d={`M${sx(INJ_T + DETECT_WINDOW_H) - 26},${CHART.base + 57} l9,5 l-9,5 Z`} fill="#FDA4AF" />

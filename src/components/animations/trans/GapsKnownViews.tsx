@@ -2,11 +2,12 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, HelpCircle, Info, Microscope } from 'lucide-react';
 import { GAPS, GAPS_CAPTION, GAPS_NOTE, KNOWN, KNOWN_CAPTION, SOCIETIES } from './scienceData';
 import { CARD, CARD_BG } from './StepHeader';
+import { DUR, EASE_OUT, stagger } from '../../../lib/motion';
+import { SUBSTANCE } from '../../../lib/palette';
 
 const MAX = 35;
 const TICKS = [0, 10, 20, 30];
 const COLS = '230px minmax(0,1fr) 70px';
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Passo 4: diferença de desempenho entre sexos por modalidade (antes de qualquer TRT). */
 export const GapsView = () => (
@@ -26,9 +27,9 @@ export const GapsView = () => (
                         <span className="text-[17px] font-medium text-gray-100">{g.sport}</span>
                         <div className="relative h-4 rounded-full bg-white/[0.05] overflow-hidden">
                             <motion.div className="absolute inset-y-0 left-0 rounded-full"
-                                style={{ background: 'linear-gradient(90deg, #60A5FA, #A855F7)' }}
-                                initial={{ width: 0 }} animate={{ width: `${(g.gap / MAX) * 100}%` }}
-                                transition={{ duration: 0.9, delay: 0.15 + i * 0.1, ease: EASE }} />
+                                style={{ background: 'linear-gradient(90deg, #60A5FA, #A855F7)', width: `${(g.gap / MAX) * 100}%`, originX: 0 }}
+                                initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                                transition={{ duration: DUR.bar, delay: stagger(i, 0.1, 0.06), ease: EASE_OUT }} />
                         </div>
                         <span className="text-right font-mono text-[18px] font-bold text-white">~{g.gap}%</span>
                     </div>
@@ -44,7 +45,7 @@ export const GapsView = () => (
                 <div />
             </div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: DUR.enter, ease: EASE_OUT }}
             className="mt-3 rounded-xl border px-4 py-2.5 flex gap-3" style={{ borderColor: 'rgba(96,165,250,0.35)', background: 'rgba(30,58,138,0.18)' }}>
             <Info size={18} className="text-blue-300 shrink-0 mt-0.5" />
             <p className="text-[16px] leading-[1.45] text-gray-100">{GAPS_NOTE}</p>
@@ -54,17 +55,17 @@ export const GapsView = () => (
 
 const KnownColumn = ({ confident }: { confident: boolean }) => {
     const items = KNOWN.filter(k => k.confident === confident);
-    const color = confident ? '#10B981' : '#F59E0B';
+    const color = confident ? SUBSTANCE.allowed : '#F59E0B';
     const Icon = confident ? CheckCircle2 : HelpCircle;
     const offset = confident ? 0 : 0.35;
     return (
         <div className="flex flex-col gap-1.5 min-h-0">
             <div className="flex items-center gap-2">
                 <Icon size={20} style={{ color }} />
-                <span className="font-display text-[19px] font-semibold" style={{ color }}>{confident ? 'Evidência sólida' : 'Inconclusivo'}</span>
+                <span className="font-body text-[19px] font-semibold" style={{ color }}>{confident ? 'Evidência sólida' : 'Inconclusivo'}</span>
             </div>
             {items.map((k, i) => (
-                <motion.div key={k.item} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: offset + i * 0.1 }}
+                <motion.div key={k.item} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, delay: stagger(i, offset, 0.1), ease: EASE_OUT }}
                     className="rounded-xl border px-3.5 py-1.5 min-h-[50px] flex items-center"
                     style={{ borderColor: `${color}44`, background: `${color}10` }}>
                     <span className="text-[16px] leading-snug text-gray-100">{k.item}</span>
@@ -82,7 +83,7 @@ export const KnownView = () => (
             <KnownColumn confident />
             <KnownColumn confident={false} />
         </div>
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: DUR.enter, ease: EASE_OUT }}
             className="mt-auto rounded-xl border border-white/10 px-4 py-2.5 flex gap-3 shrink-0" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <Microscope size={18} className="text-gray-200 shrink-0 mt-0.5" />
             <div>

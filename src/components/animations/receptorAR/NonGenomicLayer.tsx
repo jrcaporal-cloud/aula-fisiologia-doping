@@ -1,4 +1,5 @@
 import { motion, type Transition } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 import { NONGENOMIC_COLOR } from './content';
 import { CA_COLOR, CHANNEL_X, CORTISOL_COLOR, EASE, GPCR_X, Label, MEM_BOT, MEM_TOP, Pill, Receptor, Steroid } from './shapes';
 
@@ -48,7 +49,8 @@ interface NonGenomicLayerProps {
 }
 
 export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: NonGenomicLayerProps) => {
-    const t = (duration = 0.8, delay = 0): Transition => (reduced ? { duration: 0 } : { duration, delay, ease: EASE });
+    // Cada fase da via é um passo da sequência (useSequence): só a curva e a duração DENTRO da fase são tokens.
+    const t = (duration: number = DUR.draw, delay = 0): Transition => (reduced ? { duration: 0 } : { duration, delay, ease: EASE });
     const on = (p: number) => phase >= p;
     const caOpen = on(3);
 
@@ -56,12 +58,12 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
         <motion.g
             initial={false}
             animate={{ opacity: dim ? 0.6 : 1 }}
-            transition={t(0.5)}
+            transition={t(DUR.morph)}
             onClick={onSelect}
             style={{ cursor: 'pointer' }}
         >
             {/* Rota tênue (passo 0) */}
-            <motion.g initial={false} animate={{ opacity: showRoute ? 1 : 0 }} transition={t(0.5)}>
+            <motion.g initial={false} animate={{ opacity: showRoute ? 1 : 0 }} transition={t(DUR.morph)}>
                 <motion.path
                     d={`M ${GPCR_X},46 L ${GPCR_X},${MEM_BOT + 6} M ${EAA_C_REST.x},46 L ${CORT_RECEPTOR.x},${CORT_RECEPTOR.y - 16} M ${CHANNEL_X},52 L ${CHANNEL_X},120`}
                     fill="none"
@@ -86,7 +88,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                 fill={NONGENOMIC_COLOR}
                 initial={false}
                 animate={{ opacity: on(1) ? 0.3 : 0 }}
-                transition={t(0.5)}
+                transition={t(DUR.morph)}
             />
             <Gpcr />
             <Label x={GPCR_X + 22} y={52} color="#FDA4AF" weight={700}>
@@ -104,7 +106,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                         strokeWidth={2}
                         initial={false}
                         animate={{ opacity: on(1) ? 0.9 : 0.35 }}
-                        transition={t(0.4)}
+                        transition={t(DUR.enter)}
                     />
                     {on(1) &&
                         !reduced &&
@@ -131,7 +133,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                     key={i}
                     initial={false}
                     animate={{ scale: on(1) ? 1 : 0, opacity: on(1) ? 1 : 0 }}
-                    transition={t(0.4, on(1) ? 0.35 + i * 0.15 : 0)}
+                    transition={t(DUR.enter, on(1) ? 0.35 + i * 0.15 : 0)}
                 >
                     <circle cx={p.x + 53} cy={p.y - 14} r={11} fill="#FBBF24" stroke="#0A1124" strokeWidth={1.5} />
                     <text x={p.x + 53} y={p.y - 8.8} textAnchor="middle" fontSize={15} fontWeight={800} fill="#1F1300" className="font-mono">
@@ -139,7 +141,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                     </text>
                 </motion.g>
             ))}
-            <motion.g initial={false} animate={{ opacity: on(1) ? 1 : 0 }} transition={t(0.4, on(1) ? 0.5 : 0)}>
+            <motion.g initial={false} animate={{ opacity: on(1) ? 1 : 0 }} transition={t(DUR.enter, on(1) ? 0.5 : 0)}>
                 <Label x={(MAPK.x + PI3K.x) / 2} y={194} anchor="middle" color="#FCD34D">
                     P = fosforilação
                 </Label>
@@ -154,7 +156,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                 fill={NONGENOMIC_COLOR}
                 initial={false}
                 animate={{ x: CHANNEL_X - (caOpen ? 14 : 9) }}
-                transition={t(0.4)}
+                transition={t(DUR.enter)}
             />
             <motion.rect
                 y={MEM_TOP - 5}
@@ -164,7 +166,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                 fill={NONGENOMIC_COLOR}
                 initial={false}
                 animate={{ x: CHANNEL_X + (caOpen ? 6 : 1) }}
-                transition={t(0.4)}
+                transition={t(DUR.enter)}
             />
             <Label x={CHANNEL_X - 18} y={106} anchor="end" color="#FDA4AF">
                 canal iônico
@@ -180,11 +182,11 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                             ? { cx: [ion.out.x, CHANNEL_X, ion.in.x], cy: [ion.out.y, MEM_BOT + 6, ion.in.y] }
                             : { cx: ion.out.x, cy: ion.out.y }
                     }
-                    transition={reduced ? { duration: 0 } : { duration: 0.9, delay: caOpen ? 0.25 + i * 0.045 : 0, ease: 'easeOut' }}
+                    transition={reduced ? { duration: 0 } : { duration: DUR.draw, delay: caOpen ? stagger(i, 0.25, 0.045) : 0, ease: EASE_OUT }}
                 />
             ))}
-            <motion.g initial={false} animate={{ y: caOpen ? 72 : 0 }} transition={t(0.8, caOpen ? 0.4 : 0)}>
-                <Label x={676} y={40} anchor="end" color={CA_COLOR} weight={800}>
+            <motion.g initial={false} animate={{ y: caOpen ? 72 : 0 }} transition={t(DUR.bar, caOpen ? 0.4 : 0)}>
+                <Label x={668} y={40} anchor="end" color={CA_COLOR} weight={800}>
                     Ca²⁺
                 </Label>
             </motion.g>
@@ -203,14 +205,14 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
                         ? { x: [EAA_C_REST.x, EAA_C_REST.x + 2, CORT_RECEPTOR.x], y: [EAA_C_REST.y, 74, CORT_RECEPTOR.y - 3], scale: 0.85 }
                         : { x: EAA_C_REST.x, y: EAA_C_REST.y, scale: 1 }
                 }
-                transition={t(0.8)}
+                transition={t(DUR.draw)}
             >
                 <Steroid />
             </motion.g>
             <motion.g
                 initial={false}
                 animate={on(2) ? { x: [CORTISOL_REST, BLOCK_X - 18, CORTISOL_REST - 6] } : { x: CORTISOL_REST }}
-                transition={reduced ? { duration: 0 } : { duration: 1.1, delay: on(2) ? 0.55 : 0, times: [0, 0.55, 1], ease: 'easeInOut' }}
+                transition={reduced ? { duration: 0 } : { duration: DUR.draw, delay: on(2) ? 0.3 : 0, times: [0, 0.55, 1], ease: EASE_IN_OUT }}
             >
                 <g transform={`translate(0 ${CORT_RECEPTOR.y - 2})`}>
                     <Steroid s={4.2} color="#CBD5E1" />
@@ -222,7 +224,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
             <motion.g
                 initial={false}
                 animate={{ opacity: on(2) ? 1 : 0, scale: on(2) ? 1 : 0.4 }}
-                transition={t(0.3, on(2) ? 1.15 : 0)}
+                transition={t(DUR.text, on(2) ? 0.8 : 0)}
             >
                 <circle cx={BLOCK_X} cy={CORT_RECEPTOR.y - 2} r={9} fill="#0A1124" stroke={NONGENOMIC_COLOR} strokeWidth={2} />
                 <path
@@ -237,7 +239,7 @@ export const NonGenomicLayer = ({ phase, reduced, dim, showRoute, onSelect }: No
             <motion.g
                 initial={false}
                 animate={{ x: GPCR_X, y: on(0) ? MEM_TOP - 14 : 30 }}
-                transition={t(0.6)}
+                transition={t(DUR.bar)}
             >
                 <Steroid />
             </motion.g>

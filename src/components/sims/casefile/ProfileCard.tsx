@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { MessageCircleQuestion } from 'lucide-react';
+import { DUR, EASE_OUT } from '../../../lib/motion';
 import { RichText } from './RichText';
 import { CARD_BG, type CaseData } from './types';
 
@@ -35,7 +36,7 @@ export const ProfileCard = ({ data, step, revealed }: ProfileCardProps) => {
                 </div>
             </div>
             <div className="flex-1 min-h-0 flex flex-col justify-center gap-2.5">
-                <div className="font-display text-[18px] font-semibold leading-snug text-white">{data.profile.headline}</div>
+                <div className="text-[18px] font-semibold leading-snug text-white">{data.profile.headline}</div>
                 <div className="space-y-2">
                     {data.profile.paragraphs.map((parts, i) => (
                         <RichText key={i} parts={parts} step={step} revealed={revealed} className={body} />
@@ -47,12 +48,12 @@ export const ProfileCard = ({ data, step, revealed }: ProfileCardProps) => {
                     borderColor: asking ? `${data.accent}aa` : 'rgba(255,255,255,0.12)',
                     background: asking ? `${data.accent}1f` : 'rgba(255,255,255,0.03)',
                 }}
-                transition={{ duration: 0.5 }}>
+                transition={{ duration: DUR.morph, ease: EASE_OUT }}>
                 <div className="flex items-center gap-2 font-mono text-[14px] uppercase tracking-wider" style={{ color: asking ? data.accent : '#D1D5DB' }}>
                     <MessageCircleQuestion size={15} />
                     Pergunta para a turma
                 </div>
-                <div className={`mt-1 font-display font-semibold leading-snug text-white ${asking ? 'text-[17px]' : 'text-[15px]'}`}>
+                <div className={`mt-1 font-semibold leading-snug text-white ${asking ? 'text-[17px]' : 'text-[15px]'}`}>
                     {data.profile.question}
                 </div>
             </motion.div>

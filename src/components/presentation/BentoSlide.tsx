@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AnimatePresence, motion, type Variants } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion, type Variants } from 'framer-motion';
 import { Dna, FlaskConical, AlertTriangle, Zap, Shield, Activity } from 'lucide-react';
 import type { SlideSchema } from './TitleSlide';
 import { cn } from '../../lib/utils';
@@ -7,6 +7,7 @@ import { renderSlideContent } from './slideContent';
 import { SlideHeader } from './SlideHeader';
 import { useDetailsToggle } from '../../lib/detailsEvent';
 import { useDetailsStore } from '../../lib/detailsStore';
+import { DUR, EASE_OUT, stagger } from '../../lib/motion';
 
 // Map card index to a contextual icon and accent color
 const CARD_THEMES = [
@@ -18,16 +19,6 @@ const CARD_THEMES = [
     { Icon: Shield, accent: '#06b6d4', glow: 'rgba(6,182,212,0.25)', bg: 'rgba(6,182,212,0.08)' },
 ];
 
-// Alternating entrance directions for cards
-const DIRECTIONS = [
-    { x: -60, y: 40 },
-    { x: 60, y: 40 },
-    { x: -60, y: 60 },
-    { x: 60, y: 60 },
-    { x: -40, y: 50 },
-    { x: 40, y: 50 },
-];
-
 interface CardProps {
     card: { title: string; attributes: string[]; rawHtml: string };
     idx: number;
@@ -35,23 +26,19 @@ interface CardProps {
 
 const BentoCard: React.FC<CardProps> = ({ card, idx }) => {
     const theme = CARD_THEMES[idx % CARD_THEMES.length];
-    const dir = DIRECTIONS[idx % DIRECTIONS.length];
     const { Icon } = theme;
+    const reduce = useReducedMotion();
 
+    // Cartão: fade curto subindo 8 px, escalonado com teto (sem blur, sem mola).
     const cardVariant: Variants = {
-        hidden: { opacity: 0, x: dir.x, y: dir.y, filter: 'blur(12px)', scale: 0.92 },
-        show: {
-            opacity: 1, x: 0, y: 0, filter: 'blur(0px)', scale: 1,
-            transition: { type: 'spring', stiffness: 160, damping: 22, delay: idx * 0.1 }
-        }
+        hidden: { opacity: 0, y: 8 },
+        show: { opacity: 1, y: 0, transition: { duration: DUR.enter, ease: EASE_OUT, delay: stagger(idx, 0.05) } },
     };
 
+    // Itens da lista: pior caso termina em 0,15 + 0,4 + 0,25 + 0,25 = 1,05 s.
     const listItem: Variants = {
-        hidden: { opacity: 0, x: -16 },
-        show: (i: number) => ({
-            opacity: 1, x: 0,
-            transition: { delay: 0.3 + idx * 0.1 + i * 0.07, duration: 0.45, ease: 'easeOut' }
-        })
+        hidden: { opacity: 0 },
+        show: (i: number) => ({ opacity: 1, transition: { delay: stagger(idx, 0.15) + Math.min(i * 0.05, 0.25), duration: DUR.text, ease: EASE_OUT } }),
     };
 
     return (
@@ -64,9 +51,9 @@ const BentoCard: React.FC<CardProps> = ({ card, idx }) => {
             }}
             whileHover={{
                 y: -6,
-                boxShadow: `0 20px 60px -10px ${theme.glow}, 0 0 0 1px ${theme.accent}55`,
+                boxShadow: `0 20px 50px -16px rgba(0,0,0,0.7), 0 0 0 1px ${theme.accent}55`,
                 borderColor: `${theme.accent}66`,
-                transition: { type: 'spring', stiffness: 300, damping: 24 }
+                transition: { duration: DUR.exit, ease: EASE_OUT }
             }}
         >
             {/* Shimmer top border */}
@@ -76,39 +63,24 @@ const BentoCard: React.FC<CardProps> = ({ card, idx }) => {
                     background: `linear-gradient(90deg, transparent, ${theme.accent}, transparent)`,
                     opacity: 0.3,
                 }}
-                animate={{ backgroundPosition: ['200% 0', '-200% 0'] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'linear', delay: idx * 0.4 }}
+                animate={reduce ? undefined : { backgroundPosition: ['200% 0', '-200% 0'] }}
+                // Atraso negativo: o brilho já começa em fase, sem pausa (único loop do cartão).
+                transition={{ duration: 3, repeat: Infinity, ease: 'linear', delay: -idx * 0.4 }}
             />
 
-            {/* Glow blob on hover */}
+            {/* Corner accent (estático) */}
             <div
-                className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-                style={{ background: `radial-gradient(circle, ${theme.glow} 0%, transparent 70%)` }}
-            />
-
-            {/* Animated corner accent */}
-            <motion.div
-                className="absolute bottom-0 right-0 w-24 h-24 opacity-5 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
+                className="absolute bottom-0 right-0 w-24 h-24 opacity-5 pointer-events-none"
                 style={{ background: `radial-gradient(circle at bottom right, ${theme.accent}, transparent 70%)` }}
-                animate={{ scale: [1, 1.15, 1] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.3 }}
             />
 
             {/* Header */}
             <div className="flex items-start gap-4 mb-5 relative z-10">
-                <motion.div
-                    className="flex-shrink-0 p-3 rounded-xl border border-white/8"
-                    style={{ background: theme.bg }}
-                    whileHover={{ scale: 1.12, rotate: 6 }}
-                    animate={{
-                        boxShadow: [`0 0 0px ${theme.accent}00`, `0 0 12px ${theme.accent}55`, `0 0 0px ${theme.accent}00`]
-                    }}
-                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.5 }}
-                >
+                <div className="flex-shrink-0 p-3 rounded-xl border border-white/8" style={{ background: theme.bg }}>
                     <Icon className="w-6 h-6" style={{ color: theme.accent }} />
-                </motion.div>
+                </div>
 
-                <h3 className="text-xl font-display font-semibold leading-tight whitespace-pre-line transition-colors duration-300 pt-0.5"
+                <h3 className="text-xl font-body font-semibold leading-tight whitespace-pre-line transition-colors duration-300 ease-(--ease-out) pt-0.5"
                     style={{ color: 'white' }}
                 >
                     {card.title}
@@ -133,12 +105,7 @@ const BentoCard: React.FC<CardProps> = ({ card, idx }) => {
                             variants={listItem}
                             className="flex gap-3 text-sm text-gray-300 items-start"
                         >
-                            <motion.span
-                                className="flex-shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full"
-                                style={{ background: theme.accent }}
-                                animate={{ scale: [1, 1.4, 1], opacity: [0.7, 1, 0.7] }}
-                                transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
-                            />
+                            <span className="flex-shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full" style={{ background: theme.accent }} />
                             <span>{attr}</span>
                         </motion.li>
                     ))}
@@ -146,8 +113,8 @@ const BentoCard: React.FC<CardProps> = ({ card, idx }) => {
             )}
 
             {/* Bottom separator glow line */}
-            <motion.div
-                className="absolute bottom-0 left-0 h-[1px] w-0 group-hover:w-full transition-all duration-700"
+            <div
+                className="absolute bottom-0 left-0 h-[1px] w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-450 ease-(--ease-out)"
                 style={{ background: `linear-gradient(90deg, transparent, ${theme.accent}44, transparent)` }}
             />
         </motion.div>
@@ -181,13 +148,8 @@ export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
         if (hasCards) useDetailsStore.getState().setOpen(showCards);
     }, [hasCards, showCards]);
 
-    const container = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: { staggerChildren: 0.1, delayChildren: 0.15 }
-        }
-    };
+    // Sem staggerChildren: cada cartão já tem o próprio stagger(idx, 0.05).
+    const container = { hidden: { opacity: 1 }, show: { opacity: 1 } };
 
     return (
         <div className="w-full flex flex-col justify-center py-4 px-8 relative z-10 max-w-[1200px] mx-auto pointer-events-auto">
@@ -196,17 +158,11 @@ export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
 
                 <SlideHeader title={slide.title} subtitle={slide.subtitle} />
 
-                {/* Custom component content */}
+                {/* Custom component content (sem entrada própria: o slide inteiro já esmaece) */}
                 {slide.content && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.3 }}
-                        transition={{ duration: 0.7 }}
-                        className="prose prose-invert prose-lg max-w-none mb-6 text-gray-200 drop-shadow-md pointer-events-auto"
-                    >
+                    <div className="prose prose-invert prose-lg max-w-none mb-6 text-gray-200 drop-shadow-md pointer-events-auto">
                         {renderSlideContent(slide.content, { collapseAfter: collapsible })}
-                    </motion.div>
+                    </div>
                 )}
 
                 {/* Cards grid */}
@@ -217,7 +173,7 @@ export const BentoSlide = ({ slide }: { slide: SlideSchema }) => {
                             variants={container}
                             initial="hidden"
                             animate="show"
-                            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                            exit={{ opacity: 0, transition: { duration: DUR.exit } }}
                             className={cn('grid gap-5 w-full', gridColumns(slide.cards.length))}
                         >
                             {slide.cards.map((card, idx) => (

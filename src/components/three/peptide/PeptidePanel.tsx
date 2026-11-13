@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Info } from 'lucide-react';
 import type { PeptideLigand } from '../../../data/peptideSteps';
 import { PC, PEPTIDE_LIGANDS, PEPTIDE_LIGAND_ORDER, PEPTIDE_SOURCE } from './ligands';
@@ -11,7 +11,7 @@ export const LigandCard = ({ ligand, onChange }: LigandCardProps) => {
     const info = PEPTIDE_LIGANDS[ligand];
     return (
         <div className="mt-5">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 mb-2">
                 <span className="text-[14px] font-semibold text-gray-200 uppercase tracking-wider">Ligante</span>
                 <span className="text-[14px] font-mono text-gray-400">peptídeo · bolas e varetas</span>
             </div>
@@ -35,26 +35,24 @@ export const LigandCard = ({ ligand, onChange }: LigandCardProps) => {
                     );
                 })}
             </div>
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={ligand}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.25 }}
-                    className="mt-3 p-3.5 rounded-xl border"
-                    style={{ borderColor: `${info.color}55`, background: `${info.color}0f` }}
-                >
-                    <p className="text-[14px] font-mono" style={{ color: info.color }}>{info.family}</p>
-                    <p className="text-[15px] text-gray-200 leading-snug mt-1.5">{info.text}</p>
-                    <div className="mt-3 grid grid-cols-3 gap-1.5 text-[14px] text-center">
-                        {[info.gProtein, info.enzyme === 'Fosfolipase C' ? 'PLC' : 'AC', info.messenger === 'IP3' ? 'IP3 → Ca²⁺' : 'AMPc → PKA'].map(t => (
-                            <div key={t} className="rounded-lg px-2 py-1.5 border text-gray-100" style={{ borderColor: `${info.color}44`, background: 'rgba(255,255,255,0.03)' }}>{t}</div>
-                        ))}
-                    </div>
-                    <p className="text-[14px] text-gray-400 mt-2.5">Fonte: {PEPTIDE_SOURCE}</p>
-                </motion.div>
-            </AnimatePresence>
+            {/* sem AnimatePresence mode="wait": trocar de ligante depressa deixaria o cartão antigo preso */}
+            <motion.div
+                key={ligand}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25 }}
+                className="mt-3 p-3.5 rounded-xl border"
+                style={{ borderColor: `${info.color}55`, background: `${info.color}0f` }}
+            >
+                <p className="text-[14px] font-mono" style={{ color: info.color }}>{info.family}</p>
+                <p className="text-[15px] text-gray-200 leading-snug mt-1.5">{info.text}</p>
+                <div className="mt-3 grid grid-cols-3 gap-1.5 text-[14px] text-center">
+                    {[info.gProtein, info.enzyme === 'Fosfolipase C' ? 'PLC' : 'AC', info.messenger === 'IP3' ? 'IP3 → Ca²⁺' : 'AMPc → PKA'].map(t => (
+                        <div key={t} className="rounded-lg px-2 py-1.5 border text-gray-100" style={{ borderColor: `${info.color}44`, background: 'rgba(255,255,255,0.03)' }}>{t}</div>
+                    ))}
+                </div>
+                <p className="text-[14px] text-gray-400 mt-2.5">Fonte: {PEPTIDE_SOURCE}</p>
+            </motion.div>
         </div>
     );
 };

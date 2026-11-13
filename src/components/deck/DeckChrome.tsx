@@ -8,7 +8,6 @@ interface DeckChromeProps {
     index: number;
     total: number;
     section: string;
-    idle: boolean;
     has3D: boolean;
     onPrev: () => void;
     onNext: () => void;
@@ -42,61 +41,81 @@ const IconButton = ({ label, onClick, disabled, children }: {
         title={label}
         onClick={onClick}
         disabled={disabled}
-        className="w-9 h-9 rounded-full flex items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 disabled:opacity-25 disabled:pointer-events-none transition-colors focus-visible:outline-2 focus-visible:outline-brand-red"
+        className="w-9 h-9 rounded-full flex items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 disabled:opacity-25 disabled:pointer-events-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
     >
         {children}
     </button>
 );
 
-/** Barra de progresso, seção atual, contador e controles — somem com o mouse parado. */
-export const DeckChrome = ({ index, total, section, idle, has3D, onPrev, onNext, onOverview, on3D, onPresenter }: DeckChromeProps) => {
+/** Acima disto os pontinhos viram régua ilegível no projetor: troca por uma barra fina proporcional. */
+const MAX_STEP_DOTS = 8;
+
+/**
+ * Barra de progresso, seção atual, contador e controles. A cor do ato (CSS var --act-color, definida no
+ * deck-root) pinta o ponto da seção, a barra de progresso e os passos. Botões e navegação somem com o mouse
+ * parado (`.hide-when-idle`, em index.css) — menos quando têm foco de teclado, para quem navega por Tab.
+ */
+export const DeckChrome = ({ index, total, section, has3D, onPrev, onNext, onOverview, on3D, onPresenter }: DeckChromeProps) => {
     const { isFull, toggle } = useFullscreen();
     const step = useSlideStepStore(s => s.step);
     const stepCount = useSlideStepStore(s => s.count);
     const detailsAvailable = useDetailsStore(s => s.available > 0);
     const detailsOpen = useDetailsStore(s => s.open);
     const progress = total > 1 ? index / (total - 1) : 1;
-    const fade = idle ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0';
+    const stepProgress = stepCount > 0 ? (step + 1) / stepCount : 0;
 
     return (
         <>
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-white/5 z-30" aria-hidden>
+                {/* Barra de largura total encolhida por scaleX: só composição, nada de layout a cada slide. */}
                 <div
-                    className="h-full bg-gradient-to-r from-brand-crimson via-brand-red to-fuchsia-500 transition-[width] duration-500 ease-out"
-                    style={{ width: `${progress * 100}%` }}
+                    className="h-full w-full origin-left bg-[var(--act-color,#E11D48)] transition-[transform,background-color] duration-450 ease-(--ease-out)"
+                    style={{ transform: `scaleX(${progress})` }}
                 />
             </div>
 
             {section && (
-                <div className={`absolute top-5 left-7 z-30 flex items-center gap-3 text-[13px] uppercase tracking-[0.22em] text-gray-300 pointer-events-none transition-all duration-500 ${idle ? 'opacity-60' : 'opacity-90'}`}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-brand-red shadow-[0_0_8px_#e11d48]" />
+                <div className="absolute top-5 left-7 z-30 flex items-center gap-3 text-[16px] uppercase tracking-[0.18em] text-gray-100 pointer-events-none">
+                    <span className="w-2 h-2 rounded-full bg-[var(--act-color,#E11D48)]" />
                     <span>{section}</span>
                 </div>
             )}
 
             {stepCount > 1 && (
-                <div
-                    className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 px-4 py-2 rounded-full bg-black/55 border border-white/10 backdrop-blur-md pointer-events-none"
-                    aria-label={`Passo ${step + 1} de ${stepCount}`}
-                >
-                    <span className="text-[13px] font-mono text-gray-200 tabular-nums">Passo {step + 1} de {stepCount}</span>
-                    <span className="flex items-center gap-1.5" aria-hidden>
-                        {Array.from({ length: stepCount }, (_, i) => (
-                            <span key={i} className={`h-2 rounded-full transition-all duration-300 ${i === step ? 'w-5 bg-brand-red' : i < step ? 'w-2 bg-brand-red/70' : 'w-2 bg-white/30'}`} />
-                        ))}
-                    </span>
+                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 px-4 py-2 rounded-full bg-black/55 border border-white/10 backdrop-blur-md pointer-events-none">
+                    {/* role=status: o leitor de tela anuncia cada passo novo. */}
+                    <span role="status" className="text-[14px] font-mono text-gray-200 tabular-nums">Passo {step + 1} de {stepCount}</span>
+                    {stepCount > MAX_STEP_DOTS ? (
+                        <span className="relative block w-28 h-1.5 rounded-full bg-white/20 overflow-hidden" aria-hidden>
+                            <span
+                                className="absolute inset-0 origin-left rounded-full bg-[var(--act-color,#E11D48)] transition-transform duration-250 ease-(--ease-out)"
+                                style={{ transform: `scaleX(${stepProgress})` }}
+                            />
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-1.5" aria-hidden>
+                            {/* Exceção deliberada: o ponto ativo cresce em largura e empurra os vizinhos. */}
+                            {Array.from({ length: stepCount }, (_, i) => (
+                                <span
+                                    key={i}
+                                    className={`h-2 rounded-full transition-[width,background-color,opacity] duration-250 ease-(--ease-out) ${i === step ? 'w-5 bg-[var(--act-color,#E11D48)]' : i < step ? 'w-2 bg-[var(--act-color,#E11D48)] opacity-70' : 'w-2 bg-white/30'}`}
+                                />
+                            ))}
+                        </span>
+                    )}
                 </div>
             )}
 
             {(has3D || detailsAvailable) && (
-                <div className={`absolute bottom-6 left-7 z-30 flex items-center gap-3 transition-all duration-500 ${idle ? 'opacity-60' : 'opacity-100'}`}>
+                // Em tela estreita (projetor 4:3) estes botões sobem e deixam a faixa de baixo para a pílula de passos.
+                <div className="hide-when-idle absolute bottom-20 min-[1180px]:bottom-6 left-7 z-30 flex items-center gap-3">
                     {has3D && (
                         <button
                             type="button"
                             onClick={on3D}
-                            className="flex items-center gap-2 pl-3 pr-4 py-2 rounded-full text-sm text-white bg-gradient-to-r from-cyan-500/25 to-fuchsia-500/25 border border-cyan-300/30 hover:border-cyan-200/70 shadow-[0_0_30px_-6px_rgba(34,211,238,0.6)] backdrop-blur-md"
+                            className="flex items-center gap-2 pl-3 pr-4 py-2 rounded-full text-sm text-white bg-[rgba(8,8,18,0.72)] border border-[rgba(255,255,255,0.18)] hover:border-white/40 backdrop-blur-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                         >
-                            <Box size={16} className="text-cyan-300" />
+                            <Box size={16} className="text-[var(--act-color,#E11D48)]" aria-hidden />
                             Ver mecanismo em 3D
                             <kbd className="deck-kbd ml-1">3</kbd>
                         </button>
@@ -106,10 +125,10 @@ export const DeckChrome = ({ index, total, section, idle, has3D, onPrev, onNext,
                             type="button"
                             onClick={toggleDetails}
                             aria-expanded={detailsOpen}
-                            className="flex items-center gap-2 pl-4 pr-3 py-2 rounded-full text-sm text-gray-100 bg-black/55 border border-white/15 hover:border-brand-red/60 hover:text-white backdrop-blur-md"
+                            className="flex items-center gap-2 pl-4 pr-3 py-2 rounded-full text-sm text-gray-100 bg-black/55 border border-white/15 hover:border-white/40 hover:text-white backdrop-blur-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                         >
                             {detailsOpen ? 'Ocultar detalhamento' : 'Mostrar detalhamento'}
-                            <ChevronDown size={16} className={`transition-transform duration-300 ${detailsOpen ? 'rotate-180' : ''}`} />
+                            <ChevronDown size={16} className={`transition-transform duration-300 ease-(--ease-out) ${detailsOpen ? 'rotate-180' : ''}`} aria-hidden />
                             <kbd className="deck-kbd">D</kbd>
                         </button>
                     )}
@@ -118,13 +137,13 @@ export const DeckChrome = ({ index, total, section, idle, has3D, onPrev, onNext,
 
             <nav
                 aria-label="Navegação dos slides"
-                className={`absolute bottom-5 right-6 z-30 flex items-center gap-1 px-2 py-1.5 rounded-full bg-black/55 border border-white/10 backdrop-blur-md transition-all duration-500 ${fade}`}
+                className="hide-when-idle absolute bottom-5 right-6 z-30 flex items-center gap-1 px-2 py-1.5 rounded-full bg-black/55 border border-white/10 backdrop-blur-md"
             >
                 <IconButton label="Slide anterior (←)" onClick={onPrev} disabled={index === 0}>
                     <ChevronLeft size={18} />
                 </IconButton>
-                <span className="px-2 font-mono text-xs text-gray-300 tabular-nums select-none">
-                    {pad(index + 1)}<span className="text-gray-600"> / {pad(total)}</span>
+                <span className="px-2 font-mono text-[14px] text-gray-200 tabular-nums select-none">
+                    {pad(index + 1)}<span className="text-gray-400"> / {pad(total)}</span>
                 </span>
                 <IconButton label="Próximo slide (→)" onClick={onNext} disabled={index === total - 1}>
                     <ChevronRight size={18} />

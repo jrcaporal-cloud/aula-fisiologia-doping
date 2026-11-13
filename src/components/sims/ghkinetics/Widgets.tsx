@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { COLORS } from './content';
+import { DUR, EASE_OUT, stagger } from '../../../lib/motion';
+import { CAUTION } from '../../../lib/palette';
 
 /** Peças do painel lateral: barras de isoformas, cadeia hepática do IGF-1 e faixa do passaporte (ABP). */
 
@@ -16,8 +18,8 @@ const IsoBar = ({ label, share20, delay, note }: BarProps) => (
             <span className="text-[14px] text-gray-200">{note}</span>
         </div>
         <div className="h-[18px] rounded-md overflow-hidden flex border border-white/10 bg-white/5">
-            <motion.div className="h-full" style={{ background: COLORS.iso }} initial={{ width: 0 }} animate={{ width: `${100 - share20}%` }} transition={{ delay, duration: 0.8 }} />
-            <motion.div className="h-full" style={{ background: COLORS.iso20 }} initial={{ width: 0 }} animate={{ width: `${share20}%` }} transition={{ delay: delay + 0.6, duration: 0.6 }} />
+            <motion.div className="h-full" style={{ width: `${100 - share20}%`, background: COLORS.iso, originX: 0 }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay, duration: DUR.bar, ease: EASE_OUT }} />
+            <motion.div className="h-full" style={{ width: `${share20}%`, background: COLORS.iso20, originX: 0 }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: delay + 0.45, duration: DUR.enter, ease: EASE_OUT }} />
         </div>
     </div>
 );
@@ -28,10 +30,10 @@ export const Isoforms = () => (
             <span className="flex items-center gap-1.5 text-gray-100"><span className="w-3 h-3 rounded-sm" style={{ background: COLORS.iso }} />22 kDa</span>
             <span className="flex items-center gap-1.5 text-gray-100"><span className="w-3 h-3 rounded-sm" style={{ background: COLORS.iso20 }} />20 kDa</span>
         </div>
-        <IsoBar label="GH endógeno (hipófise)" note="22 + 20 kDa" share20={22} delay={0.2} />
-        <IsoBar label="rhGH (191 aa)" note="só 22 kDa" share20={0} delay={0.6} />
-        <IsoBar label="Plasma após a injeção" note="proporção muda" share20={8} delay={1.1} />
-        <div className="text-[14px] text-amber-200">proporções ilustrativas (a aula não dá valores)</div>
+        <IsoBar label="GH endógeno (hipófise)" note="22 + 20 kDa" share20={22} delay={0.1} />
+        <IsoBar label="rhGH (191 aa)" note="só 22 kDa" share20={0} delay={0.25} />
+        <IsoBar label="Plasma após a injeção" note="proporção muda" share20={8} delay={0.4} />
+        <div className="text-[14px]" style={{ color: CAUTION.text }}>proporções ilustrativas (a aula não dá valores)</div>
     </div>
 );
 
@@ -73,7 +75,7 @@ export const AbpStrip = () => {
                 return (
                     <motion.circle key={i} cx={x(i)} cy={y(s)} r={flagged ? 5.5 : 4} fill={flagged ? COLORS.control : COLORS.igf}
                         stroke={flagged ? '#FECDD3' : 'none'} strokeWidth={1.5}
-                        initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 + i * 0.12, duration: 0.3 }} />
+                        initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: stagger(i, 0.15, 0.035), duration: DUR.enter, ease: EASE_OUT }} />
                 );
             })}
             <text x={L} y={H - 28} fontSize={16} fill="#E5E7EB" style={BODY}>amostras no tempo →</text>

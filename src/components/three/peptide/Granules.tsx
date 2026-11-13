@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { V, lerp, phase, rng, smooth } from '../receptor/layout';
@@ -7,6 +7,7 @@ import { useHover } from '../receptor/useHover';
 import type { TimeRef } from '../receptor/types';
 import { BLOOD, GH_PER_GRANULE, GRANULES, GRANULE_R, MEM_HALF, PW, pp, type GranuleSpec } from './layout';
 import { PC } from './ligands';
+import { granuleMaterial } from './shaders';
 
 /*
  * Grânulos de secreção com GH. Na etapa 6 os três mais próximos sobem, fundem-se à membrana (o poro de
@@ -16,8 +17,14 @@ import { PC } from './ligands';
 /** Centro do grânulo g em T (com o achatamento da fusão). */
 const granuleCenter = (g: GranuleSpec, T: number, out: THREE.Vector3) => {
     const up = pp(T, PW.granUp);
-    if (g.fuse) return out.copy(g.rest).lerp(g.fuse, up).add(V(0, 0.42 * pp(T, PW.fuse), 0));
-    return out.copy(g.rest).add(V(0, 1.1 * up, 0));
+    if (g.fuse) {
+        out.copy(g.rest).lerp(g.fuse, up);
+        out.y += 0.42 * pp(T, PW.fuse);
+        return out;
+    }
+    out.copy(g.rest);
+    out.y += 1.1 * up;
+    return out;
 };
 
 interface Gh { g: number; o: THREE.Vector3; out: THREE.Vector3; mid: THREE.Vector3; end: THREE.Vector3; d: number; d2: number; ph: number }
@@ -75,26 +82,39 @@ const placeGh = (h: Gh, T: number, clock: number) => {
     tmpM.compose(tp, tq, ts.set(r, r, r));
 };
 
+/** Escrita fora do componente: o compilador do React não deixa mutar ali um valor de hook. */
+const setOpacity = (m: THREE.Material, o: number) => { m.opacity = o; };
+
+const SHELL_GEO = new THREE.SphereGeometry(1, 28, 20);
+/** Casca de raycast low-poly: o hover não testa os 1 100 triângulos da esfera visível. */
+const PICK_GEO = new THREE.SphereGeometry(1, 10, 8);
+
 const Shell = ({ g, timeRef }: { g: GranuleSpec; timeRef: TimeRef }) => {
     const ref = useRef<THREE.Mesh>(null);
-    const mat = useRef<THREE.MeshStandardMaterial>(null);
     const hover = useHover('Grânulo de GH', 'Vesícula com GH estocado. O cálcio no citosol dispara a fusão com a membrana e o GH sai da célula de uma vez.');
+    const mat = useMemo(() => granuleMaterial(new THREE.MeshStandardMaterial({
+        color: PC.granule, emissive: PC.gh, emissiveIntensity: 0.25, roughness: 0.25, transparent: true, opacity: 0.34, depthWrite: false,
+    }), g.fuse !== null), [g]);
+    useEffect(() => () => mat.dispose(), [mat]);
     useFrame(() => {
         const T = timeRef.current.t;
         const m = ref.current;
         if (!m) return;
-        granuleCenter(g, T, m.position);
         const f = g.fuse ? pp(T, PW.fuse) : 0;
         // a vesícula achatada vira parte da membrana e some quando o poro fecha
         const gone = g.fuse ? pp(T, PW.reseal) : 0;
-        m.scale.set(GRANULE_R * (1 + 0.5 * f), GRANULE_R * (1 - 0.72 * f), GRANULE_R * (1 + 0.5 * f));
         m.visible = gone < 0.99;
-        if (mat.current) mat.current.opacity = (0.34 + 0.16 * f) * (1 - gone);
+        // escondido: escala zero também tira a casca de hover do raycast
+        if (!m.visible) { m.scale.setScalar(0); return; }
+        granuleCenter(g, T, m.position);
+        m.scale.set(GRANULE_R * (1 + 0.5 * f), GRANULE_R * (1 - 0.72 * f), GRANULE_R * (1 + 0.5 * f));
+        setOpacity(mat, (0.34 + 0.16 * f) * (1 - gone));
     });
     return (
-        <mesh ref={ref} {...hover} renderOrder={2}>
-            <sphereGeometry args={[1, 28, 20]} />
-            <meshStandardMaterial ref={mat} color={PC.granule} emissive={PC.gh} emissiveIntensity={0.25} roughness={0.25} transparent opacity={0.34} depthWrite={false} />
+        <mesh ref={ref} geometry={SHELL_GEO} material={mat} renderOrder={2}>
+            <mesh {...hover} geometry={PICK_GEO}>
+                <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
+            </mesh>
         </mesh>
     );
 };
@@ -106,15 +126,16 @@ export const Granules = ({ timeRef }: { timeRef: TimeRef }) => {
         const m = ref.current;
         if (!m) return;
         const T = timeRef.current.t;
-        gh.forEach((h, i) => {
-            placeGh(h, T, clock.elapsedTime);
+        const c = clock.elapsedTime;
+        for (let i = 0; i < gh.length; i++) {
+            placeGh(gh[i], T, c);
             m.setMatrixAt(i, tmpM);
-        });
+        }
         m.instanceMatrix.needsUpdate = true;
     });
     return (
         <>
-            {GRANULES.map((g, i) => <Shell key={i} g={g} timeRef={timeRef} />)}
+            {GRANULES.map(g => <Shell key={`${g.rest.x}:${g.rest.y}`} g={g} timeRef={timeRef} />)}
             <instancedMesh ref={ref} args={[SPHERE_LO, undefined, gh.length]} frustumCulled={false}>
                 <meshStandardMaterial color="#FB7185" emissive={PC.gh} emissiveIntensity={0.55} roughness={0.4} />
             </instancedMesh>

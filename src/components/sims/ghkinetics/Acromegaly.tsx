@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { COLORS } from './content';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 /**
  * Silhueta do passo "custo real": perfil da cabeça que se transforma (arcadas supraorbitais, nariz/lábios,
@@ -52,7 +53,7 @@ const Hand = ({ finger, palm }: HandProps) => {
 const FOOT_N = 'M0,0 C14,-4 26,-2 30,8 C34,20 34,50 28,64 C22,74 6,74 2,64 C-4,48 -6,20 0,0 Z';
 
 const Callout = ({ x, y, tx, ty, text, delay }: { x: number; y: number; tx: number; ty: number; text: string; delay: number }) => (
-    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay, duration: 0.4 }}>
+    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay, duration: DUR.enter, ease: EASE_OUT }}>
         <circle cx={x} cy={y} r={4} fill={COLORS.warn} />
         <line x1={x} y1={y} x2={tx} y2={ty} stroke="rgba(251,191,36,0.7)" strokeWidth={1.2} />
         <text x={tx + 4} y={ty + 4} fontSize={14} fontWeight={600} fill="#FDE68A"
@@ -62,7 +63,7 @@ const Callout = ({ x, y, tx, ty, text, delay }: { x: number; y: number; tx: numb
 
 export const Acromegaly = () => {
     const reduce = useReducedMotion();
-    const t = { delay: reduce ? 0 : 0.5, duration: reduce ? 0 : 1.8, ease: [0.45, 0, 0.2, 1] as const };
+    const t = { delay: reduce ? 0 : 0.15, duration: reduce ? 0 : DUR.draw, ease: EASE_IN_OUT };
     return (
         <svg viewBox="0 0 330 236" className="block h-full w-full" role="img" aria-label="Perfil, mão e pé antes (tracejado) e com acromegalia">
             {/* cabeça em perfil */}
@@ -71,10 +72,10 @@ export const Acromegaly = () => {
                 <motion.path initial={{ d: HEAD_N }} animate={{ d: HEAD_A }} transition={t}
                     fill="rgba(251,191,36,0.16)" stroke={COLORS.warn} strokeWidth={2.2} strokeLinejoin="round" />
                 <ellipse cx={92} cy={116} rx={9} ry={14} fill="none" stroke="rgba(251,191,36,0.6)" strokeWidth={1.6} />
-                <motion.circle r={2.6} fill="#FDE68A" initial={{ cx: 158, cy: 98 }} animate={{ cx: 162, cy: 100 }} transition={t} />
+                <motion.circle cx={158} cy={98} r={2.6} fill="#FDE68A" initial={{ x: 0, y: 0 }} animate={{ x: 4, y: 2 }} transition={t} />
             </g>
-            <Callout x={174} y={86} tx={196} ty={64} text="arcadas supraorbitais" delay={reduce ? 0 : 2} />
-            <Callout x={178} y={192} tx={196} ty={214} text="mandíbula projetada" delay={reduce ? 0 : 2.3} />
+            <Callout x={174} y={86} tx={196} ty={64} text="arcadas supraorbitais" delay={reduce ? 0 : 0.6} />
+            <Callout x={178} y={192} tx={196} ty={214} text="mandíbula projetada" delay={reduce ? 0 : 0.75} />
 
             {/* mão */}
             <g transform="translate(250,108)">
@@ -91,7 +92,7 @@ export const Acromegaly = () => {
                     style={{ transformOrigin: '15px 0px' }} fill="rgba(251,191,36,0.16)" stroke={COLORS.warn} strokeWidth={1.8} />
             </g>
             <motion.text x={274} y={36} textAnchor="middle" fontSize={14} fontWeight={600} fill="#FDE68A"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduce ? 0 : 2.6 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduce ? 0 : 0.9, duration: DUR.enter, ease: EASE_OUT }}
                 style={{ fontFamily: 'var(--font-body)' }}>mãos e pés alargados</motion.text>
         </svg>
     );

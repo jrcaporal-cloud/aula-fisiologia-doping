@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { BASE_Y } from './layout';
 
 /*
  * Ajudas de seleção por ponteiro.
@@ -34,7 +33,7 @@ export const makeCellRaycast = (info: () => CanvasInfo) =>
         let bestDist = Infinity;
         for (let i = 0; i < this.count; i++) {
             const o = i * 16;
-            if (arr[o] === 0) continue; // célula apagada pelo hematócrito (matriz de escala zero)
+            if (arr[o] === 0) continue; // matriz degenerada (as apagadas pelo hematócrito já ficam fora de `count`)
             P.set(arr[o + 12], arr[o + 13], arr[o + 14]);
             const dist = ray.origin.distanceTo(P);
             const tol = Math.max(PICK_MIN, dist * worldPerPx * PICK_PX);
@@ -71,15 +70,3 @@ export function visibleRaycast(this: THREE.InstancedMesh, raycaster: THREE.Rayca
 
 /** Objeto sem acerto de ponteiro (contornos e fantasmas por cima da cena). */
 export const noRaycast = (): void => undefined;
-
-const scratch: THREE.Intersection[] = [];
-
-/**
- * Raycast da cavidade: o elipsoide de sangue passa um pouco do plano das valvas e cobriria a mitral e
- * a aórtica. Acertos acima do plano são descartados, e as valvas voltam a poder ser apontadas.
- */
-export function belowBaseRaycast(this: THREE.Mesh, raycaster: THREE.Raycaster, hits: THREE.Intersection[]): void {
-    scratch.length = 0;
-    THREE.Mesh.prototype.raycast.call(this, raycaster, scratch);
-    for (const h of scratch) if (h.point.y <= BASE_Y + 0.02) hits.push(h);
-}

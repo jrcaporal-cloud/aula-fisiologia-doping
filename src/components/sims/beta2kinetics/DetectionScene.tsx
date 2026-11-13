@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { Beef, FlaskConical, Microscope, ScanSearch } from 'lucide-react';
 import { useState } from 'react';
+import { DUR, EASE_OUT, stagger } from '../../../lib/motion';
 import { C, PK } from './content';
 
 /**
@@ -39,10 +40,10 @@ const FlowRow = () => (
             return (
                 <motion.div key={f.title} className="relative rounded-xl border px-3 py-2"
                     style={{ borderColor: `${f.color}88`, background: `${f.color}14` }}
-                    initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.25, duration: 0.35 }}>
+                    initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: stagger(i, 0.15, 0.1), duration: DUR.enter, ease: EASE_OUT }}>
                     <div className="flex items-start gap-2">
                         <Icon size={19} className="shrink-0 mt-0.5" style={{ color: f.color }} />
-                        <span className="font-display text-[15px] font-semibold text-white leading-tight">{f.title}</span>
+                        <span className="text-[15px] font-semibold text-white leading-tight">{f.title}</span>
                     </div>
                     <div className="text-[14px] text-gray-100 leading-snug mt-0.5">{f.lines.join(' ')}</div>
                     {i < FLOW.length - 1 && (
@@ -66,7 +67,7 @@ export const DetectionScene = () => {
     return (
         <div className="flex flex-col h-full gap-2">
             <div className="flex items-center justify-between px-1">
-                <span className="font-display text-[17px] font-semibold text-white">Clembuterol na urina: da carne ao laudo</span>
+                <span className="text-[17px] font-semibold text-white">Clembuterol na urina: da carne ao laudo</span>
                 <span className="font-mono text-[14px] text-gray-200">régua em escala log</span>
             </div>
             <FlowRow />
@@ -74,10 +75,11 @@ export const DetectionScene = () => {
                 <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 w-full h-full block" role="img"
                     aria-label="Régua de concentração de 1 picograma a 20 nanogramas por mililitro, com o MRPL de 0,2 ng/mL e o limite de notificação de 5 ng/mL">
                     {/* faixa < 5 ng/mL */}
-                    <motion.rect x={RL} y={50} height={60} rx={8} fill="rgba(245,158,11,0.13)" stroke="rgba(245,158,11,0.5)"
-                        initial={{ width: 0 }} animate={{ width: xNotify - RL }} transition={{ duration: reduced ? 0 : 1, delay: reduced ? 0 : 0.6, ease: 'easeOut' }} />
-                    <text x={RL + 10} y={72} className="font-body" fontSize={16} fontWeight={700} fill="#FDE68A">limite de notificação &lt; 5 ng/mL</text>
-                    <text x={RL + 10} y={92} className="font-body" fontSize={16} fill="#FEF3C7">em carnes de países de risco</text>
+                    <motion.rect x={RL} y={42} width={xNotify - RL} height={54} rx={8} fill="rgba(245,158,11,0.13)" stroke="rgba(245,158,11,0.5)"
+                        style={{ originX: 0 }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                        transition={{ duration: reduced ? 0 : DUR.bar, delay: reduced ? 0 : 0.3, ease: EASE_OUT }} />
+                    <text x={RL + 10} y={63} className="font-body" fontSize={16} fontWeight={700} fill="#FDE68A">limite de notificação &lt; 5 ng/mL</text>
+                    <text x={RL + 10} y={84} className="font-body" fontSize={16} fill="#FEF3C7">em carnes de países de risco</text>
 
                     {/* régua */}
                     <line x1={RL} x2={RR} y1={RY} y2={RY} stroke="rgba(255,255,255,0.6)" strokeWidth={2} />
@@ -95,7 +97,7 @@ export const DetectionScene = () => {
                     <text x={(xOf(0.001) + xOf(0.999)) / 2} y={RY + 84} textAnchor="middle" className="font-body" fontSize={16} fill="#EDE9FE">frações de picogramas (1 pg = 0,001 ng)</text>
 
                     {/* MRPL */}
-                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 1.2, duration: 0.4 }}>
+                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 0.6, duration: DUR.enter, ease: EASE_OUT }}>
                         <line x1={xMrpl} x2={xMrpl} y1={32} y2={RY + 10} stroke={C.red} strokeWidth={3} />
                         <rect x={xMrpl - 82} y={5} width={164} height={27} rx={6} fill={C.red} />
                         <text x={xMrpl} y={24} textAnchor="middle" className="font-mono" fontSize={16} fontWeight={700} fill="#fff">MRPL 0,2 ng/mL</text>
@@ -115,7 +117,7 @@ export const DetectionScene = () => {
             <div className="flex items-center gap-4 pt-2 border-t border-white/15">
                 <span className="font-mono text-[14px] uppercase tracking-wider text-gray-200 shrink-0">amostra</span>
                 <input type="range" min={0} max={1} step={0.002} value={u} onChange={e => setU(Number(e.target.value))}
-                    aria-label="Concentração de clembuterol na amostra" className="flex-1 cursor-pointer" style={{ accentColor: C.clen }} />
+                    aria-label="Concentração de clembuterol na amostra" className="flex-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]" style={{ accentColor: C.clen }} />
                 <span className="text-[15px] text-white shrink-0 text-right leading-tight" style={{ width: 300 }}>
                     <strong className="font-mono">{fmtNg(ng)} ng/mL</strong>
                     <span className="text-gray-200"> = {fmtPg(ng)} pg/mL</span>

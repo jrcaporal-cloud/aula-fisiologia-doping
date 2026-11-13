@@ -1,20 +1,21 @@
-import { cardioVitalsAt, type CardioVitals } from '../../../data/cardioSteps';
+import { CARDIO_VITALS, cardioVitalsAt, type CardioPhase, type CardioVitals } from '../../../data/cardioSteps';
 import { clamp01, lerp, smooth } from '../receptor/layout';
 import { APEX_RATIO, BASE_FRAC, BASE_Y, MM } from './layout';
 
 /*
- * Da ficha clínica para a geometria. Tudo o que a cena desenha vem de `cardioVitalsAt`: a parede e a
- * cavidade saem em milímetros, a pressão vira distensão (e rigidez), o hematócrito vira densidade de
- * hemácias e a viscosidade vira velocidade. Nada de número inventado aqui.
+ * Da ficha clínica para a geometria. A ficha do quadro vem do roteiro (`scriptVitals`, a tabela de
+ * cardioSteps.ts em T) ou do laboratório (`labVitals`, que reproduz a mesma tabela nos cenários); a
+ * parede e a cavidade saem em milímetros, a pressão vira distensão (e rigidez), o hematócrito vira
+ * densidade de hemácias e a viscosidade vira velocidade. Nada de número inventado aqui.
  *
  * `mix` (0 = em uso, 1 = depois de parar) é animado pelo gsap quando o seletor troca, para o circuito
  * transitar em vez de pular.
  */
 
 export interface CardioParams {
-    /** Valores da ficha já interpolados em T e entre as duas fases. */
+    /** Ficha do quadro (roteiro e laboratório já misturados). */
     v: CardioVitals;
-    /** Cavidade em diástole: raio equatorial e semi-eixo vertical. */
+    /** Cavidade do VE em diástole: raio equatorial e semi-eixo vertical (referencial do coração). */
     rCav: number;
     hCav: number;
     /** Espessura da parede (cresce para dentro: o epicárdio quase não se move). */
@@ -40,14 +41,14 @@ export interface CardioParams {
 }
 
 export const emptyParams = (): CardioParams => ({
-    v: cardioVitalsAt(0, 'uso'),
+    v: cardioVitalsAt(1, 'uso'),
     rCav: 1, hCav: 1, wall: 1, rOut: 1, hOut: 1, yc: 0, rigidez: 0, relax: 1, hz: 1,
 });
 
 /** Referência de E′ normal (cm/s): abaixo disso o relaxamento já é lento. */
 export const E_LINHA_REF = 10;
 
-const mixVitals = (a: CardioVitals, b: CardioVitals, k: number, out: CardioVitals): CardioVitals => {
+export const mixVitalsInto = (a: CardioVitals, b: CardioVitals, k: number, out: CardioVitals): CardioVitals => {
     out.paredeMm = lerp(a.paredeMm, b.paredeMm, k);
     out.cavidadeMm = lerp(a.cavidadeMm, b.cavidadeMm, k);
     out.paSist = lerp(a.paSist, b.paSist, k);
@@ -63,9 +64,26 @@ const mixVitals = (a: CardioVitals, b: CardioVitals, k: number, out: CardioVital
     return out;
 };
 
-/** Escreve em `out` (reaproveitado por quadro) a geometria derivada dos valores da ficha em T. */
-export const cardioParams = (T: number, mix: number, out: CardioParams): CardioParams => {
-    const v = mixVitals(cardioVitalsAt(T, 'uso'), cardioVitalsAt(T, 'apos'), clamp01(mix), out.v);
+/** Rascunhos das duas fases: o roteiro roda a cada quadro e não pode alocar. */
+const AT_USO: CardioVitals = { ...CARDIO_VITALS.uso[0] };
+const AT_APOS: CardioVitals = { ...CARDIO_VITALS.apos[0] };
+
+/** Mesma conta de `cardioVitalsAt` (interpola entre as etapas vizinhas), escrita em `out`. */
+const vitalsAtInto = (t: number, phase: CardioPhase, out: CardioVitals): CardioVitals => {
+    const table = CARDIO_VITALS[phase];
+    const last = table.length - 1;
+    const clamped = Math.min(Math.max(t, 0), last);
+    const i = Math.floor(clamped);
+    return mixVitalsInto(table[i], table[Math.min(i + 1, last)], clamped - i, out);
+};
+
+/** Ficha do roteiro em T, misturando "em uso" (mix = 0) e "depois de parar" (mix = 1). */
+export const scriptVitals = (T: number, mix: number, out: CardioVitals): CardioVitals =>
+    mixVitalsInto(vitalsAtInto(T, 'uso', AT_USO), vitalsAtInto(T, 'apos', AT_APOS), clamp01(mix), out);
+
+/** Geometria derivada da ficha que já está em `out.v`. */
+export const deriveGeometry = (out: CardioParams): CardioParams => {
+    const v = out.v;
     out.rCav = (v.cavidadeMm * MM) / 2;
     out.hCav = out.rCav * APEX_RATIO;
     out.wall = v.paredeMm * MM;
@@ -76,6 +94,12 @@ export const cardioParams = (T: number, mix: number, out: CardioParams): CardioP
     out.relax = clamp01((v.eLinha - 8.6) / 3);
     out.hz = 0.85 + clamp01((v.paSist - 118) / 26) * 0.2;
     return out;
+};
+
+/** Escreve em `out` (reaproveitado por quadro) a geometria do roteiro em T. */
+export const cardioParams = (T: number, mix: number, out: CardioParams): CardioParams => {
+    scriptVitals(T, mix, out.v);
+    return deriveGeometry(out);
 };
 
 // ------------------------------------------------------------------ ciclo cardíaco

@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { SUBSTANCE } from '../../../lib/palette';
 
 /**
  * Motor "ficha de caso clínico": cada caso é um prontuário revelado pelo passador
@@ -91,7 +92,8 @@ export interface CaseData {
 export const TONE_COLOR: Record<Tone, string> = {
     red: '#FB7185',
     amber: '#FBBF24',
-    green: '#34D399',
+    /** "Normal" do slide: azul de "dentro da faixa", nunca verde (daltonismo). */
+    green: SUBSTANCE.allowed,
     neutral: '#F3F4F6',
 };
 

@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 import { COLORS, HPG } from './content';
 
 /** Desenhos da "conta": fígado (ALT/AST, colestase) e eixo HPG (LH/FSH zerados). Esquemas qualitativos. */
@@ -20,7 +21,7 @@ const BileDot = ({ path, delay, active, reduced }: { path: string; delay: number
     <motion.circle r={4} fill={COLORS.amber}
         initial={false}
         animate={active && !reduced ? { offsetDistance: ['0%', '62%', '64%'], opacity: [0, 1, 1] } : { offsetDistance: '58%', opacity: active ? 1 : 0.6 }}
-        transition={active && !reduced ? { duration: 2.6, times: [0, 0.7, 1], delay, repeat: Infinity, repeatDelay: 0.4 } : { duration: 0.3 }}
+        transition={active && !reduced ? { duration: 2.6, times: [0, 0.7, 1], delay, repeat: Infinity, repeatDelay: 0.4 } : { duration: DUR.enter, ease: EASE_OUT }}
         style={{ offsetPath: `path("${path}")` }} />
 );
 
@@ -49,7 +50,7 @@ export const LiverGlyph = ({ active }: GlyphProps) => {
             {[{ label: 'ALT', x: 84 }, { label: 'AST', x: 216 }].map((e, i) => (
                 <motion.g key={e.label} initial={false}
                     animate={active && !reduced ? { y: [40, -6], opacity: [0, 1] } : { y: active ? -6 : 40, opacity: active ? 1 : 0 }}
-                    transition={active && !reduced ? { duration: 1.8, delay: 0.4 + i * 0.5, repeat: Infinity, repeatDelay: 0.6, ease: 'easeOut' } : { duration: 0.3 }}>
+                    transition={active && !reduced ? { duration: 1.8, delay: 0.4 + i * 0.5, repeat: Infinity, repeatDelay: 0.6, ease: EASE_OUT } : { duration: DUR.enter, ease: EASE_OUT }}>
                     <rect x={e.x - 36} y={42} width={72} height={28} rx={7} fill="#BE123C" stroke="#FDA4AF" />
                     <text x={e.x} y={62} textAnchor="middle" className="font-mono" fontSize={19} fontWeight={700} fill="#fff">{e.label} ↑</text>
                 </motion.g>
@@ -67,7 +68,7 @@ const NODE_X = 72;
 
 export const HpgGlyph = ({ active }: GlyphProps) => {
     const reduced = useReducedMotion() ?? false;
-    const drain = { duration: reduced ? 0 : 1.6, delay: reduced ? 0 : 0.5, ease: 'easeInOut' as const };
+    const drain = { duration: reduced ? 0 : DUR.bar, delay: reduced ? 0 : 0.15, ease: EASE_IN_OUT };
     return (
         <svg viewBox="0 0 300 200" className="w-full h-full block" role="img" aria-label="Eixo hipotálamo-hipófise-testículos com LH e FSH zerados">
             {NODES.map((n, i) => (
@@ -75,7 +76,7 @@ export const HpgGlyph = ({ active }: GlyphProps) => {
                     <motion.rect x={NODE_X - 66} y={n.y - 18} width={132} height={36} rx={18}
                         initial={false}
                         animate={{ fill: active ? 'rgba(148,163,184,0.10)' : 'rgba(96,165,250,0.18)', stroke: active ? 'rgba(148,163,184,0.5)' : '#60A5FA' }}
-                        transition={{ ...drain, delay: drain.delay + i * 0.2 }} strokeWidth={1.4} />
+                        transition={{ ...drain, delay: stagger(i, drain.delay, reduced ? 0 : 0.1) }} strokeWidth={1.4} />
                     <text x={NODE_X} y={n.y + 6} textAnchor="middle" className="font-body" fontSize={19} fontWeight={600} fill="#F3F4F6">{n.label}</text>
                 </g>
             ))}
@@ -91,19 +92,19 @@ export const HpgGlyph = ({ active }: GlyphProps) => {
             {!reduced && [0, 1, 2].map(k => (
                 <motion.circle key={k} cx={NODE_X} r={4} fill="#93C5FD" initial={false}
                     animate={active ? { opacity: 0 } : { cy: [118, 146], opacity: [0, 1, 0] }}
-                    transition={active ? { duration: 0.4 } : { duration: 1.4, delay: k * 0.45, repeat: Infinity }} />
+                    transition={active ? { duration: DUR.exit } : { duration: 1.4, delay: k * 0.45, repeat: Infinity }} />
             ))}
 
             {/* Medidor LH/FSH */}
             <g transform="translate(176 36)">
                 <text x={0} y={0} className="font-mono" fontSize={19} fill="#F3F4F6">LH/FSH</text>
                 <rect x={0} y={10} width={30} height={124} rx={6} fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" />
-                <motion.rect x={3} width={24} rx={4} fill="#60A5FA" initial={false}
-                    animate={active ? { y: 131, height: 0 } : { y: 13, height: 118 }} transition={drain} />
+                <motion.rect x={3} y={13} width={24} height={118} rx={4} fill="#60A5FA" style={{ originY: 1 }} initial={false}
+                    animate={{ scaleY: active ? 0 : 1 }} transition={drain} />
                 <motion.text x={42} y={132} className="font-mono" fontSize={34} fontWeight={700} fill={COLORS.rose}
-                    initial={false} animate={{ opacity: active ? 1 : 0 }} transition={{ delay: reduced ? 0 : 2, duration: 0.4 }}>0</motion.text>
+                    initial={false} animate={{ opacity: active ? 1 : 0 }} transition={{ delay: reduced || !active ? 0 : 0.7, duration: DUR.enter, ease: EASE_OUT }}>0</motion.text>
                 <motion.text x={0} y={156} className="font-mono" fontSize={19} fill="#FDA4AF"
-                    initial={false} animate={{ opacity: active ? 1 : 0 }} transition={{ delay: reduced ? 0 : 2, duration: 0.4 }}>{HPG.dose}</motion.text>
+                    initial={false} animate={{ opacity: active ? 1 : 0 }} transition={{ delay: reduced || !active ? 0 : 0.7, duration: DUR.enter, ease: EASE_OUT }}>{HPG.dose}</motion.text>
             </g>
         </svg>
     );

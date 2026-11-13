@@ -1,7 +1,8 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { EASE, LAYERS, STAGE_H, STAGE_W } from './content';
+import { EASE, LAYERS, STAGE_H, STAGE_W, type StageProps } from './content';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 
 const GREEN = LAYERS[2].color;
 const GREEN_INK = LAYERS[2].ink;
@@ -18,7 +19,11 @@ const PHASES = ['Androgênios', 'proliferação', 'fusão à fibra', 'novos mion
 const CHIP_GAP = 22;
 const CHIP_W = PHASES.map(p => Math.round(p.length * 7.7 + 24));
 const CHIP_X = CHIP_W.map((_, i) => 20 + CHIP_W.slice(0, i).reduce((a, b) => a + b + CHIP_GAP, 0));
-/** Instantes (ms) em que cada fase começa. */
+/**
+ * Instantes (ms) em que cada fase começa.
+ * Exceção de palco (regra T-3): a sequência É o conteúdo (~6 s); decisão do Rinaldo em 09/11/2026 (opção B).
+ * Trocar de aba corta o filme na hora: a cena salta para o estado final (ver `cut`).
+ */
 const PHASE_AT = [250, 1900, 3300, 4700];
 
 const hexPath = (cx: number, cy: number, r: number) =>
@@ -27,20 +32,24 @@ const hexPath = (cx: number, cy: number, r: number) =>
         return `${cx + r * Math.cos(a)} ${cy + r * Math.sin(a)}`;
     }).join(' L')} Z`;
 
-const usePhase = (still: boolean) => {
+const usePhase = (still: boolean, cut: boolean) => {
     const [phase, setPhase] = useState(still ? PHASES.length : 0);
     useEffect(() => {
         if (still) return;
         const timers = PHASE_AT.map((ms, i) => window.setTimeout(() => setPhase(i + 1), ms));
         return () => timers.forEach(window.clearTimeout);
     }, [still]);
-    return phase;
+    // Filme cortado (o passador trocou de aba): mostra o fim na hora.
+    return cut ? PHASES.length : phase;
 };
 
-const Scene = () => {
+const Scene = ({ cut }: { cut: boolean }) => {
     const still = !!useReducedMotion();
-    const phase = usePhase(still);
-    const ease = { duration: still ? 0 : 1, ease: EASE };
+    const phase = usePhase(still, cut);
+    /** Duração de cada fase; com o filme cortado, tudo assenta em DUR.exit e sem atraso. */
+    const dur = (d: number) => (still ? 0 : cut ? DUR.exit : d);
+    const wait = (d: number) => (still || cut ? 0 : d);
+    const ease = { duration: dur(DUR.draw), ease: EASE };
     const split = phase >= 2;
     const fused = phase >= 3;
     const grown = phase >= 4;
@@ -49,7 +58,7 @@ const Scene = () => {
             {/* Fibra muscular */}
             <motion.g
                 animate={{ scaleY: grown ? 1.09 : 1 }}
-                transition={{ duration: still ? 0 : 1.4, ease: EASE }}
+                transition={{ duration: dur(DUR.draw), ease: EASE_IN_OUT }}
                 style={{ transformOrigin: `300px ${FIBER_MID}px` }}
             >
                 <rect x={FIBER.x} y={FIBER.y} width={FIBER.w} height={FIBER.h} rx={52} fill="rgba(16,185,129,0.09)" stroke="rgba(52,211,153,0.5)" strokeWidth={1.5} />
@@ -61,10 +70,10 @@ const Scene = () => {
                 ))}
                 {/* Mionúcleo novo (vem da célula satélite) */}
                 <motion.ellipse
-                    cx={NEW_NUCLEUS.x} cy={NEW_NUCLEUS.y} ry={6} fill={NUCLEUS} stroke="#fff" strokeWidth={1.4}
-                    initial={{ rx: 0, opacity: 0 }}
-                    animate={{ rx: fused ? 15 : 0, opacity: fused ? 1 : 0 }}
-                    transition={{ ...ease, delay: still ? 0 : 0.7 }}
+                    cx={NEW_NUCLEUS.x} cy={NEW_NUCLEUS.y} rx={15} ry={6} fill={NUCLEUS} stroke="#fff" strokeWidth={1.4}
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    animate={{ scaleX: fused ? 1 : 0, opacity: fused ? 1 : 0 }}
+                    transition={{ ...ease, delay: wait(0.3) }}
                 />
                 <text x={FIBER.x + 22} y={FIBER_MID + 5} fill={GREEN_INK} fontSize={15} fontWeight={600} className="font-body">fibra muscular</text>
             </motion.g>
@@ -84,7 +93,7 @@ const Scene = () => {
                     fill="none" stroke={ANDROGEN} strokeWidth={2}
                     initial={{ y: still ? 0 : -96, opacity: still ? 0 : 1 }}
                     animate={phase >= 1 ? { y: -8, opacity: split ? 0 : 1 } : { y: -96, opacity: 1 }}
-                    transition={{ duration: still ? 0 : 1.1, delay: still ? 0 : i * 0.15, ease: EASE }}
+                    transition={{ duration: dur(DUR.draw), delay: wait(stagger(i, 0, 0.15)), ease: EASE }}
                 />
             ))}
             <text x={SAT.x + 34} y={56} fill={ANDROGEN} fontSize={15} fontWeight={600} className="font-body" opacity={phase >= 2 ? 0.7 : 1}>androgênio</text>
@@ -98,7 +107,7 @@ const Scene = () => {
                         key={k}
                         initial={false}
                         animate={{ x: dx, y: toFiber ? NEW_NUCLEUS.y - SAT.y : 0, opacity: toFiber ? 0 : 1, scale: toFiber ? 0.6 : 1 }}
-                        transition={{ duration: still ? 0 : toFiber ? 0.9 : 0.9, ease: EASE }}
+                        transition={{ duration: dur(DUR.morph), ease: EASE_IN_OUT }}
                         style={{ transformOrigin: `${SAT.x}px ${SAT.y}px` }}
                     >
                         <ellipse cx={SAT.x} cy={SAT.y} rx={22} ry={12} fill="rgba(16,185,129,0.28)" stroke={phase >= 1 ? '#fff' : GREEN} strokeWidth={1.6} />
@@ -121,7 +130,7 @@ const Scene = () => {
                             <motion.rect
                                 x={x} y={292} width={w} height={30} rx={15}
                                 animate={{ fill: on ? 'rgba(16,185,129,0.28)' : 'rgba(255,255,255,0.04)', stroke: on ? GREEN : done ? 'rgba(110,231,183,0.45)' : 'rgba(255,255,255,0.14)' }}
-                                transition={{ duration: 0.4 }}
+                                transition={{ duration: dur(DUR.text), ease: EASE_OUT }}
                             />
                             <text x={x + w / 2} y={312} textAnchor="middle" fill={on || done ? '#F3F4F6' : '#CBD5E1'} fontSize={15} fontWeight={on ? 700 : 500} className="font-body">{p}</text>
                             {i < PHASES.length - 1 && <text x={x + w + CHIP_GAP / 2} y={312} textAnchor="middle" fill="#CBD5E1" fontSize={15}>→</text>}
@@ -139,14 +148,16 @@ const BHASIN = [
 ];
 
 /** Camada 3 — célula satélite ativada por androgênio vira mionúcleo novo. */
-export const StageSatellite = () => {
-    const [run, setRun] = useState(0);
+export const StageSatellite = ({ tab }: StageProps) => {
+    // Cada execução lembra em que aba começou: se o passador troca de aba, o filme é cortado.
+    const [runStart, setRunStart] = useState({ run: 0, tab });
+    const run = runStart.run;
     const still = useReducedMotion();
     return (
         <div className="relative w-full h-full">
             <svg viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} className="w-full h-full" role="img" aria-label="Célula satélite ativada por androgênio prolifera e se funde à fibra, acrescentando um mionúcleo">
                 <text x={20} y={28} fill="#CBD5E1" fontSize={15} className="font-mono" letterSpacing={1}>CÉLULA SATÉLITE → MIONÚCLEO</text>
-                <Scene key={run} />
+                <Scene key={run} cut={tab !== runStart.tab} />
                 <line x1={20} x2={580} y1={346} y2={346} stroke="rgba(255,255,255,0.1)" />
                 <text x={20} y={376} fill="#CBD5E1" fontSize={15} className="font-mono" letterSpacing={-0.3}>BHASIN ET AL., NEJM · 16 SEMANAS · MASSA MAGRA</text>
                 {BHASIN.map((r, i) => {
@@ -156,9 +167,10 @@ export const StageSatellite = () => {
                             <text x={20} y={y + 5} fill="#E5E7EB" fontSize={15} className="font-body">{r.label}</text>
                             <motion.rect
                                 key={`b${run}`}
-                                x={240} y={y - 9} height={18} rx={9} fill={r.color} opacity={0.85}
-                                initial={{ width: still ? r.kg * 42 : 0 }} animate={{ width: r.kg * 42 }}
-                                transition={{ duration: still ? 0 : 1, delay: still ? 0 : 0.4 + i * 0.2, ease: EASE }}
+                                x={240} y={y - 9} width={r.kg * 42} height={18} rx={9} fill={r.color} opacity={0.85}
+                                style={{ originX: 0 }}
+                                initial={{ scaleX: still ? 1 : 0 }} animate={{ scaleX: 1 }}
+                                transition={{ duration: still ? 0 : DUR.bar, delay: still ? 0 : stagger(i, 0.15, 0.1), ease: EASE }}
                             />
                             <text x={240 + r.kg * 42 + 10} y={y + 5} fill={r.ink} fontSize={15} fontWeight={700} className="font-mono">{r.value}</text>
                         </g>
@@ -167,8 +179,8 @@ export const StageSatellite = () => {
             </svg>
             <button
                 type="button"
-                onClick={() => setRun(r => r + 1)}
-                className="absolute top-[2%] right-[2%] flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[15px] text-slate-100 hover:bg-white/10 cursor-pointer"
+                onClick={() => setRunStart(s => ({ run: s.run + 1, tab }))}
+                className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)] absolute top-[2%] right-[2%] flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[15px] text-slate-100 hover:bg-white/10 cursor-pointer"
             >
                 <RotateCcw size={14} /> repetir
             </button>

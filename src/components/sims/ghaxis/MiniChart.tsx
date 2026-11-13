@@ -1,16 +1,16 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { COLORS } from './content';
 import {
     CONTROL_AT, GHRH_SYNERGY, GHRP_PEAK, GHRP_WINDOW, IGF_BOUND_HALF, INJ_AT, SC_HALF_POINT, SC_PEAK_X, SLEEP,
     ghNatural, ghrpCurve, igfBound, igfFree, igfNatural, rhghIv, rhghSc, sampleFn, type Pt,
 } from './chartModel';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 export const CHART = { w: 620, h: 176, l: 52, r: 16, t: 14, b: 30 } as const;
 const MONO = 'var(--font-mono)';
 /** Texto do gráfico: ≥ 15 px (viewBox ≈ largura renderizada). */
 const AXIS_FONT = 16;
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 interface Scale { x: (v: number) => number; y: (v: number) => number }
 
@@ -50,14 +50,14 @@ const Axes = ({ s, ticks, yLabel, yTicks = [] }: { s: Scale; ticks: Tick[]; yLab
     );
 };
 
-const Curve = ({ d, color, width = 2.6, dash, delay = 0, duration = 1.4 }: { d: string; color: string; width?: number; dash?: string; delay?: number; duration?: number }) => (
+const Curve = ({ d, color, width = 2.6, dash, delay = 0, duration = DUR.draw }: { d: string; color: string; width?: number; dash?: string; delay?: number; duration?: number }) => (
     <motion.path d={d} fill="none" stroke={color} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={dash}
         initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ pathLength: { duration, ease: 'easeInOut', delay }, opacity: { duration: 0.2, delay } }} />
+        transition={{ pathLength: { duration, ease: EASE_IN_OUT, delay }, opacity: { duration: DUR.exit, delay } }} />
 );
 
 const Fade = ({ delay = 0, children }: { delay?: number; children: ReactNode }) => (
-    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay }}>{children}</motion.g>
+    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.enter, delay, ease: EASE_OUT }}>{children}</motion.g>
 );
 
 const Label = ({ x, y, text, color, anchor = 'start', size = AXIS_FONT }: { x: number; y: number; text: string; color: string; anchor?: 'start' | 'middle' | 'end'; size?: number }) => (
@@ -76,13 +76,13 @@ const NaturalPlot = () => {
             <rect x={s.x(SLEEP[0])} y={CHART.t} width={s.x(SLEEP[1]) - s.x(SLEEP[0])} height={base - CHART.t} fill="rgba(96,165,250,0.08)" />
             <Label x={s.x(SLEEP[1]) - 6} y={CHART.t + 14} text="sono" color="#93C5FD" anchor="end" />
             <Axes s={s} yLabel="nível (u.a.)" ticks={[{ v: 0, label: 'dia' }, { v: 19, label: 'noite' }, { v: 24, label: '24 h' }]} />
-            <motion.path d={toArea(gh, gh.map(p => ({ x: p.x, y: 0 })), s)} fill={COLORS.hipofise} initial={{ opacity: 0 }} animate={{ opacity: 0.12 }} transition={{ delay: 0.8, duration: 0.8 }} />
-            <Curve d={toPath(gh, s)} color={COLORS.hipofise} duration={1.8} />
-            <Curve d={toPath(igf, s)} color={COLORS.igf} width={3} delay={0.5} duration={1.4} />
-            <Fade delay={1.4}>
-                <Label x={s.x(15.4)} y={s.y(1.0) + 4} text="pulso de alta amplitude · sono profundo (N3)" color="#6EE7B7" anchor="end" />
-                <Label x={s.x(0.4)} y={s.y(0.42) - 9} text="IGF-1 (ligado à IGFBP-3, t½ ~15 h): estável" color="#FDA4AF" />
-                <Label x={s.x(4.5)} y={s.y(0.27)} text="GH: pulsátil" color="#6EE7B7" anchor="middle" />
+            <motion.path d={toArea(gh, gh.map(p => ({ x: p.x, y: 0 })), s)} fill={COLORS.hipofise} initial={{ opacity: 0 }} animate={{ opacity: 0.12 }} transition={{ delay: 0.3, duration: DUR.bar, ease: EASE_OUT }} />
+            <Curve d={toPath(gh, s)} color={COLORS.hipofise} />
+            <Curve d={toPath(igf, s)} color={COLORS.igf} width={3} delay={0.15} />
+            <Fade delay={0.6}>
+                <Label x={s.x(15.4)} y={s.y(1.0) + 4} text="pulso de alta amplitude · sono profundo (N3)" color="#34D399" anchor="end" />
+                <Label x={s.x(0.4)} y={s.y(0.42) - 9} text="IGF-1 (ligado à IGFBP-3, t½ ~15 h): estável" color="#6EE7B7" />
+                <Label x={s.x(4.5)} y={s.y(0.27)} text="GH: pulsátil" color="#34D399" anchor="middle" />
             </Fade>
         </g>
     );
@@ -99,31 +99,31 @@ const GhrpPlot = ({ synergy }: { synergy: boolean }) => {
     const bracketY = CHART.t + 16;
     return (
         <g>
-            <rect x={s.x(GHRP_PEAK[0])} y={CHART.t} width={s.x(GHRP_PEAK[1]) - s.x(GHRP_PEAK[0])} height={base - CHART.t} fill="rgba(168,85,247,0.14)" />
+            <rect x={s.x(GHRP_PEAK[0])} y={CHART.t} width={s.x(GHRP_PEAK[1]) - s.x(GHRP_PEAK[0])} height={base - CHART.t} fill="rgba(196,181,253,0.14)" />
             <defs>
                 <linearGradient id="gh-win-fade" x1="0" x2="1" y1="0" y2="0">
-                    <stop offset="0%" stopColor="#A855F7" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#A855F7" stopOpacity={0.1} />
+                    <stop offset="0%" stopColor="#C4B5FD" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="#C4B5FD" stopOpacity={0.1} />
                 </linearGradient>
             </defs>
             <Axes s={s} yLabel={synergy ? 'GH (× pico do GHRP)' : 'GH (u.a.)'}
                 ticks={[0, 15, 30, 60, 90, 120].map(v => ({ v, label: v === 120 ? '120 min' : String(v) }))}
                 yTicks={synergy ? [{ v: 1, label: '1×' }, { v: 4, label: '4×' }, { v: 10, label: '10×' }] : []} />
             {synergy && (
-                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-                    <path d={toArea(hi, lo, s)} fill="rgba(245,158,11,0.22)" stroke="rgba(245,158,11,0.7)" strokeDasharray="4 3" />
-                    <Label x={s.x(36)} y={s.y(7.2)} text="GHRP + GHRH (CJC-1295): 4–10× no pico" color="#FCD34D" />
+                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.enter, ease: EASE_OUT }}>
+                    <path d={toArea(hi, lo, s)} fill="rgba(167,139,250,0.26)" stroke="rgba(167,139,250,0.85)" strokeDasharray="4 3" />
+                    <Label x={s.x(36)} y={s.y(7.2)} text="GHRP + GHRH (CJC-1295): 4–10× no pico" color="#DDD6FE" />
                 </motion.g>
             )}
-            <Curve key={synergy ? 'g-s' : 'g'} d={toPath(pts, s)} color="#C084FC" width={3} duration={1.3} />
-            <Fade delay={0.9}>
-                <Label x={(s.x(GHRP_PEAK[0]) + s.x(GHRP_PEAK[1])) / 2} y={synergy ? s.y(2.4) : base - 8} text="pico 15–30 min" color="#E9D5FF" anchor="middle" />
+            <Curve key={synergy ? 'g-s' : 'g'} d={toPath(pts, s)} color="#C4B5FD" width={3} />
+            <Fade delay={0.6}>
+                <Label x={(s.x(GHRP_PEAK[0]) + s.x(GHRP_PEAK[1])) / 2} y={synergy ? s.y(2.4) : base - 8} text="pico 15–30 min" color="#DDD6FE" anchor="middle" />
                 {/* janela de ação ~60–90 min */}
-                <line x1={s.x(0)} x2={s.x(GHRP_WINDOW[0])} y1={bracketY} y2={bracketY} stroke="#A855F7" strokeWidth={2} />
+                <line x1={s.x(0)} x2={s.x(GHRP_WINDOW[0])} y1={bracketY} y2={bracketY} stroke="#C4B5FD" strokeWidth={2} />
                 <rect x={s.x(GHRP_WINDOW[0])} y={bracketY - 1} width={s.x(GHRP_WINDOW[1]) - s.x(GHRP_WINDOW[0])} height={2} fill="url(#gh-win-fade)" />
-                <line x1={s.x(0)} x2={s.x(0)} y1={bracketY - 5} y2={bracketY + 5} stroke="#A855F7" strokeWidth={2} />
-                <Label x={s.x(GHRP_WINDOW[0]) + 4} y={bracketY - 7} text="janela de ação ~60–90 min" color="#E9D5FF" anchor="middle" />
-                {!synergy && <Label x={s.x(30) + 8} y={s.y(0.95)} text="GH após GHRP" color="#D8B4FE" />}
+                <line x1={s.x(0)} x2={s.x(0)} y1={bracketY - 5} y2={bracketY + 5} stroke="#C4B5FD" strokeWidth={2} />
+                <Label x={s.x(GHRP_WINDOW[0]) + 4} y={bracketY - 7} text="janela de ação ~60–90 min" color="#DDD6FE" anchor="middle" />
+                {!synergy && <Label x={s.x(30) + 8} y={s.y(0.95)} text="GH após GHRP" color="#DDD6FE" />}
                 <Label x={CHART.w - CHART.r - 4} y={s.y(synergy ? 1.6 : 0.3)} text="urina: detectável 4–8 h" color="#D1D5DB" anchor="end" />
             </Fade>
         </g>
@@ -145,10 +145,10 @@ const RhghPlot = () => {
             <Label x={s.x(INJ_AT) + 6} y={CHART.t + 12} text="injeção 23h" color="#FCD34D" />
             <rect x={s.x(CONTROL_AT) - 1.5} y={CHART.t} width={3} height={base - CHART.t} fill={COLORS.red} />
             <Label x={s.x(CONTROL_AT) + 7} y={CHART.t + 12} text="controle 6h" color="#FDA4AF" />
-            <Curve d={toPath(iv, s)} color="#CBD5E1" width={1.8} dash="5 4" duration={0.8} />
-            <motion.path d={toArea(sc, sc.map(p => ({ x: p.x, y: 0 })), s)} fill={COLORS.hipofise} initial={{ opacity: 0 }} animate={{ opacity: 0.14 }} transition={{ delay: 1, duration: 0.8 }} />
-            <Curve d={toPath(sc, s)} color={COLORS.hipofise} width={3} duration={1.8} delay={0.2} />
-            <Fade delay={1.6}>
+            <Curve d={toPath(iv, s)} color="#CBD5E1" width={1.8} dash="5 4" duration={DUR.bar} />
+            <motion.path d={toArea(sc, sc.map(p => ({ x: p.x, y: 0 })), s)} fill={COLORS.hipofise} initial={{ opacity: 0 }} animate={{ opacity: 0.14 }} transition={{ delay: 0.3, duration: DUR.bar, ease: EASE_OUT }} />
+            <Curve d={toPath(sc, s)} color={COLORS.hipofise} width={3} delay={0.15} />
+            <Fade delay={0.6}>
                 <line x1={s.x(SC_PEAK_X)} x2={s.x(SC_HALF_POINT.x)} y1={s.y(0.5)} y2={s.y(0.5)} stroke="#6EE7B7" strokeDasharray="3 3" />
                 <circle cx={s.x(SC_HALF_POINT.x)} cy={s.y(0.5)} r={3.5} fill="#6EE7B7" />
                 <Label x={(s.x(SC_PEAK_X) + s.x(SC_HALF_POINT.x)) / 2} y={s.y(0.5) + 21} text="t½ SC ~3–4 h" color="#6EE7B7" anchor="middle" />
@@ -171,13 +171,13 @@ const IgfPlot = () => {
         <g>
             <Axes s={s} yLabel="% da dose" ticks={[0, 6, 12, 15, 18, 24].map(v => ({ v, label: v === 24 ? '24 h' : `${v}` }))}
                 yTicks={[{ v: 0.5, label: '50%' }, { v: 1, label: '100%' }]} />
-            <Curve d={toPath(free, s)} color="#FDE68A" width={2.4} duration={0.7} />
-            <Curve d={toPath(bound, s)} color={COLORS.igf} width={3} duration={1.8} delay={0.3} />
-            <Fade delay={1.6}>
-                <line x1={s.x(IGF_BOUND_HALF)} x2={s.x(IGF_BOUND_HALF)} y1={s.y(0.5)} y2={CHART.h - CHART.b} stroke="#FDA4AF" strokeDasharray="3 3" />
+            <Curve d={toPath(free, s)} color="#A7F3D0" width={2.4} dash="6 4" duration={DUR.bar} />
+            <Curve d={toPath(bound, s)} color={COLORS.igf} width={3} delay={0.15} />
+            <Fade delay={0.6}>
+                <line x1={s.x(IGF_BOUND_HALF)} x2={s.x(IGF_BOUND_HALF)} y1={s.y(0.5)} y2={CHART.h - CHART.b} stroke="#6EE7B7" strokeDasharray="3 3" />
                 <circle cx={s.x(IGF_BOUND_HALF)} cy={s.y(0.5)} r={4} fill={COLORS.igf} />
-                <Label x={s.x(IGF_BOUND_HALF) + 8} y={s.y(0.5) - 8} text="ligado à IGFBP-3: t½ ~15 h" color="#FDA4AF" />
-                <Label x={s.x(0.9)} y={s.y(0.16)} text="livre: t½ ~10 min" color="#FDE68A" />
+                <Label x={s.x(IGF_BOUND_HALF) + 8} y={s.y(0.5) - 8} text="ligado à IGFBP-3: t½ ~15 h" color="#6EE7B7" />
+                <Label x={s.x(0.9)} y={s.y(0.16)} text="livre: t½ ~10 min" color="#A7F3D0" />
                 <Label x={s.x(7.6)} y={s.y(0.22)} text="biologicamente ativo por horas após a injeção" color="#E5E7EB" />
             </Fade>
         </g>
@@ -186,13 +186,11 @@ const IgfPlot = () => {
 
 export const MiniChart = ({ step, synergy }: { step: number; synergy: boolean }) => (
     <svg viewBox={`0 0 ${CHART.w} ${CHART.h}`} className="w-full h-auto block" role="img" aria-label="Mini-gráfico do passo atual (modelo ilustrativo)">
-        <AnimatePresence mode="wait">
-            <motion.g key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25, ease: EASE }}>
-                {step === 0 && <NaturalPlot />}
-                {step === 1 && <GhrpPlot synergy={synergy} />}
-                {step === 2 && <RhghPlot />}
-                {step === 3 && <IgfPlot />}
-            </motion.g>
-        </AnimatePresence>
+        <motion.g key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: DUR.text, ease: EASE_OUT }}>
+            {step === 0 && <NaturalPlot />}
+            {step === 1 && <GhrpPlot synergy={synergy} />}
+            {step === 2 && <RhghPlot />}
+            {step === 3 && <IgfPlot />}
+        </motion.g>
     </svg>
 );

@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { BOND_OH, BOUNDS, KETONE, OH, SKELETON, type Frame } from './steroidGeometry';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 
 interface MoleculeProps {
     frame: Frame;
@@ -35,7 +36,7 @@ export const Molecule = ({ frame, stroke = 3, dim = false, labels = true, idPref
                 transform={frame.transform}
                 fill="none" stroke={`url(#${grad})`} strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"
                 animate={{ opacity: dim ? 0.35 : 1 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: DUR.morph, ease: EASE_OUT }}
             >
                 {[...SKELETON, BOND_OH].map((d, i) => (
                     <motion.path
@@ -43,7 +44,7 @@ export const Molecule = ({ frame, stroke = 3, dim = false, labels = true, idPref
                         d={d}
                         initial={still ? false : { pathLength: 0, opacity: 0 }}
                         animate={{ pathLength: 1, opacity: 1 }}
-                        transition={{ pathLength: { delay: 0.1 + i * 0.09, duration: 0.6, ease: 'easeInOut' }, opacity: { delay: 0.1 + i * 0.09, duration: 0.15 } }}
+                        transition={{ pathLength: { delay: stagger(i, 0, 0.03), duration: DUR.draw, ease: EASE_IN_OUT }, opacity: { delay: stagger(i, 0, 0.03), duration: DUR.exit } }}
                     />
                 ))}
             </motion.g>
@@ -52,7 +53,7 @@ export const Molecule = ({ frame, stroke = 3, dim = false, labels = true, idPref
                     fill="#FB7185" fontSize={15} fontWeight={600} className="font-body"
                     initial={still ? false : { opacity: 0 }}
                     animate={{ opacity: dim ? 0.5 : 1 }}
-                    transition={{ delay: still ? 0 : 1.1, duration: 0.5 }}
+                    transition={{ delay: still ? 0 : 0.6, duration: DUR.enter, ease: EASE_OUT }}
                 >
                     <text x={kx - 6} y={ky + 9} textAnchor="end">O</text>
                     <text x={ox + 4} y={oy - 4}>OH</text>

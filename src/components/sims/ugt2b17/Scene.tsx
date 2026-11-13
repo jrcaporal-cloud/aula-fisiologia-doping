@@ -1,4 +1,4 @@
-import { AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'framer-motion';
 import { DOPING_STEP, type Genotype } from './content';
 import { VIEW_H, VIEW_W } from './geometry';
 import { Molecules } from './Molecules';
@@ -32,9 +32,7 @@ export const Scene = ({ step, genotype }: SceneProps) => {
             <Syringe on={doping} />
             <Molecules step={step} genotype={genotype} reduced={reduced} />
             <TeGauge on={testOn} genotype={genotype} reading={doping} ghost={step >= 4} />
-            <AnimatePresence mode="wait">
-                {doping && <Stamp key={genotype} genotype={genotype} />}
-            </AnimatePresence>
+            {doping && <Stamp key={genotype} genotype={genotype} />}
         </svg>
     );
 };

@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { Drama, FlaskConical, Dna, type LucideIcon } from 'lucide-react';
+import { DUR, EASE_IN_OUT, EASE_OUT, stagger } from '../../../lib/motion';
 import { VERTICES, type VertexId } from './content';
 
 /** O triângulo: três vértices (controvérsias); o passo acende um por vez e, no fim, o conjunto. */
@@ -63,14 +64,11 @@ export const Triangle = ({ active, all, onSelect }: TriangleProps) => {
                     <stop offset={0} stopColor="#ffffff" stopOpacity={0.10} />
                     <stop offset={1} stopColor="#ffffff" stopOpacity={0} />
                 </radialGradient>
-                <filter id="ct-glow" x="-60%" y="-60%" width="220%" height="220%">
-                    <feGaussianBlur stdDeviation="7" />
-                </filter>
             </defs>
 
             {/* Arestas */}
             <motion.path d={`M${POS[0].x},${POS[0].y} L${POS[1].x},${POS[1].y} L${POS[2].x},${POS[2].y} Z`}
-                fill="url(#ct-core)" animate={{ opacity: all ? 1 : 0.4 }} transition={{ duration: 0.6 }} />
+                fill="url(#ct-core)" animate={{ opacity: all ? 1 : 0.4 }} transition={{ duration: DUR.bar, ease: EASE_OUT }} />
             {EDGES.map(([a, b], i) => {
                 const on = all || active === a || active === b;
                 return (
@@ -78,23 +76,23 @@ export const Triangle = ({ active, all, onSelect }: TriangleProps) => {
                         stroke={`url(#ct-edge-${a}${b})`} strokeLinecap="round"
                         initial={reduce ? false : { pathLength: 0 }}
                         animate={{ pathLength: 1, opacity: all ? 0.95 : on ? 0.6 : 0.22, strokeWidth: all ? 4 : on ? 3 : 2 }}
-                        transition={{ pathLength: { duration: 0.9, delay: 0.15 * i, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.5 }, strokeWidth: { duration: 0.5 } }} />
+                        transition={{ pathLength: { duration: DUR.draw, delay: stagger(i, 0, 0.15), ease: EASE_IN_OUT }, opacity: { duration: DUR.morph, ease: EASE_OUT }, strokeWidth: { duration: DUR.morph, ease: EASE_OUT } }} />
                 );
             })}
 
             {/* Centro */}
             <motion.g key={all ? 'all' : `c-${active ?? 'none'}`} initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.45 }} style={{ transformOrigin: `${CENTER.x}px ${CENTER.y}px` }}>
+                transition={{ duration: DUR.text, ease: EASE_OUT }} style={{ transformOrigin: `${CENTER.x}px ${CENTER.y}px` }}>
                 {all ? (
-                    <text x={CENTER.x} y={CENTER.y + 14} textAnchor="middle" fontSize={18} fontWeight={700} fill="#fff" style={{ fontFamily: 'var(--font-display)' }}>▶ O Embate</text>
+                    <text x={CENTER.x} y={CENTER.y + 14} textAnchor="middle" fontSize={18} fontWeight={700} fill="#fff" style={{ fontFamily: 'var(--font-body)' }}>▶ O Embate</text>
                 ) : active !== null ? (
-                    <text textAnchor="middle" fontSize={17} fontWeight={700} fill={VERTICES[active].soft} style={{ fontFamily: 'var(--font-display)' }}>
+                    <text textAnchor="middle" fontSize={17} fontWeight={700} fill={VERTICES[active].soft} style={{ fontFamily: 'var(--font-body)' }}>
                         {splitLabel(VERTICES[active].label).map((line, li) => (
                             <tspan key={line} x={CENTER.x} y={CENTER.y + 8 + li * 22}>{line}</tspan>
                         ))}
                     </text>
                 ) : (
-                    <text textAnchor="middle" fontSize={15} fill="#CBD5E1">
+                    <text textAnchor="middle" fontSize={15} fill="#D1D5DB">
                         <tspan x={CENTER.x} y={CENTER.y + 10}>três vértices</tspan>
                         <tspan x={CENTER.x} y={CENTER.y + 29}>um embate</tspan>
                     </text>
@@ -112,31 +110,31 @@ export const Triangle = ({ active, all, onSelect }: TriangleProps) => {
                 return (
                     <motion.g key={v.id} onClick={() => onSelect(i)} style={{ cursor: 'pointer' }}
                         initial={reduce ? false : { opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: 0.35 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}>
-                        <motion.circle cx={x} cy={y} r={R + 10} fill={v.color} filter="url(#ct-glow)"
-                            animate={{ opacity: on ? 0.45 : 0 }} transition={{ duration: 0.5 }} />
+                        transition={{ duration: DUR.enter, delay: stagger(i, 0.35, 0.12), ease: EASE_OUT }}>
+                        <motion.circle cx={x} cy={y} r={R + 8} fill="none" stroke={v.color} strokeWidth={1.5}
+                            animate={{ opacity: on ? 0.55 : 0 }} transition={{ duration: DUR.morph, ease: EASE_OUT }} />
                         {on && active === i && !reduce && (
                             <motion.circle cx={x} cy={y} fill="none" stroke={v.color} strokeWidth={2}
                                 initial={{ r: R, opacity: 0.8 }} animate={{ r: R + 22, opacity: 0 }}
-                                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }} />
+                                transition={{ duration: 1.8, repeat: Infinity, ease: EASE_OUT }} />
                         )}
                         <motion.circle cx={x} cy={y} r={R} strokeWidth={2.5}
                             animate={{ fill: on ? `${v.color}33` : 'rgba(8,8,18,0.95)', stroke: on ? v.color : 'rgba(255,255,255,0.28)' }}
-                            transition={{ duration: 0.5 }} />
+                            transition={{ duration: DUR.morph, ease: EASE_OUT }} />
                         <foreignObject x={x - 13} y={y - 28} width={26} height={26} style={{ pointerEvents: 'none' }}>
                             <Icon size={26} color={on ? '#fff' : '#9CA3AF'} strokeWidth={1.8} />
                         </foreignObject>
-                        <text x={x} y={y + 22} textAnchor="middle" fontSize={17} fontWeight={800} fill={on ? v.soft : '#D1D5DB'} style={{ fontFamily: 'var(--font-display)' }}>{v.num}</text>
+                        <text x={x} y={y + 22} textAnchor="middle" fontSize={17} fontWeight={800} fill={on ? v.soft : '#D1D5DB'} style={{ fontFamily: 'var(--font-body)' }}>{v.num}</text>
                         {lines.map((line, li) => (
                             <text key={line} x={x} y={ty + li * 20} textAnchor="middle" fontSize={16} fontWeight={600}
-                                fill={on ? '#fff' : '#D1D5DB'} style={{ fontFamily: 'var(--font-display)' }}>{line}</text>
+                                fill={on ? '#fff' : '#D1D5DB'} style={{ fontFamily: 'var(--font-body)' }}>{line}</text>
                         ))}
                     </motion.g>
                 );
             })}
 
             {/* Vértice 01 continua nos próximos slides */}
-            <motion.g animate={{ opacity: active === 0 || all ? 1 : 0.75 }} transition={{ duration: 0.4 }}>
+            <motion.g animate={{ opacity: active === 0 || all ? 1 : 0.75 }} transition={{ duration: DUR.morph, ease: EASE_OUT }}>
                 <rect x={POS[0].x + R + 8} y={POS[0].y - 15} width={152} height={30} rx={15} fill="rgba(168,85,247,0.14)" stroke="rgba(196,181,253,0.6)" />
                 <text x={POS[0].x + R + 84} y={POS[0].y + 5.5} textAnchor="middle" fontSize={15} fontWeight={600} fill="#DDD6FE">próximos slides →</text>
             </motion.g>

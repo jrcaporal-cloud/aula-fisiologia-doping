@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
 /**
  * Ilustração da citação "O receptor não tem ética — apenas afinidade": a testosterona
@@ -52,7 +53,7 @@ export const ReceptorAffinity = () => {
     const still = useReducedMotion();
     const a = travel(-START, DOCK_A);
     const b = travel(START, DOCK_B);
-    const loop = { duration: CYCLE, repeat: Infinity, ease: 'easeInOut' as const };
+    const loop = { duration: CYCLE, repeat: Infinity, ease: EASE_IN_OUT };
     // Brilho do receptor: acende igual nos dois encaixes.
     const glowTimes = [0, DOCK_A[0], DOCK_A[0] + 0.04, DOCK_A[1], DOCK_A[1] + 0.05, DOCK_B[0], DOCK_B[0] + 0.04, DOCK_B[1], DOCK_B[1] + 0.05, 1];
     const glow = [0, 0, 1, 1, 0, 0, 1, 1, 0, 0];
@@ -72,7 +73,7 @@ export const ReceptorAffinity = () => {
                     key={k} cx={CX} cy={CY} fill="none" stroke="#E11D48" strokeWidth="1.5"
                     initial={{ r: 40, opacity: 0 }}
                     animate={{ r: [40, 40, 92, 40, 40, 92, 92], opacity: [0, 0.7, 0, 0, 0.7, 0, 0] }}
-                    transition={{ ...loop, ease: 'easeOut', delay: k * 0.45, times: [0, DOCK_A[0], DOCK_A[0] + 0.12, DOCK_A[0] + 0.121, DOCK_B[0], DOCK_B[0] + 0.12, 1] }}
+                    transition={{ ...loop, ease: EASE_OUT, delay: k * 0.45, times: [0, DOCK_A[0], DOCK_A[0] + 0.12, DOCK_A[0] + 0.121, DOCK_B[0], DOCK_B[0] + 0.12, 1] }}
                 />
             ))}
             <motion.ellipse

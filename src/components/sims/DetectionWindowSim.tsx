@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Pause, Play } from 'lucide-react';
+import { DUR, EASE_OUT } from '../../lib/motion';
 import { useSlideSteps } from '../../store/useSlideSteps';
+import { IllustrativeTag } from '../deck/IllustrativeTag';
 import { DetectionChart, type ChartMode } from './detection/DetectionChart';
 import { COLORS } from './detection/lanes';
 import {
@@ -33,6 +35,7 @@ const STEPS = [
     },
 ] as const;
 
+/** Exceção T(3): varredura completa pedida no botão "percorrer" (pausável); não é disparada pelo passador. */
 const PLAY_MS = 9000;
 
 const logStatus = (tH: number, withNand: boolean): StatusItem[] => {
@@ -88,7 +91,9 @@ const DetectionWindowSim = () => {
 
     useEffect(() => {
         const k = reduced ? 0 : 1;
-        mixTo(step >= 1 ? 1 : 0, { duration: 750 * k });
+        mixTo(step >= 1 ? 1 : 0, { duration: DUR.bar * 1000 * k });
+        // Exceção T(3): a varredura da linha do teste É o conteúdo (o selo muda quando a linha cruza o limiar).
+        // Texto do passo legível em 0,3 s; o próximo clique corta a animação (animateTo → stop).
         if (step === 0) logTo(uFromHours(4 * HOURS_PER_DAY), { from: uFromHours(3), duration: 2600 * k, delay: 700 * k });
         if (step === 1) logTo(uFromHours(91 * HOURS_PER_DAY), { duration: 2600 * k, delay: 900 * k });
         if (step === 2) stratTo(uFromDay(0), { from: uFromDay(-42), duration: 2800 * k, delay: 1300 * k });
@@ -129,15 +134,13 @@ const DetectionWindowSim = () => {
                 </span>
                 <div className="relative min-h-[1.5rem] flex-1">
                     <motion.p key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35 }} className="text-[16px] leading-snug text-slate-100">
+                        transition={{ duration: DUR.enter, ease: EASE_OUT }} className="text-[16px] leading-snug text-slate-100">
                         {STEPS[step].text}
                     </motion.p>
                 </div>
-                <span className="shrink-0 rounded-full border border-amber-500/60 bg-amber-500/10 px-2.5 py-0.5 font-mono text-[14px] uppercase tracking-[0.06em] text-amber-300">
-                    modelo ilustrativo
-                </span>
+                <IllustrativeTag className="shrink-0">modelo ilustrativo</IllustrativeTag>
                 <button type="button" onClick={togglePlay}
-                    className="flex shrink-0 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-mono text-[14px] text-white transition-colors hover:bg-white/20"
+                    className="flex shrink-0 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-mono text-[14px] text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--act-color,#E11D48)]"
                     aria-label={playing ? 'Pausar a linha do teste' : 'Animar a linha do teste ao longo do tempo'}>
                     {playing ? <Pause size={16} /> : <Play size={16} />}
                     {playing ? 'pausar' : 'percorrer'}

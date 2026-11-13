@@ -6,7 +6,7 @@ import { SPHERE_GEO, STICK_GEO, stickMatrix } from '../receptor/geometry';
 import { Glow } from '../receptor/primitives';
 import { useHover } from '../receptor/useHover';
 import type { TimeRef } from '../receptor/types';
-import { peptidePose } from './choreo';
+import { peptidePose, type PeptideState } from './choreo';
 import { MEM_HALF, ligandOf, type Side } from './layout';
 import { PEPTIDE_LIGANDS } from './ligands';
 
@@ -22,6 +22,8 @@ const SEQ: Record<Side, Res[]> = {
     [1]: ['p', 'h', '-', 'h', 'p', '+', '-', 'p', '+'],
 } as Record<Side, Res[]>;
 const SIDE_COLOR: Record<Res, string> = { '+': '#60A5FA', '-': '#F43F5E', p: '#F1F5F9', h: '#94A3B8' };
+/** Cores das cadeias laterais pré-calculadas (uma vez por módulo). */
+const SIDE_RGB = Object.fromEntries(Object.entries(SIDE_COLOR).map(([k, v]) => [k, new THREE.Color(v)])) as Record<Res, THREE.Color>;
 
 const extended = (j: number, n: number, out: THREE.Vector3) =>
     out.set((j - (n - 1) / 2) * 0.6, (j % 2 - 0.5) * 0.24, Math.sin(j * 1.3) * 0.12);
@@ -29,12 +31,14 @@ const coiled = (j: number, n: number, out: THREE.Vector3) => {
     const a = j * 1.75;
     return out.set(Math.cos(a) * 0.42, 0.75 - (j / (n - 1)) * (n > 6 ? 1.5 : 1.05), Math.sin(a) * 0.42);
 };
+const radial = new THREE.Vector3();
 const sideDir = (j: number, bb: THREE.Vector3, compact: number, out: THREE.Vector3) => {
     out.set(0, j % 2 === 0 ? 1 : -1, j % 3 === 0 ? 0.6 : -0.4).normalize();
-    const radial = new THREE.Vector3(bb.x, 0, bb.z).normalize();
+    radial.set(bb.x, 0, bb.z).normalize();
     return out.lerp(radial, compact).normalize();
 };
 
+const pose: PeptideState = { compact: 0, pulse: 0 };
 const tmpM = new THREE.Matrix4();
 const tq = new THREE.Quaternion();
 const ts = new THREE.Vector3();
@@ -80,8 +84,7 @@ const Chain = ({ s, compactRef }: ChainProps) => {
     useLayoutEffect(() => {
         const sc = scRef.current;
         if (!sc) return;
-        const c = new THREE.Color();
-        seq.forEach((r, j) => sc.setColorAt(j, c.set(SIDE_COLOR[r])));
+        seq.forEach((r, j) => sc.setColorAt(j, SIDE_RGB[r]));
         if (sc.instanceColor) sc.instanceColor.needsUpdate = true;
     }, [seq]);
     useFrame(() => {
@@ -117,7 +120,7 @@ const MainPeptide = ({ active, timeRef }: PeptideProps) => {
     useFrame(({ clock }) => {
         const grp = g.current;
         if (!grp) return;
-        const { compact, pulse } = peptidePose(active, timeRef.current.t, clock.elapsedTime, grp.position, grp.quaternion);
+        const { compact, pulse } = peptidePose(active, timeRef.current.t, clock.elapsedTime, grp.position, grp.quaternion, pose);
         compactRef.current = compact;
         if (ring.current && ringMat.current) {
             ring.current.visible = pulse > 0.01;
@@ -162,6 +165,6 @@ const Drifter = ({ s, i }: { s: Side; i: number }) => {
 export const Peptides = ({ active, timeRef }: PeptideProps) => (
     <>
         <MainPeptide active={active} timeRef={timeRef} />
-        {DRIFT.map((_, i) => <Drifter key={`${active}-${i}`} s={active} i={i} />)}
+        {DRIFT.map((d, i) => <Drifter key={`${active}:${d.x}`} s={active} i={i} />)}
     </>
 );

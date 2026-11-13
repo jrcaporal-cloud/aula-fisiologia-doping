@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import { ACCENT, type Family } from './content';
 import type { ColumnMode } from './layout';
 import { CompactMolecule, FullScene } from './Scenes';
+import { DUR, EASE_IN_OUT, EASE_OUT } from '../../../lib/motion';
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 /** Átomos das miniaturas (unidades do desenho; escala real ≈ 0,44 no recolhido, 0,57 na comparação → ≥ 14 px). */
 const COLLAPSED_ATOM_FONT = 36;
 const COMPARE_ATOM_FONT = 30;
@@ -27,7 +27,7 @@ const Header = ({ family, size = 'lg' }: { family: Family; size?: 'lg' | 'md' | 
             {family.n}
         </span>
         <span
-            className={`font-display font-semibold leading-tight ${size === 'lg' ? 'text-[19px]' : size === 'md' ? 'text-[17px]' : 'text-[17px] break-words'}`}
+            className={`font-semibold leading-tight ${size === 'lg' ? 'text-[19px]' : size === 'md' ? 'text-[17px]' : 'text-[17px] break-words'}`}
             style={{ color: family.color }}
         >
             {family.title}
@@ -71,7 +71,7 @@ const Focus = ({ text }: { text: string }) => (
 
 const Tag = ({ text }: { text: string }) => (
     <div className="flex items-start gap-2 text-[16px] font-semibold leading-snug" style={{ color: '#FDE68A' }}>
-        <span className="w-2 h-2 rounded-full shrink-0 mt-[8px]" style={{ background: ACCENT, boxShadow: `0 0 8px ${ACCENT}` }} />
+        <span className="w-2 h-2 rounded-full shrink-0 mt-[8px]" style={{ background: ACCENT }} />
         {text}
     </div>
 );
@@ -121,25 +121,25 @@ export const FamilyColumn = ({ family, mode, width, focused, still, onSelect }: 
     const dim = mode === 'collapsed' || mode === 'bud';
     return (
         <motion.div
+            layout
             role="button" tabIndex={0} onClick={onSelect}
-            onKeyDown={e => { if (e.key === 'Enter') onSelect(); }}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(); } }}
             aria-label={`Abrir família ${family.n}: ${family.title}`}
-            className="relative h-full shrink-0 rounded-2xl border cursor-pointer overflow-hidden px-4 py-3.5"
+            className="relative h-full shrink-0 rounded-2xl border cursor-pointer overflow-hidden px-4 py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2 outline-[var(--act-color,#E11D48)]"
             initial={false}
             animate={{
-                width,
                 opacity: dim ? 0.8 : 1,
                 borderColor: focused ? `${family.color}AA` : 'rgba(255,255,255,0.10)',
-                boxShadow: focused ? `0 0 32px ${family.color}2E` : '0 0 0 rgba(0,0,0,0)',
             }}
-                        transition={{ duration: still ? 0 : 0.6, ease: EASE }}
-            style={{ background: 'rgba(8,8,18,0.72)' }}
+            transition={{ duration: still ? 0 : DUR.morph, ease: EASE_IN_OUT }}
+            style={{ width, borderRadius: 16, background: 'rgba(8,8,18,0.72)' }}
         >
             <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: family.color, opacity: focused ? 1 : 0.5 }} />
             <motion.div
+                layout
                 key={mode} className="h-full"
                 initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: 0.22, duration: 0.35 }}
+                transition={{ delay: 0.15, duration: DUR.enter, ease: EASE_OUT }}
             >
                 <Body family={family} mode={mode} still={still} />
             </motion.div>
